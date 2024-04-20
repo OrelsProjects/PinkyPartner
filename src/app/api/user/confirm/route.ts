@@ -10,21 +10,12 @@ export async function POST(req: NextRequest): Promise<AppUser | any> {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  let user: {
-    name: string | null;
-    email: string | null;
-    photoURL: string | null;
-  } | null = null;
+  let user: AppUser | null = null;
   try {
     const { user: sessionUser } = session;
-    const body = await req.json();
-    user = body as {
-      name: string | null;
-      email: string | null;
-      photoURL: string | null;
-    };
+    user = await req.json();
     const existingUser = await prisma.appUser.findUnique({
-      where: { email: session.user?.email || user.email || undefined },
+      where: { email: session.user?.email || user?.email || undefined },
     });
     if (existingUser) {
       return NextResponse.json({ ...existingUser }, { status: 200 });
@@ -32,9 +23,10 @@ export async function POST(req: NextRequest): Promise<AppUser | any> {
 
     const appUser = await prisma.appUser.create({
       data: {
-        email: sessionUser?.email || user.email || "",
-        photoURL: sessionUser?.image || user.photoURL,
-        displayName: sessionUser?.name || user.name,
+        userId: sessionUser?.id || user?.userId,
+        email: sessionUser?.email || user?.email || "",
+        photoURL: sessionUser?.image || user?.photoURL,
+        displayName: sessionUser?.name || user?.displayName,
       },
     });
     return NextResponse.json({ ...appUser }, { status: 201 });

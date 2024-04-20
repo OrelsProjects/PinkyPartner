@@ -9,6 +9,7 @@ import {
   deleteContract as deleteContractAction,
   setLoading,
 } from "../features/contracts/contractsSlice";
+import { UserContractData } from "../../models/userContract";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
@@ -32,8 +33,11 @@ export function useContracts() {
   const createContract = async (contractData: CreateContract) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.post("/api/contract", contractData);
-      dispatch(addContractAction(response.data.result));
+      const response = await axios.post<UserContractData>(
+        "/api/contract",
+        contractData,
+      );
+      dispatch(addContractAction(response.data));
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating contract"));
@@ -42,14 +46,18 @@ export function useContracts() {
     }
   };
 
-  const updateContract = async (contractData: Contract) => {
+  const setContracts = (contracts: UserContractData[]) => {
+    dispatch(setContractsAction(contracts));
+  };
+
+  const updateContract = async (contractData: UserContractData) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.patch(
+      const response = await axios.patch<UserContractData>(
         `/api/contract/${contractData.contractId}`,
         contractData,
       );
-      dispatch(updateContractAction(response.data.result));
+      dispatch(updateContractAction(response.data));
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error updating contract"));
@@ -75,6 +83,7 @@ export function useContracts() {
     contracts,
     loading,
     error,
+    setContracts,
     fetchContracts,
     createContract,
     updateContract,

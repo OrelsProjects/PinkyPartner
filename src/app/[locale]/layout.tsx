@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
+import { Toaster } from "react-hot-toast";
+import NavigationBar from "../../components/bottomBar";
+import ContentProvider from "../providers/ContentProvider";
+import HeightProvider from "../providers/HeightProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +22,12 @@ export default function LocaleLayout({
 }) {
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <HeightProvider>
+          <ContentProvider>{children}</ContentProvider>
+        </HeightProvider>
+        <Toaster />
+      </body>
     </html>
   );
 }

@@ -1,5 +1,14 @@
 {
   "Index": {
     "title": "Hello world!"
+  },
+  "Obligation": {
+    "create-button": "Create obligation",
+    "create-title": "Create a new obligation",
+    "create-description": "Create a new obligation",
+
+    "edit-button": "Edit",
+    "edit-title": "Edit obligation",
+    "edit-description": "Edit obligation"
   }
 }

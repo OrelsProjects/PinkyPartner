@@ -8,13 +8,14 @@ import {
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
 import { usePathname, useRouter } from "next/navigation";
-import Loading from "@/app/components/ui/loading";
+import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
+import { ThemeProvider } from "./ThemeProvider";
 
 export default function AuthProvider({
   children,
@@ -27,11 +28,7 @@ export default function AuthProvider({
   const { loading: loadingAuth, user } = useSelector(selectAuth);
   const { data: session, status } = useSession();
 
-  const setUser = async (user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  }) => {
+  const setUser = async (user?: AppUser) => {
     try {
       let appUser: AppUser | undefined;
       if (user) {
@@ -48,7 +45,6 @@ export default function AuthProvider({
   useEffect(() => {
     switch (status) {
       case "authenticated":
-        debugger;
         setUser(session.user);
         break;
       case "loading":
@@ -68,8 +64,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     if (loadingAuth) return;
-    if (status === "authenticated") {
-      debugger;
+    if (status === "authenticated" && pathname.includes("auth")) {
       router.push("/home");
       return;
     }
@@ -84,5 +79,5 @@ export default function AuthProvider({
       </div>
     );
   }
-  return <div>{children}</div>;
+  return <ThemeProvider>{children}</ThemeProvider>;
 }

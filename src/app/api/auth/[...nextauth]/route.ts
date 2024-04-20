@@ -1,4 +1,6 @@
-import NextAuth, { AuthOptions } from "next-auth";
+import NextAuth, { AuthOptions, Session } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: AuthOptions = {
@@ -12,12 +14,18 @@ export const authOptions: AuthOptions = {
     strategy: "jwt", // This is the default value
   },
   callbacks: {
-    async session({ session }: { session: any }) {
-      // if (!session.user.bla) {
-      //   console.log('add bla');
-      //   session.user.bla = 'new';
-      //   session.user.another = '21';
-      // }
+    async session({
+      session,
+      token,
+      user,
+    }: {
+      session: Session;
+      token: JWT;
+      user: AdapterUser;
+    }) {
+      if (session?.user) {
+        session.user.userId = token.sub;
+      }
       return session;
     },
     async signIn(user: any) {

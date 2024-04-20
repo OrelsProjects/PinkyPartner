@@ -3,6 +3,7 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import prisma from "../_db/db";
+import { CreateObligation } from "../../../models/obligation";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
@@ -11,9 +12,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const data = await req.json();
+    const data = (await req.json()) as any as CreateObligation;
     const obligation = await prisma.obligation.create({
-      data,
+      data: {
+        ...data,
+        userId: session.user.userId,
+      },
     });
     return NextResponse.json({ result: obligation }, { status: 201 });
   } catch (error: any) {
@@ -55,6 +59,15 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
   try {
     const obligationId = req.nextUrl.searchParams.get("id") as string;
     const data = await req.json();
+    const isObligationOwner = await prisma.obligation.findFirst({
+      where: {
+        obligationId,
+        userId: session.user.userId,
+      },
+    });
+    if (!isObligationOwner) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const obligation = await prisma.obligation.update({
       where: { obligationId },
       data,
@@ -74,6 +87,15 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
 
   try {
     const obligationId = req.nextUrl.searchParams.get("id") as string;
+    const isObligationOwner = await prisma.obligation.findFirst({
+      where: {
+        obligationId,
+        userId: session.user.userId,
+      },
+    });
+    if (!isObligationOwner) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     await prisma.obligation.delete({
       where: { obligationId },
     });
