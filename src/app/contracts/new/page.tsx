@@ -48,7 +48,7 @@ const AccountabilityPartnerComponent: React.FC<{
 const FindPartner = ({
   onPartnerSelect,
 }: FindPartnerProps): React.ReactNode => {
-  const { searchResult, searchUsers, loading } = useSearchUser();
+  const { searchResult, searchUsers, loading, error } = useSearchUser();
 
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -59,6 +59,7 @@ const FindPartner = ({
         onChange={e => searchUsers(e.target.value)}
         autoComplete="on"
         autoFocus
+        error={error ?? undefined}
       />
       {loading && (
         <div className="flex flex-col gap-1">

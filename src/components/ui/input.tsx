@@ -31,6 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {explainingText}
           </div>
         )}
+        {error && <div className="text-xs text-error">{error}</div>}
       </div>
     );
   },
