@@ -5,6 +5,7 @@ import Obligation, { CreateObligation } from "../../../models/obligation";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
 import { Button } from "../../../components/ui/button";
 import {
   DialogFooter,
@@ -29,6 +30,7 @@ const ObligationDialog = ({
   obligation,
   onCreate,
   onEdit,
+  onDelete,
   disabled = false,
   open,
   onOpenChange,
@@ -36,6 +38,7 @@ const ObligationDialog = ({
   obligation?: Obligation | null;
   onCreate?: (data: CreateObligation) => Promise<void>;
   onEdit?: (data: Obligation) => Promise<void>;
+  onDelete?: (data: Obligation) => Promise<void>;
   disabled?: boolean;
   open?: boolean;
   onOpenChange?: (state: boolean) => void;
@@ -72,93 +75,105 @@ const ObligationDialog = ({
   }, [obligation]);
 
   return (
-    <div
-      className={`
-    ${open ? "w-screen h-screen relative z-index[99999]" : ""}
-    `}
+    <Dialog
+      open={open}
+      onOpenChange={state => {
+        onOpenChange?.(state);
+      }}
     >
-      <Dialog
-        open={open}
-        onOpenChange={state => {
-          onOpenChange?.(state);
-        }}
-      >
-        <DialogTrigger asChild>
-          <Button variant="outline">Create</Button>
-        </DialogTrigger>
-        <DialogContent className="w-4/6 sm:max-w-[425px]">
-          <div className="w-full flex justify-center items-center">
-            <Button
-              className="w-fit h-fit"
-              variant={"outline"}
-              onClick={() => setShowEmojiPicker(true)}
-            >
-              {formik.values.emoji ? (
-                <div className="text-3xl">{formik.values.emoji}</div>
-              ) : (
-                <EmojiIcon className="w-8 h-8 fill-muted-foreground" />
-              )}
-            </Button>
-          </div>
-          <form
-            onSubmit={formik.handleSubmit}
-            className="flex flex-col justify-center items-center gap-4 py-4"
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          className="text-2xl !p-0 flex justify-center items-center"
+        >
+          <FaPlus className="w-5 h-5 mb-2.5 fill-muted-foreground" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-4/6 sm:max-w-[425px]">
+        <div className="w-full flex justify-center items-center">
+          <Button
+            className="w-fit h-fit"
+            variant={"outline"}
+            onClick={() => setShowEmojiPicker(true)}
           >
-            <div className="flex flex-col gap-4 py-4 ">
-              <div className="flex flex-col justify-center items-center gap-2">
-                <Label htmlFor="title" className="text-right">
-                  I oblige myself to...
-                </Label>
-                <Input
-                  id="title"
-                  value={formik.values.title}
-                  onChange={formik.handleChange}
-                  placeholder="Run 2km"
-                  error={formik.errors.title}
-                  explainingText={
-                    <div>
-                      {"Don't worry about time intervals."}
-                      <br />
-                      You add them in the contract.
-                    </div>
-                  }
-                  required
-                />
-              </div>
+            {formik.values.emoji ? (
+              <div className="text-3xl">{formik.values.emoji}</div>
+            ) : (
+              <EmojiIcon className="w-8 h-8 fill-muted-foreground" />
+            )}
+          </Button>
+        </div>
+        <form
+          onSubmit={formik.handleSubmit}
+          className="flex flex-col justify-center items-center gap-4 py-4"
+        >
+          <div className="flex flex-col gap-4 py-4 ">
+            <div className="flex flex-col justify-center items-center gap-2">
+              <Label htmlFor="title" className="text-right">
+                I oblige myself to...
+              </Label>
+              <Input
+                id="title"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                placeholder="Run 2km"
+                error={formik.errors.title}
+                explainingText={
+                  <div>
+                    {"Don't worry about time intervals."}
+                    <br />
+                    You add them in the contract.
+                  </div>
+                }
+                required
+              />
             </div>
-            <DialogFooter>
+          </div>
+          <DialogFooter>
+            <div className="flex flex-col">
               <Button type="submit" disabled={disabled}>
                 Save changes
               </Button>
-            </DialogFooter>
-          </form>
-          {open && showEmojiPicker && (
-            <div className="h-full w-full absolute bottom-0 left-0">
-              <div
-                className="absolute w-full h-full z-10 bg-black/50 inset-0"
-                onClick={() => setShowEmojiPicker(false)}
-              />
-              <div className="absolute bottom-0 left-0 !w-full h-4/6 z-50">
-                <EmojiPicker
-                  theme={Theme.AUTO}
-                  searchDisabled
-                  skinTonesDisabled
-                  lazyLoadEmojis={true}
-                  previewConfig={{
-                    showPreview: false,
+              {obligation && (
+                <Button
+                  variant="link"
+                  className="text-red-500 !py-0.5 !no-underline"
+                  onClick={() => {
+                    onDelete?.(obligation);
                   }}
-                  className="!w-full !h-full"
-                  onEmojiClick={emojiObject => {
-                    formik.setFieldValue("emoji", emojiObject.emoji);
-                    setShowEmojiPicker(false);
-                  }}
-                />
-              </div>
+                >
+                  Delete
+                </Button>
+              )}
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+          </DialogFooter>
+        </form>
+        {open && showEmojiPicker && (
+          <div className="h-full w-full absolute bottom-0 left-0">
+            <div
+              className="absolute w-full h-full z-10 bg-black/50 inset-0"
+              onClick={() => setShowEmojiPicker(false)}
+            />
+            <div className="absolute bottom-0 left-0 !w-full h-4/6 z-50">
+              <EmojiPicker
+                theme={Theme.AUTO}
+                searchDisabled
+                skinTonesDisabled
+                lazyLoadEmojis={true}
+                previewConfig={{
+                  showPreview: false,
+                }}
+                className="!w-full !h-full"
+                onEmojiClick={emojiObject => {
+                  formik.setFieldValue("emoji", emojiObject.emoji);
+                  setShowEmojiPicker(false);
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -168,6 +183,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     getUserObligation,
     createObligation,
     updateObligation,
+    deleteObligation,
     obligations,
     loading,
   } = useObligations();
@@ -218,7 +234,18 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     });
   };
 
-  const handleOnobligationClick = (obligation: Obligation) => {
+  const handleDeleteObligation = async (data: Obligation) => {
+    toast.promise(deleteObligation(data), {
+      loading: "Deleting obligation...",
+      success: () => {
+        hideDialog();
+        return "Obligation deleted!";
+      },
+      error: "Failed to delete obligation",
+    });
+  };
+
+  const handleOnObligationClick = (obligation: Obligation) => {
     // set window state to the obligation id
     router.push(`/obligations/${obligation.obligationId}`);
     setObligation(obligation);
@@ -226,21 +253,27 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <ObligationDialog
-        onCreate={handleCreateObligation}
-        onEdit={handleUpdateObligation}
-        disabled={loading}
-        open={showDialog}
-        onOpenChange={handleOnOpenChange}
-        obligation={obligation}
-      />
+    <div className="w-full h-full flex flex-col gap-3">
+      <div className="flex flex-row gap-1">
+        <span className="text-lg text-muted-foreground">
+          Obligations ({obligations.length || ""})
+        </span>
+        <ObligationDialog
+          onCreate={handleCreateObligation}
+          onEdit={handleUpdateObligation}
+          onDelete={handleDeleteObligation}
+          disabled={loading}
+          open={showDialog}
+          onOpenChange={handleOnOpenChange}
+          obligation={obligation}
+        />
+      </div>
       <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
         {obligations.map(obligation => (
           <ObligationComponent
             obligation={obligation}
             key={obligation.obligationId}
-            onClick={handleOnobligationClick}
+            onClick={handleOnObligationClick}
           />
         ))}
       </div>

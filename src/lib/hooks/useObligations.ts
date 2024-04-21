@@ -83,14 +83,14 @@ export function useObligations() {
     }
   };
 
-  const deleteObligation = async (obligationId: string) => {
+  const deleteObligation = async (obligation: Obligation) => {
     if (loading) {
       throw new Error("Already deleting obligation");
     }
     dispatch(setLoading(true));
     try {
-      await axios.delete(`/api/obligation/${obligationId}`);
-      dispatch(deleteObligationAction(obligationId));
+      await axios.delete(`/api/obligation/${obligation.obligationId}`);
+      dispatch(deleteObligationAction(obligation.obligationId));
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error deleting obligation"));
