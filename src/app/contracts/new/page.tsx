@@ -34,7 +34,7 @@ const AccountabilityPartnerComponent: React.FC<{
       onClick={() => onClick?.(partner)}
     >
       <img
-        src={partner.photoURL ?? ""}
+        src={partner?.photoURL ?? ""}
         alt={"Partner photo"}
         className="rounded-lg h-10 w-10 object-cover"
       />
