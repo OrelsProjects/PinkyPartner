@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";
 import { CreateObligation } from "../../../models/obligation";
 import { Obligation } from "@prisma/client";

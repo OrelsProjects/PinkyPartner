@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Logger } from "../../../../../../logger";
 import prisma from "../../../../_db/db";
 import AppUser from "../../../../../../models/appUser";
+import { authOptions } from "../../../../../../authOptions";
 
 export async function GET(
   req: NextRequest,

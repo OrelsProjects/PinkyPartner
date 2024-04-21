@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../authOptions";
 import AppUser from "../../../models/appUser";
 
 export async function GET(req: NextRequest): Promise<any> {

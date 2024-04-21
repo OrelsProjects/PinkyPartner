@@ -1,21 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "../../../../components/ui/input";
-import { TextArea } from "../../../../components/ui/textArea";
+import { Input } from "../../../components/ui/input";
+import { TextArea } from "../../../components/ui/textArea";
 import { useFormik } from "formik";
-import { CreateContract } from "../../../../models/contract";
-import { useObligations } from "../../../../lib/hooks/useObligations";
-import ObligationComponent from "../../../../components/obligationComponent";
-import Obligation from "../../../../models/obligation";
-import { AccountabilityPartner } from "../../../../models/appUser";
-import useSearchUser from "../../../../lib/hooks/useSearchUser";
-import { Skeleton } from "../../../../components/ui/skeleton";
+import { CreateContract } from "../../../models/contract";
+import { useObligations } from "../../../lib/hooks/useObligations";
+import ObligationComponent from "../../../components/obligationComponent";
+import Obligation from "../../../models/obligation";
+import { AccountabilityPartner } from "../../../models/appUser";
+import useSearchUser from "../../../lib/hooks/useSearchUser";
+import { Skeleton } from "../../../components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
-import { useAppSelector } from "../../../../lib/hooks/redux";
-import { Checkbox } from "../../../../components/ui/checkbox";
+import { useAppSelector } from "../../../lib/hooks/redux";
+import { Checkbox } from "../../../components/ui/checkbox";
 
 interface CreateContractPageProps {}
 

@@ -1,23 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Obligation, { CreateObligation } from "../../../../models/obligation";
-import { useObligations } from "../../../../lib/hooks/useObligations";
+import Obligation, { CreateObligation } from "../../../models/obligation";
+import { useObligations } from "../../../lib/hooks/useObligations";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   DialogFooter,
   DialogTrigger,
   Dialog,
   DialogContent,
-} from "../../../../components/ui/dialog";
-import { Input } from "../../../../components/ui/input";
-import { Label } from "../../../../components/ui/label";
-import { useTranslations } from "next-intl";
+} from "../../../components/ui/dialog";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import { useFormik } from "formik";
 import toast from "react-hot-toast";
-import ObligationComponent from "../../../../components/obligationComponent";
+import ObligationComponent from "../../../components/obligationComponent";
 import { useRouter } from "next/navigation";
 
 interface ObligationProps {
@@ -72,8 +71,6 @@ const ObligationDialog = ({
     }
   }, [obligation]);
 
-  const t = useTranslations("Obligation");
-
   return (
     <div
       className={`
@@ -87,7 +84,7 @@ const ObligationDialog = ({
         }}
       >
         <DialogTrigger asChild>
-          <Button variant="outline">{t("create-button")}</Button>
+          <Button variant="outline">Create</Button>
         </DialogTrigger>
         <DialogContent className="w-4/6 sm:max-w-[425px]">
           <div className="w-full flex justify-center items-center">
@@ -120,7 +117,7 @@ const ObligationDialog = ({
                   error={formik.errors.title}
                   explainingText={
                     <div>
-                      Don't worry about time intervals.
+                      {"Don't worry about time intervals."}
                       <br />
                       You add them in the contract.
                     </div>

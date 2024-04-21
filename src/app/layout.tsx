@@ -4,11 +4,10 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import AuthProvider from "./providers/AuthProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import { NextIntlClientProvider } from "next-intl";
 import DataProvider from "./providers/DataProvider";
-import NavigationBar from "../components/bottomBar";
 import HeightProvider from "./providers/HeightProvider";
 import ContentProvider from "./providers/ContentProvider";
+import { Toaster } from "react-hot-toast";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -25,15 +24,18 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
     <html lang={locale}>
       <body className="!overscroll-none">
         <StoreProvider>
-          <NextIntlClientProvider>
             <SessionWrapper>
               <ThemeProvider>
                 <AuthProvider>
-                  <DataProvider>{children}</DataProvider>
+                  <DataProvider>
+                    <HeightProvider>
+                      <ContentProvider>{children}</ContentProvider>
+                    </HeightProvider>
+                    <Toaster />
+                  </DataProvider>
                 </AuthProvider>
               </ThemeProvider>
             </SessionWrapper>
-          </NextIntlClientProvider>
         </StoreProvider>
       </body>
     </html>

@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
-import { ThemeToggle } from "../../../components/theme-toggle";
+import { ThemeToggle } from "../../components/theme-toggle";
 
 export default function Home() {
   const router = useRouter();

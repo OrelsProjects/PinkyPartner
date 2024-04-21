@@ -1,13 +1,13 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import prisma from "../../_db/db";
 import { UserData } from "../../../../models/appUser";
 import { Logger } from "../../../../logger";
 import { UserContractData } from "../../../../models/userContract";
+import { authOptions } from "../../../../authOptions";
 
 export async function GET(
-  req: NextRequest,
+  _: NextRequest,
 ): Promise<NextResponse<UserData | undefined>> {
   const session = await getServerSession(authOptions);
   if (!session) {

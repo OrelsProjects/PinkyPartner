@@ -31,7 +31,7 @@ export const initLogger = () => {
 export const setUserLogger = (user?: AppUser | null) => {
   datadogLogs.setUser({
     id: user?.userId,
-    name: user?.displayName,
+    name: user?.displayName ?? "",
     email: user?.email,
   });
 };

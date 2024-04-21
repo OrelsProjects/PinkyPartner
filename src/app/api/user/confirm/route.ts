@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import prisma from "../../_db/db";
 import { AppUser } from "@prisma/client";
+import { authOptions } from "../../../../authOptions";
 
 export async function POST(req: NextRequest): Promise<AppUser | any> {
   const session = await getServerSession(authOptions);
