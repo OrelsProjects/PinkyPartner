@@ -14,6 +14,7 @@ import { Skeleton } from "../../../components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
+import { MdOutlineCancel } from "react-icons/md";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { Checkbox } from "../../../components/ui/checkbox";
 
@@ -126,15 +127,23 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     setPreviousAccountabilityPartner(null);
   };
 
+  const handleRemoveObligationFromContract = (obligation: Obligation) => {
+    setObligationsUsed(
+      obligationsUsed.filter(
+        used => used.obligationId !== obligation.obligationId,
+      ),
+    );
+  };
+
   return (
     <AnimatePresence>
       {!accountabilityPartner ? (
         <motion.div
           // slide in from the right
-          initial={{ x: "100%", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
           // exit right to left if accountabilityPartner is set, else left to right
-          exit={{ x: "-100%", opacity: 0 }}
+          exit={{ x: "-100%" }}
           transition={{ duration: 0.2 }}
           key="find-partner"
           className="flex flex-col gap-4 justify-start items-start w-full h-fit max-h-full p-3 overflow-auto"
@@ -155,11 +164,10 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       ) : (
         <motion.div
           // slide in from the right
-          initial={{ x: "100%", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
           exit={{
             x: previousAccountabilityPartner ? "-100%" : "100%",
-            opacity: 0,
           }}
           transition={{ duration: 0.2 }}
           key="create-contract"
@@ -197,11 +205,22 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             <div className="font-bold mt-1">In contract</div>
             <div className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full">
               {obligationsUsed.map(obligation => (
-                <ObligationComponent
-                  obligation={obligation}
-                  onClick={handleAddObligationToContract}
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.2 }}
                   key={obligation.obligationId}
-                />
+                  className="w-full"
+                >
+                  <ObligationComponent
+                    obligation={obligation}
+                    onClick={handleAddObligationToContract}
+                    key={obligation.obligationId}
+                    deleteIcon={MdOutlineCancel}
+                    onDelete={handleRemoveObligationFromContract}
+                  />
+                </motion.div>
               ))}
             </div>
           </div>
@@ -209,11 +228,21 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             <div className="font-bold mt-1">Your obligations</div>
             <div className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full">
               {unusedObligations.map(obligation => (
-                <ObligationComponent
-                  obligation={obligation}
-                  onClick={handleAddObligationToContract}
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.2 }}
                   key={obligation.obligationId}
-                />
+                  className="w-full"
+                >
+                  <ObligationComponent
+                    obligation={obligation}
+                    onClick={handleAddObligationToContract}
+                    key={obligation.obligationId}
+                    showDelete={false}
+                  />
+                </motion.div>
               ))}
             </div>
           </div>

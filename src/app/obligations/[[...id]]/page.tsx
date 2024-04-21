@@ -134,17 +134,6 @@ const ObligationDialog = ({
               <Button type="submit" disabled={disabled}>
                 Save changes
               </Button>
-              {obligation && (
-                <Button
-                  variant="link"
-                  className="text-red-500 !py-0.5 !no-underline"
-                  onClick={() => {
-                    onDelete?.(obligation);
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
             </div>
           </DialogFooter>
         </form>
@@ -256,7 +245,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
         <span className="text-lg text-muted-foreground">
-          Obligations ({obligations.length || ""})
+          Obligations {obligations.length > 0 && `(${obligations.length})`}
         </span>
         <ObligationDialog
           onCreate={handleCreateObligation}

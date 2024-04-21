@@ -2,20 +2,20 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Obligation, { CreateObligation } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
-import { setLoading } from "../features/contracts/contractsSlice";
 import {
   setObligations as setObligationsAction,
   addObligation as createObligationAction,
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
 } from "../features/obligations/obligationsSlice";
+import LoadingError from "../../models/errors/LoadingError";
+import { useRef, useState } from "react";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, loading, error } = useAppSelector(
-    state => state.obligations,
-  );
+  const { obligations, error } = useAppSelector(state => state.obligations);
   const { user } = useAppSelector(state => state.auth);
+  const [loading, setLoading] = useState(false);
 
   const getUserObligation = (obligationId: string) => {
     return obligations.find(
@@ -25,9 +25,9 @@ export function useObligations() {
 
   const fetchObligations = async () => {
     if (loading) {
-      throw new Error("Already fetching obligations");
+      throw new LoadingError("Already deleting obligation");
     }
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.get("/api/obligation");
       dispatch(setObligationsAction(response.data.result));
@@ -36,7 +36,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error fetching obligations"));
       throw err;
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
@@ -46,10 +46,9 @@ export function useObligations() {
 
   const createObligation = async (obligationData: CreateObligation) => {
     if (loading) {
-      throw new Error("Already creating obligation");
+      throw new LoadingError("Already deleting obligation");
     }
-
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.post("/api/obligation", {
         ...obligationData,
@@ -61,16 +60,15 @@ export function useObligations() {
       dispatch(setError(err.message || "Error creating obligation"));
       throw err;
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
   const updateObligation = async (obligationData: Obligation) => {
     if (loading) {
-      throw new Error("Already updating obligation");
+      throw new LoadingError("Already deleting obligation");
     }
-
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.patch("/api/obligation", obligationData);
       dispatch(updateObligationAction(response.data.result));
@@ -79,15 +77,16 @@ export function useObligations() {
       dispatch(setError(err.message || "Error updating obligation"));
       throw err;
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
   const deleteObligation = async (obligation: Obligation) => {
     if (loading) {
-      throw new Error("Already deleting obligation");
+      throw new LoadingError("Already deleting obligation");
     }
-    dispatch(setLoading(true));
+    setLoading(true);
+
     try {
       await axios.delete(`/api/obligation/${obligation.obligationId}`);
       dispatch(deleteObligationAction(obligation.obligationId));
@@ -96,7 +95,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error deleting obligation"));
       throw err;
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
