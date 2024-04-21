@@ -2,7 +2,7 @@
   "extends": "next/core-web-vitals",
   "plugins": ["react-hooks"],
   "rules": {
-    "react-hooks/rules-of-hooks": "none",
-    "react-hooks/exhaustive-deps": "none"
+    "react-hooks/rules-of-hooks": 0,
+    "react-hooks/exhaustive-deps": 0
   }
 }
