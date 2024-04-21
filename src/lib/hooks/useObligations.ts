@@ -72,10 +72,7 @@ export function useObligations() {
 
     dispatch(setLoading(true));
     try {
-      const response = await axios.patch(
-        `/api/obligation/${obligationData.obligationId}`,
-        obligationData,
-      );
+      const response = await axios.patch("/api/obligation", obligationData);
       dispatch(updateObligationAction(response.data.result));
       dispatch(setError(null));
     } catch (err: any) {

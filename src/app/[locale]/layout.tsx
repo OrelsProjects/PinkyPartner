@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import NavigationBar from "../../components/bottomBar";
 import ContentProvider from "../providers/ContentProvider";
 import HeightProvider from "../providers/HeightProvider";
+import { ThemeProvider } from "../providers/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function LocaleLayout({
   params: { locale: string };
 }) {
   return (
-    <html lang={locale}>
+    <html lang={locale} className="dark">
       <body>
         <HeightProvider>
-          <ContentProvider>{children}</ContentProvider>
+          <ContentProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </ContentProvider>
         </HeightProvider>
         <Toaster />
       </body>

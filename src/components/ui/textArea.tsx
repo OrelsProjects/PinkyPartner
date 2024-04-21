@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
-import { LoadingSvg } from "./loading";
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -14,7 +13,7 @@ interface TextAreaProps
 const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ className, resize, loading, error, label, ...props }) => {
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 w-full">
         {label && <label className="text-sm text-foreground">{label}</label>}
         <textarea
           className={cn(

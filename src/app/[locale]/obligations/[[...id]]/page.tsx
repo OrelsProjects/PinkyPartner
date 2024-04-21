@@ -41,23 +41,17 @@ const ObligationDialog = ({
   open?: boolean;
   onOpenChange?: (state: boolean) => void;
 }) => {
-  
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const formik = useFormik<Omit<CreateObligation, "userId">>({
     initialValues: {
-      title: obligation ? obligation.title : "abc",
-      description: obligation ? obligation.description : "abc",
-      // smiley emoji default
-      emoji: obligation ? obligation.emoji : "😊",
+      title: obligation ? obligation.title : "",
+      description: obligation ? obligation.description : "",
+      emoji: obligation ? obligation.emoji : "",
     },
     onSubmit: values => {
       if (obligation) {
-        onEdit?.({ ...obligation, ...values })
-          .then(() => {
-            formik.resetForm();
-          })
-          .catch(() => {});
+        onEdit?.({ ...obligation, ...values });
       } else {
         onCreate?.(values)
           .then(() => {
@@ -67,6 +61,17 @@ const ObligationDialog = ({
       }
     },
   });
+
+  useEffect(() => {
+    if (obligation) {
+      formik.setValues({
+        title: obligation.title,
+        description: obligation.description,
+        emoji: obligation.emoji,
+      });
+    }
+  }, [obligation]);
+
   const t = useTranslations("Obligation");
 
   return (
@@ -82,9 +87,7 @@ const ObligationDialog = ({
         }}
       >
         <DialogTrigger asChild>
-          <Button variant="outline">
-            {obligation ? t("edit-button") : t("create-button")}
-          </Button>
+          <Button variant="outline">{t("create-button")}</Button>
         </DialogTrigger>
         <DialogContent className="w-4/6 sm:max-w-[425px]">
           <div className="w-full flex justify-center items-center">
@@ -164,8 +167,13 @@ const ObligationDialog = ({
 
 const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   const router = useRouter();
-  const { getUserObligation, createObligation, obligations, loading } =
-    useObligations();
+  const {
+    getUserObligation,
+    createObligation,
+    updateObligation,
+    obligations,
+    loading,
+  } = useObligations();
   const [obligation, setObligation] = useState<Obligation | undefined | null>(
     null,
   );
@@ -178,6 +186,13 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
       setShowDialog(true);
     }
   }, [params, params.id]);
+
+  const handleOnOpenChange = (state: boolean) => {
+    if (!state) {
+      router.push("/obligations");
+    }
+    setShowDialog(state);
+  };
 
   const hideDialog = () => {
     setShowDialog(false);
@@ -195,6 +210,17 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     });
   };
 
+  const handleUpdateObligation = async (data: Obligation) => {
+    toast.promise(updateObligation(data), {
+      loading: "Updating obligation...",
+      success: () => {
+        hideDialog();
+        return "Obligation updated!";
+      },
+      error: "Failed to update obligation",
+    });
+  };
+
   const handleOnobligationClick = (obligation: Obligation) => {
     // set window state to the obligation id
     router.push(`/obligations/${obligation.obligationId}`);
@@ -206,9 +232,10 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     <div className="w-full h-full flex flex-col">
       <ObligationDialog
         onCreate={handleCreateObligation}
+        onEdit={handleUpdateObligation}
         disabled={loading}
         open={showDialog}
-        onOpenChange={state => setShowDialog(state)}
+        onOpenChange={handleOnOpenChange}
         obligation={obligation}
       />
       <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">

@@ -12,3 +12,9 @@ export type UserData = {
   contracts: UserContractData[];
   obligations: Obligation[];
 };
+
+// Select userId, displayName and photoURL from AppUser
+export type AccountabilityPartner = Pick<
+  AppUser,
+  "userId" | "displayName" | "photoURL"
+>;

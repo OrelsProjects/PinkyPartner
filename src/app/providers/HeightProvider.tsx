@@ -19,6 +19,9 @@ export default function HeightProvider({
 
   useEffect(() => {
     const handleResize = () => {
+      console.log("resize");
+      console.log(window.innerHeight);
+      console.log(window.innerWidth);
       setHeight(window.innerHeight);
       setWidth(window.innerWidth);
     };
@@ -31,7 +34,7 @@ export default function HeightProvider({
     <SizeContext.Provider value={{ height, width }}>
       <div
         className={`w-full h-full ${className}
-        ${browser === "safari" ? "h-screen" : ""}
+        ${browser === "safari" ? "h-screen" : ""} pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]
         `}
         style={{ height: `${height}px` }}
       >
