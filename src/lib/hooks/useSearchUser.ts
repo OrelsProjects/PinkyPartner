@@ -60,8 +60,10 @@ const useSearchUser = (): SearchUserHook => {
       if (lastSearchTimestamp.current !== now) return;
 
       setSearchResult(data);
-    } catch (error) {
-      setError("An error occurred while fetching users.");
+    } catch (error: any) {
+      setError(
+        `An error occurred while fetching users. ${error.response.data.error}`,
+      );
     } finally {
       loading.current = false;
     }
