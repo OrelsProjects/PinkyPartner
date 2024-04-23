@@ -10,15 +10,16 @@ import {
   setLoading,
 } from "../features/contracts/contractsSlice";
 import { UserContractData } from "../../models/userContract";
+import { useState } from "react";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
-  const { contracts, loading, error } = useAppSelector(
-    state => state.contracts,
-  );
+  const { contracts, error } = useAppSelector(state => state.contracts);
+
+  const [loading, setLoading] = useState(false);
 
   const fetchContracts = async () => {
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.get("/api/contract");
       dispatch(setContractsAction(response.data.result));
@@ -26,12 +27,12 @@ export function useContracts() {
     } catch (err: any) {
       dispatch(setError(err.message || "Error fetching contracts"));
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
   const createContract = async (contractData: CreateContract) => {
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.post<UserContractData>(
         "/api/contract",
@@ -42,7 +43,7 @@ export function useContracts() {
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating contract"));
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
@@ -51,7 +52,7 @@ export function useContracts() {
   };
 
   const updateContract = async (contractData: UserContractData) => {
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       const response = await axios.patch<UserContractData>(
         `/api/contract/${contractData.contractId}`,
@@ -62,12 +63,12 @@ export function useContracts() {
     } catch (err: any) {
       dispatch(setError(err.message || "Error updating contract"));
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 
   const deleteContract = async (contractId: string) => {
-    dispatch(setLoading(true));
+    setLoading(true);
     try {
       await axios.delete(`/api/contract/${contractId}`);
       dispatch(deleteContractAction(contractId));
@@ -75,7 +76,7 @@ export function useContracts() {
     } catch (err: any) {
       dispatch(setError(err.message || "Error deleting contract"));
     } finally {
-      dispatch(setLoading(false));
+      setLoading(false);
     }
   };
 

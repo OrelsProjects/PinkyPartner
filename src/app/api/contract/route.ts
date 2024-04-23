@@ -3,6 +3,8 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
+import { Contract } from "@prisma/client";
+import { CreateContract } from "../../../models/contract";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
@@ -11,7 +13,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const data = await req.json();
+    const data = (await req.json()) as CreateContract;
     const contract = await prisma.contract.create({
       data,
     });

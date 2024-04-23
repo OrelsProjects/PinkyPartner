@@ -4,6 +4,7 @@ import * as React from "react";
 import SizeContext from "../../lib/context/sizeContext";
 import NavigationBar from "../../components/bottomBar";
 import { ThemeProvider } from "./ThemeProvider";
+import * as toast from "react-toastify";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -35,7 +36,19 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
         }}
       >
         <ThemeProvider>
-          <div className="w-full h-full">{children}</div>
+          <div className="w-full h-full relative">
+            {children}
+            <toast.ToastContainer
+              stacked
+              newestOnTop
+              theme="dark"
+              autoClose={2500}
+              draggablePercent={60}
+              className="!mb-16"
+              transition={toast.Flip}
+              position="bottom-center"
+            />
+          </div>
         </ThemeProvider>
       </div>
       <NavigationBar ref={bottomBarRef} />

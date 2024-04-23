@@ -17,6 +17,17 @@ export function useObligations() {
   const { user } = useAppSelector(state => state.auth);
   const [loading, setLoading] = useState(false);
 
+  const updateObligationRepeat = (
+    obligation: CreateObligation,
+  ): CreateObligation => {
+    if (obligation.repeat === "Daily") {
+      obligation.timesAWeek = undefined;
+    } else {
+      obligation.days = [];
+    }
+    return obligation;
+  };
+
   const getUserObligation = (obligationId: string) => {
     return obligations.find(
       obligation => obligation.obligationId === obligationId,
@@ -50,8 +61,9 @@ export function useObligations() {
     }
     setLoading(true);
     try {
+      const updatedObligation = updateObligationRepeat(obligationData);
       const response = await axios.post("/api/obligation", {
-        ...obligationData,
+        ...updatedObligation,
         userId: user?.userId,
       });
       dispatch(createObligationAction(response.data.result));
@@ -70,7 +82,8 @@ export function useObligations() {
     }
     setLoading(true);
     try {
-      const response = await axios.patch("/api/obligation", obligationData);
+      const updatedObligation = updateObligationRepeat(obligationData);
+      const response = await axios.patch("/api/obligation", updatedObligation);
       dispatch(updateObligationAction(response.data.result));
       dispatch(setError(null));
     } catch (err: any) {

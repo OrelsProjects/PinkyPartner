@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
@@ -7,7 +8,6 @@ import SessionWrapper from "./providers/SessionWrapper";
 import DataProvider from "./providers/DataProvider";
 import HeightProvider from "./providers/HeightProvider";
 import ContentProvider from "./providers/ContentProvider";
-import { Toaster } from "react-hot-toast";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -24,18 +24,17 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
     <html lang={locale}>
       <body className="!overscroll-none">
         <StoreProvider>
-            <SessionWrapper>
-              <ThemeProvider>
-                <AuthProvider>
-                  <DataProvider>
-                    <HeightProvider>
-                      <ContentProvider>{children}</ContentProvider>
-                    </HeightProvider>
-                    <Toaster />
-                  </DataProvider>
-                </AuthProvider>
-              </ThemeProvider>
-            </SessionWrapper>
+          <SessionWrapper>
+            <ThemeProvider>
+              <AuthProvider>
+                <DataProvider>
+                  <HeightProvider>
+                    <ContentProvider>{children}</ContentProvider>
+                  </HeightProvider>
+                </DataProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </SessionWrapper>
         </StoreProvider>
       </body>
     </html>

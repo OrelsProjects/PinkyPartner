@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Obligation, { CreateObligation } from "../../../models/obligation";
+import Obligation, {
+  CreateObligation,
+  Repeat,
+  TimesAWeek,
+} from "../../../models/obligation";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
@@ -16,9 +20,12 @@ import {
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { useFormik } from "formik";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import ObligationComponent from "../../../components/obligationComponent";
 import { useRouter } from "next/navigation";
+import IntervalDropdown from "../../../components/ui/dropdowns/intervalDropdown";
+import { Checkbox } from "../../../components/ui/checkbox";
+import TimesAWeekDropdown from "../../../components/ui/dropdowns/timesAWeekDropdown";
 
 interface ObligationProps {
   params: {
@@ -26,11 +33,91 @@ interface ObligationProps {
   };
 }
 
+const Weekly = ({
+  onChange,
+  obligation,
+}: {
+  onChange: (timesAWeek: TimesAWeek) => void;
+  obligation?: Obligation;
+}) => {
+  const [selected, setSelected] = useState<TimesAWeek>(
+    obligation?.timesAWeek || 1,
+  );
+
+  useEffect(() => {
+    onChange(selected);
+  }, [selected]);
+
+  return (
+    <div className="flex flex-row gap-2 justify-center items-center">
+      <TimesAWeekDropdown
+        defaultValue={obligation?.timesAWeek || 1}
+        onSelect={(timesAWeek: TimesAWeek) => {
+          setSelected(timesAWeek);
+        }}
+      />
+      <div className="text-muted-foreground">per week</div>
+    </div>
+  );
+};
+
+const Daily = ({
+  onChange,
+  days,
+}: {
+  onChange: (days: number[]) => void;
+  days?: number[];
+}) => {
+  const formik = useFormik<Record<string, boolean>>({
+    initialValues: {
+      sunday: days ? days.includes(0) : true,
+      monday: days ? days.includes(1) : true,
+      tuesday: days ? days.includes(2) : true,
+      wednesday: days ? days.includes(3) : true,
+      thursday: days ? days.includes(4) : true,
+      friday: days ? days.includes(5) : true,
+      saturday: days ? days.includes(6) : true,
+    },
+    onSubmit: values => {},
+  });
+
+  useEffect(() => {
+    const days: number[] = [];
+    if (formik.values.sunday) days.push(0);
+    if (formik.values.monday) days.push(1);
+    if (formik.values.tuesday) days.push(2);
+    if (formik.values.wednesday) days.push(3);
+    if (formik.values.thursday) days.push(4);
+    if (formik.values.friday) days.push(5);
+    if (formik.values.saturday) days.push(6);
+
+    onChange(days);
+  }, [formik.values]);
+
+  return (
+    <div className="flex flex-row justify-between h-fit w-full">
+      {Object.keys(formik.values).map((day, index) => (
+        <div
+          key={index}
+          className="flex flex-col justify-center items-center text-muted-foreground"
+        >
+          <Checkbox
+            className="w-6 h-6"
+            defaultChecked={formik.values[day]}
+            checked={formik.values[day]}
+            onCheckedChange={checked => formik.setFieldValue(day, checked)}
+          />
+          <div>{day[0].toUpperCase()}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const ObligationDialog = ({
   obligation,
   onCreate,
   onEdit,
-  onDelete,
   disabled = false,
   open,
   onOpenChange,
@@ -38,7 +125,6 @@ const ObligationDialog = ({
   obligation?: Obligation | null;
   onCreate?: (data: CreateObligation) => Promise<void>;
   onEdit?: (data: Obligation) => Promise<void>;
-  onDelete?: (data: Obligation) => Promise<void>;
   disabled?: boolean;
   open?: boolean;
   onOpenChange?: (state: boolean) => void;
@@ -50,16 +136,15 @@ const ObligationDialog = ({
       title: obligation ? obligation.title : "",
       description: obligation ? obligation.description : "",
       emoji: obligation ? obligation.emoji : "",
+      repeat: obligation ? obligation.repeat : "Daily",
+      days: obligation?.days,
+      timesAWeek: obligation?.timesAWeek,
     },
     onSubmit: values => {
       if (obligation) {
         onEdit?.({ ...obligation, ...values });
       } else {
-        onCreate?.(values)
-          .then(() => {
-            formik.resetForm();
-          })
-          .catch(() => {});
+        onCreate?.(values);
       }
     },
   });
@@ -70,6 +155,9 @@ const ObligationDialog = ({
         title: obligation.title,
         description: obligation.description,
         emoji: obligation.emoji,
+        repeat: obligation.repeat,
+        days: obligation.days,
+        timesAWeek: obligation.timesAWeek,
       });
     }
   }, [obligation]);
@@ -78,6 +166,9 @@ const ObligationDialog = ({
     <Dialog
       open={open}
       onOpenChange={state => {
+        if (state) {
+          formik.resetForm();
+        }
         onOpenChange?.(state);
       }}
     >
@@ -89,7 +180,7 @@ const ObligationDialog = ({
           <FaPlus className="w-5 h-5 mb-2.5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-4/6 sm:max-w-[425px]">
+      <DialogContent className="w-5/6 sm:max-w-[425px]">
         <div className="w-full flex justify-center items-center">
           <Button
             className="w-fit h-fit"
@@ -105,10 +196,10 @@ const ObligationDialog = ({
         </div>
         <form
           onSubmit={formik.handleSubmit}
-          className="flex flex-col justify-center items-center gap-4 py-4"
+          className="flex flex-col justify-center items-center gap-4 py-4 w-full"
         >
           <div className="flex flex-col gap-4 py-4 ">
-            <div className="flex flex-col justify-center items-center gap-2">
+            <div className="flex flex-col justify-start items-start gap-2">
               <Label htmlFor="title" className="text-right">
                 I oblige myself to...
               </Label>
@@ -118,15 +209,30 @@ const ObligationDialog = ({
                 onChange={formik.handleChange}
                 placeholder="Run 2km"
                 error={formik.errors.title}
-                explainingText={
-                  <div>
-                    {"Don't worry about time intervals."}
-                    <br />
-                    You add them in the contract.
-                  </div>
-                }
                 required
               />
+              <div className="w-full flex justify-start items-center gap-2">
+                <div className="font-normal">Repeat</div>
+                <IntervalDropdown
+                  onSelect={value => {
+                    formik.setFieldValue("repeat", value);
+                  }}
+                />
+              </div>
+              {formik.values.repeat === "Weekly" && (
+                <Weekly
+                  onChange={timesAWeek =>
+                    formik.setFieldValue("timesAWeek", timesAWeek)
+                  }
+                  obligation={obligation ?? undefined}
+                />
+              )}
+              {formik.values.repeat === "Daily" && (
+                <Daily
+                  onChange={days => formik.setFieldValue("days", days)}
+                  days={obligation?.days}
+                />
+              )}
             </div>
           </div>
           <DialogFooter>
@@ -203,10 +309,12 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleCreateObligation = async (data: CreateObligation) => {
     toast.promise(createObligation(data), {
-      loading: "Creating obligation...",
-      success: () => {
-        hideDialog();
-        return "Obligation created!";
+      pending: "Creating obligation...",
+      success: {
+        render() {
+          hideDialog();
+          return "Obligation created!";
+        },
       },
       error: "Failed to create obligation",
     });
@@ -214,10 +322,12 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleUpdateObligation = async (data: Obligation) => {
     toast.promise(updateObligation(data), {
-      loading: "Updating obligation...",
-      success: () => {
-        hideDialog();
-        return "Obligation updated!";
+      pending: "Updating obligation...",
+      success: {
+        render() {
+          hideDialog();
+          return "Obligation updated!";
+        },
       },
       error: "Failed to update obligation",
     });
@@ -225,10 +335,12 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleDeleteObligation = async (data: Obligation) => {
     toast.promise(deleteObligation(data), {
-      loading: "Deleting obligation...",
-      success: () => {
-        hideDialog();
-        return "Obligation deleted!";
+      pending: "Deleting obligation...",
+      success: {
+        render() {
+          hideDialog();
+          return "Obligation deleted!";
+        },
       },
       error: "Failed to delete obligation",
     });
@@ -250,7 +362,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
         <ObligationDialog
           onCreate={handleCreateObligation}
           onEdit={handleUpdateObligation}
-          onDelete={handleDeleteObligation}
           disabled={loading}
           open={showDialog}
           onOpenChange={handleOnOpenChange}

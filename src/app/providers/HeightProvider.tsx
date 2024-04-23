@@ -19,9 +19,6 @@ export default function HeightProvider({
 
   useEffect(() => {
     const handleResize = () => {
-      console.log("resize");
-      console.log(window.innerHeight);
-      console.log(window.innerWidth);
       setHeight(window.innerHeight);
       setWidth(window.innerWidth);
     };

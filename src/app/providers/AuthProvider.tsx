@@ -64,15 +64,18 @@ export default function AuthProvider({
 
   useEffect(() => {
     if (loadingAuth) return;
-    if (
-      status === "authenticated" &&
-      (pathname.includes("auth") || pathname === "/" || pathname === "/home")
-    ) {
-      router.push("/home");
-      return;
-    }
-    if (pathname.includes("auth") && pathname.includes("register")) {
-      router.push("/auth");
+    if (status === "authenticated") {
+      if (
+        pathname.includes("auth") ||
+        pathname === "/" ||
+        pathname === "/home"
+      ) {
+        router.push("/home");
+      }
+    } else {
+      if (pathname.includes("auth") && pathname.includes("register")) {
+        router.push("/auth");
+      }
     }
   }, [status, loadingAuth]);
   if (loadingAuth) {

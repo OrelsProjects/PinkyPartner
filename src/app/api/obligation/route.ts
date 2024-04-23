@@ -50,7 +50,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
 export async function PATCH(req: NextRequest): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -60,6 +59,7 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
   try {
     const data = (await req.json()) as Obligation;
     const obligationId = data.obligationId;
+
     const isObligationOwner = await prisma.obligation.findFirst({
       where: {
         obligationId,
@@ -69,10 +69,15 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
     if (!isObligationOwner) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Correctly excluding obligationId from the data used in the update
+    const { obligationId: _, ...updateData } = data;
+
     const obligation = await prisma.obligation.update({
       where: { obligationId },
-      data,
+      data: updateData, // Using the correct property name here
     });
+
     return NextResponse.json({ result: obligation }, { status: 200 });
   } catch (error: any) {
     Logger.error("Error updating obligation", error);

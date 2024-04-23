@@ -33,21 +33,28 @@ model AppUser {
 }
 
 model Obligation {
-  obligationId       String               @id @default(auto()) @map("_id") @db.ObjectId
-  title              String
-  userId             String
-  emoji              String?
-  description        String?
+  obligationId String  @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  userId       String
+  emoji        String?
+  description  String?
+  repeat       String // "Daily" | "Weekly"
+  days         Int[]   @default([])
+  timesAWeek   Int?
+
   contractObligation ContractObligation[]
 
   @@map("obligation")
 }
 
 model Contract {
-  contractId         String               @id @default(auto()) @map("_id") @db.ObjectId
-  title              String
-  description        String?
-  dueDate            DateTime
+  contractId    String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  dueDate       DateTime
+  obligationIds String[] @default([])
+  signatures    String[]
+
   userContract       UserContract[]
   contractObligation ContractObligation[]
 
@@ -59,8 +66,6 @@ model ContractObligation {
   contractId           String   @db.ObjectId
   obligationId         String   @db.ObjectId
   dueDate              DateTime // The due date for the obligation
-  interval             Int? // How many days between each interval
-  repeat               Int? // How many times to repeat the interval
 
   contract   Contract   @relation(fields: [contractId], references: [contractId])
   obligation Obligation @relation(fields: [obligationId], references: [obligationId])

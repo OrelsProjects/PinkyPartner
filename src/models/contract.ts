@@ -5,4 +5,6 @@ export default interface Contract {
   description?: string | null;
 }
 
-export type CreateContract = Omit<Contract, "contractId">;
+export type CreateContract = Omit<Contract, "contractId"> & {
+  signatures: string[];
+} & { obligationIds: string[] };
