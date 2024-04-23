@@ -1,10 +1,18 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
-import { UserData } from "../../../../models/appUser";
 import { Logger } from "../../../../logger";
-import { UserContractData } from "../../../../models/userContract";
 import { authOptions } from "../../../../authOptions";
+import { Obligation, UserContract } from "@prisma/client";
+
+type UserContractData = UserContract & {
+  obligations: Obligation[];
+};
+
+type UserData = {
+  contracts: UserContractData[];
+  obligations: Obligation[];
+};
 
 export async function GET(
   _: NextRequest,
@@ -14,7 +22,7 @@ export async function GET(
     return NextResponse.json(undefined, { status: 401 });
   }
   try {
-    const userObligations = await prisma.obligation.findMany({
+    const obligations: Obligation[] = await prisma.obligation.findMany({
       where: {
         userId: session.user.userId,
       },
@@ -35,16 +43,21 @@ export async function GET(
         },
       },
     });
-    const userContracts: UserContractData[] = contracts.map(contract => {
-      return {
-        ...contract,
-        obligations: contract.contract.contractObligation.map(
+    const userContractData: UserContractData[] = contracts.map(contract => {
+      const contractObligations: Obligation[] =
+        contract.contract.contractObligation.map(
           contractObligation => contractObligation.obligation,
-        ),
+        );
+      const { contract: _, ...rest }: { contract: any } & UserContract =
+        contract;
+      return {
+        ...rest,
+        obligations: contractObligations,
       };
     });
+
     return NextResponse.json(
-      { obligations: userObligations, contracts: userContracts },
+      { obligations, contracts: userContractData },
       { status: 200 },
     );
   } catch (error: any) {

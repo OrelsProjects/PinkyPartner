@@ -1,5 +1,5 @@
 import Obligation from "./obligation";
-import UserContract, { UserContractData } from "./userContract";
+import { UserContractData } from "./userContract";
 
 export default interface AppUser {
   userId: string;
