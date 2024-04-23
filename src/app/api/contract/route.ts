@@ -3,8 +3,7 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import { Contract } from "@prisma/client";
-import { CreateContract } from "../../../models/contract";
+import Contract from "../../../models/contract";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
@@ -13,11 +12,40 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const data = (await req.json()) as CreateContract;
+    const data = await req.json();
+    const { obligationIds, signatures, ...contractData } = data;
+    const now = new Date();
+
     const contract = await prisma.contract.create({
-      data,
+      data: { ...contractData, creatorId: session.user.userId },
     });
-    return NextResponse.json({ result: contract }, { status: 201 });
+
+    await prisma.contractObligations.createMany({
+      data: obligationIds.map((obligationId: string) => ({
+        obligationId: obligationId,
+        contractId: contract.contractId,
+      })),
+    });
+    
+    await prisma.contractSignatures.createMany({
+      data: signatures.map((signature: string) => ({
+        userId: signature,
+        contractId: contract.contractId,
+        signedAt: now,
+      })),
+    });
+
+    await prisma.userContracts.create({
+      data: {
+        contractId: contract.contractId,
+        userId: session.user.userId,
+      },
+    });
+
+    return NextResponse.json(
+      { result: { ...data, contractId: contract.contractId } },
+      { status: 200 },
+    );
   } catch (error: any) {
     Logger.error("Error creating contract", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

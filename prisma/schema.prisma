@@ -23,64 +23,76 @@ datasource db {
 }
 
 model AppUser {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @unique
-  email       String  @unique
-  displayName String?
-  photoURL    String?
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String               @unique
+  email              String               @unique
+  displayName        String?
+  photoURL           String?
+  ContractSignatures ContractSignatures[]
+  UserContracts      UserContracts[]
 
   @@map("appUser")
 }
 
 model Obligation {
   obligationId String  @id @default(auto()) @map("_id") @db.ObjectId
-  title        String
   userId       String
+  title        String
   emoji        String?
   description  String?
   repeat       String // "Daily" | "Weekly"
   days         Int[]   @default([])
   timesAWeek   Int?
 
-  contractObligation ContractObligation[]
+  contractObligations ContractObligations[]
 
   @@map("obligation")
 }
 
 model Contract {
-  contractId    String   @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  description   String?
-  dueDate       DateTime
-  obligationIds String[] @default([])
-  signatures    String[]
+  contractId  String   @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId   String
+  title       String
+  description String?
+  dueDate     DateTime
 
-  userContract       UserContract[]
-  contractObligation ContractObligation[]
+  contractSignatures  ContractSignatures[]
+  contractObligations ContractObligations[]
+  UserContracts       UserContracts[]
 
   @@map("contract")
 }
 
-model ContractObligation {
-  contractObligationId String   @id @default(auto()) @map("_id") @db.ObjectId
-  contractId           String   @db.ObjectId
-  obligationId         String   @db.ObjectId
-  dueDate              DateTime // The due date for the obligation
+model ContractSignatures {
+  contractSignatureId String   @id @default(auto()) @map("_id") @db.ObjectId
+  contractId          String   @db.ObjectId
+  userId              String
+  signedAt            DateTime
 
-  contract   Contract   @relation(fields: [contractId], references: [contractId])
-  obligation Obligation @relation(fields: [obligationId], references: [obligationId])
+  contract Contract? @relation(fields: [contractId], references: [contractId])
+  appUser  AppUser   @relation(fields: [userId], references: [userId])
 
-  @@map("contractObligation")
+  @@map("contractSignatures")
 }
 
-model UserContract {
-  userContractId    String   @id @default(auto()) @map("_id") @db.ObjectId
-  contractId        String   @db.ObjectId
-  userId            String
-  signed            Boolean
-  terminated        Boolean
-  terminationReason String?
-  contract          Contract @relation(fields: [contractId], references: [contractId])
+model ContractObligations {
+  contractObligationId String @id @default(auto()) @map("_id") @db.ObjectId
+  contractId           String @db.ObjectId
+  obligationId         String @db.ObjectId
 
-  @@map("userContract")
+  contract   Contract?   @relation(fields: [contractId], references: [contractId])
+  obligation Obligation? @relation(fields: [obligationId], references: [obligationId])
+
+  @@map("contractObligations")
+}
+
+model UserContracts {
+  userContractsId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String
+  contractId      String @db.ObjectId
+
+  appUser  AppUser  @relation(fields: [userId], references: [userId])
+  contract Contract @relation(fields: [contractId], references: [contractId])
+
+  @@map("userContracts")
 }

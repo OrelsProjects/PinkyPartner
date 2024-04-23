@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Obligation, {
   CreateObligation,
-  Repeat,
+  ObligationRepeat,
   TimesAWeek,
 } from "../../../models/obligation";
 import { useObligations } from "../../../lib/hooks/useObligations";
@@ -209,6 +209,7 @@ const ObligationDialog = ({
                 onChange={formik.handleChange}
                 placeholder="Run 2km"
                 error={formik.errors.title}
+                maxLength={24}
                 required
               />
               <div className="w-full flex justify-start items-center gap-2">

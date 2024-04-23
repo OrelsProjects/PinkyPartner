@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Repeat } from "../../../models/obligation";
+import { ObligationRepeat } from "../../../models/obligation";
 
 interface IntervalDropdownProps {
-  onSelect: (interval: Repeat) => void;
-  defaultValue?: Repeat;
+  onSelect: (interval: ObligationRepeat) => void;
+  defaultValue?: ObligationRepeat;
   error?: string;
 }
 
@@ -22,7 +22,7 @@ const IntervalDropdown: React.FC<IntervalDropdownProps> = ({
   defaultValue = "Daily",
   error,
 }) => {
-  const [selected, setSelected] = useState<Repeat>(defaultValue);
+  const [selected, setSelected] = useState<ObligationRepeat>(defaultValue);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="border border-1 border-input rounded-md p-2">
@@ -35,8 +35,8 @@ const IntervalDropdown: React.FC<IntervalDropdownProps> = ({
           <DropdownMenuItem
             key={interval}
             onSelect={() => {
-              setSelected(interval as Repeat);
-              onSelect(interval as Repeat);
+              setSelected(interval as ObligationRepeat);
+              onSelect(interval as ObligationRepeat);
             }}
           >
             {interval}

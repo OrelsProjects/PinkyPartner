@@ -3,15 +3,33 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
 import { Logger } from "../../../../logger";
 import { authOptions } from "../../../../authOptions";
-import { Obligation, UserContract } from "@prisma/client";
+import { AppUser, Contract, Obligation } from "@prisma/client";
+import * as ClientContract from "../../../../models/contract";
+import * as ClientObligation from "../../../../models/obligation";
 
-type UserContractData = UserContract & {
+type UserData = {
+  contracts: ClientContract.default[];
   obligations: Obligation[];
 };
 
-type UserData = {
-  contracts: UserContractData[];
-  obligations: Obligation[];
+const formatContract = (contract: Contract, userId: string) => {
+  return {
+    ...contract,
+    creatorId: contract.creatorId === userId ? userId : undefined,
+  };
+};
+
+const formatObligations = (
+  obligations: Obligation[],
+): ClientObligation.default[] => {
+  return obligations.map(obligation => {
+    return {
+      ...obligation,
+      repeat: obligation.repeat as ClientObligation.ObligationRepeat,
+      days: obligation.days as ClientObligation.Days,
+      timesAWeek: obligation.timesAWeek as ClientObligation.TimesAWeek,
+    };
+  });
 };
 
 export async function GET(
@@ -22,42 +40,64 @@ export async function GET(
     return NextResponse.json(undefined, { status: 401 });
   }
   try {
-    const obligations: Obligation[] = await prisma.obligation.findMany({
+    const userObligations: Obligation[] = await prisma.obligation.findMany({
       where: {
         userId: session.user.userId,
       },
     });
-    const contracts = await prisma.userContract.findMany({
+
+    let contractIds = await prisma.userContracts.findMany({
       where: {
         userId: session.user.userId,
       },
+      select: {
+        contractId: true,
+      },
+    });
+
+    const contracts = await prisma.contract.findMany({
+      where: {
+        contractId: {
+          in: contractIds.map(contract => contract.contractId),
+        },
+      },
       include: {
-        contract: {
+        contractSignatures: {
           include: {
-            contractObligation: {
-              include: {
-                obligation: true,
-              },
-            },
+            appUser: true,
+          },
+        },
+        contractObligations: {
+          include: {
+            obligation: true,
           },
         },
       },
     });
-    const userContractData: UserContractData[] = contracts.map(contract => {
-      const contractObligations: Obligation[] =
-        contract.contract.contractObligation.map(
-          contractObligation => contractObligation.obligation,
-        );
-      const { contract: _, ...rest }: { contract: any } & UserContract =
+
+    const contractsData: ClientContract.default[] = contracts.map(contract => {
+      const { contractSignatures, contractObligations, ...contractData } =
         contract;
-      return {
-        ...rest,
-        obligations: contractObligations,
+      const signatures = contractSignatures.map(
+        signature => signature.appUser,
+      ) as AppUser[];
+      const obligations = contractObligations
+        .map(co => co.obligation)
+        .filter(obligation => obligation !== null) as Obligation[];
+
+      const formattedContract = formatContract(contractData, session.user.userId);
+      const formattedObligations = formatObligations(obligations);
+
+      const clientContract: ClientContract.default = {
+        ...formattedContract,
+        obligations: formattedObligations,
+        signatures,
       };
+      return clientContract;
     });
 
     return NextResponse.json(
-      { obligations, contracts: userContractData },
+      { obligations: userObligations, contracts: contractsData },
       { status: 200 },
     );
   } catch (error: any) {

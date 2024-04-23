@@ -8,6 +8,7 @@ import SessionWrapper from "./providers/SessionWrapper";
 import DataProvider from "./providers/DataProvider";
 import HeightProvider from "./providers/HeightProvider";
 import ContentProvider from "./providers/ContentProvider";
+import NextTopLoader from "nextjs-toploader";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -29,7 +30,9 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
               <AuthProvider>
                 <DataProvider>
                   <HeightProvider>
-                    <ContentProvider>{children}</ContentProvider>
+                    <ContentProvider>
+                      {children}
+                    </ContentProvider>
                   </HeightProvider>
                 </DataProvider>
               </AuthProvider>

@@ -7,7 +7,6 @@ import {
   addContract as addContractAction,
   updateContract as updateContractAction,
   deleteContract as deleteContractAction,
-  setLoading,
 } from "../features/contracts/contractsSlice";
 import { UserContractData } from "../../models/userContract";
 import { useState } from "react";
@@ -34,7 +33,7 @@ export function useContracts() {
   const createContract = async (contractData: CreateContract) => {
     setLoading(true);
     try {
-      const response = await axios.post<UserContractData>(
+      const response = await axios.post<Contract>(
         "/api/contract",
         contractData,
       );
@@ -42,19 +41,20 @@ export function useContracts() {
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating contract"));
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const setContracts = (contracts: UserContractData[]) => {
+  const setContracts = (contracts: Contract[]) => {
     dispatch(setContractsAction(contracts));
   };
 
-  const updateContract = async (contractData: UserContractData) => {
+  const updateContract = async (contractData: Contract) => {
     setLoading(true);
     try {
-      const response = await axios.patch<UserContractData>(
+      const response = await axios.patch<Contract>(
         `/api/contract/${contractData.contractId}`,
         contractData,
       );

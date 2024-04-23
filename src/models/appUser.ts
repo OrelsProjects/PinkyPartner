@@ -1,5 +1,5 @@
+import Contract from "./contract";
 import Obligation from "./obligation";
-import { UserContractData } from "./userContract";
 
 export default interface AppUser {
   userId: string;
@@ -9,7 +9,7 @@ export default interface AppUser {
 }
 
 export type UserData = {
-  contracts: UserContractData[];
+  contracts: Contract[];
   obligations: Obligation[];
 };
 
