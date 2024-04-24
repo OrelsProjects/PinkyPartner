@@ -5,7 +5,7 @@ import { Logger } from "../../../../logger";
 import { authOptions } from "../../../../authOptions";
 import { AppUser, Contract, Obligation } from "@prisma/client";
 import * as ClientContract from "../../../../models/contract";
-import * as ClientObligation from "../../../../models/obligation";
+import { formatObligations } from "../_utils";
 
 type UserData = {
   contracts: ClientContract.default[];
@@ -17,19 +17,6 @@ const formatContract = (contract: Contract, userId: string) => {
     ...contract,
     creatorId: contract.creatorId === userId ? userId : undefined,
   };
-};
-
-export const formatObligations = (
-  obligations: Obligation[],
-): ClientObligation.default[] => {
-  return obligations.map(obligation => {
-    return {
-      ...obligation,
-      repeat: obligation.repeat as ClientObligation.ObligationRepeat,
-      days: obligation.days as ClientObligation.Days,
-      timesAWeek: obligation.timesAWeek as ClientObligation.TimesAWeek,
-    };
-  });
 };
 
 export async function GET(
