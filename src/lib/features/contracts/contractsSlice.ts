@@ -2,6 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
 import Contract from "../../../models/contract";
+import { AccountabilityPartner } from "../../../models/appUser";
 
 interface ContractsState {
   contracts: Contract[];
@@ -33,6 +34,20 @@ const contractsSlice = createSlice({
         state.contracts[index] = action.payload;
       }
     },
+    signContract(
+      state,
+      action: PayloadAction<{
+        contractId: string;
+        user: AccountabilityPartner;
+      }>,
+    ) {
+      const contract = state.contracts.find(
+        contract => contract.contractId === action.payload.contractId,
+      );
+      if (contract) {
+        contract.signatures.push(action.payload.user);
+      }
+    },
     deleteContract(state, action: PayloadAction<string>) {
       state.contracts = state.contracts.filter(
         contract => contract.contractId !== action.payload,
@@ -52,6 +67,7 @@ export const {
   setContracts,
   addContract,
   updateContract,
+  signContract,
   deleteContract,
   setLoading,
   setError,

@@ -1,4 +1,4 @@
-import AppUser from "./appUser";
+import AppUser, { AccountabilityPartner } from "./appUser";
 import Obligation from "./obligation";
 
 export default interface Contract {
@@ -8,8 +8,9 @@ export default interface Contract {
   dueDate: Date;
   description?: string | null;
 
+  contractees: AccountabilityPartner[];
   obligations: Obligation[];
-  signatures: AppUser[];
+  signatures: AccountabilityPartner[];
 }
 
 export type CreateContract = Omit<

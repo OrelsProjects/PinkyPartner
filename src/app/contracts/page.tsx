@@ -16,13 +16,19 @@ const ContractsPage: React.FC<ContractsProps> = () => {
       <Button onClick={() => router.push("/contracts/new")}>
         Create new contract
       </Button>
-      {/*<div className="flex flex-wrap">
-        {
-          contractsData.map((contractData) => <ContractComponent title={contractData./>
-
-          );
-        }
-      </div> */}
+      <div className="flex flex-wrap">
+        {contractsData.map(contractData => (
+          <ContractComponent
+            title={contractData.title}
+            description={contractData.description ?? ""}
+            dueDate={contractData.dueDate}
+            key={contractData.contractId}
+            signatures={contractData.signatures ?? []}
+            contractees={contractData.contractees}
+            contractId={contractData.contractId}
+          />
+        ))}
+      </div>
     </div>
   );
 };

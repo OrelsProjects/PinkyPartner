@@ -7,9 +7,10 @@ import {
   addContract as addContractAction,
   updateContract as updateContractAction,
   deleteContract as deleteContractAction,
+  signContract as signContractAction,
 } from "../features/contracts/contractsSlice";
-import { UserContractData } from "../../models/userContract";
 import { useState } from "react";
+import { AccountabilityPartner } from "../../models/appUser";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
@@ -25,6 +26,7 @@ export function useContracts() {
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error fetching contracts"));
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -62,6 +64,7 @@ export function useContracts() {
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error updating contract"));
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -75,6 +78,27 @@ export function useContracts() {
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error deleting contract"));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signContract = async (
+    contractId: string,
+    accountabilityPartner?: AccountabilityPartner | null,
+  ) => {
+    setLoading(true);
+    try {
+      if (!accountabilityPartner) {
+        throw new Error("Accountability partner is required");
+      }
+      await axios.post(`/api/contract/sign/${contractId}`);
+      dispatch(signContractAction({ contractId, user: accountabilityPartner }));
+      dispatch(setError(null));
+    } catch (err: any) {
+      dispatch(setError(err.message || "Error signing contract"));
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -85,6 +109,7 @@ export function useContracts() {
     loading,
     error,
     setContracts,
+    signContract,
     fetchContracts,
     createContract,
     updateContract,

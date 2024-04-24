@@ -3,9 +3,12 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import Contract from "../../../models/contract";
+import Contract, { CreateContract } from "../../../models/contract";
+import { formatObligations } from "../user/data/route";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export async function POST(
+  req: NextRequest,
+): Promise<NextResponse<{ error: string } | Contract>> {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,39 +16,62 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     const data = await req.json();
-    const { obligationIds, signatures, ...contractData } = data;
+    const { obligationIds, signatures, contractees, ...contractData } =
+      data as CreateContract;
     const now = new Date();
 
-    const contract = await prisma.contract.create({
+    const contractResponse = await prisma.contract.create({
       data: { ...contractData, creatorId: session.user.userId },
     });
 
     await prisma.contractObligations.createMany({
       data: obligationIds.map((obligationId: string) => ({
         obligationId: obligationId,
-        contractId: contract.contractId,
-      })),
-    });
-    
-    await prisma.contractSignatures.createMany({
-      data: signatures.map((signature: string) => ({
-        userId: signature,
-        contractId: contract.contractId,
-        signedAt: now,
+        contractId: contractResponse.contractId,
       })),
     });
 
-    await prisma.userContracts.create({
-      data: {
-        contractId: contract.contractId,
-        userId: session.user.userId,
+    for (const contractee of contractees) {
+      await prisma.userContracts.create({
+        data: {
+          contractId: contractResponse.contractId,
+          userId: contractee.userId,
+          signedAt: signatures.includes(contractee.userId) ? now : null,
+        },
+      });
+    }
+    const obligationsResponse = await prisma.obligation.findMany({
+      where: {
+        obligationId: {
+          in: obligationIds,
+        },
       },
     });
+    const obligations = formatObligations(obligationsResponse);
 
-    return NextResponse.json(
-      { result: { ...data, contractId: contract.contractId } },
-      { status: 200 },
-    );
+    /**
+ *   contractId: string;
+  creatorId?: string;
+  title: string;
+  dueDate: Date;
+  description?: string | null;
+
+  contractees: AccountabilityPartner[];
+  obligations: Obligation[];
+  signatures: AppUser[];
+ */
+    const contract: Contract = {
+      contractId: contractResponse.contractId,
+      creatorId: session.user.userId,
+      dueDate: contractResponse.dueDate,
+      title: contractResponse.title,
+      description: contractResponse.description,
+      obligations,
+      signatures: [session.user],
+      contractees,
+    };
+
+    return NextResponse.json({ ...contract }, { status: 200 });
   } catch (error: any) {
     Logger.error("Error creating contract", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

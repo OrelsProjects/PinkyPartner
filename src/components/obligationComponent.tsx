@@ -33,7 +33,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
       `}
       onClick={() => onClick?.(obligation)}
     >
-      <div>
+      <div className="flex flex-row gap-3">
         <span className="text-card-foreground">{obligation.emoji}</span>
         <span className="text-card-foreground truncate">
           {obligation.title}

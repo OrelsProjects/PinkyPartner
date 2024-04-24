@@ -19,7 +19,7 @@ const formatContract = (contract: Contract, userId: string) => {
   };
 };
 
-const formatObligations = (
+export const formatObligations = (
   obligations: Obligation[],
 ): ClientObligation.default[] => {
   return obligations.map(obligation => {
@@ -62,7 +62,7 @@ export async function GET(
         },
       },
       include: {
-        contractSignatures: {
+        userContracts: {
           include: {
             appUser: true,
           },
@@ -76,21 +76,25 @@ export async function GET(
     });
 
     const contractsData: ClientContract.default[] = contracts.map(contract => {
-      const { contractSignatures, contractObligations, ...contractData } =
-        contract;
-      const signatures = contractSignatures.map(
-        signature => signature.appUser,
-      ) as AppUser[];
+      const { userContracts, contractObligations, ...contractData } = contract;
+      const signatures = userContracts
+        .filter(userContract => userContract.signedAt !== null)
+        .map(signature => signature.appUser) as AppUser[];
+
       const obligations = contractObligations
         .map(co => co.obligation)
         .filter(obligation => obligation !== null) as Obligation[];
 
-      const formattedContract = formatContract(contractData, session.user.userId);
+      const formattedContract = formatContract(
+        contractData,
+        session.user.userId,
+      );
       const formattedObligations = formatObligations(obligations);
 
       const clientContract: ClientContract.default = {
         ...formattedContract,
         obligations: formattedObligations,
+        contractees: userContracts.map(userContract => userContract.appUser),
         signatures,
       };
       return clientContract;

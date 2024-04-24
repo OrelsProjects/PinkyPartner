@@ -253,7 +253,7 @@ const ObligationDialog = ({
             <div className="absolute bottom-0 left-0 !w-full h-4/6 z-50">
               <EmojiPicker
                 theme={Theme.AUTO}
-                searchDisabled
+                // searchDisabled
                 skinTonesDisabled
                 lazyLoadEmojis={true}
                 previewConfig={{

@@ -37,6 +37,7 @@
     "next-intl": "^3.11.1",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^1.6.12",
+    "nprogress": "^0.2.0",
     "posthog-js": "^1.118.1",
     "react": "^18",
     "react-dom": "^18",
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@types/lodash": "^4.17.0",
     "@types/node": "^20",
+    "@types/nprogress": "^0.2.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-toastify": "^4.1.0",

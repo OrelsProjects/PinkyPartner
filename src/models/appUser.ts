@@ -17,4 +17,4 @@ export type UserData = {
 export type AccountabilityPartner = Pick<
   AppUser,
   "userId" | "displayName" | "photoURL"
->;
+> & { signedAt?: Date | null };

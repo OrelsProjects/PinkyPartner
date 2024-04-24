@@ -20,34 +20,13 @@ import { Checkbox } from "../../../components/ui/checkbox";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import AccountabilityPartnerComponent from "../../../components/accountabilityPartnerComponent";
 
 interface CreateContractPageProps {}
 
 interface FindPartnerProps {
   onPartnerSelect: (partner: AccountabilityPartner) => void;
 }
-
-const AccountabilityPartnerComponent: React.FC<{
-  partner: AccountabilityPartner;
-  onClick?: (partner: AccountabilityPartner) => void;
-  className?: string;
-}> = ({ partner, onClick, className }) => {
-  return (
-    <div
-      className={`flex flex-row gap-1 justify-start items-center pr-4 ${className}`}
-      onClick={() => onClick?.(partner)}
-    >
-      <img
-        src={partner?.photoURL ?? ""}
-        alt={"Partner photo"}
-        className="rounded-lg h-10 w-10 object-cover"
-      />
-      <div key={partner.userId} className="truncate">
-        {partner.displayName}
-      </div>
-    </div>
-  );
-};
 
 const FindPartner = ({
   onPartnerSelect,
@@ -105,6 +84,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       title: "",
       dueDate: new Date(),
       description: null,
+      contractees: [],
       signatures: [],
       obligationIds: [],
     },
@@ -125,16 +105,24 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
         });
         return;
       }
-      toast.promise(createContract(values), {
-        pending: "Creating contract...",
-        success: {
-          render() {
-            router.back();
-            return "Contract created successfully";
+      if (!user || !accountabilityPartner) return;
+
+      toast.promise(
+        createContract({
+          ...values,
+          contractees: [user, accountabilityPartner],
+        }),
+        {
+          pending: "Creating contract...",
+          success: {
+            render() {
+              router.back();
+              return "Contract created successfully";
+            },
           },
+          error: "Error creating contract",
         },
-        error: "Error creating contract",
-      });
+      );
     },
   });
 
@@ -346,6 +334,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                   <AccountabilityPartnerComponent
                     className="flex-col !p-0"
                     partner={user as AccountabilityPartner}
+                    signed
                   />
                   <Checkbox
                     onCheckedChange={handleSignContract}
