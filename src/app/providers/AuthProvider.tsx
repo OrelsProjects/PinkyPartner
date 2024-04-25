@@ -73,7 +73,7 @@ export default function AuthProvider({
         router.push("/home");
       }
     } else {
-      if (pathname.includes("auth") && pathname.includes("register")) {
+      if (!pathname.includes("auth") && !pathname.includes("register")) {
         router.push("/auth");
       }
     }
