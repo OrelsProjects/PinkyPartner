@@ -5,17 +5,14 @@ import { useContracts } from "../lib/hooks/useContracts";
 import { useAppSelector } from "../lib/hooks/redux";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
+import ContractViewComponent from "./contractViewComponent";
+import Contract from "../models/contract";
 
 interface ContractComponentProps {
-  contractId: string;
-  title: string;
-  description?: string;
-  dueDate: Date;
-  signatures: AccountabilityPartner[];
-  contractees: AccountabilityPartner[];
+  contract: Contract;
 }
 
-const ContractComponent: React.FC<ContractComponentProps> = contract => {
+const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
   const { user } = useAppSelector(state => state.auth);
 
@@ -34,22 +31,27 @@ const ContractComponent: React.FC<ContractComponentProps> = contract => {
   };
 
   return (
-    <div className="border border-muted-foreground/50 rounded-md flex flex-col gap-1 w-full h-full p-3">
-      <div className="flex flex-row justify-between">
-        <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
-        {user && !isUserSigned && (
-          <Button onClick={handleSignContract} className="relative">
-            Sign contract
-            <div className="shimmer-wrapper"></div>
-          </Button>
-        )}
+    <div className="h-full w-full border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3">
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row justify-between">
+          <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
+          {user &&
+            (!isUserSigned ? (
+              <Button onClick={handleSignContract} className="relative">
+                Sign contract
+                <div className="shimmer-wrapper"></div>
+              </Button>
+            ) : (
+              <ContractViewComponent contract={contract} />
+            ))}
+        </div>
+        <h3 className="font-normal text-base line-clamp-2">
+          {contract.description}
+        </h3>
+        <h4 className="font-normal text-base text-muted-foreground truncate">
+          {new Date(contract.dueDate).toDateString()}
+        </h4>
       </div>
-      <h3 className="font-normal text-base line-clamp-2">
-        {contract.description}
-      </h3>
-      <h4 className="font-normal text-base text-muted-foreground truncate">
-        {new Date(contract.dueDate).toDateString()}
-      </h4>
       <div className="w-full flex flex-row justify-around gap-1">
         {contract.contractees.map(contractee => (
           <AccountabilityPartnerComponent

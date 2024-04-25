@@ -29,7 +29,7 @@ export const BottomBarItems: BottomBarItem[] = [
   {
     icon: () => <Obligation className={className} />,
     iconActive: () => <ObligationActive className={classNameActive} />,
-    label: "Obligation",
+    label: "Obligations",
     href: "/obligations",
   },
   {

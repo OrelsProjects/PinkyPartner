@@ -59,6 +59,7 @@ const FindPartner = ({
           partner={partner}
           key={partner.userId}
           onClick={onPartnerSelect}
+          signed
         />
       ))}
     </div>
@@ -204,6 +205,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                 <AccountabilityPartnerComponent
                   partner={previousAccountabilityPartner}
                   onClick={handlePartnerSelect}
+                  signed
                 />
               </div>
             )}
@@ -336,6 +338,10 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     partner={user as AccountabilityPartner}
                     signed
                   />
+                  {/* <SignatureCanvasComponent
+                    onSigned={signature => {
+                    }}
+                  /> */}
                   <Checkbox
                     onCheckedChange={handleSignContract}
                     error={formik.errors.signatures}

@@ -12,21 +12,15 @@ const ContractsPage: React.FC<ContractsProps> = () => {
   const router = useRouter();
   const { contracts: contractsData } = useContracts();
   return (
-    <div className="flex flex-col gap-1">
+    <div className="h-full w-full flex flex-col gap-1">
       <Button onClick={() => router.push("/contracts/new")}>
         Create new contract
       </Button>
-      <div className="flex flex-wrap">
+      <div className="h-full w-full flex flex-wrap gap-3">
         {contractsData.map(contractData => (
-          <ContractComponent
-            title={contractData.title}
-            description={contractData.description ?? ""}
-            dueDate={contractData.dueDate}
-            key={contractData.contractId}
-            signatures={contractData.signatures ?? []}
-            contractees={contractData.contractees}
-            contractId={contractData.contractId}
-          />
+          <div className="w-full h-60" key={contractData.contractId}>
+            <ContractComponent contract={contractData} />
+          </div>
         ))}
       </div>
     </div>

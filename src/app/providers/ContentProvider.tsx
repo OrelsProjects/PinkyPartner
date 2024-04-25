@@ -28,11 +28,12 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   }, [sizeContent.height, bottomBarRef, bottomBarRef.current]);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen flex flex-col">
       <div
-        className="p-4"
+        className="p-4 overflow-auto"
         style={{
           height: contentHeight,
+          maxHeight: contentHeight,
         }}
       >
         <ThemeProvider>
