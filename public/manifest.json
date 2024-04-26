@@ -8,7 +8,7 @@
   "display_override": "standalone",
   "description": "Fit Bud is a fitness app that helps you to stay fit and healthy. It provides you with a variety of exercises and workouts to help you achieve your fitness goals.",
   "orientation": "portrait",
-  "start_url": "https://fit-bud-git-feature-pwa-orelsprojects-projects.vercel.app/",
+  "start_url": "/",
   "dir": "auto",
   
   "icons": [
