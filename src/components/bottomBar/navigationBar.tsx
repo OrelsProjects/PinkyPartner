@@ -34,10 +34,9 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
             className="flex-1 flex items-center justify-center cursor-pointer"
             key={item.href}
           >
-            <Button
-              variant="ghost"
+            <div
               onClick={() => handleItemClick(item)}
-              className="flex flex-col gap-2"
+              className="flex flex-col gap-2 justify-center items-center"
             >
               <span className="indicator">
                 <span className="badge badge-xs badge-primary indicator-item indicator-end border-base-200" />
@@ -53,7 +52,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
               <span className="hidden md:inline tracking-tight ml-4 uppercase font-semibold text-base-content/75">
                 {item.label}
               </span>
-            </Button>
+            </div>
           </div>
         ))}
       </div>
