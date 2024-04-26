@@ -10,7 +10,7 @@
   "orientation": "portrait",
   "start_url": "https://fit-bud-omega.vercel.app/",
   "dir": "auto",
-  "scope": "/",
+  "scope": "https://fit-bud-omega.vercel.app/",
 
   "icons": [
     {
