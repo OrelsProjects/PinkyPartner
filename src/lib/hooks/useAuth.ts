@@ -10,7 +10,7 @@ import axios from "axios";
 const useAuth = () => {
   const dispatch = useAppDispatch();
 
-  const signInWithGoogle = useCallback(async () => {
+  const signInWithGoogle = useCallback(async (regsiter?: boolean) => {
     try {
       await signIn("google");
     } catch (error: any) {
@@ -25,7 +25,7 @@ const useAuth = () => {
     }
   }, []);
 
-  const signInWithApple = useCallback(async () => {
+  const signInWithApple = useCallback(async (regsiter?: boolean) => {
     try {
       await signIn("apple");
     } catch (error: any) {
@@ -62,13 +62,18 @@ const useAuth = () => {
   );
 
   const signUpWithEmail = useCallback(
-    async (email: string, password: string, displayName: string = '') => {
+    async (
+      email: string,
+      password: string,
+      register?: boolean,
+      displayName: string = "",
+    ) => {
       try {
         const result = await signIn("credentials", {
           email,
           password,
           displayName: "Orel",
-          isSignIn: false,
+          isSignIn: !register,
           redirect: false,
         });
         if (!result?.ok) {

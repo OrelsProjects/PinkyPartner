@@ -5,16 +5,18 @@ import { FaApple } from "react-icons/fa";
 interface AppleLoginProps {
   className?: string;
   signInTextPrefix?: string;
+  register?: boolean;
 }
 
 export default function AppleLogin({
   className,
   signInTextPrefix,
+  register,
 }: AppleLoginProps) {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithApple } = useAuth();
 
   const handleAppleLogin = async () => {
-    await signInWithGoogle();
+    await signInWithApple(register);
   };
 
   return (
