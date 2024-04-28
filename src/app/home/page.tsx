@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
-import * as NProgress from "nprogress";
+import React from "react";
 import { useObligations } from "../../lib/hooks/useObligations";
 import ObligationComponent from "../../components/obligationComponent";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function Home() {
   const { obligationsToComplete } = useObligations();
-
-  useEffect(() => {
-    NProgress.start();
-    NProgress.inc(0.5);
-  }, []);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">

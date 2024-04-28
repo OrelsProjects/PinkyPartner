@@ -175,9 +175,9 @@ const ObligationDialog = ({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="text-2xl !p-0 flex justify-center items-center"
+          className="text-2xl flex justify-center items-center p-2"
         >
-          <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
+          <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-5/6 sm:max-w-[425px]">
@@ -344,8 +344,8 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   return (
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
-        <span className="text-lg text-muted-foreground">
-          Obligations {obligations.length > 0 && `(${obligations.length})`}
+        <span className="text-lg text-muted-foreground mt-1">
+          OBLIGATIONS {obligations.length > 0 && `(${obligations.length})`}
         </span>
         <ObligationDialog
           onCreate={handleCreateObligation}

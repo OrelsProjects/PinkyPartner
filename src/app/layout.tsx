@@ -3,7 +3,6 @@ import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import NextTopLoader from "nextjs-toploader";
 
 const APP_NAME = "Fit Bud";
 const APP_DEFAULT_TITLE = "Fit Bud";

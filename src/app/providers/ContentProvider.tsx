@@ -10,6 +10,7 @@ import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
 import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
+import { useEffect } from "react";
 
 interface ContentProviderProps {
   children: React.ReactNode;
