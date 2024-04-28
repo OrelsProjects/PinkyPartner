@@ -3,12 +3,13 @@
 import * as React from "react";
 import "react-toastify/dist/ReactToastify.css";
 import SizeContext from "../../lib/context/sizeContext";
-import NavigationBar from "../../components/bottomBar";
+import NavigationBar from "../../components/navigationBar";
 import { ThemeProvider } from "./ThemeProvider";
 import * as toast from "react-toastify";
 import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
+import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           maxHeight: contentHeight,
         }}
       >
+        <SideNavigationBar className="mr-6" />
         <ThemeProvider>
           <div className="w-full h-full relative z-10">
             {children}

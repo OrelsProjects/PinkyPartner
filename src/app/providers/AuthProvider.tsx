@@ -25,11 +25,14 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { user } = useSelector(selectAuth);
+  const { user: currentUser, state } = useSelector(selectAuth);
   const { data: session, status } = useSession();
 
   const setUser = async (user?: AppUser) => {
     try {
+      if (state === "authenticated" && currentUser) {
+        return;
+      }
       let appUser: AppUser | undefined;
       if (user) {
         const response = await axios.post<AppUser>("/api/user/confirm", user);
@@ -58,9 +61,9 @@ export default function AuthProvider({
   }, [status]);
 
   useEffect(() => {
-    setUserEventTracker(user);
-    setUserLogger(user);
-  }, [user]);
+    setUserEventTracker(currentUser);
+    setUserLogger(currentUser);
+  }, [currentUser]);
 
   useEffect(() => {
     if (status === "loading") return;

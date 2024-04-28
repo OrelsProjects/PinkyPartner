@@ -2,9 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
-import AuthProvider from "./providers/AuthProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import DataProvider from "./providers/DataProvider";
+import NextTopLoader from "nextjs-toploader";
 
 const APP_NAME = "Fit Bud";
 const APP_DEFAULT_TITLE = "Fit Bud";
@@ -58,7 +57,9 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
       <body className="!overscroll-none">
         <StoreProvider>
           <SessionWrapper>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
           </SessionWrapper>
         </StoreProvider>
       </body>
