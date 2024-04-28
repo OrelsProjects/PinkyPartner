@@ -26,10 +26,15 @@ model AppUser {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   userId      String  @unique
   email       String  @unique
+  password    String?
   displayName String?
   photoURL    String?
 
-  userContracts UserContracts[]
+  userContracts       UserContract[]
+  // on delete cascade
+  Obligation          Obligation[]
+  Contract            Contract[]
+  ObligationCompleted ObligationCompleted[]
 
   @@map("appUser")
 }
@@ -44,7 +49,9 @@ model Obligation {
   days         Int[]   @default([])
   timesAWeek   Int?
 
-  contractObligations ContractObligations[]
+  appUser              AppUser               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contractObligations  ContractObligation[]
+  ObligationsCompleted ObligationCompleted[]
 
   @@map("obligation")
 }
@@ -56,31 +63,44 @@ model Contract {
   description String?
   dueDate     DateTime
 
-  contractObligations ContractObligations[]
-  userContracts       UserContracts[]
+  appUser             AppUser              @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
+  contractObligations ContractObligation[]
+  userContracts       UserContract[]
 
   @@map("contract")
 }
 
-model ContractObligations {
+model ContractObligation {
   contractObligationId String @id @default(auto()) @map("_id") @db.ObjectId
   contractId           String @db.ObjectId
   obligationId         String @db.ObjectId
 
-  contract   Contract?   @relation(fields: [contractId], references: [contractId])
-  obligation Obligation? @relation(fields: [obligationId], references: [obligationId])
+  contract   Contract?   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
+  obligation Obligation? @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
 
   @@map("contractObligations")
 }
 
-model UserContracts {
+model UserContract {
   userContractId String    @id @default(auto()) @map("_id") @db.ObjectId
   userId         String
   contractId     String    @db.ObjectId
   signedAt       DateTime?
 
-  appUser  AppUser  @relation(fields: [userId], references: [userId])
-  contract Contract @relation(fields: [contractId], references: [contractId])
+  appUser  AppUser  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contract Contract @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
 
   @@map("userContracts")
+}
+
+model ObligationCompleted {
+  obligationCompletedId String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String
+  obligationId          String   @db.ObjectId
+  completedAt           DateTime
+
+  appUser    AppUser    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  obligation Obligation @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
+
+  @@map("obligationsCompleted")
 }

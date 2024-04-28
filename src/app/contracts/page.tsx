@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
 import { useContracts } from "../../lib/hooks/useContracts";
 import ContractComponent from "../../components/contractComponent";
+import { FaPlus } from "react-icons/fa";
 
 interface ContractsProps {}
 
@@ -13,14 +14,24 @@ const ContractsPage: React.FC<ContractsProps> = () => {
   const { contracts: contractsData } = useContracts();
   return (
     <div className="h-full w-full flex flex-col gap-1">
-      <Button onClick={() => router.push("/contracts/new")}>
-        Create new contract
-      </Button>
-      <div className="h-full w-full flex flex-wrap gap-3">
+      <div className="flex flex-row gap-1">
+        <span className="text-lg lg:text-xl text-muted-foreground">
+          Contracts {contractsData.length > 0 && `(${contractsData.length})`}
+        </span>
+        <Button
+          variant="link"
+          className="!p-0"
+          onClick={() => router.push("/contracts/new")}
+        >
+          <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
+        </Button>
+      </div>
+      <div className="h-full w-full flex flex-col md:flex-wrap gap-3 overflow-auto">
         {contractsData.map(contractData => (
-          <div className="w-full h-60" key={contractData.contractId}>
-            <ContractComponent contract={contractData} />
-          </div>
+          <ContractComponent
+            contract={contractData}
+            key={contractData.contractId}
+          />
         ))}
       </div>
     </div>

@@ -16,7 +16,7 @@ export async function POST(
     if (!contractId) {
       throw new Error("Missing contractId");
     }
-    const userContract = await prisma.userContracts.findFirst({
+    const userContract = await prisma.userContract.findFirst({
       where: {
         AND: {
           userId: session.user.userId,
@@ -28,7 +28,7 @@ export async function POST(
       return NextResponse.json(undefined, { status: 401 });
     }
     userContract.signedAt = new Date();
-    await prisma.userContracts.update({
+    await prisma.userContract.update({
       where: {
         userContractId: userContract.userContractId,
       },

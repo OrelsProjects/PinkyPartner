@@ -31,7 +31,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   };
 
   return (
-    <div className="h-full w-full border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3">
+    <div className="w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3">
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
@@ -52,7 +52,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           {new Date(contract.dueDate).toDateString()}
         </h4>
       </div>
-      <div className="w-full flex flex-row justify-around gap-1">
+      <div className="w-full flex flex-row justify-around md:justify-start gap-1 md:gap-3">
         {contract.contractees.map(contractee => (
           <AccountabilityPartnerComponent
             key={contractee.userId}

@@ -33,7 +33,7 @@ export async function GET(
       },
     });
 
-    let contractIds = await prisma.userContracts.findMany({
+    let contractIds = await prisma.userContract.findMany({
       where: {
         userId: session.user.userId,
       },

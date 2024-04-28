@@ -93,7 +93,7 @@ export function useContracts() {
       if (!accountabilityPartner) {
         throw new Error("Accountability partner is required");
       }
-      await axios.post(`/api/contract/sign/${contractId}`);
+      await axios.post(`/api/contract/${contractId}/sign`);
       dispatch(signContractAction({ contractId, user: accountabilityPartner }));
       dispatch(setError(null));
     } catch (err: any) {

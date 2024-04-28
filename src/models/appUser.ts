@@ -11,6 +11,7 @@ export default interface AppUser {
 export type UserData = {
   contracts: Contract[];
   obligations: Obligation[];
+  obligationsToComplete: Obligation[];
 };
 
 // Select userId, displayName and photoURL from AppUser

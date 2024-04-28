@@ -10,7 +10,7 @@
   "orientation": "portrait",
   "start_url": "/",
   "dir": "auto",
-  "scope": "/",
+  "scope": "/", 
 
   "icons": [
     {

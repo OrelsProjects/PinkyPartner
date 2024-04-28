@@ -1,25 +1,27 @@
 // obligationsSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../../store'; // Adjust the import path as necessary
-import ContractObligation from '../../../models/contractObligation';
-import Obligation from '../../../models/obligation';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../../store"; // Adjust the import path as necessary
+import Obligation, {
+  ObligationsInContract,
+  ObligationsInContracts,
+} from "../../../models/obligation";
 
 interface ObligationsState {
   obligations: Obligation[];
-  contractObligations: ContractObligation[];
+  obligationsToComplete: ObligationsInContracts;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ObligationsState = {
   obligations: [],
-  contractObligations: [],
+  obligationsToComplete: [],
   loading: false,
   error: null,
 };
 
 const obligationsSlice = createSlice({
-  name: 'obligations',
+  name: "obligations",
   initialState,
   reducers: {
     setObligations(state, action: PayloadAction<Obligation[]>) {
@@ -29,28 +31,37 @@ const obligationsSlice = createSlice({
       state.obligations.push(action.payload);
     },
     updateObligation(state, action: PayloadAction<Obligation>) {
-      const index = state.obligations.findIndex(obligation => obligation.obligationId === action.payload.obligationId);
+      const index = state.obligations.findIndex(
+        obligation => obligation.obligationId === action.payload.obligationId,
+      );
       if (index !== -1) {
         state.obligations[index] = action.payload;
       }
     },
     deleteObligation(state, action: PayloadAction<string>) {
-      state.obligations = state.obligations.filter(obligation => obligation.obligationId !== action.payload);
+      state.obligations = state.obligations.filter(
+        obligation => obligation.obligationId !== action.payload,
+      );
     },
-    setContractObligations(state, action: PayloadAction<ContractObligation[]>) {
-      state.contractObligations = action.payload;
+    addObligationsToComplete(
+      state,
+      action: PayloadAction<ObligationsInContracts>,
+    ) {
+      state.obligationsToComplete.push(...action.payload);
     },
-    addContractObligation(state, action: PayloadAction<ContractObligation>) {
-      state.contractObligations.push(action.payload);
-    },
-    updateContractObligation(state, action: PayloadAction<ContractObligation>) {
-      const index = state.contractObligations.findIndex(co => co.contractObligationId === action.payload.contractObligationId);
-      if (index !== -1) {
-        state.contractObligations[index] = action.payload;
-      }
-    },
-    deleteContractObligation(state, action: PayloadAction<string>) {
-      state.contractObligations = state.contractObligations.filter(co => co.contractObligationId !== action.payload);
+    completeObligation(state, action: PayloadAction<{ obligationId: string }>) {
+      state.obligationsToComplete = state.obligationsToComplete.map(
+        (obligationsInContract: ObligationsInContract) => {
+          const newObligations = obligationsInContract.obligations.filter(
+            obligation =>
+              obligation.obligationId !== action.payload.obligationId,
+          );
+          return {
+            ...obligationsInContract,
+            obligations: newObligations,
+          };
+        },
+      );
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -66,10 +77,8 @@ export const {
   addObligation,
   updateObligation,
   deleteObligation,
-  setContractObligations,
-  addContractObligation,
-  updateContractObligation,
-  deleteContractObligation,
+  addObligationsToComplete,
+  completeObligation,
   setLoading,
   setError,
 } = obligationsSlice.actions;

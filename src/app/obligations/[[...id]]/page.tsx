@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Obligation, {
   CreateObligation,
-  ObligationRepeat,
+  Days,
   TimesAWeek,
 } from "../../../models/obligation";
 import { useObligations } from "../../../lib/hooks/useObligations";
@@ -41,7 +41,7 @@ const Weekly = ({
   obligation?: Obligation;
 }) => {
   const [selected, setSelected] = useState<TimesAWeek>(
-    obligation?.timesAWeek || 1,
+    (obligation?.timesAWeek as TimesAWeek) || 1,
   );
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const Weekly = ({
   return (
     <div className="flex flex-row gap-2 justify-center items-center">
       <TimesAWeekDropdown
-        defaultValue={obligation?.timesAWeek || 1}
+        defaultValue={(obligation?.timesAWeek as TimesAWeek) || 1}
         onSelect={(timesAWeek: TimesAWeek) => {
           setSelected(timesAWeek);
         }}
@@ -137,8 +137,8 @@ const ObligationDialog = ({
       description: obligation ? obligation.description : "",
       emoji: obligation ? obligation.emoji : "",
       repeat: obligation ? obligation.repeat : "Daily",
-      days: obligation?.days,
-      timesAWeek: obligation?.timesAWeek,
+      days: obligation?.days as Days,
+      timesAWeek: obligation?.timesAWeek as TimesAWeek,
     },
     onSubmit: values => {
       if (obligation) {
@@ -177,7 +177,7 @@ const ObligationDialog = ({
           variant="ghost"
           className="text-2xl !p-0 flex justify-center items-center"
         >
-          <FaPlus className="w-5 h-5 mb-2.5 fill-muted-foreground" />
+          <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-5/6 sm:max-w-[425px]">
@@ -334,19 +334,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     });
   };
 
-  const handleDeleteObligation = async (data: Obligation) => {
-    toast.promise(deleteObligation(data), {
-      pending: "Deleting obligation...",
-      success: {
-        render() {
-          hideDialog();
-          return "Obligation deleted!";
-        },
-      },
-      error: "Failed to delete obligation",
-    });
-  };
-
   const handleOnObligationClick = (obligation: Obligation) => {
     // set window state to the obligation id
     router.push(`/obligations/${obligation.obligationId}`);
@@ -369,12 +356,13 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
           obligation={obligation}
         />
       </div>
-      <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
+      <div className="flex flex-wrap gap-3 justify-start md:justify-between items-start overflow-auto">
         {obligations.map(obligation => (
           <ObligationComponent
             obligation={obligation}
             key={obligation.obligationId}
             onClick={handleOnObligationClick}
+            showDelete
           />
         ))}
       </div>

@@ -3,7 +3,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BottomBarItem, BottomBarItems } from "./_consts";
-import { Button } from "../ui/button";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -11,12 +10,14 @@ interface NavigationBar {
 
 const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   const [items] = useState([...BottomBarItems]);
-  const [activeItem, setActiveItem] = useState<BottomBarItem>(items[0]);
+  const [activeItem, setActiveItem] = useState<BottomBarItem | undefined>(
+    items[0],
+  );
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    setActiveItem(items.find(i => pathname.includes(i.href)) || items[0]);
+    setActiveItem(items.find(i => pathname.includes(i.href)));
   }, [pathname]);
 
   const handleItemClick = (item: BottomBarItem) => {
@@ -25,10 +26,10 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
 
   return (
     <div
-      className="lg:hidden fixed inset-x-0 bottom-0 z-40 pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)] bg-base-200 border-t border-base-content/10 select-none"
+      className="fixed inset-x-0 bottom-0 lg:left-0 z-40 pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)] bg-base-200 border-t border-base-content/10 select-none"
       ref={props.ref}
     >
-      <div className="h-16 w-full flex">
+      <div className="h-16 w-full flex flex-row">
         {items.map(item => (
           <div
             className="flex-1 flex items-center justify-center cursor-pointer"
@@ -40,7 +41,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
             >
               <span className="indicator">
                 <span className="badge badge-xs badge-primary indicator-item indicator-end border-base-200" />
-                {item.href === activeItem.href ? (
+                {item.href === activeItem?.href ? (
                   <item.iconActive />
                 ) : (
                   <item.icon />

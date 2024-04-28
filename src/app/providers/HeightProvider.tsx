@@ -31,7 +31,7 @@ export default function HeightProvider({
     <SizeContext.Provider value={{ height, width }}>
       <div
         className={`w-full h-full ${className}
-        ${browser === "safari" ? "h-screen" : ""} pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]
+        ${browser === "safari" ? "h-screen" : ""}
         `}
         style={{ height: `${height}px` }}
       >

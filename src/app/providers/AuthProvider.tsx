@@ -66,15 +66,15 @@ export default function AuthProvider({
     if (loadingAuth) return;
     if (status === "authenticated") {
       if (
-        pathname.includes("auth") ||
+        pathname.includes("login") ||
         pathname === "/" ||
         pathname === "/home"
       ) {
         router.push("/home");
       }
     } else {
-      if (!pathname.includes("auth") && !pathname.includes("register")) {
-        router.push("/auth");
+      if (!pathname.includes("login") && !pathname.includes("signup")) {
+        router.push("/");
       }
     }
   }, [status, loadingAuth]);

@@ -1,19 +1,27 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Obligation, { CreateObligation } from "../../models/obligation";
+import Obligation, {
+  CreateObligation,
+  ObligationsInContract,
+  ObligationsInContracts,
+} from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
 import {
   setObligations as setObligationsAction,
   addObligation as createObligationAction,
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
+  addObligationsToComplete as addObligationsToCompleteAction,
+  completeObligation as completeObligationAction,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
 import { useRef, useState } from "react";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, error } = useAppSelector(state => state.obligations);
+  const { obligations, error, obligationsToComplete } = useAppSelector(
+    state => state.obligations,
+  );
   const { user } = useAppSelector(state => state.auth);
   const [loading, setLoading] = useState(false);
 
@@ -21,7 +29,7 @@ export function useObligations() {
     obligation: CreateObligation,
   ): CreateObligation => {
     if (obligation.repeat === "Daily") {
-      obligation.timesAWeek = undefined;
+      obligation.timesAWeek = null;
     } else {
       obligation.days = [];
     }
@@ -112,8 +120,39 @@ export function useObligations() {
     }
   };
 
+  const addObligationsToComplete = (obligations: ObligationsInContracts) => {
+    dispatch(addObligationsToCompleteAction([...obligations]));
+  };
+
+  const completeObligation = async (
+    obligationId: string,
+  ) => {
+    if (loading) {
+      throw new LoadingError("Already completing obligation");
+    }
+    setLoading(true);
+
+    try {
+      await axios.post(
+        `/api/obligation/${obligationId}/complete`,
+      );
+      dispatch(
+        completeObligationAction({
+          obligationId,
+        }),
+      );
+      dispatch(setError(null));
+    } catch (err: any) {
+      dispatch(setError(err.message || "Error completing obligation"));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     obligations,
+    obligationsToComplete,
     loading,
     error,
     setObligations,
@@ -122,5 +161,7 @@ export function useObligations() {
     createObligation,
     updateObligation,
     deleteObligation,
+    addObligationsToComplete,
+    completeObligation,
   };
 }

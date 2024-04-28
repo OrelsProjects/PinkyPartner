@@ -3,6 +3,7 @@ import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../authOptions";
 import AppUser from "../../../models/appUser";
+import prisma from "../_db/db";
 
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);
@@ -23,11 +24,26 @@ export async function POST(req: NextRequest): Promise<any> {
     user = body as AppUser;
     user.email = sessionUser?.email || user.email;
     user.photoURL = sessionUser?.image || user.photoURL;
-
   } catch (error: any) {
     Logger.error("Error initializing logger", user?.userId || "unknown", {
       error,
     });
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest): Promise<any> {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    await prisma.appUser.delete({
+      where: { userId: session.user.userId },
+    });
+    return NextResponse.json({}, { status: 200 });
+  } catch (error: any) {
+    Logger.error("Error deleting user", session.user.userId, { error });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

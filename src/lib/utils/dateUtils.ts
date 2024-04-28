@@ -4,16 +4,30 @@
  * @returns The name of the day.
  */
 export function dayNumberToName(dayNumber: number): string {
-    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    return dayNames[dayNumber];
-  }
-  
-  /**
-   * Converts an array of day numbers into an array of day names.
-   * @param dayNumbers Array of day numbers (0-6).
-   * @returns Array of day names.
-   */
-  export function dayNumbersToNames(dayNumbers: number[]): string[] {
-    return dayNumbers.map(dayNumberToName);
-  }
-  
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  return dayNames[dayNumber];
+}
+
+/**
+ * Converts an array of day numbers into an array of day names.
+ * @param dayNumbers Array of day numbers (0-6).
+ * @returns Array of day names.
+ */
+export function dayNumbersToNames(dayNumbers: number[]): string[] {
+  return dayNumbers.map(dayNumberToName);
+}
+
+export function getNextWeekDate(): Date {
+  const now = new Date();
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+  return nextWeek;
+}

@@ -24,7 +24,7 @@ export async function POST(
       data: { ...contractData, creatorId: session.user.userId },
     });
 
-    await prisma.contractObligations.createMany({
+    await prisma.contractObligation.createMany({
       data: obligationIds.map((obligationId: string) => ({
         obligationId: obligationId,
         contractId: contractResponse.contractId,
@@ -32,7 +32,7 @@ export async function POST(
     });
 
     for (const contractee of contractees) {
-      await prisma.userContracts.create({
+      await prisma.userContract.create({
         data: {
           contractId: contractResponse.contractId,
           userId: contractee.userId,

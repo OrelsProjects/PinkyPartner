@@ -21,6 +21,8 @@ import { useContracts } from "../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent from "../../../components/accountabilityPartnerComponent";
+import { getNextWeekDate } from "../../../lib/utils/dateUtils";
+import Divider from "../../../components/ui/divider";
 
 interface CreateContractPageProps {}
 
@@ -34,7 +36,7 @@ const FindPartner = ({
   const { searchResult, searchUsers, loading, error } = useSearchUser();
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full justify-center items-start">
       <Input
         label="Search for your partner"
         type="text"
@@ -54,14 +56,17 @@ const FindPartner = ({
           ))}
         </div>
       )}
-      {searchResult.map(partner => (
-        <AccountabilityPartnerComponent
-          partner={partner}
-          key={partner.userId}
-          onClick={onPartnerSelect}
-          signed
-        />
-      ))}
+      <div className="max-h-64 w-full flex flex-col gap-1 overflow-auto">
+        {searchResult.map(partner => (
+          <AccountabilityPartnerComponent
+            partner={partner}
+            key={partner.userId}
+            onClick={onPartnerSelect}
+            className="!items-start"
+            signed
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -83,7 +88,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
   const formik = useFormik<CreateContract>({
     initialValues: {
       title: "",
-      dueDate: new Date(),
+      dueDate: getNextWeekDate(),
       description: null,
       contractees: [],
       signatures: [],
@@ -186,184 +191,186 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
   };
 
   return (
-    <AnimatePresence>
-      {!accountabilityPartner ? (
-        <motion.div
-          // slide in from the right
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          // exit right to left if accountabilityPartner is set, else left to right
-          exit={{ x: "-100%" }}
-          transition={{ duration: 0.2 }}
-          key="find-partner"
-          className="flex flex-col gap-4 justify-start items-start w-full h-fit max-h-full p-3 overflow-auto"
-        >
-          <div className="flex flex-col gap-4 max-h-full w-full">
-            {previousAccountabilityPartner && (
-              <div className="flex flex-col gap-1 w-full">
-                <span className="font-bold">Previous selection</span>
-                <AccountabilityPartnerComponent
-                  partner={previousAccountabilityPartner}
-                  onClick={handlePartnerSelect}
-                  signed
-                />
-              </div>
-            )}
-            <FindPartner onPartnerSelect={handlePartnerSelect} />
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          // slide in from the right
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{
-            x: previousAccountabilityPartner ? "-100%" : "100%",
-          }}
-          transition={{ duration: 0.2 }}
-          key="create-contract"
-          className="h-full w-full flex flex-col gap-5 justify-start items-start overflow-auto"
-        >
-          <form
-            onSubmit={formik.handleSubmit}
-            className="w-full flex flex-col gap-4"
+    <div className="w-full h-full flex justify-center items-start">
+      <AnimatePresence>
+        {!accountabilityPartner ? (
+          <motion.div
+            // slide in from the right
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            // exit right to left if accountabilityPartner is set, else left to right
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.2 }}
+            key="find-partner"
+            className="flex flex-col gap-4 justify-start md:justify-center items-start w-full h-fit max-h-full p-3 overflow-auto mt-6 md:w-96"
           >
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              className="self-start p-0 sticky top-0 left-0 w-full flex justify-start items-center bg-background z-20"
-            >
-              <div className="flex flex-row gap-1 items-start">
-                <IoArrowBack className="w-6 h-6" />
-                Back
-              </div>
-            </Button>
-            <Input
-              label="Title"
-              maxLength={36}
-              type="text"
-              name="title"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              placeholder="Reading books everyday"
-              required
-              error={formik.errors.title}
-            />
-            <TextArea
-              label="Description"
-              className="h-20"
-              name="description"
-              value={formik.values.description ?? ""}
-              onChange={formik.handleChange}
-              placeholder="Orel and Sara will read books everyday for 30 minutes."
-              rows={1}
-              error={formik.errors.description}
-            />
-            <div className="h-1 w-full border-b border-b-muted mb-4" />
-            <h1 className="text-xl font-bold">Obligations</h1>
-            <div className="flex flex-col gap-0 w-full max-h-32">
-              <div className="font-bold mt-1">In contract</div>
-              <div
-                className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full"
-                ref={obligationsRef}
-              >
-                {obligationsUsed.map(obligation => (
-                  <motion.div
-                    initial={{ x: "-100%" }}
-                    animate={{ x: 0 }}
-                    exit={{ x: "100%" }}
-                    transition={{ duration: 0.2 }}
-                    key={obligation.obligationId}
-                    className="w-full"
-                  >
-                    <ObligationComponent
-                      obligation={obligation}
-                      onClick={handleAddObligationToContract}
-                      key={obligation.obligationId}
-                      deleteIcon={MdOutlineCancel}
-                      onDelete={handleRemoveObligationFromContract}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col gap-0 w-full max-h-32">
-              <div className="font-bold mt-1">Your obligations</div>
-              <div className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full">
-                {unusedObligations.map(obligation => (
-                  <motion.div
-                    initial={{ x: "-100%" }}
-                    animate={{ x: 0 }}
-                    exit={{ x: "100%" }}
-                    transition={{ duration: 0.2 }}
-                    key={obligation.obligationId}
-                    className="w-full"
-                  >
-                    <ObligationComponent
-                      obligation={obligation}
-                      onClick={handleAddObligationToContract}
-                      key={obligation.obligationId}
-                      showDelete={false}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            <div className="h-1 w-full border-b border-b-muted mb-4" />
-            <Input
-              className="w-full"
-              label="Due Date"
-              type="date"
-              name="dueDate"
-              value={formik.values.dueDate.toISOString().split("T")[0]}
-              onChange={e => {
-                formik.setValues({
-                  ...formik.values,
-                  dueDate: new Date(e.target.value),
-                });
-              }}
-            />
-            <div className="flex flex-col gap-1 w-full h-fit">
-              <h1 className="font-bold">Signatures</h1>
-              <div
-                className="flex flex-row gap-4 w-full justify-center items-center"
-                id="contract-signatures"
-              >
-                <div
-                  className="flex flex-col justify-center items-center gap-2 w-1/2"
-                  ref={signatureRef}
-                >
+            <div className="flex flex-col gap-4 max-h-full w-full">
+              {previousAccountabilityPartner && (
+                <div className="flex flex-col gap-1 w-full">
+                  <span className="font-bold">Previous selection</span>
                   <AccountabilityPartnerComponent
-                    className="flex-col !p-0"
-                    partner={user as AccountabilityPartner}
+                    partner={previousAccountabilityPartner}
+                    onClick={handlePartnerSelect}
                     signed
                   />
-                  {/* <SignatureCanvasComponent
+                </div>
+              )}
+              <FindPartner onPartnerSelect={handlePartnerSelect} />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            // slide in from the right
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{
+              x: previousAccountabilityPartner ? "-100%" : "100%",
+            }}
+            transition={{ duration: 0.2 }}
+            key="create-contract"
+            className="h-full w-full flex flex-col gap-5 justify-start items-start "
+          >
+            <form
+              onSubmit={formik.handleSubmit}
+              className="w-full flex flex-col gap-4"
+            >
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                className="self-start p-0 sticky top-0 left-0 w-full flex justify-start items-center bg-background z-20"
+              >
+                <div className="flex flex-row gap-1 items-start">
+                  <IoArrowBack className="w-6 h-6" />
+                  Back
+                </div>
+              </Button>
+              <Input
+                label="Title"
+                maxLength={36}
+                type="text"
+                name="title"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                placeholder="Reading books everyday"
+                required
+                error={formik.errors.title}
+              />
+              <TextArea
+                label="Description"
+                className="h-20"
+                name="description"
+                value={formik.values.description ?? ""}
+                onChange={formik.handleChange}
+                placeholder="Orel and Sara will read books everyday for 30 minutes."
+                rows={1}
+                error={formik.errors.description}
+              />
+              <Divider />
+              <h1 className="text-xl font-bold">Obligations</h1>
+              <div className="flex flex-col gap-0 w-full max-h-32">
+                <div className="font-bold mt-1">In contract</div>
+                <div
+                  className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full max-h-60"
+                  ref={obligationsRef}
+                >
+                  {obligationsUsed.map(obligation => (
+                    <motion.div
+                      initial={{ x: "-100%" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "100%" }}
+                      transition={{ duration: 0.2 }}
+                      key={obligation.obligationId}
+                      className="w-full"
+                    >
+                      <ObligationComponent
+                        obligation={obligation}
+                        onClick={handleAddObligationToContract}
+                        key={obligation.obligationId}
+                        showDelete
+                        deleteIcon={MdOutlineCancel}
+                        onDelete={handleRemoveObligationFromContract}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-0 w-full max-h-60">
+                <div className="font-bold mt-1">Your obligations</div>
+                <div className="flex flex-col gap-1 justify-start items-start overflow-auto w-full">
+                  {unusedObligations.map(obligation => (
+                    <motion.div
+                      initial={{ x: "-100%" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "100%" }}
+                      transition={{ duration: 0.2 }}
+                      key={obligation.obligationId}
+                      className="w-full"
+                    >
+                      <ObligationComponent
+                        obligation={obligation}
+                        onClick={handleAddObligationToContract}
+                        key={obligation.obligationId}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              <Divider />
+              <Input
+                className="w-full"
+                label="Due Date"
+                type="date"
+                name="dueDate"
+                value={formik.values.dueDate.toISOString().split("T")[0]}
+                onChange={e => {
+                  formik.setValues({
+                    ...formik.values,
+                    dueDate: new Date(e.target.value),
+                  });
+                }}
+              />
+              <div className="flex flex-col gap-1 w-full h-fit">
+                <h1 className="font-bold">Signatures</h1>
+                <div
+                  className="flex flex-row gap-4 w-full justify-center items-center"
+                  id="contract-signatures"
+                >
+                  <div
+                    className="flex flex-col justify-center items-center gap-2 w-1/2"
+                    ref={signatureRef}
+                  >
+                    <AccountabilityPartnerComponent
+                      className="flex-col !p-0"
+                      partner={user as AccountabilityPartner}
+                      signed
+                    />
+                    {/* <SignatureCanvasComponent
                     onSigned={signature => {
                     }}
                   /> */}
-                  <Checkbox
-                    onCheckedChange={handleSignContract}
-                    error={formik.errors.signatures}
-                  />
-                </div>
+                    <Checkbox
+                      onCheckedChange={handleSignContract}
+                      error={formik.errors.signatures}
+                    />
+                  </div>
 
-                <div className="flex flex-col justify-center items-center gap-2 w-1/2 grayscale">
-                  <AccountabilityPartnerComponent
-                    className="flex-col !p-0"
-                    partner={accountabilityPartner}
-                  />
-                  <Checkbox disabled />
+                  <div className="flex flex-col justify-center items-center gap-2 w-1/2 grayscale">
+                    <AccountabilityPartnerComponent
+                      className="flex-col !p-0"
+                      partner={accountabilityPartner}
+                    />
+                    <Checkbox disabled />
+                  </div>
                 </div>
               </div>
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              Create contract
-            </Button>
-          </form>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              <Button type="submit" className="w-full" disabled={loading}>
+                Create contract
+              </Button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
