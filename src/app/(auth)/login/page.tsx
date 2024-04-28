@@ -16,7 +16,9 @@ const Auth = () => {
         <EmailLogin /> */}
       </div>
       <div className="flex flex-row gap-1 justify-center items-center">
-        <span className="text-muted-foreground">Don't have an account?</span>
+        <span className="text-muted-foreground">
+          Don&apos;t have an account?
+        </span>
         <Button
           variant="link"
           onClick={() => router.push("/register")}
