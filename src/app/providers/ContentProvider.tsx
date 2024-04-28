@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import "react-toastify/dist/ReactToastify.css";
 import SizeContext from "../../lib/context/sizeContext";
 import NavigationBar from "../../components/bottomBar";
 import { ThemeProvider } from "./ThemeProvider";

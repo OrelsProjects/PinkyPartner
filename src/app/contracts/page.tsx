@@ -26,7 +26,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
           <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
         </Button>
       </div>
-      <div className="h-full w-full flex flex-col md:flex-wrap gap-3 overflow-auto">
+      <div className="h-full w-full flex flex-col md:flex-wrap gap-3">
         {contractsData.map(contractData => (
           <ContractComponent
             contract={contractData}

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const Auth = () => {
   const router = useRouter();
   return (
-    <div className="h-full w-full flex flex-col justify-center items-center text-center overflow-hidden">
+    <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden">
       <div className="w-full flex flex-col gap-3 lg:max-w-[420px] bg-muted/20 rounded-xl p-8">
         <GoogleLogin signInTextPrefix="Sign in with" />
         <AppleLogin signInTextPrefix="Sign in with" />

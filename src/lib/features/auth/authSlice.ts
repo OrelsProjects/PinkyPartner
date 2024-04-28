@@ -13,6 +13,7 @@ export interface AuthState {
   user?: AppUser | null;
   isAdmin: boolean;
   state: AuthStateType;
+  isDataFetched?: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -22,6 +23,7 @@ export const initialState: AuthState = {
   isAdmin: false,
   state: "unauthenticated",
   loading: true,
+  isDataFetched: false,
   error: null,
 };
 
@@ -46,7 +48,7 @@ const authSlice = createSlice({
         state.user = user;
       }
       state.state = action.payload.state ?? "authenticated";
-    }, 
+    },
     setError: (state, action: PayloadAction<string | null>) => {
       console.error(action.payload);
       state.error = action.payload;
@@ -57,10 +59,14 @@ const authSlice = createSlice({
       state.user = null;
       state.state = "unauthenticated";
     },
+    setDataFetched: state => {
+      state.isDataFetched = true;
+    },
   },
 });
 
-export const { setUser, setError, clearUser } = authSlice.actions;
+export const { setUser, setError, clearUser, setDataFetched } =
+  authSlice.actions;
 
 export const selectAuth = (state: RootState): AuthState => state.auth;
 

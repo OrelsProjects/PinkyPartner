@@ -1,7 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { signIn, signOut as signOutAuth } from "next-auth/react";
 import { useCallback } from "react";
-import { clearUser, setError } from "../features/auth/authSlice";
+import {
+  clearUser,
+  setError,
+  setDataFetched as setDataFetchedAction,
+} from "../features/auth/authSlice";
 import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
@@ -115,6 +119,10 @@ const useAuth = () => {
     }
   }, []);
 
+  const setDataFetched = useCallback(() => {
+    dispatch(setDataFetchedAction());
+  }, []);
+
   return {
     signInWithGoogle,
     signInWithApple,
@@ -122,6 +130,7 @@ const useAuth = () => {
     signUpWithEmail,
     signOut,
     deleteUser,
+    setDataFetched,
   };
 };
 

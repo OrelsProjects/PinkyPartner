@@ -8,7 +8,7 @@ import { StickyScroll } from "../components/ui/stickyScrollReveal";
 import GoogleLogin from "../components/auth/googleLogin";
 
 const HeroSection = () => (
-  <HeroHighlight containerClassName="!items-start md:!items-center h-full w-full">
+  <HeroHighlight containerClassName="!items-start md:!items-center h-screen w-full">
     <motion.div
       initial={{
         opacity: 0,

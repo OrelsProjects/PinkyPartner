@@ -25,7 +25,7 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { loading: loadingAuth, user } = useSelector(selectAuth);
+  const { user } = useSelector(selectAuth);
   const { data: session, status } = useSession();
 
   const setUser = async (user?: AppUser) => {
@@ -63,7 +63,7 @@ export default function AuthProvider({
   }, [user]);
 
   useEffect(() => {
-    if (loadingAuth) return;
+    if (status === "loading") return;
     if (status === "authenticated") {
       if (
         pathname.includes("login") ||
@@ -78,13 +78,13 @@ export default function AuthProvider({
         router.push("/");
       }
     }
-  }, [status, loadingAuth]);
-  if (loadingAuth) {
+  }, [status]);
+  if (status === "loading") {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
         <Loading className="w-20 h-20" />
       </div>
     );
   }
-  return <ThemeProvider>{children}</ThemeProvider>;
+  return children;
 }
