@@ -8,8 +8,8 @@ import { StickyScroll } from "../components/ui/stickyScrollReveal";
 import { Button } from "../components/ui/button";
 
 const Header = () => (
-  <header className="w-full sticky h-20 flex flex-row justify-center items-center py-2">
-    <div className="w-1/2 flex flex-row justify-between items-center">
+  <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-background z-50">
+    <div className="w-full px-4 lg:px-0 lg:w-1/2 flex flex-row justify-between items-center">
       <div className="text-2xl font-bold text-black dark:text-white">
         PinkyPartner
       </div>
@@ -17,7 +17,7 @@ const Header = () => (
         <Button asChild variant="outline" className="rounded-full h-12">
           <a
             href="/login"
-            className="hidden md:flex text-black dark:text-white text-base md:text-lg"
+            className="hidden lg:flex text-black dark:text-white text-base md:text-lg"
           >
             Login
           </a>
