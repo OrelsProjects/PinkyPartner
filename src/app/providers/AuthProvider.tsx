@@ -12,10 +12,8 @@ import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
-import { ThemeProvider } from "./ThemeProvider";
 
 export default function AuthProvider({
   children,
@@ -28,9 +26,21 @@ export default function AuthProvider({
   const { user: currentUser } = useSelector(selectAuth);
   const { data: session, status } = useSession();
 
-  const setUser = async (user?: AppUser) => {
+  const setUser = async (user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    userId?: string | null;
+  }) => {
     try {
-      dispatch(setUserAction(user));
+      dispatch(
+        setUserAction({
+          name: user?.name || null,
+          email: user?.email || null,
+          photoURL: user?.image || null,
+          userId: user?.userId || null,
+        } as AppUser),
+      );
     } catch (error: any) {
       console.error(error);
       dispatch(setUserAction(null));

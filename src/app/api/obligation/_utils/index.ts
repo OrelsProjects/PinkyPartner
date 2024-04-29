@@ -7,6 +7,10 @@ import { Contract, Obligation, ObligationCompleted } from "@prisma/client";
 export type ObligationsInContract = {
   contract: Contract;
   obligations: Obligation[];
+  appUser?: {
+    photoURL?: string | null;
+    displayName?: string | null;
+  };
 };
 
 export type ObligationsInContracts = ObligationsInContract[];
@@ -202,8 +206,9 @@ export function getObligationsToComplete(
     const obligationsNotDue = obligationsInContract.obligations.filter(
       obligation => !isObligationDue(obligation),
     );
-    const obligationsToComplete = obligationsNotDue.filter(obligation =>
-      !isObligationCompleted(obligation, weeksCompletedObligations),
+    const obligationsToComplete = obligationsNotDue.filter(
+      obligation =>
+        !isObligationCompleted(obligation, weeksCompletedObligations),
     );
     if (obligationsToComplete.length === 0) {
       continue;
@@ -212,6 +217,7 @@ export function getObligationsToComplete(
     obligationsInContractsToComplete.push({
       contract: obligationsInContract.contract,
       obligations: obligationsToComplete,
+      appUser: obligationsInContract.appUser,
     });
   }
 

@@ -8,6 +8,9 @@ import { useContracts } from "../../lib/hooks/useContracts";
 import { ObligationsInContracts } from "../../models/obligation";
 import useAuth from "../../lib/hooks/useAuth";
 import { useAppSelector } from "../../lib/hooks/redux";
+import ObligationCompleted from "../../models/obligationCompleted";
+import Contract from "../../models/contract";
+import { Logger } from "../../logger";
 
 export default function DataProvider({
   children,
@@ -18,12 +21,35 @@ export default function DataProvider({
   const { setDataFetched } = useAuth();
   const {
     setObligations,
-    addObligationsToComplete,
+    setObligationsToComplete,
+    setObligationsCompleted,
+    setPartnerData,
     setLoadingData: setLoadingDataObligations,
   } = useObligations();
   const { setContracts, setLoadingData: setLoadingDataContracts } =
     useContracts();
   const isFetchingData = useRef(false);
+
+  const fetchPartnerData = async (contracts: Contract[]) => {
+    const signedContracts = contracts.filter(
+      ({ contractees }) => contractees.length > 1,
+    );
+    const contractIds = signedContracts.map(({ contractId }) => contractId);
+    const params = new URLSearchParams();
+    params.append("contractIds", contractIds.join(","));
+    try {
+      // Send a GET request to the API route
+      const response = await axios.get<{
+        toComplete: ObligationsInContracts;
+        completed: ObligationCompleted[];
+      }>(`/api/obligations/next-up/partner/${contractIds.join(",")}`);
+
+      const { toComplete, completed } = response.data;
+      setPartnerData(toComplete, completed);
+    } catch (error: any) {
+      Logger.error("Failed to fetch partner data", error);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -32,20 +58,45 @@ export default function DataProvider({
       isFetchingData.current = true;
       setLoadingDataContracts();
       setLoadingDataObligations();
-      const userDataResponse = await axios.get<UserData>("/api/user/data");
-      const obligationsToCompleteResponse =
-        await axios.get<ObligationsInContracts>("/api/obligations/next-up");
+
+      // Making both API requests in parallel
+      const [userDataResponse, allObligationsResponse] =
+        await Promise.allSettled([
+          axios.get<UserData>("/api/user/data"),
+          axios.get<{
+            toComplete: ObligationsInContracts;
+            completed: ObligationCompleted[];
+          }>("/api/obligations/next-up"),
+        ]);
+
+      const userData =
+        userDataResponse.status === "fulfilled"
+          ? userDataResponse.value.data
+          : {
+              obligations: [],
+              contracts: [],
+            };
+      const obligationsData =
+        allObligationsResponse.status === "fulfilled"
+          ? allObligationsResponse.value.data
+          : { toComplete: [], completed: [] };
+
       const userObligations = {
-        ...userDataResponse.data,
-        obligationsToComplete: obligationsToCompleteResponse.data,
+        ...userData,
+        obligationsToComplete: obligationsData.toComplete,
+        completed: obligationsData.completed,
       };
 
-      const { obligations, contracts, obligationsToComplete } = userObligations;
+      const { obligations, contracts, obligationsToComplete, completed } =
+        userObligations;
       setObligations(obligations || []);
       setContracts(contracts || []);
-      addObligationsToComplete(obligationsToComplete || []);
+      setObligationsToComplete(obligationsToComplete || []);
+      setObligationsCompleted(completed || []);
       setDataFetched();
-    } catch (error: any) {
+      await fetchPartnerData(contracts);
+    } catch (error) {
+      // Optionally handle any errors that aren't related to the individual promises
     } finally {
       isFetchingData.current = false;
     }

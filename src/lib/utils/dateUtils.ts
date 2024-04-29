@@ -31,3 +31,10 @@ export function getNextWeekDate(): Date {
   nextWeek.setDate(now.getDate() + 7);
   return nextWeek;
 }
+
+export function dateToHourMinute(date: Date): string {
+  return new Date(date).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}

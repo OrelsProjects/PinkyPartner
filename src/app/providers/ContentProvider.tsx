@@ -78,7 +78,9 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
               position="bottom-center"
             />
           </div>
-          <div className="w-full h-full relative z-10">{children}</div>
+          <div className="w-full h-full relative z-10 overflow-auto">
+            {children}
+          </div>
         </ThemeProvider>
         {user && (
           <div className="absolute top-0 right-0 p-4 z-20">

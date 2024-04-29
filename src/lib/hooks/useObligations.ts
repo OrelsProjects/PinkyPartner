@@ -10,17 +10,25 @@ import {
   addObligation as createObligationAction,
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
-  addObligationsToComplete as addObligationsToCompleteAction,
+  setObligationsToComplete as setObligationsToCompleteAction,
   completeObligation as completeObligationAction,
+  setObligationsCompleted as setObligationsCompletedAction,
+  setPartnerData as setPartnerDataAction,
   setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
+import ObligationCompleted from "../../models/obligationCompleted";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, error, obligationsToComplete, loading } = useAppSelector(
-    state => state.obligations,
-  );
+  const {
+    obligations,
+    error,
+    obligationsToComplete,
+    obligationsCompleted,
+    partnerData,
+    loading,
+  } = useAppSelector(state => state.obligations);
   const { user } = useAppSelector(state => state.auth);
 
   const updateObligationRepeat = (
@@ -123,35 +131,52 @@ export function useObligations() {
     }
   };
 
-  const addObligationsToComplete = (obligations: ObligationsInContracts) => {
-    dispatch(addObligationsToCompleteAction([...obligations]));
+  const setObligationsToComplete = (obligations: ObligationsInContracts) => {
+    dispatch(setObligationsToCompleteAction([...obligations]));
   };
 
-  const completeObligation = async (obligationId: string) => {
+  const setObligationsCompleted = (obligations: ObligationCompleted[]) => {
+    dispatch(setObligationsCompletedAction([...obligations]));
+  };
+
+  const setPartnerData = (
+    obligationsInContracts: ObligationsInContracts,
+    obligationsCompleted: ObligationCompleted[],
+  ) => {
+    dispatch(
+      setPartnerDataAction({
+        obligationsToComplete: obligationsInContracts,
+        obligationsCompleted,
+      }),
+    );
+  };
+
+  const completeObligation = async (
+    obligationId: string,
+    contractId: string,
+  ) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
     }
-    dispatch(setLoading(true));
 
     try {
-      await axios.post(`/api/obligation/${obligationId}/complete`);
-      dispatch(
-        completeObligationAction({
-          obligationId,
-        }),
+      const obligationCompletedResponse = await axios.post<ObligationCompleted>(
+        `/api/obligation/${contractId}/${obligationId}/complete`,
       );
+      dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;
     } finally {
-      dispatch(setLoading(false));
     }
   };
 
   return {
     obligations,
     obligationsToComplete,
+    obligationsCompleted,
+    partnerData,
     loading,
     error,
     setObligations,
@@ -161,7 +186,9 @@ export function useObligations() {
     createObligation,
     updateObligation,
     deleteObligation,
-    addObligationsToComplete,
+    setObligationsToComplete,
+    setObligationsCompleted,
+    setPartnerData,
     completeObligation,
   };
 }

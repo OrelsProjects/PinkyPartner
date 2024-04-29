@@ -50,7 +50,7 @@ const FindPartner = ({
         autoFocus
         error={error ?? undefined}
       />
-      <div className="max-h-64 w-full flex flex-col gap-5 overflow-auto">
+      <div className="max-h-80 w-full flex flex-col gap-5 overflow-auto">
         {status === "loading"
           ? Array.from({ length: 3 }).map((_, index) => (
               <AccountabilityPartnerComponentLoading

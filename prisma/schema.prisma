@@ -43,8 +43,8 @@ model AppUser {
 model AppUserMetadata {
   appUserMetadataId String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @unique
-  referralCode       String?
-  referredBy         String?
+  referralCode      String?
+  referredBy        String?
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
@@ -75,9 +75,10 @@ model Contract {
   description String?
   dueDate     DateTime
 
-  appUser             AppUser              @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
+  appUser             AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
   contractObligations ContractObligation[]
   userContracts       UserContract[]
+  obligationsCompleted ObligationCompleted[]
 
   @@map("contract")
 }
@@ -109,9 +110,11 @@ model ObligationCompleted {
   obligationCompletedId String   @id @default(auto()) @map("_id") @db.ObjectId
   userId                String
   obligationId          String   @db.ObjectId
+  contractId            String   @db.ObjectId
   completedAt           DateTime
 
   appUser    AppUser    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contract   Contract   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
   obligation Obligation @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
 
   @@map("obligationsCompleted")
