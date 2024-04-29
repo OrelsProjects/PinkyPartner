@@ -31,7 +31,6 @@ const Content = ({
   obligationsCompleted: GroupedObligations; // Now generic
   user?: { photoURL?: string | null } | null;
 }) => {
-
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <h1 className="text-xl font-bold">Next up</h1>
@@ -71,7 +70,7 @@ const Content = ({
                               contractId={
                                 obligationInContract.contract.contractId
                               }
-                              showComplete
+                              showComplete={!!user}
                               ownerImageUrl={
                                 obligationInContract.appUser?.photoURL ||
                                 user?.photoURL

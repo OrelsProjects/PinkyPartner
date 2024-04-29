@@ -16,6 +16,16 @@ export async function POST(
   try {
     const now = new Date();
     const { user } = session;
+    const isOwner = await prisma.userContract.findFirst({
+      where: {
+        contractId: params.contractId,
+        userId: user.userId,
+      },
+    });
+    if (!isOwner) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const completedObligation = await prisma.obligationCompleted.create({
       data: {
         obligationId: params.obligationId,
