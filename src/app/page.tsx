@@ -7,6 +7,22 @@ import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { StickyScroll } from "../components/ui/stickyScrollReveal";
 import GoogleLogin from "../components/auth/googleLogin";
 
+const Header = () => (
+  <header className="w-full flex flex-row justify-between items-center px-4 py-2">
+    <div className="text-2xl font-bold text-black dark:text-white">
+      PinkyPartner
+    </div>
+    <div className="flex flex-row gap-2">
+      <a href="/login" className="text-black dark:text-white">
+        Login
+      </a>
+      <a href="/register" className="text-black dark:text-white">
+        Register
+      </a>
+    </div>
+  </header>
+);
+
 const HeroSection = () => (
   <HeroHighlight containerClassName="!items-start md:!items-center h-screen w-full">
     <motion.div
@@ -163,6 +179,7 @@ const Content = () => {
 export default function Home() {
   return (
     <div className="h-full w-full gap-1">
+      <Header />
       <HeroSection />
       <Content />
       {/* <GoogleLogin /> */}

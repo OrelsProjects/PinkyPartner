@@ -6,6 +6,7 @@ import Divider from "../../components/ui/divider";
 import { Button } from "../../components/ui/button";
 import useAuth from "../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
+import InvitePartnerComponent from "../../components/invitePartnerComponent";
 
 interface SettingsProps {}
 
@@ -57,6 +58,14 @@ const SettingsButton: React.FC<SettingsProps> = () => {
           <span className="text-base-content/75">
             Manage notifications and reminders
           </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-lg font-semibold">Partners</span>
+          <InvitePartnerComponent
+            buttonText="Invite a partner"
+            referralCode={user?.meta?.referralCode}
+            className="justify-start px-0 text-base w-fit"
+          />
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Account</span>

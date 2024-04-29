@@ -1,21 +1,31 @@
 "use client";
 
-import { ThemeToggle } from "../../../components/theme-toggle";
-import useAuth from "../../../lib/hooks/useAuth";
 import GoogleLogin from "../../../components/auth/googleLogin";
 import AppleLogin from "../../../components/auth/appleLogin";
-import Divider from "../../../components/ui/divider";
-import EmailLogin from "../../../components/auth/emailLogin";
 import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 
 const Auth = () => {
+  const searchParams = useSearchParams();
+
+  const referralCode = useMemo(() => {
+    return searchParams.get("referral") || undefined;
+  }, [searchParams]);
+
   const router = useRouter();
   return (
     <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden">
       <div className="w-full flex flex-col gap-3 lg:max-w-[420px] bg-muted/20 rounded-xl p-8">
-        <GoogleLogin signInTextPrefix="Sign up with" register />
-        <AppleLogin signInTextPrefix="Sign up with" register />
+        <GoogleLogin
+          signInTextPrefix="Sign up with"
+          referralCode={referralCode}
+        />
+        <AppleLogin
+          signInTextPrefix="Sign up with"
+          referralCode={referralCode}
+        />
         {/* <Divider textInCenter="OR" className="my-4" />
         <EmailLogin register /> */}
       </div>

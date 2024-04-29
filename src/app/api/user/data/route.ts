@@ -5,7 +5,7 @@ import { Logger } from "../../../../logger";
 import { authOptions } from "../../../../authOptions";
 import { AppUser, Contract, Obligation } from "@prisma/client";
 import * as ClientContract from "../../../../models/contract";
-import { formatObligations } from "../_utils";
+import { formatObligations } from "../../_utils";
 
 type UserData = {
   contracts: ClientContract.default[];

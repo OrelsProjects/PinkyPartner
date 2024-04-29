@@ -10,12 +10,22 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
+import Cookies from "js-cookie";
+
+interface SignUpOptions {
+  referralCode?: string;
+}
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
 
-  const signInWithGoogle = useCallback(async (regsiter?: boolean) => {
+  const saveReferralCode = (referralCode?: string) => {
+    Cookies.set("referralCode", referralCode || "");
+  };
+
+  const signInWithGoogle = useCallback(async (options?: SignUpOptions) => {
     try {
+      saveReferralCode(options?.referralCode);
       await signIn("google");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
@@ -29,8 +39,10 @@ const useAuth = () => {
     }
   }, []);
 
-  const signInWithApple = useCallback(async (regsiter?: boolean) => {
+  const signInWithApple = useCallback(async (options?: SignUpOptions) => {
     try {
+      saveReferralCode(options?.referralCode);
+
       await signIn("apple");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
@@ -71,14 +83,16 @@ const useAuth = () => {
       password: string,
       register?: boolean,
       displayName: string = "",
+      options?: SignUpOptions,
     ) => {
       try {
         const result = await signIn("credentials", {
           email,
           password,
-          displayName: "Orel",
+          displayName: displayName,
           isSignIn: !register,
           redirect: false,
+          ...options,
         });
         if (!result?.ok) {
           throw new Error("Failed to sign in");

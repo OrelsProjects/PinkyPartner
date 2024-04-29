@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent from "../../../components/accountabilityPartnerComponent";
 import { getNextWeekDate } from "../../../lib/utils/dateUtils";
 import Divider from "../../../components/ui/divider";
+import InvitePartnerComponent from "../../../components/invitePartnerComponent";
 
 interface CreateContractPageProps {}
 
@@ -33,7 +34,8 @@ interface FindPartnerProps {
 const FindPartner = ({
   onPartnerSelect,
 }: FindPartnerProps): React.ReactNode => {
-  const { searchResult, searchUsers, loading, error } = useSearchUser();
+  const { user } = useAppSelector(state => state.auth);
+  const { searchResult, searchUsers, status, error } = useSearchUser();
 
   return (
     <div className="flex flex-col gap-2 w-full justify-center items-start">
@@ -46,7 +48,7 @@ const FindPartner = ({
         autoFocus
         error={error ?? undefined}
       />
-      {loading && (
+      {status === "loading" && (
         <div className="flex flex-col gap-1">
           {[...Array(5)].map((_, index) => (
             <Skeleton
@@ -67,6 +69,20 @@ const FindPartner = ({
           />
         ))}
       </div>
+      {(status === "no-results" || status === "success") && (
+        <>
+          <Divider />
+          <div className="mt-2 flex flex-row gap-1 items-start">
+            <span className="text-sm text-muted-foreground mt-0.5">
+              Can&apos;t find your buddies?
+            </span>
+            <InvitePartnerComponent
+              buttonText="Invite them!"
+              referralCode={user?.meta?.referralCode}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

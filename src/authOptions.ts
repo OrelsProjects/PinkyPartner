@@ -10,6 +10,15 @@ import { v4 as uuidv4 } from "uuid";
 import { InvalidCredentialsError } from "./models/errors/InvalidCredentialsError";
 import { UnknownUserError } from "./models/errors/UnknownUserError";
 import UserAlreadyExistsError from "./models/errors/UserAlreadyExistsError";
+import { generateReferalCode } from "./app/api/_utils/referralCode";
+import { cookies } from "next/headers";
+import loggerServer from "./loggerServer";
+
+const getReferralCode = (): string | undefined => {
+  const code = cookies().get("referralCode")?.value;
+  cookies().set("referralCode", "");
+  return code;
+};
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -33,6 +42,7 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
         displayName: { label: "Display Name", type: "text" },
         isSignIn: { label: "Sign In", type: "hidden", value: "true" },
+        referralCode: { label: "Referred by", type: "text" },
       },
       async authorize(credentials, req) {
         if (!credentials) {
@@ -78,9 +88,16 @@ export const authOptions: AuthOptions = {
                 userId: newUser.id,
               },
             });
-            return newUser;
-          } catch (e) {
-            console.log(e);
+            const appUserMetadata = await prisma.appUserMetadata.create({
+              data: {
+                userId: newUser.id,
+                referralCode: generateReferalCode(newUser.id),
+                referredBy: getReferralCode(),
+              },
+            });
+            return { ...newUser, meta: appUserMetadata };
+          } catch (e: any) {
+            loggerServer.error("Error creating user", "new_user", { error: e });
             throw e;
           }
         }
@@ -100,44 +117,66 @@ export const authOptions: AuthOptions = {
       token: JWT;
       user: AdapterUser;
     }) {
-      const isUserInDB = await prisma.appUser.findFirst({
+      let userInDB = await prisma.appUser.findFirst({
         where: {
           userId: token.sub,
         },
-        select: {
-          userId: true,
+        include: {
+          meta: {
+            select: {
+              referralCode: true,
+            },
+          },
         },
       });
-
-      if (!isUserInDB) {
-        throw new UnknownUserError();
-      }
       if (session?.user) {
         session.user.userId = token.sub;
+        session.user.meta = {
+          referralCode: userInDB?.meta?.referralCode,
+        };
       }
       return session;
     },
-    async signIn(user: any) {
+    async signIn(session: any) {
       try {
-        // Fetch additional user data from your database based on email
-        console.log("email ", user.user.email);
-        // const res = await getDocs(
-        //   query(volunteersCol, where("email", "==", user.user.email), limit(1))
-        // );
+        debugger;
         let additionalUserData = {};
-        // if (res.docs.length > 0) {
-        //   additionalUserData = { ...res.docs[0].data(), id: res.docs[0].id };
-        // }
-        // console.log(additionalUserData);
+        let userInDB = await prisma.appUser.findFirst({
+          where: {
+            userId: session.user.id,
+          },
+          include: {
+            meta: true,
+          },
+        });
 
-        // Merge additional data into the user object
+        if (!userInDB) {
+          const newUser = await prisma.appUser.create({
+            data: {
+              userId: session.user.id,
+              email: session.user.email || "",
+              photoURL: session.user.image || "",
+              displayName: session.user.name || "",
+            },
+          });
+          const appUserMetadata = await prisma.appUserMetadata.create({
+            data: {
+              userId: newUser.id,
+              referredBy: getReferralCode(),
+              referralCode: generateReferalCode(newUser.id),
+            },
+          });
+          additionalUserData = {
+            meta: appUserMetadata,
+          };
+        }
+
         return {
-          ...user,
+          ...session,
           ...additionalUserData,
-          // redirect: '/profile',
         };
-      } catch (e) {
-        console.log(e);
+      } catch (e: any) {
+        loggerServer.error("Error signing in", session.user.id, { error: e });
       }
     },
   },

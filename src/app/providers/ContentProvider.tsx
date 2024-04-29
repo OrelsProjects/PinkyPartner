@@ -10,7 +10,6 @@ import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
 import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
-import { useEffect } from "react";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -50,19 +49,19 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
       >
         <SideNavigationBar className="mr-6" />
         <ThemeProvider>
-          <div className="w-full h-full relative z-10">
-            {children}
+          <div className="relative z-[51]">
             <toast.ToastContainer
               stacked
               newestOnTop
               theme="dark"
               autoClose={2500}
               draggablePercent={60}
-              className="!mb-16"
+              className="!mb-16 z-[51]"
               transition={toast.Flip}
               position="bottom-center"
             />
           </div>
+          <div className="w-full h-full relative z-10">{children}</div>
         </ThemeProvider>
         {user && (
           <div className="absolute top-0 right-0 p-4 z-20">

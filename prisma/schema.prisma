@@ -35,8 +35,20 @@ model AppUser {
   Obligation          Obligation[]
   Contract            Contract[]
   ObligationCompleted ObligationCompleted[]
+  meta                AppUserMetadata?
 
   @@map("appUser")
+}
+
+model AppUserMetadata {
+  appUserMetadataId String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @unique
+  referralCode       String?
+  referredBy         String?
+
+  appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("AppUserMetadata")
 }
 
 model Obligation {

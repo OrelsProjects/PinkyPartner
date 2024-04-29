@@ -4,10 +4,10 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 
-const APP_NAME = "Fit Bud";
-const APP_DEFAULT_TITLE = "Fit Bud";
-const APP_TITLE_TEMPLATE = "%s - Fit Bud";
-const APP_DESCRIPTION = "Do stuff with your buddy!";
+const APP_NAME = "PinkyPartner";
+const APP_DEFAULT_TITLE = "PinkyPartner";
+const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
+const APP_DESCRIPTION = "Do stuff with your partner!";
 
 interface RootLayoutProps {
   children: React.ReactNode;

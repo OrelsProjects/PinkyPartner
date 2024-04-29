@@ -2,10 +2,14 @@ import { getServerSession } from "next-auth";
 import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
-import { AppUser } from "@prisma/client";
+import { AppUser, AppUserMetadata } from "@prisma/client";
 import { authOptions } from "../../../../authOptions";
+import { generateReferalCode } from "../../_utils/referralCode";
 
-export async function POST(req: NextRequest): Promise<AppUser | any> {
+
+export async function POST(
+  req: NextRequest,
+): Promise<(AppUser & { meta: AppUserMetadata }) | any> {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,9 +20,20 @@ export async function POST(req: NextRequest): Promise<AppUser | any> {
     user = await req.json();
     const existingUser = await prisma.appUser.findUnique({
       where: { email: session.user?.email || user?.email || undefined },
+      include: { meta: true },
     });
     if (existingUser) {
-      return NextResponse.json({ ...existingUser }, { status: 200 });
+      if (!existingUser.meta) {
+        const appUserMetadata = await prisma.appUserMetadata.create({
+          data: {
+            userId: existingUser.userId,
+            referralCode: generateReferalCode(existingUser.userId),
+          },
+        });
+        existingUser.meta = appUserMetadata;
+      }
+      const { password, ...userNoPassword } = existingUser;
+      return NextResponse.json({ ...userNoPassword }, { status: 200 });
     }
 
     const appUser = await prisma.appUser.create({
@@ -29,7 +44,20 @@ export async function POST(req: NextRequest): Promise<AppUser | any> {
         displayName: sessionUser?.name || user?.displayName,
       },
     });
-    return NextResponse.json({ ...appUser }, { status: 201 });
+
+    const appUserMetadata = await prisma.appUserMetadata.create({
+      data: {
+        userId: appUser.userId,
+        referralCode: generateReferalCode(appUser.userId),
+      },
+    });
+
+    const { password, ...userNoPassword } = appUser;
+
+    return NextResponse.json(
+      { ...userNoPassword, meta: appUserMetadata },
+      { status: 201 },
+    );
   } catch (error: any) {
     Logger.error("Error initializing logger", "unknown", {
       error,
