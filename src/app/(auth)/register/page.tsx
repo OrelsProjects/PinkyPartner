@@ -11,7 +11,7 @@ const Auth = () => {
   const searchParams = useSearchParams();
 
   const referralCode = useMemo(() => {
-    return searchParams.get("referral") || undefined;
+    return searchParams.get("referralCode") || undefined;
   }, [searchParams]);
 
   const router = useRouter();
