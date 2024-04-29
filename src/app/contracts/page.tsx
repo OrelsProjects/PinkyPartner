@@ -15,15 +15,15 @@ const ContractsPage: React.FC<ContractsProps> = () => {
   return (
     <div className="h-full w-full flex flex-col gap-1">
       <div className="flex flex-row gap-1">
-        <span className="text-lg lg:text-xl text-muted-foreground">
-          Contracts {contractsData.length > 0 && `(${contractsData.length})`}
+        <span className="text-lg lg:text-xl text-muted-foreground mt-1">
+          CONTRACTS {contractsData.length > 0 && `(${contractsData.length})`}
         </span>
         <Button
           variant="link"
-          className="!p-0"
           onClick={() => router.push("/contracts/new")}
+          className="text-2xl flex justify-center items-center p-2 hover:bg-muted/50"
         >
-          <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
+          <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </div>
       <div className="h-full w-full flex flex-col md:flex-wrap gap-3">

@@ -344,7 +344,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   return (
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
-        <span className="text-lg text-muted-foreground mt-1">
+        <span className="text-lg lg:text-xl text-muted-foreground mt-1">
           OBLIGATIONS {obligations.length > 0 && `(${obligations.length})`}
         </span>
         <ObligationDialog
