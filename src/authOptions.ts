@@ -88,12 +88,22 @@ export const authOptions: AuthOptions = {
                 userId: newUser.id,
               },
             });
+            const data: {
+              userId: string;
+              referralCode: string;
+              referredBy?: string;
+            } = {
+              userId: newUser.id,
+              referralCode: generateReferalCode(newUser.id),
+            };
+            
+            const referredBy = getReferralCode();
+            if (referredBy) {
+              data.referredBy = referredBy;
+            }
+
             const appUserMetadata = await prisma.appUserMetadata.create({
-              data: {
-                userId: newUser.id,
-                referralCode: generateReferalCode(newUser.id),
-                referredBy: getReferralCode(),
-              },
+              data,
             });
             return { ...newUser, meta: appUserMetadata };
           } catch (e: any) {
