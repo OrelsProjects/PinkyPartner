@@ -20,7 +20,9 @@ import { Checkbox } from "../../../components/ui/checkbox";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import AccountabilityPartnerComponent from "../../../components/accountabilityPartnerComponent";
+import AccountabilityPartnerComponent, {
+  AccountabilityPartnerComponentLoading,
+} from "../../../components/accountabilityPartnerComponent";
 import { getNextWeekDate } from "../../../lib/utils/dateUtils";
 import Divider from "../../../components/ui/divider";
 import InvitePartnerComponent from "../../../components/invitePartnerComponent";
@@ -48,33 +50,30 @@ const FindPartner = ({
         autoFocus
         error={error ?? undefined}
       />
-      {status === "loading" && (
-        <div className="flex flex-col gap-1">
-          {[...Array(5)].map((_, index) => (
-            <Skeleton
-              className="h-4 w-full rounded-full"
-              key={`skeleton-${index}`}
-            />
-          ))}
-        </div>
-      )}
-      <div className="max-h-64 w-full flex flex-col gap-1 overflow-auto">
-        {searchResult.map(partner => (
-          <AccountabilityPartnerComponent
-            partner={partner}
-            key={partner.userId}
-            onClick={onPartnerSelect}
-            className="!items-start"
-            signed
-          />
-        ))}
+      <div className="max-h-64 w-full flex flex-col gap-5 overflow-auto">
+        {status === "loading"
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <AccountabilityPartnerComponentLoading
+                key={`accountabilityPartnerComponentLoading - ${index}`}
+                className="!items-start"
+              />
+            ))
+          : searchResult.map(partner => (
+              <AccountabilityPartnerComponent
+                partner={partner}
+                key={partner.userId}
+                onClick={onPartnerSelect}
+                className="!items-start"
+                signed
+              />
+            ))}
       </div>
       {(status === "no-results" || status === "success") && (
         <>
           <Divider />
           <div className="mt-2 flex flex-row gap-1 items-start">
             <span className="text-sm text-muted-foreground mt-0.5">
-              Can&apos;t find your buddies?
+              Can&apos;t find your partner?
             </span>
             <InvitePartnerComponent
               buttonText="Invite them!"

@@ -24,6 +24,10 @@ const useSearchUser = (): SearchUserHook => {
   const debouncedFetch = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    console.log("status", status.current);
+  }, [status.current]);
+
+  useEffect(() => {
     if (debouncedFetch.current) {
       clearTimeout(debouncedFetch.current);
     }
