@@ -31,6 +31,9 @@ export default function AuthProvider({
     email?: string | null;
     image?: string | null;
     userId?: string | null;
+    meta: {
+      referralCode?: string | null;
+    };
   }) => {
     try {
       dispatch(
@@ -39,6 +42,9 @@ export default function AuthProvider({
           email: user?.email || null,
           photoURL: user?.image || null,
           userId: user?.userId || null,
+          meta: {
+            referralCode: user?.meta.referralCode || null,
+          },
         } as AppUser),
       );
     } catch (error: any) {
