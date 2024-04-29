@@ -5,26 +5,38 @@ import { HeroHighlight, Highlight } from "../components/ui/heroHighlight";
 import { motion } from "framer-motion";
 import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { StickyScroll } from "../components/ui/stickyScrollReveal";
-import GoogleLogin from "../components/auth/googleLogin";
+import { Button } from "../components/ui/button";
 
 const Header = () => (
-  <header className="w-full flex flex-row justify-between items-center px-4 py-2">
-    <div className="text-2xl font-bold text-black dark:text-white">
-      PinkyPartner
-    </div>
-    <div className="flex flex-row gap-2">
-      <a href="/login" className="text-black dark:text-white">
-        Login
-      </a>
-      <a href="/register" className="text-black dark:text-white">
-        Register
-      </a>
+  <header className="w-full sticky h-20 flex flex-row justify-center items-center py-2">
+    <div className="w-1/2 flex flex-row justify-between items-center">
+      <div className="text-2xl font-bold text-black dark:text-white">
+        PinkyPartner
+      </div>
+      <div className="flex flex-row gap-2">
+        <Button asChild variant="outline" className="rounded-full h-12">
+          <a
+            href="/login"
+            className="hidden md:flex text-black dark:text-white text-base md:text-lg"
+          >
+            Login
+          </a>
+        </Button>
+        <Button asChild variant="magic">
+          <a
+            href="/register"
+            className="text-black dark:text-white text-lg md:text-xl"
+          >
+            Get Started
+          </a>
+        </Button>
+      </div>
     </div>
   </header>
 );
 
 const HeroSection = () => (
-  <HeroHighlight containerClassName="!items-start md:!items-center h-screen w-full">
+  <HeroHighlight containerClassName="items-center h-screen w-full">
     <motion.div
       initial={{
         opacity: 0,
@@ -38,7 +50,7 @@ const HeroSection = () => (
         duration: 0.5,
         ease: [0.4, 0.0, 0.2, 1],
       }}
-      className="w-full text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white text-start leading-relaxed lg:leading-snug mx-auto lg:w-[980px]"
+      className="w-full h-80 md:h-fit text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white text-start leading-relaxed lg:leading-snug mx-auto lg:w-[980px]"
     >
       <div className="flex flex-col lg:flex-row items-center gap-1">
         <TextGenerateEffect words={"Building habits is hard "} />
