@@ -243,11 +243,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start "
+            className="h-full w-full flex flex-col gap-5 justify-start items-start overflow-auto"
           >
             <form
               onSubmit={formik.handleSubmit}
-              className="w-full flex flex-col gap-4"
+              className="w-full flex flex-col gap-4 pr-8"
             >
               <Button
                 variant="ghost"

@@ -71,7 +71,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
 
   return (
     <div
-      className={`rounded-lg h-16 w-full md:w-96 bg-muted flex flex-row justify-between items-start gap-3 p-2 ${className}
+      className={`rounded-lg h-16 w-full md:w-96 bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
       shadow-md
       `}
       onClick={() => onClick?.(obligation)}
@@ -81,8 +81,10 @@ const ObligationComponent: React.FC<ObligationProps> = ({
           <span className="text-card-foreground">{obligation.emoji}</span>
           <span
             className={cn(
-              "text-card-foreground truncate",
-              completedAt ? "line-through text-muted-foreground" : "",
+              "text-card-foreground truncate font-medium",
+              completedAt
+                ? "line-through text-muted-foreground font-normal"
+                : "",
             )}
           >
             {obligation.title}
@@ -125,10 +127,12 @@ const ObligationComponent: React.FC<ObligationProps> = ({
         )}
         {completedAt && (
           <div className="flex flex-col gap-1">
-            <span className="text-sm">
+            <span className="text-sm text-muted-foreground">
               {new Date(completedAt).toLocaleDateString()}
             </span>
-            <span className="text-sm">{dateToHourMinute(completedAt)}</span>
+            <span className="text-sm text-muted-foreground">
+              {dateToHourMinute(completedAt)}
+            </span>
           </div>
         )}
       </div>
