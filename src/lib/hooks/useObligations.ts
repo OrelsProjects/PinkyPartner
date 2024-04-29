@@ -2,7 +2,6 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Obligation, {
   CreateObligation,
-  ObligationsInContract,
   ObligationsInContracts,
 } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
@@ -13,17 +12,16 @@ import {
   deleteObligation as deleteObligationAction,
   addObligationsToComplete as addObligationsToCompleteAction,
   completeObligation as completeObligationAction,
+  setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
-import { useRef, useState } from "react";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, error, obligationsToComplete } = useAppSelector(
+  const { obligations, error, obligationsToComplete, loading } = useAppSelector(
     state => state.obligations,
   );
   const { user } = useAppSelector(state => state.auth);
-  const [loading, setLoading] = useState(false);
 
   const updateObligationRepeat = (
     obligation: CreateObligation,
@@ -46,7 +44,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const response = await axios.get("/api/obligation");
       dispatch(setObligationsAction(response.data.result));
@@ -55,19 +53,24 @@ export function useObligations() {
       dispatch(setError(err.message || "Error fetching obligations"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
+  };
+
+  const setLoadingData = (loading: boolean = true) => {
+    dispatch(setLoading(loading));
   };
 
   const setObligations = (obligations: Obligation[]) => {
     dispatch(setObligationsAction(obligations));
+    dispatch(setLoading(false));
   };
 
   const createObligation = async (obligationData: CreateObligation) => {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
       const response = await axios.post("/api/obligation", {
@@ -80,7 +83,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error creating obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -88,7 +91,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
       const response = await axios.patch("/api/obligation", updatedObligation);
@@ -98,7 +101,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error updating obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -106,7 +109,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
 
     try {
       await axios.delete(`/api/obligation/${obligation.obligationId}`);
@@ -116,7 +119,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error deleting obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -124,18 +127,14 @@ export function useObligations() {
     dispatch(addObligationsToCompleteAction([...obligations]));
   };
 
-  const completeObligation = async (
-    obligationId: string,
-  ) => {
+  const completeObligation = async (obligationId: string) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
 
     try {
-      await axios.post(
-        `/api/obligation/${obligationId}/complete`,
-      );
+      await axios.post(`/api/obligation/${obligationId}/complete`);
       dispatch(
         completeObligationAction({
           obligationId,
@@ -146,7 +145,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -156,6 +155,7 @@ export function useObligations() {
     loading,
     error,
     setObligations,
+    setLoadingData,
     getUserObligation,
     fetchObligations,
     createObligation,

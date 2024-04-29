@@ -8,18 +8,18 @@ import {
   updateContract as updateContractAction,
   deleteContract as deleteContractAction,
   signContract as signContractAction,
+  setLoading,
 } from "../features/contracts/contractsSlice";
-import { useState } from "react";
 import { AccountabilityPartner } from "../../models/appUser";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
-  const { contracts, error } = useAppSelector(state => state.contracts);
-
-  const [loading, setLoading] = useState(false);
+  const { contracts, error, loading } = useAppSelector(
+    state => state.contracts,
+  );
 
   const fetchContracts = async () => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const response = await axios.get("/api/contract");
       dispatch(setContractsAction(response.data.result));
@@ -28,12 +28,12 @@ export function useContracts() {
       dispatch(setError(err.message || "Error fetching contracts"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
   const createContract = async (contractData: CreateContract) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const response = await axios.post<Contract>(
         "/api/contract",
@@ -45,16 +45,21 @@ export function useContracts() {
       dispatch(setError(err.message || "Error creating contract"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
+  };
+
+  const setLoadingData = (loading: boolean = true) => {
+    dispatch(setLoading(loading));
   };
 
   const setContracts = (contracts: Contract[]) => {
     dispatch(setContractsAction(contracts));
+    dispatch(setLoading(false));
   };
 
   const updateContract = async (contractData: Contract) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const response = await axios.patch<Contract>(
         `/api/contract/${contractData.contractId}`,
@@ -66,12 +71,12 @@ export function useContracts() {
       dispatch(setError(err.message || "Error updating contract"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
   const deleteContract = async (contractId: string) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       await axios.delete(`/api/contract/${contractId}`);
       dispatch(deleteContractAction(contractId));
@@ -80,7 +85,7 @@ export function useContracts() {
       dispatch(setError(err.message || "Error deleting contract"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -88,7 +93,7 @@ export function useContracts() {
     contractId: string,
     accountabilityPartner?: AccountabilityPartner | null,
   ) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       if (!accountabilityPartner) {
         throw new Error("Accountability partner is required");
@@ -100,7 +105,7 @@ export function useContracts() {
       dispatch(setError(err.message || "Error signing contract"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -109,6 +114,7 @@ export function useContracts() {
     loading,
     error,
     setContracts,
+    setLoadingData,
     signContract,
     fetchContracts,
     createContract,

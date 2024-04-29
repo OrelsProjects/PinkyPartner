@@ -139,7 +139,6 @@ export const authOptions: AuthOptions = {
     },
     async signIn(session: any) {
       try {
-        debugger;
         let additionalUserData = {};
         let userInDB = await prisma.appUser.findFirst({
           where: {

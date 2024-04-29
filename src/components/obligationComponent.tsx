@@ -8,6 +8,7 @@ import { Checkbox } from "./ui/checkbox";
 import CheckboxObligation from "./checkboxObligation";
 import RepeatComponent from "./repeatComponent";
 import { toast } from "react-toastify";
+import { Skeleton } from "./ui/skeleton";
 
 interface ObligationProps {
   obligation: Obligation;
@@ -18,6 +19,27 @@ interface ObligationProps {
   deleteIcon?: ElementType;
   className?: string;
 }
+
+export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
+  className,
+}) => (
+  <div
+    className={`rounded-lg h-16 w-full md:w-96 bg-muted flex flex-row justify-between items-start gap-3 p-2 ${className}
+  shadow-md
+  `}
+  >
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-row gap-3">
+        <Skeleton className="w-4 h-4 rounded-full" />
+        <Skeleton className="w-24 h-4 rounded-full" />
+      </div>
+      <Skeleton className="w-16 h-4 rounded-full" />
+    </div>
+    <div className="flex flex-row gap-2 self-center">
+      <Skeleton className="w-6 h-6 rounded-full" />
+    </div>
+  </div>
+);
 
 const ObligationComponent: React.FC<ObligationProps> = ({
   obligation,

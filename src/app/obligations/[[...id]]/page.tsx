@@ -21,11 +21,14 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import ObligationComponent from "../../../components/obligationComponent";
+import ObligationComponent, {
+  ObligationComponentLoading,
+} from "../../../components/obligationComponent";
 import { useRouter } from "next/navigation";
 import IntervalDropdown from "../../../components/ui/dropdowns/intervalDropdown";
 import { Checkbox } from "../../../components/ui/checkbox";
 import TimesAWeekDropdown from "../../../components/ui/dropdowns/timesAWeekDropdown";
+import { Skeleton } from "../../../components/ui/skeleton";
 
 interface ObligationProps {
   params: {
@@ -279,7 +282,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     getUserObligation,
     createObligation,
     updateObligation,
-    deleteObligation,
     obligations,
     loading,
   } = useObligations();
@@ -356,15 +358,21 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
           obligation={obligation}
         />
       </div>
-      <div className="flex flex-wrap gap-3 justify-start md:justify-between items-start overflow-auto">
-        {obligations.map(obligation => (
-          <ObligationComponent
-            obligation={obligation}
-            key={obligation.obligationId}
-            onClick={handleOnObligationClick}
-            showDelete
-          />
-        ))}
+      <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <div className="flex flex-col gap-1" key={index}>
+                <ObligationComponentLoading />
+              </div>
+            ))
+          : obligations.map(obligation => (
+              <ObligationComponent
+                obligation={obligation}
+                key={obligation.obligationId}
+                onClick={handleOnObligationClick}
+                showDelete
+              />
+            ))}
       </div>
     </div>
   );

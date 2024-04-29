@@ -16,8 +16,13 @@ export default function DataProvider({
 }) {
   const { isDataFetched } = useAppSelector(state => state.auth);
   const { setDataFetched } = useAuth();
-  const { setObligations, addObligationsToComplete } = useObligations();
-  const { setContracts } = useContracts();
+  const {
+    setObligations,
+    addObligationsToComplete,
+    setLoadingData: setLoadingDataObligations,
+  } = useObligations();
+  const { setContracts, setLoadingData: setLoadingDataContracts } =
+    useContracts();
   const isFetchingData = useRef(false);
 
   const fetchUserData = async () => {
@@ -25,11 +30,13 @@ export default function DataProvider({
       if (isDataFetched) return;
       if (isFetchingData.current) return;
       isFetchingData.current = true;
-      const response = await axios.get<UserData>("/api/user/data");
+      setLoadingDataContracts();
+      setLoadingDataObligations();
+      const userDataResponse = await axios.get<UserData>("/api/user/data");
       const obligationsToCompleteResponse =
         await axios.get<ObligationsInContracts>("/api/obligations/next-up");
       const userObligations = {
-        ...response.data,
+        ...userDataResponse.data,
         obligationsToComplete: obligationsToCompleteResponse.data,
       };
 

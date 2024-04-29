@@ -2,44 +2,48 @@
 
 import React from "react";
 import { useObligations } from "../../lib/hooks/useObligations";
-import ObligationComponent from "../../components/obligationComponent";
+import ObligationComponent, {
+  ObligationComponentLoading,
+} from "../../components/obligationComponent";
 import { AnimatePresence, motion } from "framer-motion";
+import { Skeleton } from "../../components/ui/skeleton";
 
 export default function Home() {
-  const { obligationsToComplete } = useObligations();
+  const { obligationsToComplete, loading } = useObligations();
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <h1 className="text-xl font-bold">Next up</h1>
       <div className="w-full flex flex-col gap-3">
-        {obligationsToComplete?.map(obligationInContract => (
-          <div
-            className="w-full"
-            key={`contract-${obligationInContract.contract.contractId}`}
-          >
-            <h2 className="text-lg font-semibold">
-              {obligationInContract.contract.title}
-            </h2>
-            <div className="w-full flex flex-col items-start justify-start gap-2">
-              {obligationInContract.obligations.map(obligation => (
-                <AnimatePresence key={`obligation-${obligationInContract}`}>
-                  <motion.div
-                    // initial={{ opacity: 0, x: 100 }}
-                    // animate={{ opacity: 1, x: 0 }}
-                    // exit={{ opacity: 0, x: -100 }}
-                    // transition={{ duration: 0.5 }}
-                    className="w-full flex items-center justify-center"
-                  >
-                    <ObligationComponent
-                      obligation={obligation}
-                      showComplete
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              ))}
-            </div>
-          </div>
-        ))}
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <div className="flex flex-col gap-1" key={index}>
+                <Skeleton className="w-24 h-6" />
+                <ObligationComponentLoading />
+              </div>
+            ))
+          : obligationsToComplete?.map(obligationInContract => (
+              <div
+                className="w-full flex flex-col gap-1"
+                key={`contract-${obligationInContract.contract.contractId}`}
+              >
+                <h2 className="text-lg font-semibold">
+                  {obligationInContract.contract.title}
+                </h2>
+                <div className="w-full flex flex-col items-start justify-start gap-3">
+                  {obligationInContract.obligations.map(obligation => (
+                    <AnimatePresence key={`obligation-${obligationInContract}`}>
+                      <motion.div className="w-full flex items-center justify-center md:items-start md:justify-start">
+                        <ObligationComponent
+                          obligation={obligation}
+                          showComplete
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  ))}
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   );

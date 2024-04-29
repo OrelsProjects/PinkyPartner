@@ -10,6 +10,8 @@ import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
 import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
+import { useEffect } from "react";
+import * as NProgress from "nprogress";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -24,6 +26,21 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const [contentHeight, setContentHeight] = React.useState<number>(
     sizeContent.height,
   );
+  ("use client");
+
+  useEffect(() => {
+    NProgress.start();
+    NProgress.configure({ showSpinner: false });
+
+    NProgress.set(0.4);
+
+    const random = Math.floor(Math.random() * 1000) + 500;
+
+    setTimeout(() => {
+      NProgress.done();
+      NProgress.remove();
+    }, random);
+  }, []);
 
   React.useEffect(() => {
     if (bottomBarRef.current) {
