@@ -4,15 +4,22 @@ import React, { useEffect, useRef } from "react";
 import { HeroHighlight, Highlight } from "../components/ui/heroHighlight";
 import { motion } from "framer-motion";
 import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
-import { StickyScroll } from "../components/ui/stickyScrollReveal";
 import { Button } from "../components/ui/button";
+import { FaArrowDownLong } from "react-icons/fa6";
+
+const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
+  <div
+    className="h-10 lg:h-16 w-10 lg:w-16 lg:hover:cursor-pointer absolute bottom-6 inset-x-1/2 flex justify-center items-center rounded-full bg-card border-[1.5px] border-muted animate-bounce"
+    onClick={onClick}
+  >
+    <FaArrowDownLong className="text-3xl text-primary h-6 lg:h-8 w-6 lg:w-8" />
+  </div>
+);
 
 const Header = () => (
-  <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-background z-50">
+  <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-card z-50">
     <div className="w-full px-4 lg:px-0 lg:w-1/2 flex flex-row justify-between items-center">
-      <div className="text-2xl font-bold text-black dark:text-white">
-        PinkyPartner
-      </div>
+      <div className="text-2xl font-bold text-foreground">PinkyPartner</div>
       <div className="flex flex-row gap-2">
         <Button asChild variant="outline" className="rounded-full h-12">
           <a
@@ -87,114 +94,29 @@ const HeroSection = () => (
   </HeroHighlight>
 );
 
+const PartOne = () => {
+  return <div></div>;
+};
+
 const Content = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.autoplay = true;
-      videoRef.current.loop = false;
-      videoRef.current.muted = true;
-      videoRef.current.playbackRate = 2.5;
-    }
-  }, [videoRef.current]);
-
-  return (
-    <StickyScroll
-      contentClassName="!h-96 w-80"
-      content={[
-        {
-          title: "Create an obligation",
-          description:
-            "Set a goal, create a contract, and invite a friend to keep you accountable.",
-          background: false,
-          content: (
-            <div className="h-full w-full relative flex items-center justify-center text-white">
-              <video
-                height={400}
-                width={250}
-                preload="none"
-                ref={videoRef}
-                className="absolute inset-0 rounded-xl object-cover overflow-visible"
-              >
-                <source src="/landing/create-obligation.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          ),
-        },
-        {
-          title: "Create an obligation",
-          description:
-            "Set a goal, create a contract, and invite a friend to keep you accountable.",
-          background: false,
-          content: (
-            <div className="h-full w-full relative flex items-center justify-center text-white">
-              <video
-                height={400}
-                width={250}
-                preload="none"
-                ref={videoRef}
-                className="absolute inset-0 rounded-xl object-cover overflow-visible"
-              >
-                <source src="/landing/create-obligation.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          ),
-        },
-        {
-          title: "Create an obligation",
-          description:
-            "Set a goal, create a contract, and invite a friend to keep you accountable.",
-          background: false,
-          content: (
-            <div className="h-full w-full relative flex items-center justify-center text-white">
-              <video
-                height={400}
-                width={250}
-                preload="none"
-                ref={videoRef}
-                className="absolute inset-0 rounded-xl object-cover overflow-visible"
-              >
-                <source src="/landing/create-obligation.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          ),
-        },
-        {
-          title: "Create an obligation",
-          description:
-            "Set a goal, create a contract, and invite a friend to keep you accountable.",
-          background: false,
-          content: (
-            <div className="h-full w-full relative flex items-center justify-center text-white">
-              <video
-                height={400}
-                width={250}
-                preload="none"
-                ref={videoRef}
-                className="absolute inset-0 rounded-xl object-cover overflow-visible"
-              >
-                <source src="/landing/create-obligation.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          ),
-        },
-      ]}
-    />
-  );
+  return <div className="w-screen h-screen bg-red-500"></div>;
 };
 
 export default function Home() {
+  const partOneRef = useRef<HTMLDivElement>(null);
+
+  const scrollToPartOne = () => {
+    partOneRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <div className="h-full w-full gap-1">
+    <div className="h-full w-full gap-1 flex flex-col overflow-auto">
       <Header />
       <HeroSection />
-      <Content />
-      {/* <GoogleLogin /> */}
+      <div ref={partOneRef}>
+        <Content />
+      </div>
+      <ArrowDown onClick={scrollToPartOne} />
     </div>
   );
 }

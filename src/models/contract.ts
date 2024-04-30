@@ -7,6 +7,7 @@ export default interface Contract {
   title: string;
   dueDate: Date;
   description?: string | null;
+  createdAt: Date;
 
   contractees: AccountabilityPartner[];
   obligations: Obligation[];
@@ -15,7 +16,7 @@ export default interface Contract {
 
 export type CreateContract = Omit<
   Contract,
-  "contractId" | "creatorId" | "obligations" | "signatures"
+  "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
   signatures: string[];
 } & { obligationIds: string[] };

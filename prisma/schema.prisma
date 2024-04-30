@@ -74,10 +74,11 @@ model Contract {
   title       String
   description String?
   dueDate     DateTime
+  createdAt   DateTime @default(now())
 
-  appUser             AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
-  contractObligations ContractObligation[]
-  userContracts       UserContract[]
+  appUser              AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
+  contractObligations  ContractObligation[]
+  userContracts        UserContract[]
   obligationsCompleted ObligationCompleted[]
 
   @@map("contract")

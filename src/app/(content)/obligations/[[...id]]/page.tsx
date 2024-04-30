@@ -360,7 +360,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
       </div>
       <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
         {loading
-          ? Array.from({ length: 5 }).map((_, index) => (
+          ? Array.from({ length: obligations.length || 5 }).map((_, index) => (
               <div className="flex flex-col gap-1" key={index}>
                 <ObligationComponentLoading />
               </div>

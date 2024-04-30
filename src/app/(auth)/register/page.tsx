@@ -16,7 +16,7 @@ const Auth = () => {
 
   const router = useRouter();
   return (
-    <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden">
+    <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden px-6 lg:px-0">
       <div className="w-full flex flex-col gap-3 lg:max-w-[420px] bg-muted/20 rounded-xl p-8">
         <GoogleLogin
           signInTextPrefix="Sign up with"
