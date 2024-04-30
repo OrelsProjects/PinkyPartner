@@ -23,36 +23,13 @@ export default function DataProvider({
     setObligations,
     setObligationsToComplete,
     setObligationsCompleted,
-    setPartnerData,
     setLoadingData: setLoadingDataObligations,
     setLoadingPartnerData,
+    fetchPartnerData,
   } = useObligations();
   const { setContracts, setLoadingData: setLoadingDataContracts } =
     useContracts();
   const isFetchingData = useRef(false);
-
-  const fetchPartnerData = async (contracts: Contract[]) => {
-    const signedContracts = contracts.filter(
-      ({ contractees }) => contractees.length > 1,
-    );
-    const contractIds = signedContracts.map(({ contractId }) => contractId);
-    const params = new URLSearchParams();
-    params.append("contractIds", contractIds.join(","));
-    try {
-      // Send a GET request to the API route
-      const response = await axios.get<{
-        toComplete: ObligationsInContracts;
-        completed: ObligationCompleted[];
-      }>(`/api/obligations/next-up/partner/${contractIds.join(",")}`);
-
-      const { toComplete, completed } = response.data;
-      setPartnerData(toComplete, completed);
-    } catch (error: any) {
-      Logger.error("Failed to fetch partner data", error);
-    } finally {
-      setLoadingPartnerData(false);
-    }
-  };
 
   const fetchUserData = async () => {
     try {
@@ -100,8 +77,8 @@ export default function DataProvider({
       setLoadingDataContracts(false);
       setLoadingDataObligations(false);
       // Fetch partner data - on signed contracts
-      fetchPartnerData(contracts);
       setDataFetched();
+      await fetchPartnerData(contracts);
     } catch (error: any) {
       Logger.error("Failed to fetch user data", error);
       setLoadingDataContracts(false);

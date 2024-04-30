@@ -74,10 +74,11 @@ model Contract {
   title       String
   description String?
   dueDate     DateTime
+  createdAt   DateTime @default(now())
 
-  appUser             AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
-  contractObligations ContractObligation[]
-  userContracts       UserContract[]
+  appUser              AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
+  contractObligations  ContractObligation[]
+  userContracts        UserContract[]
   obligationsCompleted ObligationCompleted[]
 
   @@map("contract")
@@ -99,6 +100,7 @@ model UserContract {
   userId         String
   contractId     String    @db.ObjectId
   signedAt       DateTime?
+  viewedAt       DateTime? // If the user has seen his new contract
 
   appUser  AppUser  @relation(fields: [userId], references: [userId], onDelete: Cascade)
   contract Contract @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
@@ -107,11 +109,12 @@ model UserContract {
 }
 
 model ObligationCompleted {
-  obligationCompletedId String   @id @default(auto()) @map("_id") @db.ObjectId
+  obligationCompletedId String    @id @default(auto()) @map("_id") @db.ObjectId
   userId                String
-  obligationId          String   @db.ObjectId
-  contractId            String   @db.ObjectId
+  obligationId          String    @db.ObjectId
+  contractId            String    @db.ObjectId
   completedAt           DateTime
+  viewedAt              DateTime? // If the partner saw his partner's completion
 
   appUser    AppUser    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   contract   Contract   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)

@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,6 @@ export const StickyScroll = ({
   content: {
     title: string;
     description: string;
-    background: boolean;
     content?: React.ReactNode | any;
   }[];
   contentClassName?: string;
@@ -20,7 +19,7 @@ export const StickyScroll = ({
   const ref = useRef<any>(null);
   const { scrollYProgress } = useScroll({
     // uncomment line 22 and comment line 23 if you DONT want the overflow container and want to have it change on the entire page scroll
-    // target: ref,
+    // target: ref
     container: ref,
     offset: ["start start", "end start"],
   });
@@ -51,18 +50,23 @@ export const StickyScroll = ({
     "linear-gradient(to bottom right, var(--pink-500), var(--indigo-500))",
     "linear-gradient(to bottom right, var(--orange-500), var(--yellow-500))",
   ];
+
+  const marginClassname = useMemo(() => {
+    return `my-[${100 / content.length}vh]`;
+  }, [content]);
+
   return (
     <motion.div
       animate={{
         backgroundColor: backgroundColors[activeCard % backgroundColors.length],
       }}
-      className="h-[60rem] overflow-y-auto flex justify-center relative space-x-10 rounded-md p-10"
+      className="h-full overflow-y-auto flex justify-center relative space-x-10 rounded-md p-10"
       ref={ref}
     >
       <div className="div relative flex items-start px-4">
         <div className="max-w-2xl">
           {content.map((item, index) => (
-            <div key={item.title + index} className="my-[60rem]">
+            <div key={item.title + index} className={marginClassname}>
               <motion.h2
                 initial={{
                   opacity: 0,
@@ -92,12 +96,10 @@ export const StickyScroll = ({
       </div>
       <motion.div
         animate={{
-          background: content[activeCard].background
-            ? linearGradients[activeCard % linearGradients.length]
-            : "none",
+          background: linearGradients[activeCard % linearGradients.length],
         }}
         className={cn(
-          "hidden lg:block h-60 w-80 rounded-md sticky top-10 overflow-hidden",
+          "hidden lg:block h-60 w-80 rounded-md bg-white top-[50%] sticky overflow-hidden",
           contentClassName,
         )}
       >

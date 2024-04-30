@@ -28,8 +28,6 @@ import { useRouter } from "next/navigation";
 import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
-import { Skeleton } from "../../../../components/ui/skeleton";
-
 interface ObligationProps {
   params: {
     id?: string;
@@ -204,7 +202,7 @@ const ObligationDialog = ({
           <div className="flex flex-col gap-4 py-4 ">
             <div className="flex flex-col justify-start items-start gap-2">
               <Label htmlFor="title" className="text-right">
-                I oblige myself to...
+                I pinky promise that...
               </Label>
               <Input
                 id="title"
@@ -285,6 +283,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     obligations,
     loading,
   } = useObligations();
+
   const [obligation, setObligation] = useState<Obligation | undefined | null>(
     null,
   );
@@ -300,14 +299,14 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleOnOpenChange = (state: boolean) => {
     if (!state) {
-      router.push("/obligations");
+      router.push("/promises");
     }
     setShowDialog(state);
   };
 
   const hideDialog = () => {
     setShowDialog(false);
-    router.push("/obligations");
+    router.push("/promises");
   };
 
   const handleCreateObligation = async (data: CreateObligation) => {
@@ -338,7 +337,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleOnObligationClick = (obligation: Obligation) => {
     // set window state to the obligation id
-    router.push(`/obligations/${obligation.obligationId}`);
+    router.push(`/promises/${obligation.obligationId}`);
     setObligation(obligation);
     router.refresh();
   };
@@ -347,7 +346,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
         <span className="text-lg lg:text-xl text-muted-foreground mt-1">
-          OBLIGATIONS {obligations.length > 0 && `(${obligations.length})`}
+          PROMISES {obligations.length > 0 && `(${obligations.length})`}
         </span>
         <ObligationDialog
           onCreate={handleCreateObligation}
@@ -360,7 +359,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
       </div>
       <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
         {loading
-          ? Array.from({ length: 5 }).map((_, index) => (
+          ? Array.from({ length: obligations.length || 5 }).map((_, index) => (
               <div className="flex flex-col gap-1" key={index}>
                 <ObligationComponentLoading />
               </div>

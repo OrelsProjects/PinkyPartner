@@ -51,7 +51,13 @@ export async function GET(
       include: {
         userContracts: {
           include: {
-            appUser: true,
+            appUser: {
+              select: {
+                photoURL: true,
+                displayName: true,
+                userId: true,
+              },
+            },
           },
         },
         contractObligations: {
@@ -77,7 +83,6 @@ export async function GET(
         session.user.userId,
       );
       const formattedObligations = formatObligations(obligations);
-
       const clientContract: ClientContract.default = {
         ...formattedContract,
         obligations: formattedObligations,

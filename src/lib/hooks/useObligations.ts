@@ -20,6 +20,8 @@ import {
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
 import ObligationCompleted from "../../models/obligationCompleted";
+import Contract from "../../models/contract";
+import { Logger } from "../../logger";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -161,10 +163,34 @@ export function useObligations() {
     }
   };
 
+  const fetchPartnerData = async (contracts: Contract[]) => {
+    setLoadingPartnerData(true);
+    const signedContracts = contracts.filter(
+      ({ contractees }) => contractees.length > 1,
+    );
+    const contractIds = signedContracts.map(({ contractId }) => contractId);
+    const params = new URLSearchParams();
+    params.append("contractIds", contractIds.join(","));
+    try {
+      const response = await axios.get<{
+        toComplete: ObligationsInContracts;
+        completed: ObligationCompleted[];
+      }>(`/api/obligations/next-up/partner/${contractIds.join(",")}`);
+
+      const { toComplete, completed } = response.data;
+      setPartnerData(toComplete, completed);
+    } catch (error: any) {
+      Logger.error("Failed to fetch partner data", error);
+    } finally {
+      setLoadingPartnerData(false);
+    }
+  };
+
   return {
     obligations,
     obligationsToComplete,
     obligationsCompleted,
+    fetchPartnerData,
     partnerData,
     loading,
     loadingData,

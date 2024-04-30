@@ -12,6 +12,7 @@ import ContractViewComponent from "./contractViewComponent";
 import Contract from "../models/contract";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
+import { useObligations } from "../lib/hooks/useObligations";
 
 interface ContractComponentProps {
   contract: Contract;
@@ -49,6 +50,7 @@ export const ContractComponentLoading = ({
 
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
+  const { fetchPartnerData } = useObligations();
   const { user } = useAppSelector(state => state.auth);
 
   const isUserSigned = useMemo(
@@ -60,13 +62,23 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const handleSignContract = () => {
     toast.promise(signContract(contract.contractId, user), {
       pending: "Signing contract...",
-      success: "Contract signed!",
+      success: {
+        async render() {
+          fetchPartnerData([contract]);
+          return "Contract signed successfully";
+        },
+      },
       error: "Failed to sign contract",
     });
   };
 
   return (
-    <div className="w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3">
+    <div
+      className={cn(
+        "w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3",
+        { "border-primary/50": !isUserSigned },
+      )}
+    >
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>

@@ -32,7 +32,7 @@ const TimesAWeekDropdown: React.FC<TimesAWeekDropdownProps> = ({
       <DropdownMenuContent defaultValue={defaultValue}>
         <DropdownMenuLabel>Times a week</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {[0, 1, 2, 3, 4, 5, 6, 7].map(timesAWeek => (
+        {[1, 2, 3, 4, 5, 6, 7].map(timesAWeek => (
           <DropdownMenuItem
             key={timesAWeek}
             onSelect={() => {

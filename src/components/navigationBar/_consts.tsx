@@ -12,11 +12,11 @@ import {
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: string;
+  label: "Home" | "Promises" | "Contracts";
   href: string;
 }
 
-const className = "w-6 h-6 fill-muted text-muted";
+const className = "w-6 h-6 fill-muted-foreground/40 text-muted-foreground/40";
 const classNameActive = "w-6 h-6 fill-muted-foreground";
 
 export const BottomBarItems: NavigationBarItem[] = [
@@ -29,8 +29,8 @@ export const BottomBarItems: NavigationBarItem[] = [
   {
     icon: () => <Obligation className={className} />,
     iconActive: () => <ObligationActive className={classNameActive} />,
-    label: "Obligations",
-    href: "/obligations",
+    label: "Promises",
+    href: "/promises",
   },
   {
     icon: () => <Contracts className={className} />,

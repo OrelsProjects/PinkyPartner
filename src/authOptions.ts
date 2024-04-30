@@ -96,7 +96,7 @@ export const authOptions: AuthOptions = {
               userId: newUser.id,
               referralCode: generateReferalCode(newUser.id),
             };
-            
+
             const referredBy = getReferralCode();
             if (referredBy) {
               data.referredBy = referredBy;
@@ -140,6 +140,17 @@ export const authOptions: AuthOptions = {
         },
       });
       if (session?.user) {
+        if (session?.user.image !== userInDB?.photoURL) {
+          await prisma.appUser.update({
+            where: {
+              userId: token.sub,
+            },
+            data: {
+              photoURL: session.user.image,
+            },
+          });
+        }
+
         session.user.userId = token.sub;
         session.user.meta = {
           referralCode: userInDB?.meta?.referralCode,
