@@ -57,7 +57,8 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       <DialogHeader>
         <DialogTitle>{contract.title}</DialogTitle>
         <DialogDescription>
-          {contract.description || "No additional details provided."}
+          {contract.description ||
+            `Contract between ${contract.contractees?.[0]?.displayName} and ${contract.contractees?.[1]?.displayName}`}
         </DialogDescription>
       </DialogHeader>
       <div className="text-sm">

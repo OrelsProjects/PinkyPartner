@@ -12,7 +12,7 @@ import {
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: "Home" | "Obligations" | "Contracts";
+  label: "Home" | "Promises" | "Contracts";
   href: string;
 }
 
@@ -29,8 +29,8 @@ export const BottomBarItems: NavigationBarItem[] = [
   {
     icon: () => <Obligation className={className} />,
     iconActive: () => <ObligationActive className={classNameActive} />,
-    label: "Obligations",
-    href: "/obligations",
+    label: "Promises",
+    href: "/promises",
   },
   {
     icon: () => <Contracts className={className} />,
