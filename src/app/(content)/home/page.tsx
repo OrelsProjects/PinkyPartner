@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import ObligationComponent, {
   ObligationComponentLoading,
@@ -14,6 +14,8 @@ import { useAppSelector } from "../../../lib/hooks/redux";
 import { ObligationsInContracts } from "../../../models/obligation";
 import { cn } from "../../../lib/utils";
 import { Switch } from "../../../components/ui/switch";
+import useNotifications from "../../../lib/hooks/useNotifications";
+import NotificationBadge from "../../../components/ui/notificationBadge";
 
 type GroupedObligations = {
   [key: string]: {
@@ -43,6 +45,15 @@ const NextUp = ({
   partner?: boolean;
   className?: string;
 }) => {
+  const sortedObligations = useMemo(() => {
+    if (!obligationsToComplete) return [];
+    return [...obligationsToComplete]?.sort(
+      (a, b) =>
+        new Date(a.contract.createdAt).getTime() -
+        new Date(b.contract.createdAt).getTime(),
+    );
+  }, [obligationsToComplete]);
+
   return (
     <div
       className={cn(
@@ -54,7 +65,7 @@ const NextUp = ({
         {loading ? (
           <Loading />
         ) : (
-          obligationsToComplete?.map(
+          sortedObligations.map(
             obligationInContract =>
               obligationInContract.obligations.length > 0 && (
                 <div
@@ -128,30 +139,42 @@ const Done = ({
             >
               <h2 className="text-lg font-normal">{group.contract.title}</h2>
               <div className="w-full flex flex-col items-start justify-start gap-3">
-                {group.obligations.map(obligationCompleted => (
-                  <AnimatePresence
-                    key={`obligation-${obligationCompleted.obligationCompletedId}`}
-                  >
-                    <motion.div
-                      className="w-full flex items-center justify-center md:items-start md:justify-start"
-                      initial={{ x: -100 }}
-                      animate={{ x: 0 }}
-                      exit={{ x: -100 }}
-                      transition={{ duration: 0.5 }}
+                {group.obligations
+                  .sort(
+                    (a, b) =>
+                      new Date(b.completedAt).getTime() -
+                      new Date(a.completedAt).getTime(),
+                  )
+                  .map(obligationCompleted => (
+                    <AnimatePresence
+                      key={`obligation-${obligationCompleted.obligationCompletedId}`}
                     >
-                      <ObligationComponent
-                        obligation={obligationCompleted.obligation}
-                        contractId={group.contract.contractId}
-                        completedAt={obligationCompleted.completedAt}
-                        ownerImageUrl={
-                          partner
-                            ? obligationCompleted.appUser?.photoURL
-                            : user?.photoURL
-                        }
-                      />
-                    </motion.div>
-                  </AnimatePresence>
-                ))}
+                      <motion.div
+                        className="w-full flex items-center justify-center relative md:items-start md:justify-start overflow-visible"
+                        initial={{ x: -100 }}
+                        animate={{ x: 0 }}
+                        exit={{ x: -100 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <NotificationBadge
+                          count={
+                            !partner || obligationCompleted.viewedAt ? 0 : 1
+                          }
+                          className="absolute -top-1 -right-3 w-3 h-3"
+                        />
+                        <ObligationComponent
+                          obligation={obligationCompleted.obligation}
+                          contractId={group.contract.contractId}
+                          completedAt={obligationCompleted.completedAt}
+                          ownerImageUrl={
+                            partner
+                              ? obligationCompleted.appUser?.photoURL
+                              : user?.photoURL
+                          }
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  ))}
               </div>
             </div>
           ))
@@ -170,6 +193,17 @@ export default function Home() {
     loadingData,
     loadingPartner,
   } = useObligations();
+
+  const { newObligations, markObligationsAsViewed } = useNotifications();
+
+  useEffect(() => {
+    if (!loadingPartner && newObligations.length > 0) {
+      setTimeout(() => {
+        markObligationsAsViewed();
+      }, 2000);
+    }
+  }, [newObligations, loadingPartner]);
+
   const [showPartner, setShowPartner] = React.useState(false); // For small screens
 
   const groupObligations = (

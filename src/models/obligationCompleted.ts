@@ -16,6 +16,8 @@ export default interface ObligationCompleted {
   contractId: string;
   obligation: Obligation;
   contract: Contract;
+  viewedAt?: string;
+
   appUser?: {
     photoURL: string;
     displayName: string;

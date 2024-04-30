@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
 import { useContracts } from "../../../lib/hooks/useContracts";
@@ -13,7 +13,9 @@ interface ContractsProps {}
 
 const ContractsPage: React.FC<ContractsProps> = () => {
   const router = useRouter();
-  const { contracts: contractsData, loading } = useContracts();
+
+  const { contracts: contractsData, loadingData } = useContracts();
+
   return (
     <div className="h-full w-full flex flex-col gap-1">
       <div className="flex flex-row gap-1">
@@ -29,12 +31,14 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </Button>
       </div>
       <div className="h-full w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 overflow-auto">
-        {loading
-          ? Array.from({ length: contractsData.length || 6 }).map((_, index) => (
-              <ContractComponentLoading
-                key={`contractComponentLoading - ${index}`}
-              />
-            ))
+        {loadingData
+          ? Array.from({ length: contractsData.length || 6 }).map(
+              (_, index) => (
+                <ContractComponentLoading
+                  key={`contractComponentLoading - ${index}`}
+                />
+              ),
+            )
           : contractsData.map(contractData => (
               <ContractComponent
                 contract={contractData}

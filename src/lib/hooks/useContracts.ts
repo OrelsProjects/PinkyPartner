@@ -15,7 +15,7 @@ import { AccountabilityPartner } from "../../models/appUser";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
-  const { contracts, error, loading } = useAppSelector(
+  const { contracts, error, loading, loadingData } = useAppSelector(
     state => state.contracts,
   );
 
@@ -112,6 +112,7 @@ export function useContracts() {
   return {
     contracts,
     loading,
+    loadingData,
     error,
     setContracts,
     setLoadingData,

@@ -9,7 +9,6 @@ import * as toast from "react-toastify";
 import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
-import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
 import { useEffect } from "react";
 import * as NProgress from "nprogress";
 
@@ -53,18 +52,15 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   return (
     <div className="w-screen h-screen flex flex-col relative">
       <div
-        className={cn(
-          "w-full lg:max-w-[70rem] mx-auto lg:flex p-4 relative",
-          {
-            "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
-          },
-        )}
+        className={cn("w-full lg:max-w-[70rem] mx-auto lg:flex p-4 relative", {
+          "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
+        })}
         style={{
           height: contentHeight,
           maxHeight: contentHeight,
         }}
       >
-        <SideNavigationBar className="mr-6" />
+        {user && <NavigationBar ref={bottomBarRef} className="lg:mr-6" />}
         <ThemeProvider>
           <div className="relative z-[51]">
             <toast.ToastContainer
@@ -88,7 +84,6 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           </div>
         )}
       </div>
-      {user && <NavigationBar ref={bottomBarRef} />}
     </div>
   );
 };

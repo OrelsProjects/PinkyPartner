@@ -28,8 +28,6 @@ import { useRouter } from "next/navigation";
 import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
-import { Skeleton } from "../../../../components/ui/skeleton";
-
 interface ObligationProps {
   params: {
     id?: string;
@@ -285,6 +283,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     obligations,
     loading,
   } = useObligations();
+
   const [obligation, setObligation] = useState<Obligation | undefined | null>(
     null,
   );

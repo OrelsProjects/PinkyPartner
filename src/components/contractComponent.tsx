@@ -66,7 +66,12 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   };
 
   return (
-    <div className="w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3">
+    <div
+      className={cn(
+        "w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3",
+        { "border-primary/50": !isUserSigned },
+      )}
+    >
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>

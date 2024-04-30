@@ -12,7 +12,7 @@ import {
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: string;
+  label: "Home" | "Obligations" | "Contracts";
   href: string;
 }
 

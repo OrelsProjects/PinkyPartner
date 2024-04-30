@@ -1,4 +1,4 @@
-import AppUser, { AccountabilityPartner } from "./appUser";
+import { AccountabilityPartner } from "./appUser";
 import Obligation from "./obligation";
 
 export default interface Contract {
@@ -8,6 +8,7 @@ export default interface Contract {
   dueDate: Date;
   description?: string | null;
   createdAt: Date;
+  viewedAt?: string;
 
   contractees: AccountabilityPartner[];
   obligations: Obligation[];

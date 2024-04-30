@@ -19,7 +19,9 @@ const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
 const Header = () => (
   <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-card z-50">
     <div className="w-full px-4 lg:px-0 lg:w-1/2 flex flex-row justify-between items-center">
-      <div className="text-2xl font-bold text-foreground">PinkyPartner</div>
+      <div className="text-3xl md:text-4xl font-bold text-foreground">
+        PinkyPartner
+      </div>
       <div className="flex flex-row gap-2">
         <Button asChild variant="outline" className="rounded-full h-12">
           <a
