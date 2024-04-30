@@ -12,6 +12,7 @@ import ContractViewComponent from "./contractViewComponent";
 import Contract from "../models/contract";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
+import { useObligations } from "../lib/hooks/useObligations";
 
 interface ContractComponentProps {
   contract: Contract;
@@ -49,6 +50,7 @@ export const ContractComponentLoading = ({
 
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
+  const { fetchPartnerData } = useObligations();
   const { user } = useAppSelector(state => state.auth);
 
   const isUserSigned = useMemo(
@@ -60,7 +62,12 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const handleSignContract = () => {
     toast.promise(signContract(contract.contractId, user), {
       pending: "Signing contract...",
-      success: "Contract signed!",
+      success: {
+        async render() {
+          fetchPartnerData([contract]);
+          return "Contract signed successfully";
+        },
+      },
       error: "Failed to sign contract",
     });
   };

@@ -52,11 +52,9 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
         },
       )}
       key={item.href}
+      onClick={() => handleItemClick(item)}
     >
-      <div
-        onClick={() => handleItemClick(item)}
-        className="flex flex-col lg:flex-row gap-2 justify-center items-center"
-      >
+      <div className="flex flex-col lg:flex-row gap-2 justify-center items-center">
         <span className="indicator">
           <NotificationBadge
             count={getItemNewNotificationCount(item)}
