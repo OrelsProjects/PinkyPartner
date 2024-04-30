@@ -16,6 +16,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const messaging = getMessaging(firebaseApp);
 debugger;
+
 onMessage(messaging, payload => {
   console.log("[firebase-messaging-sw.js] Received message ", payload);
   debugger;
