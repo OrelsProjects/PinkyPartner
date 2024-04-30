@@ -33,7 +33,7 @@ const AccountabilityPartnerComponent: React.FC<{
           src={partner.photoURL}
           alt={"Partner photo"}
           fill
-          className="rounded-full !relative !h-10 !w-10"
+          className="rounded-full !relative !h-10 !w-10 flex-shrink-0"
         />
       ) : (
         <FaUserCircle className="w-10 h-10 rounded-lg fill-gray-500" />

@@ -50,7 +50,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
               <span className="md:hidden text-[0.7rem] leading-3 tracking-tight capitalize -mt-0.5 font-medium text-base-content/75">
                 {item.label}
               </span>
-              <span className="hidden md:inline tracking-tight uppercase font-semibold text-base-content/75">
+              <span className="hidden md:inline tracking-tight uppercase font-semibold text-muted-foreground">
                 {item.label}
               </span>
             </div>

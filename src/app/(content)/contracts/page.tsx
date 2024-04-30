@@ -30,7 +30,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
       </div>
       <div className="h-full w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 overflow-auto">
         {loading
-          ? Array.from({ length: 6 }).map((_, index) => (
+          ? Array.from({ length: contractsData.length || 6 }).map((_, index) => (
               <ContractComponentLoading
                 key={`contractComponentLoading - ${index}`}
               />

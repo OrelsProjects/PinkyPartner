@@ -78,12 +78,12 @@ const ObligationComponent: React.FC<ObligationProps> = ({
       `}
       onClick={() => onClick?.(obligation)}
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 flex-shrink-1">
         <div className="flex flex-row gap-3">
           <span className="text-card-foreground">{obligation.emoji}</span>
           <span
             className={cn(
-              "text-card-foreground truncate font-medium",
+              "text-card-foreground line-clamp-1 font-medium",
               completedAt
                 ? "line-through text-muted-foreground font-normal"
                 : "",
@@ -94,7 +94,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
         </div>
         <RepeatComponent obligation={obligation} />
       </div>
-      <div className="h-full flex flex-row gap-2 items-center">
+      <div className="h-full flex flex-row gap-2 items-center flex-shrink-0">
         {ownerImageUrl && (
           <AccountabilityPartnerComponent
             signed

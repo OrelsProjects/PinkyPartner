@@ -206,7 +206,8 @@ export default function Home() {
       <Switch
         checked={showPartner}
         onCheckedChange={setShowPartner}
-        className="w-9 lg:hidden"
+        className="w-10"
+        containerClassName="lg:hidden"
         textUnder={showPartner ? "Partner" : "You"}
       />
       <h1 className="text-xl font-bold">Next up</h1>

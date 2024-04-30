@@ -270,7 +270,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                 required
                 error={formik.errors.title}
               />
-              <TextArea
+              {/* <TextArea
                 label="Description"
                 className="h-20"
                 name="description"
@@ -279,7 +279,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                 placeholder="Orel and Sara will read books everyday for 30 minutes."
                 rows={1}
                 error={formik.errors.description}
-              />
+              /> */}
               <Divider />
               <h1 className="text-xl font-bold">Obligations</h1>
               <div className="flex flex-col gap-0 w-full max-h-32">

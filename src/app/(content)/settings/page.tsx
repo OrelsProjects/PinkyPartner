@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/button";
 import useAuth from "../../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
 import InvitePartnerComponent from "../../../components/invitePartnerComponent";
+import { ThemeToggle } from "../../../components/theme-toggle";
 
 interface SettingsProps {}
 
@@ -49,9 +50,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Appearance</span>
-          <span className="text-base-content/75">
-            Change the look and feel of the app
-          </span>
+          <ThemeToggle />
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Notifications</span>
