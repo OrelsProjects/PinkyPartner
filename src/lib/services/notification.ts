@@ -61,24 +61,24 @@ export function createNotification(title: string, body: string, image: string) {
  * This function registers the service worker and initializes push notifications
  * @returns
  */
-export async function initPushNotifications() {
-  debugger;
+export async function getUserToken(): Promise<string> {
   if (!("serviceWorker" in navigator)) {
-    return;
+    return "";
   }
   if (isNotificationSupported()) {
     const permissionGranted = await requestPermission();
     if (!permissionGranted) {
-      return; // TODO: Throw
+      return ""; // TODO: Throw
     }
   } else {
-    return; // TODO: Throw
+    return ""; // TODO: Throw
   }
 
   const token = await getToken(messaging, {
     vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   });
 
+  return token;
   // debugger;
   // navigator.serviceWorker.register("/service-worker.js").then(registration => {
   //   registration.pushManager.getSubscription().then(subscription => {

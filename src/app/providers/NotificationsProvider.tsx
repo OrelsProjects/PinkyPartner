@@ -1,11 +1,16 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { initPushNotifications } from "../../lib/services/notification";
+import { getUserToken } from "../../lib/services/notification";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase.config";
 
 const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   const init = async () => {
-    await initPushNotifications();
+    await getUserToken();
+    onMessage(messaging, payload => {
+      alert(JSON.stringify(payload, null, 2));
+    });
   };
 
   useEffect(() => {
