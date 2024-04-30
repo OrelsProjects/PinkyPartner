@@ -66,6 +66,7 @@ export async function POST(
       dueDate: contractResponse.dueDate,
       title: contractResponse.title,
       description: contractResponse.description,
+      createdAt: contractResponse.createdAt,
       obligations,
       signatures: [session.user],
       contractees,
