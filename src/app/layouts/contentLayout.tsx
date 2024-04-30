@@ -4,6 +4,7 @@ import HeightProvider from "../providers/HeightProvider";
 import AuthProvider from "../providers/AuthProvider";
 import DataProvider from "../providers/DataProvider";
 import NextTopLoader from "nextjs-toploader";
+import NotificationsProvider from "../providers/NotificationsProvider";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -13,24 +14,26 @@ export default function ContentLayout({ children }: RootLayoutProps) {
   return (
     <main>
       <AuthProvider>
-        <DataProvider>
-          <HeightProvider>
-            <ContentProvider>
-              <NextTopLoader
-                color="hsl(var(--primary))"
-                initialPosition={0.08}
-                crawlSpeed={250}
-                height={3}
-                crawl={true}
-                showSpinner={false}
-                easing="ease"
-                speed={1500}
-                shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
-              />
-              {children}
-            </ContentProvider>
-          </HeightProvider>
-        </DataProvider>
+        <NotificationsProvider>
+          <DataProvider>
+            <HeightProvider>
+              <ContentProvider>
+                <NextTopLoader
+                  color="hsl(var(--primary))"
+                  initialPosition={0.08}
+                  crawlSpeed={250}
+                  height={3}
+                  crawl={true}
+                  showSpinner={false}
+                  easing="ease"
+                  speed={1500}
+                  shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
+                />
+                {children}
+              </ContentProvider>
+            </HeightProvider>
+          </DataProvider>
+        </NotificationsProvider>
       </AuthProvider>
     </main>
   );

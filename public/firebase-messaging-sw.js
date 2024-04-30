@@ -1,7 +1,6 @@
-importScripts("https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js");
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.11.1/firebase-messaging.js",
-);
+import { initializeApp } from "firebase/app";
+import { onMessage } from "firebase/messaging";
+import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,6 +12,46 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
+const messaging = getMessaging(firebaseApp);
+debugger;
+onMessage(messaging, payload => {
+  console.log("[firebase-messaging-sw.js] Received message ", payload);
+  debugger;
+  // ...
+});
+
+onBackgroundMessage(messaging, payload => {
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload,
+  );
+  // Customize notification here
+  const notificationTitle = "Background Message Title";
+  const notificationOptions = {
+    body: "Background Message body.",
+    icon: "/firebase-logo.png",
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// function addPushNotificationListener() {
+//   if (!isNotificationSupported() || !isPermissionGranted()) {
+//     return;
+//   }
+
+//   onMessage(messaging, payload => {
+//     debugger;
+//     console.log("Message received. ", payload);
+//   });
+//   onBackgroundMessage(messaging, payload => {
+//     debugger;
+//     console.log("Message received. ", payload);
+//     self.registration.showNotification(notificationTitle, notificationOptions);
+//   });
+
+//   // navigator.serviceWorker.addEventListener("message", onClick);
+//   // self.addEventListener("push", onClick);
+// }
