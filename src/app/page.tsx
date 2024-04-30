@@ -105,8 +105,8 @@ const HeroSection = () => (
         <TextGenerateEffect words={"Building habits is hard "} />
         <Highlight
           className="text-black dark:text-white 
-      from-orange-300/70 to-red-300/70 dark:from-orange-500/70 dark:to-red-500/70
-      "
+          from-orange-300 to-red-300 dark:from-orange-500 dark:to-red-500
+          "
           duration={0.8}
           delay={0.8}
         >
