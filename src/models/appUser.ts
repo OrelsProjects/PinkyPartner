@@ -6,6 +6,11 @@ export default interface AppUser {
   email: string;
   displayName?: string | null;
   photoURL?: string | null;
+  meta?: AppUserMetadata;
+}
+
+export interface AppUserMetadata {
+  referralCode: string;
 }
 
 export type UserData = {

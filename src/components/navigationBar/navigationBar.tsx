@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { BottomBarItem, BottomBarItems } from "./_consts";
+import { NavigationBarItem, BottomBarItems } from "./_consts";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -10,7 +10,7 @@ interface NavigationBar {
 
 const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   const [items] = useState([...BottomBarItems]);
-  const [activeItem, setActiveItem] = useState<BottomBarItem | undefined>(
+  const [activeItem, setActiveItem] = useState<NavigationBarItem | undefined>(
     items[0],
   );
   const router = useRouter();
@@ -20,13 +20,13 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     setActiveItem(items.find(i => pathname.includes(i.href)));
   }, [pathname]);
 
-  const handleItemClick = (item: BottomBarItem) => {
+  const handleItemClick = (item: NavigationBarItem) => {
     router.push(item.href);
   };
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 lg:left-0 z-40 pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)] bg-base-200 border-t border-base-content/10 select-none"
+      className="fixed lg:hidden inset-x-0 bottom-0 lg:left-0 z-40 pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)] bg-base-200 border-t border-base-content/10 select-none"
       ref={props.ref}
     >
       <div className="h-16 w-full flex flex-row">

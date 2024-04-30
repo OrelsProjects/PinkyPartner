@@ -21,6 +21,11 @@ export type CreateObligation = Omit<Obligation, "obligationId" | "userId">;
 export type ObligationsInContract = {
   contract: Contract;
   obligations: Obligation[];
+  appUser?: {
+    photoURL: string;
+    displayName: string;
+    userId: string;
+  };
 };
 
 export type ObligationsInContracts = ObligationsInContract[];

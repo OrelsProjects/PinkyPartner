@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
 import Contract, { CreateContract } from "../../../models/contract";
-import { formatObligations } from "../user/_utils";
+import { formatObligations } from "../_utils";
 
 export async function POST(
   req: NextRequest,

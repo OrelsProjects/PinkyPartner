@@ -2,7 +2,6 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Obligation, {
   CreateObligation,
-  ObligationsInContract,
   ObligationsInContracts,
 } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
@@ -11,19 +10,29 @@ import {
   addObligation as createObligationAction,
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
-  addObligationsToComplete as addObligationsToCompleteAction,
+  setObligationsToComplete as setObligationsToCompleteAction,
   completeObligation as completeObligationAction,
+  setObligationsCompleted as setObligationsCompletedAction,
+  setPartnerData as setPartnerDataAction,
+  setLoadingData as setLoadingDataAction,
+  setLoadingPartnerData as setLoadingPartnerDataAction,
+  setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
-import { useRef, useState } from "react";
+import ObligationCompleted from "../../models/obligationCompleted";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, error, obligationsToComplete } = useAppSelector(
-    state => state.obligations,
-  );
+  const {
+    obligations,
+    error,
+    obligationsToComplete,
+    obligationsCompleted,
+    partnerData,
+    loading,
+    loadingData,
+  } = useAppSelector(state => state.obligations);
   const { user } = useAppSelector(state => state.auth);
-  const [loading, setLoading] = useState(false);
 
   const updateObligationRepeat = (
     obligation: CreateObligation,
@@ -42,21 +51,12 @@ export function useObligations() {
     );
   };
 
-  const fetchObligations = async () => {
-    if (loading) {
-      throw new LoadingError("Already deleting obligation");
-    }
-    setLoading(true);
-    try {
-      const response = await axios.get("/api/obligation");
-      dispatch(setObligationsAction(response.data.result));
-      dispatch(setError(null));
-    } catch (err: any) {
-      dispatch(setError(err.message || "Error fetching obligations"));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+  const setLoadingData = (loading: boolean = true) => {
+    dispatch(setLoadingDataAction(loading));
+  };
+
+  const setLoadingPartnerData = (loading: boolean = true) => {
+    dispatch(setLoadingPartnerDataAction(loading));
   };
 
   const setObligations = (obligations: Obligation[]) => {
@@ -67,7 +67,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
       const response = await axios.post("/api/obligation", {
@@ -80,7 +80,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error creating obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -88,7 +88,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
       const response = await axios.patch("/api/obligation", updatedObligation);
@@ -98,7 +98,7 @@ export function useObligations() {
       dispatch(setError(err.message || "Error updating obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -106,7 +106,7 @@ export function useObligations() {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
-    setLoading(true);
+    dispatch(setLoading(true));
 
     try {
       await axios.delete(`/api/obligation/${obligation.obligationId}`);
@@ -116,52 +116,70 @@ export function useObligations() {
       dispatch(setError(err.message || "Error deleting obligation"));
       throw err;
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
-  const addObligationsToComplete = (obligations: ObligationsInContracts) => {
-    dispatch(addObligationsToCompleteAction([...obligations]));
+  const setObligationsToComplete = (obligations: ObligationsInContracts) => {
+    dispatch(setObligationsToCompleteAction([...obligations]));
+  };
+
+  const setObligationsCompleted = (obligations: ObligationCompleted[]) => {
+    dispatch(setObligationsCompletedAction([...obligations]));
+  };
+
+  const setPartnerData = (
+    obligationsInContracts: ObligationsInContracts,
+    obligationsCompleted: ObligationCompleted[],
+  ) => {
+    dispatch(
+      setPartnerDataAction({
+        obligationsToComplete: obligationsInContracts,
+        obligationsCompleted,
+      }),
+    );
   };
 
   const completeObligation = async (
     obligationId: string,
+    contractId: string,
   ) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
     }
-    setLoading(true);
 
     try {
-      await axios.post(
-        `/api/obligation/${obligationId}/complete`,
+      const obligationCompletedResponse = await axios.post<ObligationCompleted>(
+        `/api/obligation/${contractId}/${obligationId}/complete`,
       );
-      dispatch(
-        completeObligationAction({
-          obligationId,
-        }),
-      );
+      dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;
     } finally {
-      setLoading(false);
     }
   };
 
   return {
     obligations,
     obligationsToComplete,
+    obligationsCompleted,
+    partnerData,
     loading,
+    loadingData,
+    loadingPartner: partnerData.loading,
     error,
     setObligations,
+    setLoadingData,
+    setLoadingPartnerData,
     getUserObligation,
-    fetchObligations,
     createObligation,
     updateObligation,
     deleteObligation,
-    addObligationsToComplete,
+    setObligationsToComplete,
+    setObligationsCompleted,
+    setPartnerData,
     completeObligation,
   };
 }

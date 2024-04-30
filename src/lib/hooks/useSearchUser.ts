@@ -4,7 +4,7 @@ import { AccountabilityPartner } from "../../models/appUser";
 
 interface SearchUserHook {
   searchResult: AccountabilityPartner[];
-  loading: boolean;
+  status: "idle" | "loading" | "success" | "error" | "no-results";
   error: string | null;
   searchUsers: (query: string) => void;
   fetchUsers: () => void;
@@ -18,15 +18,27 @@ const useSearchUser = (): SearchUserHook => {
   const [error, setError] = useState<string | null>(null);
 
   const lastSearchTimestamp = useRef<number>(0);
-  const loading = useRef<boolean>(false);
+  const status = useRef<
+    "idle" | "loading" | "success" | "error" | "no-results"
+  >("idle");
   const debouncedFetch = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    console.log("status", status.current);
+  }, [status.current]);
 
   useEffect(() => {
     if (debouncedFetch.current) {
       clearTimeout(debouncedFetch.current);
     }
 
-    loading.current = true;
+    if (!query) {
+      setSearchResult([]);
+      status.current = "idle";
+      return;
+    }
+
+    status.current = "loading";
 
     debouncedFetch.current = setTimeout(() => {
       fetchUsers();
@@ -43,12 +55,12 @@ const useSearchUser = (): SearchUserHook => {
     try {
       if (!query) {
         setSearchResult([]);
-        loading.current = false;
+        status.current = "idle";
         return;
       }
 
       const now = Date.now();
-      loading.current = true;
+      status.current = "loading";
       lastSearchTimestamp.current = now;
       setError(null);
 
@@ -58,14 +70,13 @@ const useSearchUser = (): SearchUserHook => {
       const data = response.data;
 
       if (lastSearchTimestamp.current !== now) return;
-
+      status.current = data.length > 0 ? "success" : "no-results";
       setSearchResult(data);
     } catch (error: any) {
       setError(
         `An error occurred while fetching users. ${error.response.data.error}`,
       );
-    } finally {
-      loading.current = false;
+      status.current = "error";
     }
   };
 
@@ -81,7 +92,7 @@ const useSearchUser = (): SearchUserHook => {
 
   return {
     searchResult,
-    loading: loading.current,
+    status: status.current,
     error,
     searchUsers,
     fetchUsers,

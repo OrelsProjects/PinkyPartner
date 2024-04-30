@@ -1,28 +1,31 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Input } from "../../../components/ui/input";
-import { TextArea } from "../../../components/ui/textArea";
+import { Input } from "../../../../components/ui/input";
+import { TextArea } from "../../../../components/ui/textArea";
 import { useFormik } from "formik";
-import { CreateContract } from "../../../models/contract";
-import { useObligations } from "../../../lib/hooks/useObligations";
-import ObligationComponent from "../../../components/obligationComponent";
-import Obligation from "../../../models/obligation";
-import { AccountabilityPartner } from "../../../models/appUser";
-import useSearchUser from "../../../lib/hooks/useSearchUser";
-import { Skeleton } from "../../../components/ui/skeleton";
+import { CreateContract } from "../../../../models/contract";
+import { useObligations } from "../../../../lib/hooks/useObligations";
+import ObligationComponent from "../../../../components/obligationComponent";
+import Obligation from "../../../../models/obligation";
+import { AccountabilityPartner } from "../../../../models/appUser";
+import useSearchUser from "../../../../lib/hooks/useSearchUser";
+import { Skeleton } from "../../../../components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineCancel } from "react-icons/md";
-import { useAppSelector } from "../../../lib/hooks/redux";
-import { Checkbox } from "../../../components/ui/checkbox";
-import { useContracts } from "../../../lib/hooks/useContracts";
+import { useAppSelector } from "../../../../lib/hooks/redux";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import { useContracts } from "../../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import AccountabilityPartnerComponent from "../../../components/accountabilityPartnerComponent";
-import { getNextWeekDate } from "../../../lib/utils/dateUtils";
-import Divider from "../../../components/ui/divider";
+import AccountabilityPartnerComponent, {
+  AccountabilityPartnerComponentLoading,
+} from "../../../../components/accountabilityPartnerComponent";
+import { getNextWeekDate } from "../../../../lib/utils/dateUtils";
+import Divider from "../../../../components/ui/divider";
+import InvitePartnerComponent from "../../../../components/invitePartnerComponent";
 
 interface CreateContractPageProps {}
 
@@ -33,7 +36,8 @@ interface FindPartnerProps {
 const FindPartner = ({
   onPartnerSelect,
 }: FindPartnerProps): React.ReactNode => {
-  const { searchResult, searchUsers, loading, error } = useSearchUser();
+  const { user } = useAppSelector(state => state.auth);
+  const { searchResult, searchUsers, status, error } = useSearchUser();
 
   return (
     <div className="flex flex-col gap-2 w-full justify-center items-start">
@@ -46,27 +50,38 @@ const FindPartner = ({
         autoFocus
         error={error ?? undefined}
       />
-      {loading && (
-        <div className="flex flex-col gap-1">
-          {[...Array(5)].map((_, index) => (
-            <Skeleton
-              className="h-4 w-full rounded-full"
-              key={`skeleton-${index}`}
-            />
-          ))}
-        </div>
-      )}
-      <div className="max-h-64 w-full flex flex-col gap-1 overflow-auto">
-        {searchResult.map(partner => (
-          <AccountabilityPartnerComponent
-            partner={partner}
-            key={partner.userId}
-            onClick={onPartnerSelect}
-            className="!items-start"
-            signed
-          />
-        ))}
+      <div className="max-h-80 w-full flex flex-col gap-5 overflow-auto">
+        {status === "loading"
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <AccountabilityPartnerComponentLoading
+                key={`accountabilityPartnerComponentLoading - ${index}`}
+                className="!items-start"
+              />
+            ))
+          : searchResult.map(partner => (
+              <AccountabilityPartnerComponent
+                partner={partner}
+                key={partner.userId}
+                onClick={onPartnerSelect}
+                className="!items-start"
+                signed
+              />
+            ))}
       </div>
+      {(status === "no-results" || status === "success") && (
+        <>
+          <Divider />
+          <div className="mt-2 flex flex-row gap-1 items-start">
+            <span className="text-sm text-muted-foreground mt-0.5">
+              Can&apos;t find your partner?
+            </span>
+            <InvitePartnerComponent
+              buttonText="Invite them!"
+              referralCode={user?.meta?.referralCode}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -228,11 +243,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start "
+            className="h-full w-full flex flex-col gap-5 justify-start items-start overflow-auto"
           >
             <form
               onSubmit={formik.handleSubmit}
-              className="w-full flex flex-col gap-4"
+              className="w-full flex flex-col gap-4 pr-8"
             >
               <Button
                 variant="ghost"

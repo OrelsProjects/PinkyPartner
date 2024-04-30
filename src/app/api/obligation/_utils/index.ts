@@ -7,6 +7,10 @@ import { Contract, Obligation, ObligationCompleted } from "@prisma/client";
 export type ObligationsInContract = {
   contract: Contract;
   obligations: Obligation[];
+  appUser?: {
+    photoURL?: string | null;
+    displayName?: string | null;
+  };
 };
 
 export type ObligationsInContracts = ObligationsInContract[];
@@ -43,89 +47,6 @@ export function getEndOfTheWeekDate(): Date {
   endOfTheWeek.setHours(23, 59, 59, 999);
   return endOfTheWeek;
 }
-
-// export function extractObligationsToComplete(
-//   obligationsInContracts: ObligationsInContracts,
-//   completedObligations: ObligationCompleted[],
-// ): ObligationsInContracts {
-//   // Get today's date and start of the week
-//   const today = new Date();
-//   const startOfWeek = getStartOfTheWeekDate();
-
-//   // Helper function to check if an obligation is due on a given day
-//   function isDue(obligation: Obligation, day: Date): boolean {
-//     const dayOfWeek = day.getDay(); // Sunday is 0, Saturday is 6
-//     return (obligation.days as number[])?.includes(dayOfWeek) || false;
-//   }
-
-//   // Helper function to check weekly completion status
-//   function isWeeklyCompleted(
-//     obligation: Obligation,
-//     completedObs: ObligationCompleted[],
-//   ): boolean {
-//     const endOfWeek = getEndOfTheWeekDate();
-//     const completionsThisWeek = completedObs.filter(
-//       co =>
-//         co.obligationId === obligation.obligationId &&
-//         co.completedAt >= startOfWeek &&
-//         co.completedAt <= endOfWeek,
-//     ).length;
-//     return completionsThisWeek >= (obligation.timesAWeek ?? 0);
-//   }
-
-//   // Helper function to find the next due date for a daily obligation
-//   function getNextDueDateForDaily(
-//     obligation: Obligation,
-//     lastCompletedDate: Date | null,
-//   ): Date | null {
-//     const daysSorted = [...(obligation.days || [])].sort();
-//     const lastDate = lastCompletedDate || new Date(startOfWeek); // Use start of the week if no completion date available
-
-//     for (let i = 0; i < daysSorted.length; i++) {
-//       const nextDate = new Date(lastDate);
-//       const nextDayOffset = (daysSorted[i] + 7 - lastDate.getDay()) % 7;
-//       nextDate.setDate(
-//         lastDate.getDate() + (nextDayOffset === 0 ? 7 : nextDayOffset),
-//       ); // Ensure it's a future date
-
-//       if (nextDate > today) {
-//         return nextDate;
-//       }
-//     }
-//     return null;
-//   }
-
-//   const obligationsToComplete: ObligationsInContracts = [];
-
-//   obligationsInContracts.forEach(contract => {
-//     const obligationsDue = contract.obligations.filter(obligation => {
-//       if (obligation.repeat === "Weekly") {
-//         return !isWeeklyCompleted(obligation, completedObligations);
-//       } else if (obligation.repeat === "Daily") {
-//         if (isDue(obligation, today)) {
-//           const lastCompletion = completedObligations.find(
-//             co => co.obligationId === obligation.obligationId,
-//           );
-//           const nextDueDate = getNextDueDateForDaily(
-//             obligation,
-//             lastCompletion?.completedAt || null,
-//           );
-//           return nextDueDate && nextDueDate <= today;
-//         }
-//       }
-//       return false;
-//     });
-
-//     if (obligationsDue.length > 0) {
-//       obligationsToComplete.push({
-//         contract: contract.contract,
-//         obligations: obligationsDue,
-//       });
-//     }
-//   });
-
-//   return obligationsToComplete;
-// }
 
 function isObligationDueDaily(obligation: Obligation): boolean {
   const today = new Date().getDay();
@@ -202,8 +123,9 @@ export function getObligationsToComplete(
     const obligationsNotDue = obligationsInContract.obligations.filter(
       obligation => !isObligationDue(obligation),
     );
-    const obligationsToComplete = obligationsNotDue.filter(obligation =>
-      !isObligationCompleted(obligation, weeksCompletedObligations),
+    const obligationsToComplete = obligationsNotDue.filter(
+      obligation =>
+        !isObligationCompleted(obligation, weeksCompletedObligations),
     );
     if (obligationsToComplete.length === 0) {
       continue;
@@ -212,6 +134,7 @@ export function getObligationsToComplete(
     obligationsInContractsToComplete.push({
       contract: obligationsInContract.contract,
       obligations: obligationsToComplete,
+      appUser: obligationsInContract.appUser,
     });
   }
 

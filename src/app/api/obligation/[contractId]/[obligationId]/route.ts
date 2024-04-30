@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
-import prisma from "../../_db/db";
-import { authOptions } from "../../../../authOptions";
+import prisma from "../../../_db/db";
+import { authOptions } from "../../../../../authOptions";
 
 export async function DELETE(
   req: NextRequest,

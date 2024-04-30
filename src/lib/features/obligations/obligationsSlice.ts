@@ -5,18 +5,33 @@ import Obligation, {
   ObligationsInContract,
   ObligationsInContracts,
 } from "../../../models/obligation";
+import ObligationCompleted from "../../../models/obligationCompleted";
 
 interface ObligationsState {
   obligations: Obligation[];
   obligationsToComplete: ObligationsInContracts;
+  obligationsCompleted: ObligationCompleted[];
+  partnerData: {
+    loading?: boolean;
+    obligationsToComplete: ObligationsInContracts;
+    obligationsCompleted: ObligationCompleted[];
+  };
   loading: boolean;
+  loadingData: boolean;
   error: string | null;
 }
 
 const initialState: ObligationsState = {
   obligations: [],
   obligationsToComplete: [],
+  obligationsCompleted: [],
+  partnerData: {
+    loading: false,
+    obligationsToComplete: [],
+    obligationsCompleted: [],
+  },
   loading: false,
+  loadingData: false,
   error: null,
 };
 
@@ -43,13 +58,29 @@ const obligationsSlice = createSlice({
         obligation => obligation.obligationId !== action.payload,
       );
     },
-    addObligationsToComplete(
+    setObligationsToComplete(
       state,
       action: PayloadAction<ObligationsInContracts>,
     ) {
-      state.obligationsToComplete.push(...action.payload);
+      state.obligationsToComplete = action.payload;
     },
-    completeObligation(state, action: PayloadAction<{ obligationId: string }>) {
+    setObligationsCompleted(
+      state,
+      action: PayloadAction<ObligationCompleted[]>,
+    ) {
+      state.obligationsCompleted = action.payload;
+    },
+    setPartnerData(
+      state,
+      action: PayloadAction<{
+        obligationsToComplete: ObligationsInContracts;
+        obligationsCompleted: ObligationCompleted[];
+      }>,
+    ) {
+      state.partnerData = action.payload;
+    },
+
+    completeObligation(state, action: PayloadAction<ObligationCompleted>) {
       state.obligationsToComplete = state.obligationsToComplete.map(
         (obligationsInContract: ObligationsInContract) => {
           const newObligations = obligationsInContract.obligations.filter(
@@ -62,9 +93,19 @@ const obligationsSlice = createSlice({
           };
         },
       );
+      state.obligationsCompleted.push(action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
+    },
+    setLoadingData(state, action: PayloadAction<boolean>) {
+      state.loadingData = action.payload;
+    },
+    setLoadingPartnerData(state, action: PayloadAction<boolean>) {
+      state.partnerData = {
+        ...state.partnerData,
+        loading: action.payload,
+      };
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
@@ -77,9 +118,13 @@ export const {
   addObligation,
   updateObligation,
   deleteObligation,
-  addObligationsToComplete,
+  setObligationsToComplete,
+  setObligationsCompleted,
+  setPartnerData,
   completeObligation,
   setLoading,
+  setLoadingData,
+  setLoadingPartnerData,
   setError,
 } = obligationsSlice.actions;
 

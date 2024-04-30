@@ -5,27 +5,30 @@ import Obligation, {
   CreateObligation,
   Days,
   TimesAWeek,
-} from "../../../models/obligation";
-import { useObligations } from "../../../lib/hooks/useObligations";
+} from "../../../../models/obligation";
+import { useObligations } from "../../../../lib/hooks/useObligations";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   DialogFooter,
   DialogTrigger,
   Dialog,
   DialogContent,
-} from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+} from "../../../../components/ui/dialog";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import ObligationComponent from "../../../components/obligationComponent";
+import ObligationComponent, {
+  ObligationComponentLoading,
+} from "../../../../components/obligationComponent";
 import { useRouter } from "next/navigation";
-import IntervalDropdown from "../../../components/ui/dropdowns/intervalDropdown";
-import { Checkbox } from "../../../components/ui/checkbox";
-import TimesAWeekDropdown from "../../../components/ui/dropdowns/timesAWeekDropdown";
+import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
+import { Skeleton } from "../../../../components/ui/skeleton";
 
 interface ObligationProps {
   params: {
@@ -175,9 +178,9 @@ const ObligationDialog = ({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="text-2xl !p-0 flex justify-center items-center"
+          className="text-2xl flex justify-center items-center p-2"
         >
-          <FaPlus className="w-5 h-5 mb-2 fill-muted-foreground" />
+          <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-5/6 sm:max-w-[425px]">
@@ -279,7 +282,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     getUserObligation,
     createObligation,
     updateObligation,
-    deleteObligation,
     obligations,
     loading,
   } = useObligations();
@@ -344,8 +346,8 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   return (
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
-        <span className="text-lg text-muted-foreground">
-          Obligations {obligations.length > 0 && `(${obligations.length})`}
+        <span className="text-lg lg:text-xl text-muted-foreground mt-1">
+          OBLIGATIONS {obligations.length > 0 && `(${obligations.length})`}
         </span>
         <ObligationDialog
           onCreate={handleCreateObligation}
@@ -356,15 +358,21 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
           obligation={obligation}
         />
       </div>
-      <div className="flex flex-wrap gap-3 justify-start md:justify-between items-start overflow-auto">
-        {obligations.map(obligation => (
-          <ObligationComponent
-            obligation={obligation}
-            key={obligation.obligationId}
-            onClick={handleOnObligationClick}
-            showDelete
-          />
-        ))}
+      <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <div className="flex flex-col gap-1" key={index}>
+                <ObligationComponentLoading />
+              </div>
+            ))
+          : obligations.map(obligation => (
+              <ObligationComponent
+                obligation={obligation}
+                key={obligation.obligationId}
+                onClick={handleOnObligationClick}
+                showDelete
+              />
+            ))}
       </div>
     </div>
   );

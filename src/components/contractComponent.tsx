@@ -1,16 +1,51 @@
+"use client";
+
 import React, { useMemo } from "react";
-import { AccountabilityPartner } from "../models/appUser";
-import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
+import AccountabilityPartnerComponent, {
+  AccountabilityPartnerComponentLoading,
+} from "./accountabilityPartnerComponent";
 import { useContracts } from "../lib/hooks/useContracts";
 import { useAppSelector } from "../lib/hooks/redux";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import ContractViewComponent from "./contractViewComponent";
 import Contract from "../models/contract";
+import { Skeleton } from "./ui/skeleton";
+import { cn } from "../lib/utils";
 
 interface ContractComponentProps {
   contract: Contract;
 }
+
+export const ContractComponentLoading = ({
+  className,
+}: {
+  className?: string;
+}) => (
+  <div
+    className={cn(
+      "w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3",
+      className,
+    )}
+  >
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-row justify-between">
+        <Skeleton className="w-40 h-6 rounded-lg" />
+        <Skeleton className="w-32 h-9 rounded-lg" />
+      </div>
+      <Skeleton className="w-4/6 h-5 rounded-lg" />
+      <Skeleton className="w-32 h-5 rounded-lg" />
+    </div>
+    <div className="w-full flex flex-row justify-around md:justify-start gap-1 md:gap-3">
+      <AccountabilityPartnerComponentLoading
+        key={"accountabilityPartnerComponentLoading - 1"}
+      />
+      <AccountabilityPartnerComponentLoading
+        key={"accountabilityPartnerComponentLoading - 2"}
+      />
+    </div>
+  </div>
+);
 
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();

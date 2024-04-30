@@ -1,5 +1,5 @@
 import { Obligation } from "@prisma/client";
-import * as ClientObligation from "../../../../models/obligation";
+import * as ClientObligation from "../../../models/obligation";
 
 export const formatObligations = (
   obligations: Obligation[],

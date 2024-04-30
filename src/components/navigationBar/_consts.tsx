@@ -9,7 +9,7 @@ import {
   RiFilePaper2Fill as ContractsActive,
 } from "react-icons/ri";
 
-export interface BottomBarItem {
+export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
   label: string;
@@ -19,7 +19,7 @@ export interface BottomBarItem {
 const className = "w-6 h-6 fill-muted text-muted";
 const classNameActive = "w-6 h-6 fill-muted-foreground";
 
-export const BottomBarItems: BottomBarItem[] = [
+export const BottomBarItems: NavigationBarItem[] = [
   {
     icon: () => <Home className={className} />,
     iconActive: () => <HomeActive className={classNameActive} />,

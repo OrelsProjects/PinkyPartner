@@ -7,12 +7,14 @@ import { AccountabilityPartner } from "../../../models/appUser";
 interface ContractsState {
   contracts: Contract[];
   loading: boolean;
+  loadingData: boolean;
   error: string | null;
 }
 
 const initialState: ContractsState = {
   contracts: [],
   loading: false,
+  loadingData: false,
   error: null,
 };
 
@@ -56,6 +58,9 @@ const contractsSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    setLoadingData(state, action: PayloadAction<boolean>) {
+      state.loadingData = action.payload;
+    },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
@@ -69,6 +74,7 @@ export const {
   updateContract,
   signContract,
   deleteContract,
+  setLoadingData,
   setLoading,
   setError,
 } = contractsSlice.actions;

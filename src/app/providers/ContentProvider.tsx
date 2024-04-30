@@ -3,12 +3,15 @@
 import * as React from "react";
 import "react-toastify/dist/ReactToastify.css";
 import SizeContext from "../../lib/context/sizeContext";
-import NavigationBar from "../../components/bottomBar";
+import NavigationBar from "../../components/navigationBar";
 import { ThemeProvider } from "./ThemeProvider";
 import * as toast from "react-toastify";
 import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
+import SideNavigationBar from "../../components/navigationBar/sideNavigationBar";
+import { useEffect } from "react";
+import * as NProgress from "nprogress";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -23,6 +26,21 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const [contentHeight, setContentHeight] = React.useState<number>(
     sizeContent.height,
   );
+  ("use client");
+
+  useEffect(() => {
+    NProgress.start();
+    NProgress.configure({ showSpinner: false });
+
+    NProgress.set(0.4);
+
+    const random = Math.floor(Math.random() * 1000) + 500;
+
+    setTimeout(() => {
+      NProgress.done();
+      NProgress.remove();
+    }, random);
+  }, []);
 
   React.useEffect(() => {
     if (bottomBarRef.current) {
@@ -36,7 +54,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
     <div className="w-screen h-screen flex flex-col relative">
       <div
         className={cn(
-          "w-full lg:max-w-[92rem] mx-auto lg:flex p-4 overflow-y-auto relative",
+          "w-full lg:max-w-[70rem] mx-auto lg:flex p-4 relative",
           {
             "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
           },
@@ -46,19 +64,22 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           maxHeight: contentHeight,
         }}
       >
+        <SideNavigationBar className="mr-6" />
         <ThemeProvider>
-          <div className="w-full h-full relative z-10">
-            {children}
+          <div className="relative z-[51]">
             <toast.ToastContainer
               stacked
               newestOnTop
               theme="dark"
               autoClose={2500}
               draggablePercent={60}
-              className="!mb-16"
+              className="!mb-16 z-[51]"
               transition={toast.Flip}
               position="bottom-center"
             />
+          </div>
+          <div className="w-full h-full relative z-10 overflow-auto">
+            {children}
           </div>
         </ThemeProvider>
         {user && (
