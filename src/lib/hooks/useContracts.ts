@@ -8,6 +8,7 @@ import {
   updateContract as updateContractAction,
   deleteContract as deleteContractAction,
   signContract as signContractAction,
+  setLoadingData as setLoadingDataAction,
   setLoading,
 } from "../features/contracts/contractsSlice";
 import { AccountabilityPartner } from "../../models/appUser";
@@ -50,12 +51,11 @@ export function useContracts() {
   };
 
   const setLoadingData = (loading: boolean = true) => {
-    dispatch(setLoading(loading));
+    dispatch(setLoadingDataAction(loading));
   };
 
   const setContracts = (contracts: Contract[]) => {
     dispatch(setContractsAction(contracts));
-    dispatch(setLoading(false));
   };
 
   const updateContract = async (contractData: Contract) => {

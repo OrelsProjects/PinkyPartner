@@ -14,6 +14,8 @@ import {
   completeObligation as completeObligationAction,
   setObligationsCompleted as setObligationsCompletedAction,
   setPartnerData as setPartnerDataAction,
+  setLoadingData as setLoadingDataAction,
+  setLoadingPartnerData as setLoadingPartnerDataAction,
   setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
@@ -28,6 +30,7 @@ export function useObligations() {
     obligationsCompleted,
     partnerData,
     loading,
+    loadingData,
   } = useAppSelector(state => state.obligations);
   const { user } = useAppSelector(state => state.auth);
 
@@ -48,30 +51,16 @@ export function useObligations() {
     );
   };
 
-  const fetchObligations = async () => {
-    if (loading) {
-      throw new LoadingError("Already deleting obligation");
-    }
-    dispatch(setLoading(true));
-    try {
-      const response = await axios.get("/api/obligation");
-      dispatch(setObligationsAction(response.data.result));
-      dispatch(setError(null));
-    } catch (err: any) {
-      dispatch(setError(err.message || "Error fetching obligations"));
-      throw err;
-    } finally {
-      dispatch(setLoading(false));
-    }
+  const setLoadingData = (loading: boolean = true) => {
+    dispatch(setLoadingDataAction(loading));
   };
 
-  const setLoadingData = (loading: boolean = true) => {
-    dispatch(setLoading(loading));
+  const setLoadingPartnerData = (loading: boolean = true) => {
+    dispatch(setLoadingPartnerDataAction(loading));
   };
 
   const setObligations = (obligations: Obligation[]) => {
     dispatch(setObligationsAction(obligations));
-    dispatch(setLoading(false));
   };
 
   const createObligation = async (obligationData: CreateObligation) => {
@@ -178,11 +167,13 @@ export function useObligations() {
     obligationsCompleted,
     partnerData,
     loading,
+    loadingData,
+    loadingPartner: partnerData.loading,
     error,
     setObligations,
     setLoadingData,
+    setLoadingPartnerData,
     getUserObligation,
-    fetchObligations,
     createObligation,
     updateObligation,
     deleteObligation,

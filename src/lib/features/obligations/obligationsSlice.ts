@@ -12,10 +12,12 @@ interface ObligationsState {
   obligationsToComplete: ObligationsInContracts;
   obligationsCompleted: ObligationCompleted[];
   partnerData: {
+    loading?: boolean;
     obligationsToComplete: ObligationsInContracts;
     obligationsCompleted: ObligationCompleted[];
   };
   loading: boolean;
+  loadingData: boolean;
   error: string | null;
 }
 
@@ -24,10 +26,12 @@ const initialState: ObligationsState = {
   obligationsToComplete: [],
   obligationsCompleted: [],
   partnerData: {
+    loading: false,
     obligationsToComplete: [],
     obligationsCompleted: [],
   },
   loading: false,
+  loadingData: false,
   error: null,
 };
 
@@ -94,6 +98,15 @@ const obligationsSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    setLoadingData(state, action: PayloadAction<boolean>) {
+      state.loadingData = action.payload;
+    },
+    setLoadingPartnerData(state, action: PayloadAction<boolean>) {
+      state.partnerData = {
+        ...state.partnerData,
+        loading: action.payload,
+      };
+    },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
@@ -110,6 +123,8 @@ export const {
   setPartnerData,
   completeObligation,
   setLoading,
+  setLoadingData,
+  setLoadingPartnerData,
   setError,
 } = obligationsSlice.actions;
 

@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
-import { useContracts } from "../../lib/hooks/useContracts";
+import { useContracts } from "../../../lib/hooks/useContracts";
 import ContractComponent, {
   ContractComponentLoading,
-} from "../../components/contractComponent";
+} from "../../../components/contractComponent";
 import { FaPlus } from "react-icons/fa";
 
 interface ContractsProps {}

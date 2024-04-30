@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAppSelector } from "../../lib/hooks/redux";
-import Divider from "../../components/ui/divider";
-import { Button } from "../../components/ui/button";
-import useAuth from "../../lib/hooks/useAuth";
+import { useAppSelector } from "../../../lib/hooks/redux";
+import Divider from "../../../components/ui/divider";
+import { Button } from "../../../components/ui/button";
+import useAuth from "../../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
-import InvitePartnerComponent from "../../components/invitePartnerComponent";
+import InvitePartnerComponent from "../../../components/invitePartnerComponent";
 
 interface SettingsProps {}
 

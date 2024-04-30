@@ -5,30 +5,30 @@ import Obligation, {
   CreateObligation,
   Days,
   TimesAWeek,
-} from "../../../models/obligation";
-import { useObligations } from "../../../lib/hooks/useObligations";
+} from "../../../../models/obligation";
+import { useObligations } from "../../../../lib/hooks/useObligations";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   DialogFooter,
   DialogTrigger,
   Dialog,
   DialogContent,
-} from "../../../components/ui/dialog";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+} from "../../../../components/ui/dialog";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import ObligationComponent, {
   ObligationComponentLoading,
-} from "../../../components/obligationComponent";
+} from "../../../../components/obligationComponent";
 import { useRouter } from "next/navigation";
-import IntervalDropdown from "../../../components/ui/dropdowns/intervalDropdown";
-import { Checkbox } from "../../../components/ui/checkbox";
-import TimesAWeekDropdown from "../../../components/ui/dropdowns/timesAWeekDropdown";
-import { Skeleton } from "../../../components/ui/skeleton";
+import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
+import { Skeleton } from "../../../../components/ui/skeleton";
 
 interface ObligationProps {
   params: {

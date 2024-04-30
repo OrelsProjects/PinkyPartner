@@ -25,6 +25,7 @@ export default function DataProvider({
     setObligationsCompleted,
     setPartnerData,
     setLoadingData: setLoadingDataObligations,
+    setLoadingPartnerData,
   } = useObligations();
   const { setContracts, setLoadingData: setLoadingDataContracts } =
     useContracts();
@@ -48,6 +49,8 @@ export default function DataProvider({
       setPartnerData(toComplete, completed);
     } catch (error: any) {
       Logger.error("Failed to fetch partner data", error);
+    } finally {
+      setLoadingPartnerData(false);
     }
   };
 
@@ -56,8 +59,9 @@ export default function DataProvider({
       if (isDataFetched) return;
       if (isFetchingData.current) return;
       isFetchingData.current = true;
-      setLoadingDataContracts();
-      setLoadingDataObligations();
+      setLoadingDataContracts(true);
+      setLoadingDataObligations(true);
+      setLoadingPartnerData(true);
 
       // Making both API requests in parallel
       const [userDataResponse, allObligationsResponse] =
@@ -93,10 +97,15 @@ export default function DataProvider({
       setContracts(contracts || []);
       setObligationsToComplete(obligationsToComplete || []);
       setObligationsCompleted(completed || []);
+      setLoadingDataContracts(false);
+      setLoadingDataObligations(false);
+      // Fetch partner data - on signed contracts
+      fetchPartnerData(contracts);
       setDataFetched();
-      await fetchPartnerData(contracts);
-    } catch (error) {
-      // Optionally handle any errors that aren't related to the individual promises
+    } catch (error: any) {
+      Logger.error("Failed to fetch user data", error);
+      setLoadingDataContracts(false);
+      setLoadingDataObligations(false);
     } finally {
       isFetchingData.current = false;
     }

@@ -1,5 +1,6 @@
+"use client";
+
 import React, { useMemo } from "react";
-import { AccountabilityPartner } from "../models/appUser";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
 } from "./accountabilityPartnerComponent";

@@ -1,31 +1,31 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Input } from "../../../components/ui/input";
-import { TextArea } from "../../../components/ui/textArea";
+import { Input } from "../../../../components/ui/input";
+import { TextArea } from "../../../../components/ui/textArea";
 import { useFormik } from "formik";
-import { CreateContract } from "../../../models/contract";
-import { useObligations } from "../../../lib/hooks/useObligations";
-import ObligationComponent from "../../../components/obligationComponent";
-import Obligation from "../../../models/obligation";
-import { AccountabilityPartner } from "../../../models/appUser";
-import useSearchUser from "../../../lib/hooks/useSearchUser";
-import { Skeleton } from "../../../components/ui/skeleton";
+import { CreateContract } from "../../../../models/contract";
+import { useObligations } from "../../../../lib/hooks/useObligations";
+import ObligationComponent from "../../../../components/obligationComponent";
+import Obligation from "../../../../models/obligation";
+import { AccountabilityPartner } from "../../../../models/appUser";
+import useSearchUser from "../../../../lib/hooks/useSearchUser";
+import { Skeleton } from "../../../../components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineCancel } from "react-icons/md";
-import { useAppSelector } from "../../../lib/hooks/redux";
-import { Checkbox } from "../../../components/ui/checkbox";
-import { useContracts } from "../../../lib/hooks/useContracts";
+import { useAppSelector } from "../../../../lib/hooks/redux";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import { useContracts } from "../../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
-} from "../../../components/accountabilityPartnerComponent";
-import { getNextWeekDate } from "../../../lib/utils/dateUtils";
-import Divider from "../../../components/ui/divider";
-import InvitePartnerComponent from "../../../components/invitePartnerComponent";
+} from "../../../../components/accountabilityPartnerComponent";
+import { getNextWeekDate } from "../../../../lib/utils/dateUtils";
+import Divider from "../../../../components/ui/divider";
+import InvitePartnerComponent from "../../../../components/invitePartnerComponent";
 
 interface CreateContractPageProps {}
 

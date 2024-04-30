@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ElementType } from "react";
 import Obligation from "../models/obligation";
 import { useObligations } from "../lib/hooks/useObligations";

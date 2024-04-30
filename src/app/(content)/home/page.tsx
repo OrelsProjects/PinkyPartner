@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { useObligations } from "../../lib/hooks/useObligations";
+import { useObligations } from "../../../lib/hooks/useObligations";
 import ObligationComponent, {
   ObligationComponentLoading,
-} from "../../components/obligationComponent";
+} from "../../../components/obligationComponent";
 import { AnimatePresence, motion } from "framer-motion";
-import { Skeleton } from "../../components/ui/skeleton";
-import Divider from "../../components/ui/divider";
-import ObligationCompleted from "../../models/obligationCompleted";
-import Contract from "../../models/contract";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { ObligationsInContracts } from "../../models/obligation";
-import { cn } from "../../lib/utils";
-import { Switch } from "../../components/ui/switch";
+import { Skeleton } from "../../../components/ui/skeleton";
+import Divider from "../../../components/ui/divider";
+import ObligationCompleted from "../../../models/obligationCompleted";
+import Contract from "../../../models/contract";
+import { useAppSelector } from "../../../lib/hooks/redux";
+import { ObligationsInContracts } from "../../../models/obligation";
+import { cn } from "../../../lib/utils";
+import { Switch } from "../../../components/ui/switch";
 
 type GroupedObligations = {
   [key: string]: {
@@ -23,8 +23,8 @@ type GroupedObligations = {
 };
 
 const Loading = () =>
-  Array.from({ length: 5 }).map((_, index) => (
-    <div className="flex flex-col gap-1" key={index}>
+  Array.from({ length: 3 }).map((_, index) => (
+    <div className="flex last:hidden last:lg:flex flex-col gap-2" key={index}>
       <Skeleton className="w-24 h-6" />
       <ObligationComponentLoading />
     </div>
@@ -37,7 +37,7 @@ const NextUp = ({
   partner,
   className,
 }: {
-  loading: boolean;
+  loading?: boolean;
   obligationsToComplete: ObligationsInContracts;
   user?: { photoURL?: string | null } | null;
   partner?: boolean;
@@ -163,8 +163,13 @@ const Done = ({
 
 export default function Home() {
   const { user } = useAppSelector(state => state.auth);
-  const { obligationsToComplete, obligationsCompleted, partnerData, loading } =
-    useObligations();
+  const {
+    obligationsToComplete,
+    obligationsCompleted,
+    partnerData,
+    loadingData,
+    loadingPartner,
+  } = useObligations();
   const [showPartner, setShowPartner] = React.useState(false); // For small screens
 
   const groupObligations = (
@@ -207,7 +212,7 @@ export default function Home() {
       <h1 className="text-xl font-bold">Next up</h1>
       <div className="w-full h-4/10 min-h-[40%] flex-shrink-0 flex flex-row justify-between">
         <NextUp
-          loading={loading}
+          loading={loadingData}
           obligationsToComplete={obligationsToComplete}
           user={{
             photoURL: user?.photoURL,
@@ -215,7 +220,7 @@ export default function Home() {
           className={`${showPartner ? "hidden" : "flex"} lg:flex`}
         />
         <NextUp
-          loading={loading}
+          loading={loadingPartner}
           obligationsToComplete={partnerData.obligationsToComplete}
           partner
           className={`${showPartner ? "flex" : "hidden"} lg:flex`}
@@ -225,7 +230,7 @@ export default function Home() {
       <h1 className="text-xl font-bold">Done</h1>
       <div className="w-full h-4/10 min-h-[40%] flex flex-row justify-between">
         <Done
-          loading={loading}
+          loading={loadingData}
           groupedObligations={groupedObligationsCompleted}
           user={{
             photoURL: user?.photoURL,
@@ -233,7 +238,7 @@ export default function Home() {
           className={`${showPartner ? "hidden" : "flex"} lg:flex`}
         />
         <Done
-          loading={loading}
+          loading={loadingPartner}
           groupedObligations={partnersGroupedObligationsCompleted}
           partner
           className={`${showPartner ? "flex" : "hidden"} lg:flex`}
