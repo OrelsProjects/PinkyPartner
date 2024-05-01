@@ -172,6 +172,24 @@ export default function Home() {
   const partTwoRef = useRef<HTMLDivElement>(null);
   const partThreeRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then(registration => {
+            console.log("Service Worker registered: ", registration);
+          })
+          .catch(registrationError => {
+            console.log(
+              "Service Worker registration failed: ",
+              registrationError,
+            );
+          });
+      });
+    }
+  }, []);
+
   const scrollToPartOne = () => {
     partOneRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
