@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Obligation, {
   CreateObligation,
   Days,
@@ -66,9 +66,11 @@ const Weekly = ({
 const Daily = ({
   onChange,
   days,
+  showRepeatText = true,
 }: {
   onChange: (days: number[]) => void;
   days?: number[];
+  showRepeatText?: boolean;
 }) => {
   const formik = useFormik<Record<string, boolean>>({
     initialValues: {
@@ -96,27 +98,44 @@ const Daily = ({
     onChange(days);
   }, [formik.values]);
 
+  // Return su, mo, tu, we, th, fr, sa for every corresponding day that is checked
+  const daysText = useMemo(() => {
+    const days = Object.keys(formik.values)
+      .filter(day => formik.values[day as keyof typeof formik.values])
+      .map(day => day.slice(0, 2))
+      .map(day => day[0].toUpperCase() + day.slice(1));
+    return days.join(", ");
+  }, [formik.values]);
+
   return (
-    <div className="flex flex-row justify-between h-fit w-full">
-      {Object.keys(formik.values).map((day, index) => (
-        <div
-          key={index}
-          className="flex flex-col justify-center items-center text-muted-foreground"
-        >
-          <Checkbox
-            className="w-6 h-6"
-            defaultChecked={formik.values[day]}
-            checked={formik.values[day]}
-            onCheckedChange={checked => formik.setFieldValue(day, checked)}
-          />
-          <div>{day[0].toUpperCase()}</div>
+    <div className="flex flex-col h-fit w-full gap-0.5">
+      <div className="flex flex-row justify-between h-fit w-full gap-3">
+        {Object.keys(formik.values).map((day, index) => (
+          <div
+            key={index}
+            className="flex flex-col justify-center items-center text-muted-foreground"
+          >
+            <Checkbox
+              className="w-6 h-6"
+              defaultChecked={formik.values[day]}
+              checked={formik.values[day]}
+              onCheckedChange={checked => formik.setFieldValue(day, checked)}
+            />
+            <div>{day[0].toUpperCase()}</div>
+          </div>
+        ))}
+      </div>
+      {showRepeatText && (
+        <div className="text-muted-foreground font-normal italic flex flex-col">
+          <div>Repeat every:</div>
+          {daysText}
         </div>
-      ))}
+      )}
     </div>
   );
 };
 
-const ObligationDialog = ({
+const PromiseDialog = ({
   obligation,
   onCreate,
   onEdit,
@@ -162,6 +181,11 @@ const ObligationDialog = ({
         days: obligation.days,
         timesAWeek: obligation.timesAWeek,
       });
+    } else {
+      formik.setValues({
+        ...formik.values,
+        emoji: formik.values.emoji || "🤝",
+      });
     }
   }, [obligation]);
 
@@ -180,66 +204,73 @@ const ObligationDialog = ({
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-5/6 sm:max-w-[425px]">
-        <div className="w-full flex justify-center items-center">
-          <Button
-            className="w-fit h-fit"
-            variant={"outline"}
-            onClick={() => setShowEmojiPicker(true)}
-          >
-            {formik.values.emoji ? (
-              <div className="text-3xl">{formik.values.emoji}</div>
-            ) : (
-              <EmojiIcon className="w-8 h-8 fill-muted-foreground" />
-            )}
-          </Button>
-        </div>
+      <DialogContent className="w-5/6 sm:max-w-[525px] sm:h-[525px]">
         <form
           onSubmit={formik.handleSubmit}
-          className="flex flex-col justify-center items-center gap-4 py-4 w-full"
+          className="flex flex-col justify-start items-center gap-4 w-full"
         >
-          <div className="flex flex-col gap-4 py-4 ">
-            <div className="flex flex-col justify-start items-start gap-2">
-              <Label htmlFor="title" className="text-right">
-                I pinky promise to...
-              </Label>
-              <Input
-                id="title"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                placeholder="Run 2km"
-                error={formik.errors.title}
-                maxLength={24}
-                required
-              />
-              <div className="w-full flex justify-start items-center gap-2">
-                <div className="font-normal">Repeat</div>
-                <IntervalDropdown
-                  onSelect={value => {
-                    formik.setFieldValue("repeat", value);
-                  }}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col justify-start items-start gap-6">
+              <div className="flex flex-col items-start gap-2 p-3 w-fit h-fit rounded-lg">
+                <Label htmlFor="title" className="text-right">
+                  I pinky promise to...
+                </Label>
+                <Input
+                  id="title"
+                  value={formik.values.title}
+                  onChange={formik.handleChange}
+                  placeholder="Run 2km"
+                  error={formik.errors.title}
+                  maxLength={24}
+                  required
                 />
               </div>
-              {formik.values.repeat === "Weekly" && (
-                <Weekly
-                  onChange={timesAWeek =>
-                    formik.setFieldValue("timesAWeek", timesAWeek)
-                  }
-                  obligation={obligation ?? undefined}
-                />
-              )}
-              {formik.values.repeat === "Daily" && (
-                <Daily
-                  onChange={days => formik.setFieldValue("days", days)}
-                  days={obligation?.days}
-                />
-              )}
+              <div className="flex flex-col gap-2 p-3 w-fit h-fit rounded-lg">
+                <div className="w-full flex justify-start items-center gap-2">
+                  <div className="font-normal">Repeat</div>
+                  <IntervalDropdown
+                    onSelect={value => {
+                      formik.setFieldValue("repeat", value);
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col items-start gap-2 py-3 w-fit h-fit rounded-lg">
+                  {formik.values.repeat === "Weekly" && (
+                    <Weekly
+                      onChange={timesAWeek =>
+                        formik.setFieldValue("timesAWeek", timesAWeek)
+                      }
+                      obligation={obligation ?? undefined}
+                    />
+                  )}
+                  {formik.values.repeat === "Daily" && (
+                    <Daily
+                      onChange={days => formik.setFieldValue("days", days)}
+                      days={obligation?.days}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="w-full flex flex-col justify-center items-center">
+            <div>Now choose the perfect icon!</div>
+            <Button
+              className="w-fit h-fit"
+              variant={"outline"}
+              onClick={() => setShowEmojiPicker(true)}
+            >
+              {formik.values.emoji ? (
+                <div className="text-3xl">{formik.values.emoji}</div>
+              ) : (
+                <EmojiIcon className="w-8 h-8 fill-muted-foreground" />
+              )}
+            </Button>
           </div>
           <DialogFooter>
             <div className="flex flex-col">
               <Button type="submit" disabled={disabled}>
-                Save changes
+                {obligation ? "I repromise" : "I promise"}
               </Button>
             </div>
           </DialogFooter>
@@ -346,7 +377,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
         <span className="text-lg lg:text-xl text-muted-foreground mt-1">
           PROMISES {obligations.length > 0 && `(${obligations.length})`}
         </span>
-        <ObligationDialog
+        <PromiseDialog
           onCreate={handleCreateObligation}
           onEdit={handleUpdateObligation}
           disabled={loading}

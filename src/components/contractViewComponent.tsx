@@ -6,18 +6,24 @@ import {
   DialogTitle,
   DialogDescription,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import Contract from "../models/contract";
 import Obligation from "../models/obligation";
 import { Button } from "./ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface ContractViewComponentProps {
   contract: Contract;
+  isSigned?: boolean;
+  onSign?: (contract: Contract) => void;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   contract,
+  isSigned,
+  onSign,
 }) => {
   const SignedNames = useMemo(() => {
     const names = contract.contractees.map(ce => ce.displayName);
@@ -39,7 +45,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   }, [contract.contractees]);
 
   const areAllSigned = useMemo(
-    () => contract.signatures.length === contract.contractees.length,
+    () => contract.signatures.length >= contract.contractees.length,
     [contract],
   );
 
@@ -53,25 +59,13 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   }, [contract]);
 
   const ContractDetails = () => (
-    <DialogContent className="space-y-4">
+    <DialogContent className="md:h-[575px] md:w-[575px]">
       <DialogHeader>
-        <DialogTitle>{contract.title}</DialogTitle>
-        <DialogDescription>
-          {contract.description ||
-            `Contract between ${contract.contractees?.[0]?.displayName} and ${contract.contractees?.[1]?.displayName}`}
-        </DialogDescription>
+        <DialogTitle className="text-2xl">{contract.title}</DialogTitle>
       </DialogHeader>
-      <div className="text-sm">
-        <h3 className="font-bold">Contract Due Date:</h3>
-        <p>
-          {new Date(contract.dueDate).toLocaleDateString(undefined, {
-            dateStyle: "long",
-          })}
-        </p>
-      </div>
       <div>
-        <h3 className="font-semibold">Contract Obligations:</h3>
-        <div className="flex flex-col gap-1 max-h-48 overflow-auto">
+        <h3 className="font-semibold">Obligations:</h3>
+        <div className="flex flex-col gap-1 max-h-56 overflow-auto">
           {contract.obligations.map((obligation: Obligation, index: number) => (
             <div key={index} className="p-2 border-t">
               <p className="font-semibold">
@@ -83,7 +77,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
               </div>
               {obligation.days && obligation.days?.length > 0 ? (
                 <div className="flex flex-row gap-1">
-                  <p className="flex-shrink-0">Scheduled Days:</p>
+                  <p className="flex-shrink-0">Repeated every:</p>
                   <span className="font-thin">
                     {dayNumbersToNames(obligation.days)
                       .map(day => day.slice(0, 2))
@@ -102,6 +96,14 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           ))}
         </div>
       </div>
+      <div className="text-sm">
+        <h3 className="font-semibold text-base">Due Date:</h3>
+        <p>
+          {new Date(contract.dueDate).toLocaleDateString(undefined, {
+            dateStyle: "long",
+          })}
+        </p>
+      </div>
       <div className="mt-4">
         <h3 className="font-semibold">Signatories:</h3>
         <p className="font-thin">
@@ -109,6 +111,15 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           contract.
         </p>
       </div>
+      <DialogFooter>
+        <div className="w-full flex justify-center items-center">
+          <DialogClose>
+            <Button onClick={() => onSign?.(contract)}>
+              Put your pinky in!
+            </Button>
+          </DialogClose>
+        </div>
+      </DialogFooter>
     </DialogContent>
   );
 
@@ -133,9 +144,16 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">View Contract</Button>
+        {!isSigned ? (
+          <Button className="relative">
+            Sign contract
+            <div className="shimmer-wrapper"></div>
+          </Button>
+        ) : (
+          <Button variant="outline">View Contract</Button>
+        )}
       </DialogTrigger>
-      {areAllSigned ? <ContractDetails /> : <UnSignedNotice />}
+      {areAllSigned || !isSigned ? <ContractDetails /> : <UnSignedNotice />}
     </Dialog>
   );
 };

@@ -25,7 +25,7 @@ export const ContractComponentLoading = ({
 }) => (
   <div
     className={cn(
-      "w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3",
+      "w-full md:w-5/12 h-60 shadow-md rounded-md flex flex-col justify-between gap-1 p-3",
       className,
     )}
   >
@@ -75,22 +75,20 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-5/12 h-60 border border-muted-foreground/50 rounded-md flex flex-col justify-between gap-1 p-3",
+        "w-full md:w-5/12 h-60 shadow-md rounded-md flex flex-col justify-between gap-1 p-3",
         { "border-primary/50": !isUserSigned },
       )}
     >
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
-          {user &&
-            (!isUserSigned ? (
-              <Button onClick={handleSignContract} className="relative">
-                Sign contract
-                <div className="shimmer-wrapper"></div>
-              </Button>
-            ) : (
-              <ContractViewComponent contract={contract} />
-            ))}
+          {user && (
+            <ContractViewComponent
+              contract={contract}
+              isSigned={isUserSigned}
+              onSign={handleSignContract}
+            />
+          )}
         </div>
         <h3 className="font-normal text-base line-clamp-2">
           {contract.description}
@@ -99,7 +97,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           {new Date(contract.dueDate).toDateString()}
         </h4>
       </div>
-      <div className="w-full flex flex-row justify-around md:justify-start gap-1 md:gap-3">
+      <div className="w-full flex flex-row justify-between md:justify-start gap-1 md:gap-3">
         {contract.contractees.map(contractee => (
           <AccountabilityPartnerComponent
             key={contractee.userId}

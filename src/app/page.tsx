@@ -212,7 +212,7 @@ export default function Home() {
       <HeroSection />
       <div ref={partOneRef}>
         <Section
-          title="Create Obligations"
+          title="Create a Promise"
           body="The beginning of every relationship is a promise. Create obligations to keep each other accountable."
           onNext={scrollToPartTwo}
         >

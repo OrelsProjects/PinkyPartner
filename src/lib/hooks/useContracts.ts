@@ -13,10 +13,12 @@ import {
 } from "../features/contracts/contractsSlice";
 import { AccountabilityPartner } from "../../models/appUser";
 import { Logger } from "../../logger";
+import { useObligations } from "./useObligations";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
+  const { fetchPartnerData, fetchNextUpObligations } = useObligations();
   const { contracts, error, loading, loadingData } = useAppSelector(
     state => state.contracts,
   );
@@ -113,8 +115,17 @@ export function useContracts() {
         throw new Error("Accountability partner is required");
       }
       await axios.post(`/api/contract/${contractId}/sign`);
+
+      const fetchDataPromises = [
+        fetchPartnerData(contracts),
+        fetchNextUpObligations(),
+      ];
       dispatch(signContractAction({ contractId, user: accountabilityPartner }));
       dispatch(setError(null));
+      debugger;
+      Promise.allSettled(fetchDataPromises).catch(err => {
+        Logger.error("Error fetching data after signing contract", err);
+      });
     } catch (err: any) {
       dispatch(setError(err.message || "Error signing contract"));
       throw err;

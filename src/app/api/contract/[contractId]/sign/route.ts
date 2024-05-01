@@ -28,6 +28,7 @@ export async function POST(
       return NextResponse.json(undefined, { status: 401 });
     }
     userContract.signedAt = new Date();
+    
     await prisma.userContract.update({
       where: {
         userContractId: userContract.userContractId,

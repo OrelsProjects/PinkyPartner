@@ -34,6 +34,7 @@ interface ObligationProps {
   className?: string;
   completedAt?: Date;
   ownerImageUrl?: string | null;
+  trailingIcon?: React.ReactNode;
 }
 
 export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
@@ -68,6 +69,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   className,
   completedAt,
   ownerImageUrl,
+  trailingIcon,
 }) => {
   const { deleteObligation } = useObligations();
 
@@ -173,6 +175,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
           />
         )}
         <DeleteButton />
+        {trailingIcon}
         {contract && showComplete && (
           <CheckboxObligation obligation={obligation} contract={contract} />
         )}

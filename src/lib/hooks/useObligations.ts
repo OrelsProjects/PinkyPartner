@@ -166,6 +166,23 @@ export function useObligations() {
     }
   };
 
+  const fetchNextUpObligations = async () => {
+    try {
+      setLoadingData(true);
+      const response = await axios.get<{
+        toComplete: ObligationsInContracts;
+        completed: ObligationCompleted[];
+      }>("/api/obligations/next-up");
+      const { toComplete, completed } = response.data;
+      setObligationsToComplete(toComplete);
+      setObligationsCompleted(completed);
+    } catch (error: any) {
+      Logger.error("Failed to fetch next up obligations", error);
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
   const completeObligation = async (
     obligation: Obligation,
     contractId: string,
@@ -244,6 +261,7 @@ export function useObligations() {
     setObligationsToComplete,
     setObligationsCompleted,
     setPartnerData,
+    fetchNextUpObligations,
     completeObligation,
   };
 }

@@ -26,6 +26,7 @@ export default function DataProvider({
     setLoadingData: setLoadingDataObligations,
     setLoadingPartnerData,
     fetchPartnerData,
+    fetchNextUpObligations,
   } = useObligations();
   const { setContracts, setLoadingData: setLoadingDataContracts } =
     useContracts();
@@ -37,17 +38,13 @@ export default function DataProvider({
       if (isFetchingData.current) return;
       isFetchingData.current = true;
       setLoadingDataContracts(true);
-      setLoadingDataObligations(true);
       setLoadingPartnerData(true);
 
       // Making both API requests in parallel
       const [userDataResponse, allObligationsResponse] =
         await Promise.allSettled([
           axios.get<UserData>("/api/user/data"),
-          axios.get<{
-            toComplete: ObligationsInContracts;
-            completed: ObligationCompleted[];
-          }>("/api/obligations/next-up"),
+          fetchNextUpObligations(),
         ]);
 
       const userData =
@@ -57,23 +54,10 @@ export default function DataProvider({
               obligations: [],
               contracts: [],
             };
-      const obligationsData =
-        allObligationsResponse.status === "fulfilled"
-          ? allObligationsResponse.value.data
-          : { toComplete: [], completed: [] };
 
-      const userObligations = {
-        ...userData,
-        obligationsToComplete: obligationsData.toComplete,
-        completed: obligationsData.completed,
-      };
-
-      const { obligations, contracts, obligationsToComplete, completed } =
-        userObligations;
+      const { obligations, contracts } = userData;
       setObligations(obligations || []);
       setContracts(contracts || []);
-      setObligationsToComplete(obligationsToComplete || []);
-      setObligationsCompleted(completed || []);
       setLoadingDataContracts(false);
       setLoadingDataObligations(false);
       // Fetch partner data - on signed contracts
