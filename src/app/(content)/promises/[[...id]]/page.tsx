@@ -258,7 +258,11 @@ const PromiseDialog = ({
             <Button
               className="w-fit h-fit"
               variant={"outline"}
-              onClick={() => setShowEmojiPicker(true)}
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowEmojiPicker(true);
+              }}
             >
               {formik.values.emoji ? (
                 <div className="text-3xl">{formik.values.emoji}</div>

@@ -126,6 +126,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
                 className="font-light text-foreground hover:no-underline"
                 onClick={(e: any) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   if (onDelete) {
                     onDelete(obligation);
                   } else {
