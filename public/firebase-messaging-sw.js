@@ -1,51 +1,35 @@
-// import { initializeApp } from "firebase/app";
-// import { onMessage } from "firebase/messaging";
-// import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
+importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+importScripts(
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js",
+);
 
-// const firebaseConfig = {
-//   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-//   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-//   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-//   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-//   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-//   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-//   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-// };
+const firebaseConfig = {
+  apiKey: "AIzaSyALZvbmwKVBUXia4-u2Wv__C6ST6GFbBUQ",
+  authDomain: "myworkout-ca350.firebaseapp.com",
+  projectId: "myworkout-ca350",
+  storageBucket: "myworkout-ca350.appspot.com",
+  messagingSenderId: "334976118267",
+  appId: "1:334976118267:web:2547d2f91a0235d1aa2f5e",
+  measurementId: "G-BTFG0DLT3J",
+};
 
-// const firebaseApp = initializeApp(firebaseConfig);
+// Firebase Messaging setup and other service worker code here
+firebase.initializeApp(firebaseConfig);
 
-// const messaging = getMessaging(firebaseApp);
+const messaging = firebase.messaging();
+messaging.onBackgroundMessage(payload => {
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload,
+  );
+  const notificationTitle = payload.notification.title;
+  // const notificationOptions = {
+  //   icon: payload.notification.icon,
+  // };
 
-// onBackgroundMessage(messaging, payload => {
-//   console.log(
-//     "[firebase-messaging-sw.js] Received background message ",
-//     payload,
-//   );
-//   // Customize notification here
-//   const notificationTitle = "Background Message Title";
-//   const notificationOptions = {
-//     body: "Background Message body.",
-//     icon: "/firebase-logo.png",
-//   };
+  const notificationOptions = {
+    body: payload.notification.body,
+  };
 
-//   self.registration.showNotification(notificationTitle, notificationOptions);
-// });
-
-// // function addPushNotificationListener() {
-// //   if (!isNotificationSupported() || !isPermissionGranted()) {
-// //     return;
-// //   }
-
-// //   onMessage(messaging, payload => {
-// //     debugger;
-// //     console.log("Message received. ", payload);
-// //   });
-// //   onBackgroundMessage(messaging, payload => {
-// //     debugger;
-// //     console.log("Message received. ", payload);
-// //     self.registration.showNotification(notificationTitle, notificationOptions);
-// //   });
-
-// //   // navigator.serviceWorker.addEventListener("message", onClick);
-// //   // self.addEventListener("push", onClick);
-// // }
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

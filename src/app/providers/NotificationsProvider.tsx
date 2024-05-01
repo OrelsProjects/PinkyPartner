@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { messaging } from "../../../firebase.config";
 import { getUserToken } from "../../lib/services/notification";
 import { onMessage } from "firebase/messaging";
-import { messaging } from "../../../firebase.config";
 
 const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   const init = async () => {
-    await getUserToken();
-    onMessage(messaging, payload => {
-      alert(JSON.stringify(payload, null, 2));
-    });
+    const token = await getUserToken();
   };
+
+  onMessage(messaging, payload => {
+    alert("Message received. Title: " + payload.notification?.title);
+  });
 
   useEffect(() => {
     init();

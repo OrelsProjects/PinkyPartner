@@ -39,7 +39,7 @@ export default function GoogleLogin({
 
   return (
     <div
-      className={`w-full h-12 flex flex-row gap-2 justify-center items-center bg-white rounded-lg text-black ${className}`}
+      className={`w-full h-12 flex flex-row gap-2 justify-center items-centerrounded-lg ${className}`}
       onClick={handleGoogleLogin}
     >
       <FcGoogle className="w-7 h-7" />

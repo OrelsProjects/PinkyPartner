@@ -167,9 +167,6 @@ const ObligationDialog = ({
     <Dialog
       open={open}
       onOpenChange={state => {
-        if (state) {
-          formik.resetForm();
-        }
         onOpenChange?.(state);
       }}
     >
@@ -202,7 +199,7 @@ const ObligationDialog = ({
           <div className="flex flex-col gap-4 py-4 ">
             <div className="flex flex-col justify-start items-start gap-2">
               <Label htmlFor="title" className="text-right">
-                I pinky promise that...
+                I pinky promise to...
               </Label>
               <Input
                 id="title"
@@ -339,7 +336,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     // set window state to the obligation id
     router.push(`/promises/${obligation.obligationId}`);
     setObligation(obligation);
-    router.refresh();
   };
 
   return (

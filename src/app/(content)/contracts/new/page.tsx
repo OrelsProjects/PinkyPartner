@@ -78,6 +78,7 @@ const FindPartner = ({
             <InvitePartnerComponent
               buttonText="Invite them!"
               referralCode={user?.meta?.referralCode}
+              className="items-start"
             />
           </div>
         </>

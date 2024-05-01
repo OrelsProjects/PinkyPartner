@@ -3,15 +3,19 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import { Switch } from "./ui/switch";
+import { cn } from "../lib/utils";
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+export function ThemeToggle({ className }: ThemeToggleProps) {
   const { setTheme, theme } = useTheme();
 
   return (
     <Switch
-      className="w-10"
+      className={cn("w-10", className)}
       defaultChecked={theme === "dark"}
       checkedIcon={<Moon className="h-4 w-4" />}
       uncheckedIcon={<Sun className="h-4 w-4" />}

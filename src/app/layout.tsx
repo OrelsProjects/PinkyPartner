@@ -52,13 +52,11 @@ export const metadata: Metadata = {
 
 export default function LocaleLayout({ children, locale }: RootLayoutProps) {
   return (
-    <html lang={locale}>
+    <html lang={locale} className="font-montserrat">
       <body className="!overscroll-none">
         <StoreProvider>
           <SessionWrapper>
-            <ThemeProvider>
-              {children}
-            </ThemeProvider>
+            <ThemeProvider>{children}</ThemeProvider>
           </SessionWrapper>
         </StoreProvider>
       </body>

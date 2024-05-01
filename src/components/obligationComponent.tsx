@@ -14,6 +14,16 @@ import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
 import { dateToHourMinute } from "../lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface ObligationProps {
   obligation: Obligation;
@@ -61,16 +71,75 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   completedAt,
   ownerImageUrl,
 }) => {
-  const { deleteObligation, loading } = useObligations();
+  const { deleteObligation } = useObligations();
 
   const DeleteIcon: ElementType = deleteIcon ?? Minus;
 
   const handleDelete = () => {
     toast.promise(deleteObligation(obligation), {
       pending: "Deleting...",
+      success: `Deleted ${obligation.title}`,
+      error: "Something went wrong... Try again?",
     });
   };
 
+  const DeleteButton = () =>
+    showDelete && (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            className="!p-1 self-center"
+            onClick={(e: any) => {
+              e.stopPropagation();
+            }}
+          >
+            <DeleteIcon className="text-red-500 cursor-pointer text-2xl" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="space-y-4">
+          <DialogTitle>Giving up?</DialogTitle>
+          <DialogDescription>
+            {`Are you sure you want to go back on your promise to:`}
+            <br />
+            <span className="font-semibold">{obligation.title}</span>
+            <br />
+            {/* Remind the user that the promise will be removed from all of his contracts */}
+            <div className="text-sm text-muted-foreground italic mt-4">
+              This action will remove this promise from all of your contracts.
+            </div>
+          </DialogDescription>
+
+          <div className="w-full flex items-center flex-col gap-0">
+            <DialogClose asChild>
+              <Button
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                }}
+              >
+                I changed my mind
+              </Button>
+            </DialogClose>
+            <DialogClose asChild>
+              <Button
+                variant="link"
+                className="font-light text-foreground hover:no-underline"
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  if (onDelete) {
+                    onDelete(obligation);
+                  } else {
+                    handleDelete();
+                  }
+                }}
+              >
+                Yes, I give up
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   return (
     <div
       className={`rounded-lg h-16 w-full md:w-96 bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
@@ -105,25 +174,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
             }}
           />
         )}
-        {showDelete && (
-          <Button variant="ghost" className="!p-1 self-center">
-            {!loading ? (
-              <DeleteIcon
-                className="text-red-500 cursor-pointer text-2xl"
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  if (onDelete) {
-                    onDelete(obligation);
-                  } else {
-                    handleDelete();
-                  }
-                }}
-              />
-            ) : (
-              <Loading spinnerClassName="w-6 h-6 fill-red-500 text-red-500" />
-            )}
-          </Button>
-        )}
+        <DeleteButton />
         {contractId && showComplete && (
           <CheckboxObligation obligation={obligation} contractId={contractId} />
         )}

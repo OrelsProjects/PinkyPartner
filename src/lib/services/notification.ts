@@ -1,8 +1,6 @@
 "use client";
-import { getToken, onMessage } from "firebase/messaging";
-import { onBackgroundMessage } from "firebase/messaging/sw";
+import { getToken } from "firebase/messaging";
 import { messaging } from "../../../firebase.config";
-import { on } from "events";
 
 function isNotificationSupported() {
   return "Notification" in window;
@@ -79,15 +77,4 @@ export async function getUserToken(): Promise<string> {
   });
 
   return token;
-  // debugger;
-  // navigator.serviceWorker.register("/service-worker.js").then(registration => {
-  //   registration.pushManager.getSubscription().then(subscription => {
-  //     if (!subscription) {
-  //       registration.pushManager.subscribe({
-  //         userVisibleOnly: true,
-  //         applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  //       });
-  //     }
-  //   });
-  // });
 }

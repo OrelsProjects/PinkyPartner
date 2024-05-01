@@ -5,9 +5,9 @@ import AppleLogin from "../../../components/auth/appleLogin";
 import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
-const Auth = () => {
+const RegisterPage = () => {
   const searchParams = useSearchParams();
 
   const referralCode = useMemo(() => {
@@ -16,8 +16,8 @@ const Auth = () => {
 
   const router = useRouter();
   return (
-    <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden px-6 lg:px-0">
-      <div className="w-full flex flex-col gap-3 lg:max-w-[420px] bg-muted/20 rounded-xl p-8">
+    <div className="h-screen w-screen flex flex-col justify-center items-center text-center overflow-hidden px-6 lg:px-0 ">
+      <div className="w-full flex flex-col gap-3 lg:max-w-[420px] rounded-xl p-8 bg-card">
         <GoogleLogin
           signInTextPrefix="Sign up with"
           referralCode={referralCode}
@@ -43,4 +43,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default RegisterPage;

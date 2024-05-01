@@ -23,6 +23,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {		
+        montserrat: ["Montserrat", "Hauora", "sans-serif"],
+        hauora: ["Hauora", "Montserrat", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

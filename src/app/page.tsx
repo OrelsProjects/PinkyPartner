@@ -58,24 +58,22 @@ const CreateContractVideo = () => (
 
 const Header = () => (
   <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-card z-50">
-    <div className="w-full px-4 lg:px-0 lg:w-1/2 flex flex-row justify-between items-center">
-      <div className="text-3xl md:text-4xl font-bold text-foreground">
+    <div className="w-full px-4 lg:px-0 lg:w-[1040px] flex flex-row justify-between items-center">
+      <div className="text-3xl md:text-4xl font-medium text-foreground">
         PinkyPartner
       </div>
       <div className="flex flex-row gap-2">
-        <Button asChild variant="outline" className="rounded-full h-12">
-          <a
-            href="/login"
-            className="hidden lg:flex text-black dark:text-white text-base md:text-lg"
-          >
+        <Button
+          asChild
+          variant="outline"
+          className="rounded-full h-12 bg-transparent"
+        >
+          <a href="/login" className="hidden lg:flex text-base md:text-lg">
             Login
           </a>
         </Button>
         <Button asChild variant="magic">
-          <a
-            href="/register"
-            className="text-black dark:text-white text-lg md:text-xl"
-          >
+          <a href="/register" className="text-lg md:text-xl">
             Get Started
           </a>
         </Button>
@@ -99,13 +97,17 @@ const HeroSection = () => (
         duration: 0.5,
         ease: [0.4, 0.0, 0.2, 1],
       }}
-      className="w-full h-80 md:h-fit text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white text-start leading-relaxed lg:leading-snug mx-auto lg:w-[980px]"
+      className="w-full h-80 md:h-fit text-2xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed lg:leading-snug mx-auto lg:w-[1040px]"
     >
-      <div className="flex flex-col lg:flex-row items-center gap-1">
-        <TextGenerateEffect words={"Building habits is hard "} />
+      <div className="flex flex-col lg:flex-row justify-start gap-1 tracking-tighter">
+        <TextGenerateEffect
+          words={"Building habits is hard "}
+          className="!font-medium"
+        />
         <Highlight
-          className="text-black dark:text-white 
-          from-orange-300 to-red-300 dark:from-orange-500 dark:to-red-500
+          className="
+          from-orange-400 to-red-400 dark:from-orange-500 dark:to-red-500
+          text-white
           "
           duration={0.8}
           delay={0.8}
@@ -117,17 +119,17 @@ const HeroSection = () => (
         <TextGenerateEffect
           words={"But it's easier when you have a"}
           delay={2}
-          className="hidden lg:block"
+          className="hidden lg:block !font-medium"
         />
         <TextGenerateEffect
           words={"But it's easier with a"}
           delay={2.5}
-          className="lg:hidden"
+          className="lg:hidden !font-medium"
         />
         <Highlight
-          className="text-black dark:text-white"
           duration={0.8}
           delay={3.5}
+          className="from-purple-400 to-indigo-400 dark:from-purple-500 dark:to-indigo-500 text-white"
         >
           Partner.
         </Highlight>
@@ -151,7 +153,7 @@ const Section = ({
     <div className="w-screen h-screen bg-background flex flex-col relative sm:px-80 sm:py-28">
       <div className="w-full h-full flex flex-col sm:flex-row justify-center items-center gap-6 bg-card rounded-xl">
         <div className="flex flex-col justify-center items-center sm:w-[30rem]">
-          <h1 className="text-4xl font-bold text-foreground text-center">
+          <h1 className="text-4xl font-medium text-foreground text-center">
             {title}
           </h1>
           <div className="text-foreground text-center font-light tracking-wide leading-7">

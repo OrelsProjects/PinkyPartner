@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Button } from "./ui/button";
+import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
 import { cn } from "../lib/utils";
@@ -16,12 +16,14 @@ interface InvitePartnerComponentProps {
   buttonText: string;
   referralCode?: string;
   className?: string;
+  variant?: ButtonVariants;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   buttonText,
   referralCode,
   className,
+  variant,
 }) => {
   const url = useMemo(() => {
     const baseUrl = window.location.origin;
@@ -44,8 +46,8 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="link"
-          className={cn("py-0 pt-0.5 items-start px-1", className)}
+          variant={variant || "link"}
+          className={cn("py-0 pt-0.5 px-1", className)}
         >
           {buttonText}
         </Button>

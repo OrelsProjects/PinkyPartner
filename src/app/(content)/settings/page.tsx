@@ -50,29 +50,42 @@ const SettingsButton: React.FC<SettingsProps> = () => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Appearance</span>
-          <ThemeToggle />
+          <div className="pl-2">
+            <ThemeToggle />
+          </div>
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Notifications</span>
-          <span className="text-base-content/75">
+          <span className="text-base-content/75 pl-2">
             Manage notifications and reminders
           </span>
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Partners</span>
-          <InvitePartnerComponent
-            buttonText="Invite a partner"
-            referralCode={user?.meta?.referralCode}
-            className="justify-start px-0 text-base w-fit"
-          />
+          <div className="pl-2">
+            <InvitePartnerComponent
+              variant="default"
+              buttonText="Invite a partner"
+              referralCode={user?.meta?.referralCode}
+              className="text-base w-fit px-2"
+            />
+          </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full justify-start">
           <span className="text-lg font-semibold">Account</span>
-          <div className="flex flex-col gap-1">
-            <Button variant="ghost" onClick={handleSignOut}>
+          <div className="flex flex-col gap-1 pl-2">
+            <Button
+              variant="ghost"
+              className="w-fit !px-0"
+              onClick={handleSignOut}
+            >
               LOGOUT
             </Button>
-            <Button variant="ghost" onClick={handleDeleteUserRequest}>
+            <Button
+              variant="ghost"
+              className="w-fit !px-0"
+              onClick={handleDeleteUserRequest}
+            >
               DELETE
             </Button>
           </div>
