@@ -22,6 +22,7 @@ import LoadingError from "../../models/errors/LoadingError";
 import ObligationCompleted from "../../models/obligationCompleted";
 import Contract from "../../models/contract";
 import { Logger } from "../../logger";
+import useNotifications from "./useNotifications";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -34,7 +35,9 @@ export function useObligations() {
     loading,
     loadingData,
   } = useAppSelector(state => state.obligations);
+  const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
+  const { sendCompletedObligationNotification } = useNotifications();
 
   const updateObligationRepeat = (
     obligation: CreateObligation,
@@ -143,16 +146,26 @@ export function useObligations() {
   };
 
   const completeObligation = async (
-    obligationId: string,
+    obligation: Obligation,
     contractId: string,
   ) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
     }
+    const contract = contracts.find(
+      contract => contract.contractId === contractId,
+    );
+
+    if (!contract) {
+      throw new Error("Contract not found");
+    }
 
     try {
+      debugger;
+      await sendCompletedObligationNotification(contract, obligation);
+
       const obligationCompletedResponse = await axios.post<ObligationCompleted>(
-        `/api/obligation/${contractId}/${obligationId}/complete`,
+        `/api/obligation/${contract.contractId}/${obligation.obligationId}/complete`,
       );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));

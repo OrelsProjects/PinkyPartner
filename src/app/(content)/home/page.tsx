@@ -89,8 +89,8 @@ const NextUp = ({
                         >
                           <ObligationComponent
                             obligation={obligation}
-                            contractId={
-                              obligationInContract.contract.contractId
+                            contract={
+                              obligationInContract.contract
                             }
                             showComplete={!partner}
                             ownerImageUrl={
@@ -164,7 +164,7 @@ const Done = ({
                         />
                         <ObligationComponent
                           obligation={obligationCompleted.obligation}
-                          contractId={group.contract.contractId}
+                          contract={group.contract}
                           completedAt={obligationCompleted.completedAt}
                           ownerImageUrl={
                             partner

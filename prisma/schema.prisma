@@ -45,6 +45,7 @@ model AppUserMetadata {
   userId            String  @unique
   referralCode      String?
   referredBy        String?
+  pushToken         String?
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 

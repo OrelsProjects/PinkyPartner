@@ -47,3 +47,25 @@ export async function DELETE(req: NextRequest): Promise<any> {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: NextRequest): Promise<any> {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  let user: AppUser | null = null;
+  try {
+    const { token } = await req.json();
+    await prisma.appUserMetadata.upsert({
+      where: { userId: session.user.userId },
+      update: { pushToken: token },
+      create: { userId: session.user.userId, pushToken: token },
+    });
+    return NextResponse.json({}, { status: 200 });
+  } catch (error: any) {
+    Logger.error("Error updating user", user || "unknown", {
+      error,
+    });
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

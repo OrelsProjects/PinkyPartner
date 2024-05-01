@@ -5,7 +5,6 @@ import Obligation from "../models/obligation";
 import { useObligations } from "../lib/hooks/useObligations";
 import { FiMinusCircle as Minus } from "react-icons/fi";
 import { Button } from "./ui/button";
-import Loading from "./ui/loading";
 
 import CheckboxObligation from "./checkboxObligation";
 import RepeatComponent from "./repeatComponent";
@@ -18,16 +17,15 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
+import Contract from "../models/contract";
 
 interface ObligationProps {
   obligation: Obligation;
-  contractId?: string;
+  contract?: Contract;
   onClick?: (obligation: Obligation) => void;
   onDelete?: (obligation: Obligation) => void;
   showDelete?: boolean;
@@ -61,7 +59,7 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 
 const ObligationComponent: React.FC<ObligationProps> = ({
   obligation,
-  contractId,
+  contract,
   onClick,
   onDelete,
   showDelete,
@@ -175,8 +173,8 @@ const ObligationComponent: React.FC<ObligationProps> = ({
           />
         )}
         <DeleteButton />
-        {contractId && showComplete && (
-          <CheckboxObligation obligation={obligation} contractId={contractId} />
+        {contract && showComplete && (
+          <CheckboxObligation obligation={obligation} contract={contract} />
         )}
         {completedAt && (
           <div className="flex flex-col gap-1">

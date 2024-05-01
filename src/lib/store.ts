@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/auth/authSlice";
 import contractReducer from "./features/contracts/contractsSlice";
 import obligationReducer from "./features/obligations/obligationsSlice";
+import notificationsReducer from "./features/notifications/notificationsSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const makeStore = () => {
       auth: authReducer,
       contracts: contractReducer,
       obligations: obligationReducer,
+      notifications: notificationsReducer,
     },
   });
 };

@@ -75,6 +75,7 @@ export async function getUserToken(): Promise<string> {
   const token = await getToken(messaging, {
     vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   });
-
+  debugger;
+  console.log(token);
   return token;
 }
