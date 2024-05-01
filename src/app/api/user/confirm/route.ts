@@ -6,7 +6,6 @@ import { AppUser, AppUserMetadata } from "@prisma/client";
 import { authOptions } from "../../../../authOptions";
 import { generateReferalCode } from "../../_utils/referralCode";
 
-
 export async function POST(
   req: NextRequest,
 ): Promise<(AppUser & { meta: AppUserMetadata }) | any> {
@@ -36,12 +35,16 @@ export async function POST(
       return NextResponse.json({ ...userNoPassword }, { status: 200 });
     }
 
+    if (!sessionUser?.userId || !user?.userId) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const appUser = await prisma.appUser.create({
       data: {
-        userId: sessionUser?.id || user?.userId,
-        email: sessionUser?.email || user?.email || "",
-        photoURL: sessionUser?.image || user?.photoURL,
-        displayName: sessionUser?.name || user?.displayName,
+        userId: sessionUser.userId || user?.userId,
+        email: sessionUser.email || user?.email || "",
+        photoURL: sessionUser.image || user?.photoURL,
+        displayName: sessionUser.name || user?.displayName,
       },
     });
 

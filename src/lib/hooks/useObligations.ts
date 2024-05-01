@@ -161,13 +161,18 @@ export function useObligations() {
     }
 
     try {
-      await sendCompletedObligationNotification(contract, obligation);
-
       const obligationCompletedResponse = await axios.post<ObligationCompleted>(
         `/api/obligation/${contract.contractId}/${obligation.obligationId}/complete`,
       );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
+      sendCompletedObligationNotification(contract, obligation)
+        .then(() => {
+          Logger.info("Notification sent");
+        })
+        .catch(err => {
+          Logger.error("Failed to send notification", err);
+        });
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;

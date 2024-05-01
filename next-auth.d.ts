@@ -1,9 +1,14 @@
-import { DefaultSession } from 'next-auth';
+import { DefaultSession } from "next-auth";
+import {} from "./src/models/appUser";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       userId: string;
-    } & DefaultSession['user'];
+      meta: {
+        referralCode?: string;
+        pushToken?: string;
+      };
+    } & DefaultSession["user"];
   }
 }

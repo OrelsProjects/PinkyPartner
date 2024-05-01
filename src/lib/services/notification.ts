@@ -58,7 +58,7 @@ export function createNotification(title: string, body: string, image: string) {
  * This function registers the service worker and initializes push notifications
  * @returns
  */
-export async function getToken(): Promise<string> {
+export async function getToken(): Promise<string | undefined> {
   if (!("serviceWorker" in navigator)) {
     return "";
   }

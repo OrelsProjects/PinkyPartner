@@ -135,6 +135,7 @@ export const authOptions: AuthOptions = {
           meta: {
             select: {
               referralCode: true,
+              pushToken: true,
             },
           },
         },
@@ -150,10 +151,13 @@ export const authOptions: AuthOptions = {
             },
           });
         }
-
+        if (!token.sub) {
+          return session;
+        }
         session.user.userId = token.sub;
         session.user.meta = {
-          referralCode: userInDB?.meta?.referralCode,
+          referralCode: userInDB?.meta?.referralCode || "",
+          pushToken: userInDB?.meta?.pushToken || "",
         };
       }
       return session;

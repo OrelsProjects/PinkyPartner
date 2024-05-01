@@ -1,9 +1,8 @@
+"use client";
+
 import firebase from "firebase/compat/app";
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getMessaging, getToken } from "firebase/messaging";
+import { Messaging, getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,22 +14,21 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 // if app is not initialized, initialize it
-let app: FirebaseApp = firebase.apps?.[0];
-if (!app) {
-  app = initializeApp(firebaseConfig);
+let app: FirebaseApp | null =
+  firebase.apps.length > 0 ? firebase.apps?.[0] : null;
+let messaging: Messaging | null = null;
+if (typeof window !== "undefined") {
+  // Ensures this runs only in client-side
+  app = !firebase.apps.length ? initializeApp(firebaseConfig) : firebase.app();
+  messaging = getMessaging(app);
 }
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const messaging = getMessaging(app);
 const getUserToken = async () => {
-  try {
-    return await getToken(messaging, {
-      vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    });
-  } catch (error) {
-    return "";
-  }
+  if (!messaging) return;
+  const token = await getToken(messaging, {
+    vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  });
+  return token;
 };
-export { auth, db, storage, messaging, getUserToken };
+
+export { app, messaging, getUserToken };
