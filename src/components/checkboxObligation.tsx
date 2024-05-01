@@ -26,6 +26,7 @@ const CheckboxObligation: React.FC<CheckboxObligationProps> = ({
       toast.success("You've completed " + obligation.title + "!");
     } catch (error: any) {
       toast.error("Something happened... try again?");
+      throw error;
     } finally {
       setLoadingComplete(false);
     }

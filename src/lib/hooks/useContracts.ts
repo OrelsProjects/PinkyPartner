@@ -12,9 +12,11 @@ import {
   setLoading,
 } from "../features/contracts/contractsSlice";
 import { AccountabilityPartner } from "../../models/appUser";
+import { Logger } from "../../logger";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector(state => state.auth);
   const { contracts, error, loading, loadingData } = useAppSelector(
     state => state.contracts,
   );
@@ -42,6 +44,18 @@ export function useContracts() {
       );
       dispatch(addContractAction(response.data));
       dispatch(setError(null));
+      const otherUser = contractData.contractees.find(
+        contractee => contractee.userId !== user?.userId,
+      );
+      axios
+        .post("/api/notifications", {
+          title: "Put your pinky in!",
+          body: `${otherUser?.displayName} sent you a new contract!`,
+          userId: otherUser?.userId,
+        })
+        .catch(err => {
+          Logger.error("Error sending notification", err);
+        });
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating contract"));
       throw err;

@@ -84,3 +84,34 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+// DELETE with query params
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const obligationId = req.nextUrl.searchParams.get("obligationId") as string;
+
+    const isObligationOwner = await prisma.obligation.findFirst({
+      where: {
+        obligationId,
+        userId: session.user.userId,
+      },
+    });
+    if (!isObligationOwner) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await prisma.obligation.delete({
+      where: { obligationId },
+    });
+
+    return NextResponse.json({ result: "Obligation deleted" }, { status: 200 });
+  } catch (error: any) {
+    Logger.error("Error deleting obligation", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

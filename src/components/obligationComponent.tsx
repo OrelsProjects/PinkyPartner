@@ -40,8 +40,8 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
   className,
 }) => (
   <div
-    className={`rounded-lg h-16 w-full md:w-96 bg-muted flex flex-row justify-between items-start gap-3 p-2 ${className}
-  shadow-md
+    className={`rounded-lg h-16 w-full md:w-96 bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+      shadow-md
   `}
   >
     <div className="flex flex-col gap-1">

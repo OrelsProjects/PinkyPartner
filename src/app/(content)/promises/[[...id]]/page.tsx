@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
+import { useTheme } from "next-themes";
 interface ObligationProps {
   params: {
     id?: string;
@@ -131,6 +132,7 @@ const ObligationDialog = ({
   onOpenChange?: (state: boolean) => void;
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const { theme } = useTheme();
 
   const formik = useFormik<Omit<CreateObligation, "userId">>({
     initialValues: {
@@ -250,7 +252,7 @@ const ObligationDialog = ({
             />
             <div className="absolute bottom-0 left-0 !w-full h-4/6 z-50">
               <EmojiPicker
-                theme={Theme.AUTO}
+                theme={theme === "dark" ? Theme.DARK : Theme.LIGHT}
                 // searchDisabled
                 skinTonesDisabled
                 lazyLoadEmojis={true}
@@ -356,7 +358,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
       <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
         {loading
           ? Array.from({ length: obligations.length || 5 }).map((_, index) => (
-              <div className="flex flex-col gap-1" key={index}>
+              <div className="w-full flex flex-col gap-1" key={index}>
                 <ObligationComponentLoading />
               </div>
             ))

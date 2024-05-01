@@ -106,6 +106,7 @@ const HeroSection = () => (
         />
         <Highlight
           className="
+          w-fit
           from-orange-400 to-red-400 dark:from-orange-500 dark:to-red-500
           text-white
           "
@@ -129,7 +130,7 @@ const HeroSection = () => (
         <Highlight
           duration={0.8}
           delay={3.5}
-          className="from-purple-400 to-indigo-400 dark:from-purple-500 dark:to-indigo-500 text-white"
+          className="from-blue-400 to-indigo-400 dark:from-blue-500 dark:to-indigo-500 text-white"
         >
           Partner.
         </Highlight>

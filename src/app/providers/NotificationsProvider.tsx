@@ -5,14 +5,20 @@ import { messaging } from "../../../firebase.config";
 import { getToken } from "../../lib/services/notification";
 import { Messaging, onMessage } from "firebase/messaging";
 import axios from "axios";
+import useNotifications from "../../lib/hooks/useNotifications";
 
 const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
+  const { showNotification } = useNotifications();
   const init = async (messaging: Messaging) => {
     const token = await getToken();
     await axios.patch("/api/user", { token });
 
     onMessage(messaging, payload => {
-      alert("Message received. Title: " + payload.notification?.title);
+      showNotification({
+        title: payload.notification?.title ?? "",
+        body: payload.notification?.body ?? "",
+        image: payload.notification?.image ?? "",
+      });
     });
   };
 

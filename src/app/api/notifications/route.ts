@@ -5,6 +5,7 @@ import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";
 import { Contract, Obligation } from "@prisma/client";
 import { messaging } from "../../../../firebase.config.admin";
+import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
 
 interface SendNotificationBody {
   contract: Contract;
@@ -18,8 +19,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const { contract, obligation, userId }: SendNotificationBody =
-      await req.json();
+    const {
+      title,
+      body,
+      image,
+      userId,
+    }: NotificationData & { userId: string } = await req.json();
     const user = await prisma.appUserMetadata.findUnique({
       where: { userId },
     });
@@ -37,18 +42,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     }
     const message = {
       notification: {
-        title: contract.title,
-        body: obligation.description || "",
-        image: "",
+        title,
+        body,
+        image,
       },
       token,
     };
     const imageUrl = process.env.LOGO_URL;
-    if (imageUrl) {
+    if (imageUrl && !message.notification.image) {
       message.notification.image = imageUrl;
     }
 
-    const env = process.env.NODE_ENV;
     await messaging.send(message);
 
     return NextResponse.json({}, { status: 201 });

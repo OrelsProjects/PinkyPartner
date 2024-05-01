@@ -7,12 +7,11 @@ import ObligationCompleted from "../../models/obligationCompleted";
 import { setPartnerData } from "../features/obligations/obligationsSlice";
 import axios from "axios";
 import { setContracts } from "../features/contracts/contractsSlice";
-import {
-  addObligationNotification,
-  clearObligationNotifications,
-} from "../features/notifications/notificationsSlice";
-import Obligation from "../../models/obligation";
-import { Logger } from "../../logger";
+import { NotificationData } from "../features/notifications/notificationsSlice";
+import NotificationComponent from "../../components/ui/notificationComponent";
+import { toast } from "react-toastify";
+
+const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -21,12 +20,13 @@ export default function useNotifications() {
   const { partnerData } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
 
+  const lastShownNewContractsNotification = React.useRef<number>(0);
+  const lastShownNewObligationsNotification = React.useRef<number>(0);
+
   const [newContracts, setNewContracts] = React.useState<Contract[]>([]);
   const [newObligations, setNewObligations] = React.useState<
     ObligationCompleted[]
   >([]);
-
-  const sendNotificationTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (partnerData.obligationsCompleted?.length > 0) {
@@ -34,8 +34,29 @@ export default function useNotifications() {
         obligation => !obligation.viewedAt,
       );
       setNewObligations(newObligations);
+
+      if (newObligations.length > 0 && canShowObligationsNotification()) {
+        lastShownNewObligationsNotification.current = Date.now();
+        const distinctPartnersObligations = newObligations.reduce(
+          (acc, obligation) => {
+            if (
+              !acc.some(o => o.appUser?.userId === obligation.appUser?.userId)
+            ) {
+              acc.push(obligation);
+            }
+            return acc;
+          },
+          [] as ObligationCompleted[],
+        );
+        // distinctPartnersObligations.forEach(obligation => {
+        //   showNotification({
+        //     title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
+        //     body: `${newObligations.length > 1 ? newObligations.length + " promises" : newObligations[0]?.obligation.title} completed!`,
+        //   });
+        // });
+      }
     }
-  }, [partnerData]);
+  }, [partnerData.obligationsCompleted]);
 
   useEffect(() => {
     if (contracts) {
@@ -46,8 +67,34 @@ export default function useNotifications() {
           ),
       );
       setNewContracts(newContracts);
+      if (newContracts.length > 0 && canShowContractsNotification()) {
+        lastShownNewContractsNotification.current = Date.now();
+        const contractees = newContracts.map(contract =>
+          contract.contractees.find(
+            contractee => contractee.userId !== user?.userId,
+          ),
+        );
+        // showNotification({
+        //   title: "New contract!",
+        //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
+        // });
+      }
     }
   }, [contracts]);
+
+  const canShowContractsNotification = () => {
+    const now = Date.now();
+    const timeSinceLastNotification =
+      now - lastShownNewContractsNotification.current;
+    return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
+  };
+
+  const canShowObligationsNotification = () => {
+    const now = Date.now();
+    const timeSinceLastNotification =
+      now - lastShownNewObligationsNotification.current;
+    return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
+  };
 
   const markObligationsAsViewed = async () => {
     try {
@@ -86,50 +133,23 @@ export default function useNotifications() {
     } catch (error) {}
   };
 
+  const showNotification = async (notification: NotificationData) => {
+    const notificationComponent = () => NotificationComponent({ notification });
+    toast(notificationComponent, {
+      autoClose: 3000,
+    });
+  };
+
   // Using firebase messaging, send a push notification to thhe other user in the contract.
   // Before sending, it adds the obligation to the notifications slice.
   // Then, waits 1 minutes before sending the notification.
   // If a new obligation is added, the timeout is reset.
-
-  const sendCompletedObligationNotification = async (
-    contract: Contract,
-    obligation: Obligation,
-  ) => {
-    try {
-      const otherUser = contract.contractees.find(
-        contractee => contractee.userId !== user?.userId,
-      );
-      if (!otherUser) return;
-
-      dispatch(
-        addObligationNotification({
-          userId: otherUser.userId,
-          contract: contract,
-          obligation: obligation,
-        }),
-      );
-
-      if (sendNotificationTimeout.current) {
-        clearTimeout(sendNotificationTimeout.current);
-      }
-
-      await axios.post("/api/notifications", {
-        contract,
-        obligation,
-        userId: otherUser.userId,
-      });
-      dispatch(clearObligationNotifications());
-    } catch (error: any) {
-      Logger.error("Error sending notification", error);
-      throw error;
-    }
-  };
 
   return {
     newContracts,
     newObligations,
     markObligationsAsViewed,
     markContractsAsViewed,
-    sendCompletedObligationNotification,
+    showNotification,
   };
 }

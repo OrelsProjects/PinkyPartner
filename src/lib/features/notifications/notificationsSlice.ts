@@ -2,6 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Contract from "../../../models/contract";
 import Obligation from "../../../models/obligation";
 
+export type NotificationData = {
+  title: string;
+  body?: string;
+  image?: string;
+  onClick?: () => void;
+};
+
 type ObligationNotification = {
   userId: string;
   contract: Contract;

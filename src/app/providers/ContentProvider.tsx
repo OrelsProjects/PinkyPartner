@@ -11,6 +11,7 @@ import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
 import { useEffect } from "react";
 import * as NProgress from "nprogress";
+import { useTheme } from "next-themes";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ const BOTTOM_BAR_HEIGHT = 65;
 
 const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const { user } = useAppSelector(state => state.auth);
+  const { theme } = useTheme();
   const sizeContent = React.useContext(SizeContext);
   const bottomBarRef = React.useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = React.useState<number>(
@@ -66,12 +68,13 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             <toast.ToastContainer
               stacked
               newestOnTop
-              theme="dark"
+              theme={theme}
               autoClose={2500}
               draggablePercent={60}
               className="!mb-16 z-[51]"
               transition={toast.Flip}
               position="bottom-center"
+              pauseOnHover={false}
             />
           </div>
           <div className="w-full h-full relative z-10 overflow-auto">

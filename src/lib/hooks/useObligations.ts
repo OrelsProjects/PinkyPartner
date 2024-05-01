@@ -22,7 +22,6 @@ import LoadingError from "../../models/errors/LoadingError";
 import ObligationCompleted from "../../models/obligationCompleted";
 import Contract from "../../models/contract";
 import { Logger } from "../../logger";
-import useNotifications from "./useNotifications";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -37,7 +36,6 @@ export function useObligations() {
   } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
-  const { sendCompletedObligationNotification } = useNotifications();
 
   const updateObligationRepeat = (
     obligation: CreateObligation,
@@ -114,7 +112,9 @@ export function useObligations() {
     dispatch(setLoading(true));
 
     try {
-      await axios.delete(`/api/obligation/${obligation.obligationId}`);
+      await axios.delete(
+        `/api/obligation?obligationId=${obligation.obligationId}`,
+      );
       dispatch(deleteObligationAction(obligation.obligationId));
       dispatch(setError(null));
     } catch (err: any) {
@@ -143,6 +143,27 @@ export function useObligations() {
         obligationsCompleted,
       }),
     );
+  };
+
+  const sendCompletedObligationNotification = async (
+    contract: Contract,
+    obligation: Obligation,
+  ) => {
+    try {
+      const otherUser = contract.contractees.find(
+        contractee => contractee.userId !== user?.userId,
+      );
+      if (!otherUser) return;
+
+      await axios.post("/api/notifications", {
+        title: `${otherUser.displayName || "Your partner"} is progressing!`,
+        body: `${obligation.title} completed!`,
+        userId: otherUser.userId,
+      });
+    } catch (error: any) {
+      Logger.error("Error sending notification", error);
+      throw error;
+    }
   };
 
   const completeObligation = async (
