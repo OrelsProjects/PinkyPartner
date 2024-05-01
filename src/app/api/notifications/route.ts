@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Logger from "@/loggerServer";
+import Logger from "../../../loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";

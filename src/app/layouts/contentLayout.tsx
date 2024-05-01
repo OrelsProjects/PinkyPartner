@@ -1,3 +1,7 @@
+"use client";
+
+import React from "react";
+import "../../../firebase.config";
 import type { Viewport } from "next";
 import ContentProvider from "../providers/ContentProvider";
 import HeightProvider from "../providers/HeightProvider";

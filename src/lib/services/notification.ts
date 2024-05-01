@@ -1,5 +1,5 @@
 "use client";
-import { messaging, getToken } from "../../../firebase.config";
+import { messaging, getUserToken } from "../../../firebase.config";
 
 function isNotificationSupported() {
   return "Notification" in window;
@@ -58,7 +58,7 @@ export function createNotification(title: string, body: string, image: string) {
  * This function registers the service worker and initializes push notifications
  * @returns
  */
-export async function getUserToken(): Promise<string> {
+export async function getToken(): Promise<string> {
   if (!("serviceWorker" in navigator)) {
     return "";
   }
@@ -71,9 +71,7 @@ export async function getUserToken(): Promise<string> {
     return ""; // TODO: Throw
   }
 
-  const token = await getToken(messaging, {
-    vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  });
+  const token = await getUserToken();
 
   console.log(token);
   return token;

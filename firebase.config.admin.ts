@@ -23,7 +23,6 @@ try {
     });
   }
 } catch (e) {
-  debugger;
 }
 
 const storage = admin.storage();

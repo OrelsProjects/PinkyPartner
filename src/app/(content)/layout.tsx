@@ -1,3 +1,5 @@
+
+import React from "react";
 import ContentLayout from "../layouts/contentLayout";
 
 interface RootLayoutProps {

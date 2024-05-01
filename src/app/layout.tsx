@@ -3,6 +3,7 @@ import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
+import React from "react";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";

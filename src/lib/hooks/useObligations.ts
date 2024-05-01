@@ -161,7 +161,6 @@ export function useObligations() {
     }
 
     try {
-      debugger;
       await sendCompletedObligationNotification(contract, obligation);
 
       const obligationCompletedResponse = await axios.post<ObligationCompleted>(

@@ -1,8 +1,9 @@
-import { initializeApp } from "firebase/app";
+import firebase from "firebase/compat/app";
+import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,13 +14,23 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+// if app is not initialized, initialize it
+let app: FirebaseApp = firebase.apps?.[0];
+if (!app) {
+  app = initializeApp(firebaseConfig);
+}
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const messaging = getMessaging(app);
-const getToken = async (messaging: any, options: any) => {
-  return await messaging.getToken(options);
+const getUserToken = async () => {
+  try {
+    return await getToken(messaging, {
+      vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    });
+  } catch (error) {
+    return "";
+  }
 };
-export { auth, db, storage, messaging, getToken };
+export { auth, db, storage, messaging, getUserToken };
