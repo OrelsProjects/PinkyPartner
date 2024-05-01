@@ -1,6 +1,5 @@
 "use client";
-import { getToken } from "firebase/messaging";
-import { messaging } from "../../../firebase.config";
+import { messaging, getToken } from "../../../firebase.config";
 
 function isNotificationSupported() {
   return "Notification" in window;
@@ -75,7 +74,7 @@ export async function getUserToken(): Promise<string> {
   const token = await getToken(messaging, {
     vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   });
-  debugger;
+
   console.log(token);
   return token;
 }

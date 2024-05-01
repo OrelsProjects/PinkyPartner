@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
-import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../authOptions";
 import AppUser from "../../../models/appUser";
 import prisma from "../_db/db";
+import Logger from "../../../loggerServer";
 
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);
@@ -38,8 +38,11 @@ export async function DELETE(req: NextRequest): Promise<any> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    if (!session.user?.userId) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
     await prisma.appUser.delete({
-      where: { userId: session.user.userId },
+      where: { userId: session.user?.userId },
     });
     return NextResponse.json({}, { status: 200 });
   } catch (error: any) {
@@ -55,11 +58,14 @@ export async function PATCH(req: NextRequest): Promise<any> {
   }
   let user: AppUser | null = null;
   try {
+    if (!session.user?.userId) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
     const { token } = await req.json();
     await prisma.appUserMetadata.upsert({
-      where: { userId: session.user.userId },
+      where: { userId: session.user?.userId },
       update: { pushToken: token },
-      create: { userId: session.user.userId, pushToken: token },
+      create: { userId: session.user?.userId, pushToken: token },
     });
     return NextResponse.json({}, { status: 200 });
   } catch (error: any) {

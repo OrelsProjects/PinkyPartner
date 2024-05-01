@@ -19,4 +19,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const messaging = getMessaging(app);
-export { auth, db, storage, messaging };
+const getToken = async (messaging: any, options: any) => {
+  return await messaging.getToken(options);
+};
+export { auth, db, storage, messaging, getToken };
