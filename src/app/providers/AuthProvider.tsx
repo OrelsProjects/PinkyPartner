@@ -10,7 +10,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
-import { setUserLogger } from "../../logger";
+import { initLogger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
@@ -56,6 +56,7 @@ export default function AuthProvider({
     switch (status) {
       case "authenticated":
         setUser(session.user);
+        initLogger();
         break;
       case "loading":
         break;
