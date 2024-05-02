@@ -9,7 +9,7 @@ export const HeroHighlight = ({
   className,
   containerClassName,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   containerClassName?: string;
 }) => {

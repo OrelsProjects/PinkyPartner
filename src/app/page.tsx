@@ -10,7 +10,7 @@ import { cn } from "../lib/utils";
 
 const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
   <div
-    className="h-10 lg:h-16 w-10 lg:w-16 lg:hover:cursor-pointer absolute bottom-6 left-[45%] sm:left-1/2 flex justify-center items-center rounded-full bg-card border-[1.5px] border-muted animate-bounce"
+    className="h-10 lg:h-16 w-10 lg:w-16 lg:hover:cursor-pointer absolute bottom-6 left-[45%] sm:left-1/2 flex justify-center items-center rounded-full bg-card border-[1.5px] border-muted animate-bounce z-30"
     onClick={onClick}
   >
     <FaArrowDownLong className="text-3xl text-primary h-6 lg:h-8 w-6 lg:w-8" />
@@ -61,7 +61,7 @@ const Video = ({ url }: { url: string }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = 2;
+      videoRef.current.playbackRate = 1;
     }
   }, []);
 
@@ -152,8 +152,11 @@ const Header = () => (
   </header>
 );
 
-const HeroSection = () => (
-  <HeroHighlight containerClassName="items-center h-screen w-full">
+const HeroSection = ({ onNext }: { onNext: () => void }) => (
+  <HeroHighlight
+    containerClassName="items-center h-screen w-full relative"
+    className="h-screen flex justify-start items-center pt-20 md:pt-0"
+  >
     <motion.div
       initial={{
         opacity: 0,
@@ -186,7 +189,7 @@ const HeroSection = () => (
           Alone.
         </Highlight>
       </div>
-      <div className="flex flex-col lg:flex-row items-center gap-1">
+      <div className="flex flex-col lg:flex-row justify-start gap-1 tracking-tighter">
         <TextGenerateEffect
           words={"But it's easier when you have a"}
           delay={2}
@@ -200,11 +203,19 @@ const HeroSection = () => (
         <Highlight
           duration={0.8}
           delay={3.5}
-          className="from-blue-400 to-indigo-400 dark:from-blue-500 dark:to-indigo-500 text-white"
+          className="w-fit from-blue-400 to-indigo-400 dark:from-blue-500 dark:to-indigo-500 text-white"
         >
           Partner.
         </Highlight>
       </div>
+    </motion.div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 5 }}
+      className="z-30 absolute bottom-0 inset-x-0"
+    >
+      <ArrowDown onClick={onNext} />
     </motion.div>
   </HeroHighlight>
 );
@@ -223,10 +234,11 @@ const Section = ({
   className?: string;
 }) => {
   return (
-    <div className="w-screen h-screen bg-background flex flex-col relative sm:px-80 sm:py-28">
+    <div className="w-screen h-screen flex flex-col relative sm:px-80 sm:py-28 z-20">
+      <HeroHighlight containerClassName="items-center h-full w-full absolute inset-0 z-10" />
       <div
         className={cn(
-          "w-full h-full flex flex-col sm:flex-row justify-center items-center gap-6 bg-card rounded-xl",
+          "w-full h-full flex flex-col sm:flex-row justify-center items-center gap-6 bg-card rounded-xl z-30",
           className,
         )}
       >
@@ -292,10 +304,10 @@ export default function Home() {
   };
 
   return (
-    <div className="h-full w-full gap-1 flex flex-col overflow-auto">
+    <div className="h-full w-full gap-1 flex flex-col overflow-auto relative">
       <Header />
-      <HeroSection />
-      <div ref={partOneRef}>
+      <HeroSection onNext={scrollToPartOne} />
+      <div ref={partOneRef} className="z-20">
         <Section
           title="Make a Promises"
           body="The beginning of every relationship is a promise. Make promises to keep each other accountable."
@@ -304,7 +316,7 @@ export default function Home() {
           <CreateObligationVideo />
         </Section>
       </div>
-      <div ref={partTwoRef}>
+      <div ref={partTwoRef} className="z-20">
         <Section
           title="Create Contracts"
           body={
@@ -320,7 +332,7 @@ export default function Home() {
           <CreateContractVideo />
         </Section>
       </div>
-      <div ref={partThreeRef}>
+      <div ref={partThreeRef} className="z-20">
         <Section
           title="Wait for your partner"
           body={
@@ -336,23 +348,16 @@ export default function Home() {
           <SignContractVideo />
         </Section>
       </div>
-      <div ref={partFourRef}>
+      <div ref={partFourRef} className="z-20">
         <Section title="Let's get started!" className="flex !flex-col gap-2">
           <Button
             variant="magic"
             className="bg-card dark:bg-background text-lg md:text-xl"
           >
-            <a href="/register">Get Started</a>
+            <a href="/register">Take my pinky!</a>
           </Button>
         </Section>
       </div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 5 }}
-      >
-        <ArrowDown onClick={scrollToPartOne} />
-      </motion.div>
     </div>
   );
 }
