@@ -31,6 +31,7 @@ import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDr
 import { useTheme } from "next-themes";
 import { DaysToText } from "../../../../lib/utils/dateUtils";
 import { cn } from "../../../../lib/utils";
+import { motion } from "framer-motion";
 interface ObligationProps {
   params: {
     id?: string;
@@ -84,7 +85,7 @@ const Daily = ({
       friday: days ? days.includes(5) : true,
       saturday: days ? days.includes(6) : true,
     },
-    onSubmit: values => {},
+    onSubmit: _ => {},
   });
 
   useEffect(() => {
@@ -184,6 +185,7 @@ const PromiseDialog = ({
   disabled = false,
   open,
   onOpenChange,
+  onCreateNewClick,
 }: {
   obligation?: Obligation | null;
   onCreate?: (data: CreateObligation) => Promise<void>;
@@ -191,6 +193,7 @@ const PromiseDialog = ({
   disabled?: boolean;
   open?: boolean;
   onOpenChange?: (state: boolean) => void;
+  onCreateNewClick?: () => void;
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { theme } = useTheme();
@@ -205,6 +208,11 @@ const PromiseDialog = ({
       timesAWeek: obligation?.timesAWeek as TimesAWeek,
     },
     onSubmit: values => {
+      if (values.repeat === "Daily" && values.days.length === 0) {
+        toast.info("Don't forget to select the days!");
+        formik.setErrors({ repeat: "Select days" });
+        return;
+      }
       if (obligation) {
         onEdit?.({ ...obligation, ...values });
       } else {
@@ -224,10 +232,8 @@ const PromiseDialog = ({
         timesAWeek: obligation.timesAWeek,
       });
     } else {
-      formik.setValues({
-        ...formik.values,
-        emoji: formik.values.emoji || "🤝",
-      });
+      formik.resetForm();
+      formik.values.emoji = "🤝";
     }
   }, [obligation]);
 
@@ -242,6 +248,9 @@ const PromiseDialog = ({
         <Button
           variant="ghost"
           className="text-2xl flex justify-center items-center p-2"
+          onClick={_ => {
+            onCreateNewClick?.();
+          }}
         >
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
@@ -294,6 +303,7 @@ const PromiseDialog = ({
                   formik.setFieldValue("repeat", value);
                 }}
                 className="h-10"
+                error={formik.errors.repeat}
               />
               <div className="flex flex-col items-start gap-2 w-fit h-fit rounded-lg">
                 {formik.values.repeat === "Weekly" && (
@@ -380,7 +390,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     createObligation,
     updateObligation,
     obligations,
-    loading,
+    loadingData,
   } = useObligations();
 
   const [obligation, setObligation] = useState<Obligation | undefined | null>(
@@ -389,21 +399,37 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   const [showDialog, setShowDialog] = useState<boolean | undefined>();
 
   useEffect(() => {
+    if (loadingData) return;
     if (params.id && params.id.length > 0) {
       const obligationId = params.id[0];
       if (obligationId !== "new") {
-        const obligation = getUserObligation(params.id[0]);
-        setObligation(obligation);
+        setTimeout(() => {
+          const obligation = getUserObligation(params?.id?.[0] ?? "");
+          if (!obligation) router.push("/promises");
+          setObligation(obligation);
+          setShowDialog(true);
+        }, 300); // Hack to let the data load
       }
+    }
+  }, [params, params.id, loadingData]);
+
+  useEffect(() => {
+    if (obligation) {
       setShowDialog(true);
     }
-  }, [params, params.id]);
+  }, [obligation]);
 
   const handleOnOpenChange = (state: boolean) => {
     if (!state) {
       router.push("/promises");
+      setObligation(null);
     }
     setShowDialog(state);
+  };
+
+  const handleOnCreateNewClick = () => {
+    setObligation(null);
+    setShowDialog(true);
   };
 
   const hideDialog = () => {
@@ -439,7 +465,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleOnObligationClick = (obligation: Obligation) => {
     // set window state to the obligation id
-    router.push(`/promises/${obligation.obligationId}`);
+    window.history.pushState({}, "", `/promises/${obligation.obligationId}`);
     setObligation(obligation);
   };
 
@@ -452,26 +478,34 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
         <PromiseDialog
           onCreate={handleCreateObligation}
           onEdit={handleUpdateObligation}
-          disabled={loading}
+          disabled={loadingData}
           open={showDialog}
           onOpenChange={handleOnOpenChange}
           obligation={obligation}
+          onCreateNewClick={handleOnCreateNewClick}
         />
       </div>
-      <div className="flex flex-wrap gap-3 justify-start items-start overflow-auto">
-        {loading
-          ? Array.from({ length: obligations.length || 5 }).map((_, index) => (
-              <div className="w-full flex flex-col gap-1" key={index}>
-                <ObligationComponentLoading />
-              </div>
+      <div className="flex flex-wrap gap-5 justify-between items-start overflow-auto mt-10 h-fit max-h-full pb-3">
+        {loadingData
+          ? Array.from({ length: obligations.length || 6 }).map((_, index) => (
+              <ObligationComponentLoading
+                key={`obligationComponentLoading - ${index}`}
+              />
             ))
           : obligations.map(obligation => (
-              <ObligationComponent
-                obligation={obligation}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
                 key={obligation.obligationId}
-                onClick={handleOnObligationClick}
-                showDelete
-              />
+              >
+                <ObligationComponent
+                  obligation={obligation}
+                  onClick={handleOnObligationClick}
+                  showDelete
+                />
+              </motion.div>
             ))}
       </div>
     </div>

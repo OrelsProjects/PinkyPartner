@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
 import { useContracts } from "../../../lib/hooks/useContracts";
@@ -8,6 +8,7 @@ import ContractComponent, {
   ContractComponentLoading,
 } from "../../../components/contractComponent";
 import { FaPlus } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 interface ContractsProps {}
 
@@ -30,7 +31,13 @@ const ContractsPage: React.FC<ContractsProps> = () => {
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </div>
-      <div className="h-full w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 overflow-auto">
+      <motion.div
+        className="h-full w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-8 md:justify-between overflow-auto mt-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {loadingData
           ? Array.from({ length: contractsData.length || 6 }).map(
               (_, index) => (
@@ -45,7 +52,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
                 key={contractData.contractId}
               />
             ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -32,19 +32,15 @@ const CheckboxObligation: React.FC<CheckboxObligationProps> = ({
     }
   };
 
-  return (
-    <div>
-      {loadingComplete ? (
-        <Loading className="w-6 h-6 fill-primary" />
-      ) : (
-        <Checkbox
-          className="w-6 h-6"
-          onCheckedChange={(e: any) => {
-            handleComplete();
-          }}
-        />
-      )}
-    </div>
+  return loadingComplete ? (
+    <Loading className="w-6 h-6 fill-primary" />
+  ) : (
+    <Checkbox
+      className="w-6 h-6"
+      onCheckedChange={(e: any) => {
+        handleComplete();
+      }}
+    />
   );
 };
 

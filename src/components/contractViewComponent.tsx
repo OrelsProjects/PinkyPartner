@@ -122,7 +122,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           </div>
         </DialogFooter>
       )}
-    </DialogContent> 
+    </DialogContent>
   );
 
   const UnSignedNotice = () => (
@@ -152,7 +152,9 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
             <div className="shimmer-wrapper"></div>
           </Button>
         ) : (
-          <Button variant="outline">View Contract</Button>
+          <Button variant="outline" className="dark:bg-card">
+            View Contract
+          </Button>
         )}
       </DialogTrigger>
       {areAllSigned || !isSigned ? <ContractDetails /> : <UnSignedNotice />}

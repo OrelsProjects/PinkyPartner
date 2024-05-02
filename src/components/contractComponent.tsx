@@ -25,7 +25,7 @@ export const ContractComponentLoading = ({
 }) => (
   <div
     className={cn(
-      "w-full md:w-5/12 h-60 shadow-md rounded-md flex flex-col justify-between gap-1 p-3",
+      "w-full md:w-[23.5rem] h-60 shadow-md dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
       className,
     )}
   >
@@ -75,7 +75,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-5/12 h-60 shadow-md rounded-md flex flex-col justify-between gap-1 p-3",
+        "w-full md:w-[23.5rem] h-60 shadow-md dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
         { "border-primary/50": !isUserSigned },
       )}
     >

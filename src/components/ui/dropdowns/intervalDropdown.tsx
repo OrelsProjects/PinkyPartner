@@ -29,7 +29,9 @@ const IntervalDropdown: React.FC<IntervalDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={`border border-1 border-input rounded-md p-2 ${className || ""}`}
+        className={`border border-1 border-input rounded-md p-2 ${className || ""}
+        ${error ? "border-red-400" : ""}
+        `}
       >
         <div className="flex flex-row justify-center items-center gap-5">
           <div className="font-light">{selected}</div>

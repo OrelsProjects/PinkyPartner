@@ -54,15 +54,18 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   return (
     <div className="w-screen h-screen flex flex-col relative">
       <div
-        className={cn("w-full lg:max-w-[70rem] mx-auto lg:flex p-4 relative", {
-          "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
-        })}
+        className={cn(
+          "w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative",
+          {
+            "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
+          },
+        )}
         style={{
           height: contentHeight,
           maxHeight: contentHeight,
         }}
       >
-        {user && <NavigationBar ref={bottomBarRef} className="lg:mr-6" />}
+        {user && <NavigationBar ref={bottomBarRef} />}
         <ThemeProvider>
           <div className="relative z-[51]">
             <toast.ToastContainer

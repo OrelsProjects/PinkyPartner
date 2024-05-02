@@ -36,17 +36,16 @@ export default function AuthProvider({
     };
   }) => {
     try {
-      dispatch(
-        setUserAction({
-          name: user?.name || null,
-          email: user?.email || null,
-          photoURL: user?.image || null,
-          userId: user?.userId || null,
-          meta: {
-            referralCode: user?.meta.referralCode || null,
-          },
-        } as AppUser),
-      );
+      const appUser: AppUser = {
+        displayName: user?.name || null,
+        email: user?.email || "",
+        photoURL: user?.image || null,
+        userId: user?.userId || "",
+        meta: {
+          referralCode: user?.meta.referralCode || "",
+        },
+      };
+      dispatch(setUserAction(appUser));
     } catch (error: any) {
       console.error(error);
       dispatch(setUserAction(null));

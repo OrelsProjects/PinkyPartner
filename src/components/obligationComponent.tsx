@@ -41,8 +41,8 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
   className,
 }) => (
   <div
-    className={`rounded-lg h-16 w-full md:w-96 bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
-      shadow-md
+    className={`rounded-lg h-16 w-full  md:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+    shadow-md
   `}
   >
     <div className="flex flex-col gap-1">
@@ -142,12 +142,12 @@ const ObligationComponent: React.FC<ObligationProps> = ({
     );
   return (
     <div
-      className={`rounded-lg h-16 w-full md:w-96 bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+      className={`rounded-lg h-16 w-full md:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
       shadow-md
       `}
       onClick={() => onClick?.(obligation)}
     >
-      <div className="flex flex-col gap-1 flex-shrink-1">
+      <div className="flex flex-col gap-1 flex-shrink-1"> 
         <div className="flex flex-row gap-3">
           <span className="text-card-foreground">{obligation.emoji}</span>
           <span

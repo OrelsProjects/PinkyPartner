@@ -122,7 +122,6 @@ export function useContracts() {
       ];
       dispatch(signContractAction({ contractId, user: accountabilityPartner }));
       dispatch(setError(null));
-      debugger;
       Promise.allSettled(fetchDataPromises).catch(err => {
         Logger.error("Error fetching data after signing contract", err);
       });

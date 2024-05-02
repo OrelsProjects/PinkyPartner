@@ -97,7 +97,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     useState<AccountabilityPartner | null>(null);
   const [previousAccountabilityPartner, setPreviousAccountabilityPartner] =
     useState<AccountabilityPartner | null>(null);
-  const [obligationsUsed, setObligationsUsed] = useState<Obligation[]>([]);
+  const [usedObligations, setObligationsUsed] = useState<Obligation[]>([]);
 
   const signatureRef = useRef<HTMLDivElement>(null);
   const obligationsRef = useRef<HTMLDivElement>(null);
@@ -152,24 +152,25 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
   const unusedObligations = React.useMemo(() => {
     return obligations.filter(
       obligation =>
-        !obligationsUsed.find(
+        !usedObligations.find(
           used => used.obligationId === obligation.obligationId,
         ),
     );
-  }, [obligations, obligationsUsed]);
+  }, [obligations, usedObligations]);
 
   const handleAddObligationToContract = (obligation: Obligation) => {
-    if (obligationsUsed.includes(obligation)) return;
-    setObligationsUsed([...obligationsUsed, obligation]);
-    const obligationUsedIds = obligationsUsed.map(used => used.obligationId);
+    if (usedObligations.includes(obligation)) return;
+    setObligationsUsed([obligation, ...usedObligations]);
+    const obligationUsedIds = usedObligations.map(used => used.obligationId);
+
     formik.setValues({
       ...formik.values,
-      obligationIds: [...obligationUsedIds, obligation.obligationId],
+      obligationIds: [obligation.obligationId, ...obligationUsedIds],
     });
   };
 
   const handleRemoveObligationFromContract = (obligation: Obligation) => {
-    const filteredObligations = obligationsUsed.filter(
+    const filteredObligations = usedObligations.filter(
       used => used.obligationId !== obligation.obligationId,
     );
     setObligationsUsed(filteredObligations);
@@ -245,7 +246,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start overflow-auto"
+            className="h-full w-full flex flex-col gap-5 justify-start items-start"
           >
             <form
               onSubmit={formik.handleSubmit}
@@ -254,14 +255,14 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="self-start p-0 sticky top-0 left-0 w-full flex justify-start items-center bg-background z-20"
+                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 !rounded-none"
               >
                 <div className="flex flex-row gap-1 items-start">
                   <IoArrowBack className="w-6 h-6" />
                   Back
                 </div>
               </Button>
-              <div className="flex flex-col gap-12">
+              <div className="w-full h-full overflow-auto flex flex-col gap-12">
                 <div className="flex flex-col gap-1" id="title">
                   <h1 className="text-xl font-bold">Title</h1>
                   <Input
@@ -278,43 +279,46 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
 
                 <div className="flex flex-col gap-1" id="promises">
                   <h1 className="text-xl font-bold">Promises</h1>
-                  <div className="flex flex-row max-h-96">
+                  <div className="flex flex-col-reverse md:flex-row md:max-h-[26rem] gap-6 md:gap-0.5">
                     <div className="flex flex-col gap-0 w-full">
-                      <div className="font-normal mt-1">Your promises</div>
-                      <div className="flex flex-col gap-1 justify-start items-start overflow-auto w-full">
+                      <div className="mt-1 font-semibold md:font-normal">
+                        Your promises
+                      </div>
+                      <div className="flex flex-col gap-3 justify-start items-start overflow-auto w-full">
                         {unusedObligations.map(obligation => (
                           <motion.div
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
                             transition={{ duration: 0.2 }}
-                            key={obligation.obligationId}
-                            className="w-full"
+                            key={`used-obligation-${obligation.obligationId}`}
+                            className="w-full md:w-auto"
                           >
                             <ObligationComponent
                               obligation={obligation}
                               onClick={handleAddObligationToContract}
-                              key={obligation.obligationId}
                             />
                           </motion.div>
                         ))}
                       </div>
                     </div>
                     <div className="flex flex-col gap-0 w-full">
-                      <div className="font-normal mt-1">In contract</div>
+                      <div className="mt-1 font-semibold md:font-normal">
+                        In contract
+                      </div>
                       <div
-                        className="flex flex-col gap-0.5 justify-start items-start overflow-auto w-full h-full"
+                        className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full"
                         ref={obligationsRef}
                       >
-                        {obligationsUsed.length > 0 ? (
-                          obligationsUsed.map(obligation => (
+                        {usedObligations.length > 0 ? (
+                          usedObligations.map(obligation => (
                             <motion.div
                               initial={{ x: "-100%" }}
                               animate={{ x: 0 }}
                               exit={{ x: "100%" }}
                               transition={{ duration: 0.2 }}
-                              key={obligation.obligationId}
                               className="w-full"
+                              key={`used-obligation-${obligation.obligationId}`}
                             >
                               <ObligationComponent
                                 obligation={obligation}
@@ -334,10 +338,17 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                             </motion.div>
                           ))
                         ) : (
-                          <div className="h-full w-full flex flex-col justify-center items-center">
+                          <div
+                            className="h-full w-full flex flex-col justify-center items-center
+                          font-thin md:font-normal
+                          "
+                          >
                             <div>You didn&apos;t make any promises yet.</div>
-                            <div>
-                              Click on the left to add some 💪
+                            <div className="hidden md:block">
+                              Choose some from the left 💪
+                            </div>
+                            <div className="block md:hidden">
+                              Choose some from the below 💪
                             </div>
                           </div>
                         )}
@@ -397,10 +408,10 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     </div>
                   </div>
                 </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  Create contract
+                </Button>
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                Create contract
-              </Button>
             </form>
           </motion.div>
         )}

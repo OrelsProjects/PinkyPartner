@@ -57,11 +57,11 @@ const NextUp = ({
   return (
     <div
       className={cn(
-        "w-full lg:w-fit h-full flex flex-col gap-4 overflow-auto pr-2 lg:pr-4",
+        "w-full lg:w-fit h-full flex flex-col gap-4 overflow-auto pb-1",
         className,
       )}
     >
-      <div className="w-full lg:w-fit h-full flex flex-col gap-3 pr-2 lg:pr-4">
+      <div className="w-full lg:w-fit h-full flex flex-col gap-3">
         {loading ? (
           <Loading />
         ) : (
@@ -82,21 +82,19 @@ const NextUp = ({
                       >
                         <motion.div
                           className="w-full flex items-center justify-center md:items-start md:justify-start"
-                          initial={{ x: 100 }}
-                          animate={{ x: 0 }}
-                          exit={{ x: 100 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
                           transition={{ duration: 0.5 }}
                         >
                           <ObligationComponent
                             obligation={obligation}
-                            contract={
-                              obligationInContract.contract
-                            }
+                            contract={obligationInContract.contract}
                             showComplete={!partner}
                             ownerImageUrl={
                               partner
                                 ? obligationInContract.appUser?.photoURL
-                                : user?.photoURL
+                                : ""
                             }
                           />
                         </motion.div>
@@ -126,7 +124,7 @@ const Done = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("w-full lg:w-fit h-full overflow-auto", className)}>
+    <div className={cn("w-full lg:w-fit h-full overflow-auto pb-1", className)}>
       <div className="w-full lg:w-fit h-full flex flex-col gap-3 pr-4">
         {loading ? (
           <Loading />

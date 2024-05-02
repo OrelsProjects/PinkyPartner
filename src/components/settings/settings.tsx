@@ -1,20 +1,29 @@
 import React from "react";
 import { FaCog } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "../../lib/hooks/redux";
+import Image from "next/image";
 
 interface SettingsComponentProps {}
 
 const SettingsComponent: React.FC<SettingsComponentProps> = () => {
   const router = useRouter();
+  const { user } = useAppSelector(state => state.auth);
 
   return (
     <div
       onClick={() => {
         router.push("/settings");
       }}
-      className="p-2 rounded-lg  hover:rotate-30 hover:bg-muted/50"
+      className="p-2 rounded-lg"
     >
-      <FaCog className="text-muted-foreground h-6 w-6 hover:-rotate-45 transition-all " />
+      <Image
+        src={user?.photoURL || "/images/default-profile.png"}
+        alt="profile"
+        width={40}
+        height={40}
+        className="rounded-full hover:cursor-pointer"
+      />
     </div>
   );
 };

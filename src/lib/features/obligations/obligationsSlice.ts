@@ -31,7 +31,7 @@ const initialState: ObligationsState = {
     obligationsCompleted: [],
   },
   loading: false,
-  loadingData: false,
+  loadingData: true,
   error: null,
 };
 

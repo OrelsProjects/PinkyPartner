@@ -12,7 +12,7 @@ export const AccountabilityPartnerComponentLoading = ({
   <div
     className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${className}`}
   >
-    <Skeleton className="w-10 h-10 rounded-lg" />
+    <Skeleton className="w-10 h-10 rounded-full" />
     <Skeleton className="w-20 h-5 rounded-lg" />
   </div>
 );
