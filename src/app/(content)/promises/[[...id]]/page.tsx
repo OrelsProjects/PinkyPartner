@@ -42,7 +42,6 @@ interface ObligationProps {
 }
 
 const isFirstObligationView = (): boolean => {
-  localStorage.removeItem("isFirstObligationCreated");
   const isFirstObligationCreated = localStorage.getItem(
     "isFirstObligationCreated",
   );
@@ -404,7 +403,15 @@ const NoContractsDialog = () => {
     setIsFirstObligationView();
   }, []);
   return (
-    <Dialog open={true} onOpenChange={_ => {}}>
+    <Dialog
+      open={true}
+      onOpenChange={open => {
+        debugger;
+        if (!open) {
+          setIsFirstObligationView();
+        }
+      }}
+    >
       <DialogContent className="w-5/6 sm:max-w-[450px] sm:h-[450px] bg-card p-6">
         <div className="w-full h-full flex flex-col justify-center items-center gap-3">
           <h1 className="text-xl font-semibold">
@@ -418,7 +425,7 @@ const NoContractsDialog = () => {
               }}
               className="bg-primary text-white"
             >
-             Make it official!
+              Make it official!
             </Button>
           </div>
         </div>
@@ -518,7 +525,9 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   // If it's the first time the user is viewing the obligations page
   const shouldShowCreateContract = useMemo(() => {
     return (
-      !isFirstObligationView() && contracts.length === 0 && obligations.length > 0
+      !isFirstObligationView() &&
+      contracts.length === 0 &&
+      obligations.length > 0
     );
   }, [contracts]);
 
