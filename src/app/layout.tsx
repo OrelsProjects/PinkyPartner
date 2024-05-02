@@ -8,7 +8,7 @@ import React from "react";
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
 const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
-const APP_DESCRIPTION = "Do stuff with your partner!";
+const APP_DESCRIPTION = "Create habits with a partner!";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     template: APP_TITLE_TEMPLATE,
   },
   description: APP_DESCRIPTION,
+
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -54,6 +55,10 @@ export const metadata: Metadata = {
 export default function LocaleLayout({ children, locale }: RootLayoutProps) {
   return (
     <html lang={locale} className="font-montserrat">
+      <meta property="og:image" content="<generated>" />
+      <meta property="og:image:type" content="<generated>" />
+      <meta property="og:image:width" content="<generated>" />
+      <meta property="og:image:height" content="<generated>" />
       <body className="!overscroll-none">
         <StoreProvider>
           <SessionWrapper>
