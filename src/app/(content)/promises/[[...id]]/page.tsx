@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Obligation, {
   CreateObligation,
   Days,
@@ -32,11 +32,26 @@ import { useTheme } from "next-themes";
 import { DaysToText } from "../../../../lib/utils/dateUtils";
 import { cn } from "../../../../lib/utils";
 import { motion } from "framer-motion";
+import { useContracts } from "../../../../lib/hooks/useContracts";
+import { useAppSelector } from "../../../../lib/hooks/redux";
+
 interface ObligationProps {
   params: {
     id?: string;
   };
 }
+
+const isFirstObligationView = (): boolean => {
+  localStorage.removeItem("isFirstObligationCreated");
+  const isFirstObligationCreated = localStorage.getItem(
+    "isFirstObligationCreated",
+  );
+  return isFirstObligationCreated === "true";
+};
+
+const setIsFirstObligationView = () => {
+  localStorage.setItem("isFirstObligationCreated", "true");
+};
 
 const Weekly = ({
   onChange,
@@ -283,7 +298,7 @@ const PromiseDialog = ({
           <SectionContainer>
             <SectionTitleContainer>
               <SectionTitle text="Repeat" />
-              <SectionTitleExplanation text="Choose how often you&apos;d like to practice the new habit" />
+              <SectionTitleExplanation text="Choose how often you'd like to practice the new habit" />
             </SectionTitleContainer>
 
             <RepeatText
@@ -383,6 +398,35 @@ const PromiseDialog = ({
   );
 };
 
+const NoContractsDialog = () => {
+  const router = useRouter();
+  useEffect(() => {
+    setIsFirstObligationView();
+  }, []);
+  return (
+    <Dialog open={true} onOpenChange={_ => {}}>
+      <DialogContent className="w-5/6 sm:max-w-[450px] sm:h-[450px] bg-card p-6">
+        <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+          <h1 className="text-xl font-semibold">
+            Seems like your pinky is ready to meet another pinky.. 😉
+          </h1>
+          <div className="w-full flex justify-center items-center flex-col">
+            <Button
+              onClick={() => {
+                setIsFirstObligationView();
+                router.push("/contracts/new");
+              }}
+              className="bg-primary text-white"
+            >
+             Make it official!
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
   const router = useRouter();
   const {
@@ -392,7 +436,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     obligations,
     loadingData,
   } = useObligations();
-
+  const { contracts } = useAppSelector(state => state.contracts);
   const [obligation, setObligation] = useState<Obligation | undefined | null>(
     null,
   );
@@ -471,6 +515,13 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
     setObligation(obligation);
   };
 
+  // If it's the first time the user is viewing the obligations page
+  const shouldShowCreateContract = useMemo(() => {
+    return (
+      !isFirstObligationView() && contracts.length === 0 && obligations.length > 0
+    );
+  }, [contracts]);
+
   return (
     <div className="w-full h-full flex flex-col gap-3">
       <div className="flex flex-row gap-1">
@@ -511,6 +562,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
               </motion.div>
             ))}
       </div>
+      {shouldShowCreateContract && <NoContractsDialog />}
     </div>
   );
 };

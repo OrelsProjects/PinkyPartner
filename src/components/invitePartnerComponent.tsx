@@ -47,17 +47,20 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
       <DialogTrigger asChild>
         <Button
           variant={variant || "link"}
-          className={cn("py-0 pt-0.5 px-1", className)}
+          className={cn(className)}
         >
           {buttonText}
         </Button>
       </DialogTrigger>
       <DialogContent className="space-y-4">
-        <DialogHeader>
+        <DialogHeader className="gap-3">
           <DialogTitle>Great choice!</DialogTitle>
           <DialogDescription>
             Copy this link and send it to your partner to invite them to sign up
             and put their pinky in!
+          </DialogDescription>
+          <DialogDescription>
+            Once they join, you will be able to search for them :)
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="w-full flex flex-col md:flex-row gap-1 justify-center items-center md:justify-start md:items-start">

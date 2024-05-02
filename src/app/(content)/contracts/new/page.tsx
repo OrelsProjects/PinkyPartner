@@ -72,14 +72,15 @@ const FindPartner = ({
       {(status === "no-results" || status === "success") && (
         <>
           <Divider />
-          <div className="mt-2 flex flex-row gap-1 items-start">
-            <span className="text-sm text-muted-foreground mt-0.5">
+          <div className="mt-2 flex flex-row gap-1 items-start bg-card p-3 rounded-lg">
+            <span className="text-sm text-muted-foreground mt-1.5">
               Can&apos;t find your partner?
             </span>
             <InvitePartnerComponent
               buttonText="Invite them!"
               referralCode={user?.meta?.referralCode}
               className="items-start"
+              variant="default"
             />
           </div>
         </>

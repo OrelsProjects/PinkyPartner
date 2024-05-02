@@ -27,18 +27,31 @@ type GroupedObligations = {
   };
 };
 
-const EmptyContracts = () => (
-  <div className="w-full h-full flex justify-center items-center">
-    <h1 className="text-lg font-normal">No contracts to show</h1>
-  </div>
-);
+const EmptyContracts = () => {
+  const router = useRouter();
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+      <h1 className="text-xl font-semibold">
+        Seems like your pinky is ready to meet another pinky.. 😉
+      </h1>
+      <div className="w-full flex justify-center items-center flex-col">
+        <Button
+          onClick={() => router.push("/contracts/new")}
+          className="bg-primary text-white"
+        >
+          Make it official!
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const EmptyObligations = () => {
   const router = useRouter();
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-3">
       <h1 className="text-xl font-semibold">
-        Seems like you didn&apos;t promise anyhting yet.. 🤔
+        Seems like you didn&apos;t promise anything yet.. 🤔
       </h1>
       <div className="w-full flex justify-center items-center flex-col">
         <div>Le&apos;s start with making a promise</div>
