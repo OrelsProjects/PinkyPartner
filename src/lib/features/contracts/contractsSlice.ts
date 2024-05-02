@@ -26,7 +26,7 @@ const contractsSlice = createSlice({
       state.contracts = action.payload;
     },
     addContract(state, action: PayloadAction<Contract>) {
-      state.contracts.push(action.payload);
+      state.contracts = [action.payload, ...state.contracts];
     },
     updateContract(state, action: PayloadAction<Contract>) {
       const index = state.contracts.findIndex(

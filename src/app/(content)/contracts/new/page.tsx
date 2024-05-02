@@ -141,7 +141,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
           pending: "Creating contract...",
           success: {
             render() {
-              router.back();
+              router.push("/contracts");
               return "Contract created successfully";
             },
           },
