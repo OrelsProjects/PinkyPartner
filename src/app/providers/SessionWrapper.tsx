@@ -1,12 +1,17 @@
 "use client";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 
-import React from 'react'
+import React, { useEffect } from "react";
+import { initEventTracker } from "../../eventTracker";
+import { initLogger } from "../../logger";
 
-const SessionWrapper = ({children}: {children: React.ReactNode}) => {
-  return (
-    <SessionProvider>{children}</SessionProvider>
-  )
-}
+const SessionWrapper = ({ children }: { children: React.ReactNode }) => {
+  useEffect(() => {
+    initLogger();
+    initEventTracker();
+  }, []);
 
-export default SessionWrapper
+  return <SessionProvider>{children}</SessionProvider>;
+};
+
+export default SessionWrapper;
