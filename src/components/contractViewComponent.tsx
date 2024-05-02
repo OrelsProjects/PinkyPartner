@@ -152,7 +152,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
             <div className="shimmer-wrapper"></div>
           </Button>
         ) : (
-          <Button variant="outline" className="dark:bg-card">
+          <Button variant="outline" className="bg-transparent dark:bg-card">
             View Contract
           </Button>
         )}

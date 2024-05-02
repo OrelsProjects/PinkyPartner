@@ -81,7 +81,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-[23.5rem] h-60 shadow-md dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
+        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
         { "border-primary/50": !isUserSigned },
       )}
     >
