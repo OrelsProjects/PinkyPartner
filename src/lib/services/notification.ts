@@ -49,7 +49,7 @@ export function createNotification(title: string, body: string, image: string) {
   if (!isNotificationSupported()) {
     return;
   }
-  if (isPermissionGranted()) {
+  if (isPermissionGranted()) { 
     new Notification(title, { body, icon: image });
   }
 }
