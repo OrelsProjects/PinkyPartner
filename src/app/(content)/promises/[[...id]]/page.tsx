@@ -499,6 +499,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
                 key={obligation.obligationId}
+                className="w-full pr-2 md:pr-0 md:w-auto"
               >
                 <ObligationComponent
                   obligation={obligation}
