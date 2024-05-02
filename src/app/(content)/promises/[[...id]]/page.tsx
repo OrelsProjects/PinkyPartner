@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Obligation, {
   CreateObligation,
   Days,
@@ -29,6 +29,8 @@ import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdo
 import { Checkbox } from "../../../../components/ui/checkbox";
 import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
 import { useTheme } from "next-themes";
+import { DaysToText } from "../../../../lib/utils/dateUtils";
+import { cn } from "../../../../lib/utils";
 interface ObligationProps {
   params: {
     id?: string;
@@ -98,42 +100,82 @@ const Daily = ({
     onChange(days);
   }, [formik.values]);
 
-  // Return su, mo, tu, we, th, fr, sa for every corresponding day that is checked
-  const daysText = useMemo(() => {
-    const days = Object.keys(formik.values)
-      .filter(day => formik.values[day as keyof typeof formik.values])
-      .map(day => day.slice(0, 2))
-      .map(day => day[0].toUpperCase() + day.slice(1));
-    return days.join(", ");
-  }, [formik.values]);
-
   return (
     <div className="flex flex-col h-fit w-full gap-0.5">
-      <div className="flex flex-row justify-between h-fit w-full gap-3">
+      <div className="flex flex-row justify-between items-start h-fit w-full gap-3">
         {Object.keys(formik.values).map((day, index) => (
           <div
             key={index}
-            className="flex flex-col justify-center items-center text-muted-foreground"
+            className="flex flex-col justify-start items-center text-muted-foreground"
           >
             <Checkbox
-              className="w-6 h-6"
+              className="w-7 md:w-8 h-10 md:h-11"
               defaultChecked={formik.values[day]}
               checked={formik.values[day]}
               onCheckedChange={checked => formik.setFieldValue(day, checked)}
+              variant="outline"
             />
             <div>{day[0].toUpperCase()}</div>
           </div>
         ))}
       </div>
-      {showRepeatText && (
-        <div className="text-muted-foreground font-normal italic flex flex-col">
-          <div>Repeat every:</div>
-          {daysText}
-        </div>
+    </div>
+  );
+};
+
+const RepeatText = ({
+  days,
+  timesAWeek,
+}: {
+  days?: number[];
+  timesAWeek?: number | null;
+}) => {
+  return (
+    <div className="text-muted-foreground font-light flex flex-row gap-1 text-sm">
+      {days ? (
+        <>
+          <div className="font-normal">Practice every:</div>
+          {DaysToText(days)}
+        </>
+      ) : (
+        <div className="font-normal">Practice {timesAWeek} times a week</div>
       )}
     </div>
   );
 };
+
+const SectionContainer = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-full flex flex-col items-start gap-3 h-fit rounded-lg">
+    {children}
+  </div>
+);
+
+const SectionTitleContainer = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex flex-col gap-0 items-start justify-start">
+    {children}
+  </div>
+);
+
+const SectionTitle = ({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) => (
+  <Label
+    className={cn(
+      "text-right text-base md:text-lg font-normal tracking-wide",
+      className,
+    )}
+  >
+    {text}
+  </Label>
+);
+
+const SectionTitleExplanation = ({ text }: { text: string }) => (
+  <div className="text-xs font-thin">{text}</div>
+);
 
 const PromiseDialog = ({
   obligation,
@@ -159,7 +201,7 @@ const PromiseDialog = ({
       description: obligation ? obligation.description : "",
       emoji: obligation ? obligation.emoji : "",
       repeat: obligation ? obligation.repeat : "Daily",
-      days: obligation?.days as Days,
+      days: (obligation?.days as Days) || [],
       timesAWeek: obligation?.timesAWeek as TimesAWeek,
     },
     onSubmit: values => {
@@ -178,7 +220,7 @@ const PromiseDialog = ({
         description: obligation.description,
         emoji: obligation.emoji,
         repeat: obligation.repeat,
-        days: obligation.days,
+        days: obligation.days || [],
         timesAWeek: obligation.timesAWeek,
       });
     } else {
@@ -204,59 +246,78 @@ const PromiseDialog = ({
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-5/6 sm:max-w-[525px] sm:h-[525px]">
+      <DialogContent className="w-5/6 sm:max-w-[525px] sm:h-[525px] bg-card p-6">
         <form
           onSubmit={formik.handleSubmit}
-          className="flex flex-col justify-start items-center gap-4 w-full"
+          className="flex flex-col justify-start items-start w-full gap-4"
         >
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col justify-start items-start gap-6">
-              <div className="flex flex-col items-start gap-2 p-3 w-fit h-fit rounded-lg">
-                <Label htmlFor="title" className="text-right">
-                  I pinky promise to...
-                </Label>
-                <Input
-                  id="title"
-                  value={formik.values.title}
-                  onChange={formik.handleChange}
-                  placeholder="Run 2km"
-                  error={formik.errors.title}
-                  maxLength={24}
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-2 p-3 w-fit h-fit rounded-lg">
-                <div className="w-full flex justify-start items-center gap-2">
-                  <div className="font-normal">Repeat</div>
-                  <IntervalDropdown
-                    onSelect={value => {
-                      formik.setFieldValue("repeat", value);
-                    }}
+          <SectionContainer>
+            <SectionTitleContainer>
+              <SectionTitle
+                text="I pinky promise to:"
+                className="font-semibold"
+              />
+              <SectionTitleExplanation text="Write the habit you would like start practicing" />
+            </SectionTitleContainer>
+
+            <Input
+              id="title"
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              placeholder="i.e, Run, Drink water, Read"
+              error={formik.errors.title}
+              maxLength={24}
+              className="h-11 rounded-md w-full"
+              required
+            />
+          </SectionContainer>
+          <SectionContainer>
+            <SectionTitleContainer>
+              <SectionTitle text="Repeat" />
+              <SectionTitleExplanation text="Choose how often you'd like to practice the new habit" />
+            </SectionTitleContainer>
+
+            <RepeatText
+              days={formik.values.days}
+              timesAWeek={formik.values.timesAWeek}
+            />
+            <div
+              className={cn(
+                "flex flex-col md:flex-row gap-3 justify-start items-start",
+                {
+                  "!flex-row": formik.values.repeat === "Weekly",
+                },
+              )}
+            >
+              <IntervalDropdown
+                onSelect={value => {
+                  formik.setFieldValue("repeat", value);
+                }}
+                className="h-10"
+              />
+              <div className="flex flex-col items-start gap-2 w-fit h-fit rounded-lg">
+                {formik.values.repeat === "Weekly" && (
+                  <Weekly
+                    onChange={timesAWeek =>
+                      formik.setFieldValue("timesAWeek", timesAWeek)
+                    }
+                    obligation={obligation ?? undefined}
                   />
-                </div>
-                <div className="flex flex-col items-start gap-2 py-3 w-fit h-fit rounded-lg">
-                  {formik.values.repeat === "Weekly" && (
-                    <Weekly
-                      onChange={timesAWeek =>
-                        formik.setFieldValue("timesAWeek", timesAWeek)
-                      }
-                      obligation={obligation ?? undefined}
-                    />
-                  )}
-                  {formik.values.repeat === "Daily" && (
-                    <Daily
-                      onChange={days => formik.setFieldValue("days", days)}
-                      days={obligation?.days}
-                    />
-                  )}
-                </div>
+                )}
+                {formik.values.repeat === "Daily" && (
+                  <Daily
+                    onChange={days => formik.setFieldValue("days", days)}
+                    days={obligation?.days}
+                  />
+                )}
               </div>
             </div>
-          </div>
-          <div className="w-full flex flex-col justify-center items-center">
-            <div>Now choose the perfect icon!</div>
+          </SectionContainer>
+
+          <SectionContainer>
+            <SectionTitle text="Now choose the perfect icon!"></SectionTitle>
             <Button
-              className="w-fit h-fit"
+              className="w-20 h-12 bg-card"
               variant={"outline"}
               onClick={e => {
                 e.preventDefault();
@@ -270,10 +331,14 @@ const PromiseDialog = ({
                 <EmojiIcon className="w-8 h-8 fill-muted-foreground" />
               )}
             </Button>
-          </div>
-          <DialogFooter>
-            <div className="flex flex-col">
-              <Button type="submit" disabled={disabled}>
+          </SectionContainer>
+          <DialogFooter className="w-full">
+            <div className="w-full flex flex-col justify-end items-end">
+              <Button
+                type="submit"
+                disabled={disabled}
+                className="px-12 !py-5 rounded-[5px]"
+              >
                 {obligation ? "I repromise" : "I promise"}
               </Button>
             </div>
@@ -325,8 +390,11 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   useEffect(() => {
     if (params.id && params.id.length > 0) {
-      const obligation = getUserObligation(params.id[0]);
-      setObligation(obligation);
+      const obligationId = params.id[0];
+      if (obligationId !== "new") {
+        const obligation = getUserObligation(params.id[0]);
+        setObligation(obligation);
+      }
       setShowDialog(true);
     }
   }, [params, params.id]);

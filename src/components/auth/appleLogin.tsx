@@ -21,7 +21,7 @@ export default function AppleLogin({
 
   return (
     <div
-      className={`w-full h-12 flex flex-row gap-2 justify-center items-center bg-black rounded-lg text-white ${className}`}
+      className={`w-full h-12 flex flex-row gap-2 justify-center hover:cursor-pointer items-center bg-black rounded-lg text-white ${className}`}
       onClick={handleAppleLogin}
     >
       <FaApple className="w-7 h-7" />

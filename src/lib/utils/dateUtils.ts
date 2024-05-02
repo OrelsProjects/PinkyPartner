@@ -38,3 +38,10 @@ export function dateToHourMinute(date: Date): string {
     minute: "2-digit",
   });
 }
+
+export function DaysToText(days?: number[]): string {
+  if (!days || days.length === 0) {
+    return "Never";
+  }
+  return days.map(day => dayNumberToName(day).slice(0, 2)).join(", ");
+}

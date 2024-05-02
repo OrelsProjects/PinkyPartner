@@ -21,9 +21,14 @@ export default function GoogleLogin({
 
   const handleGoogleLogin = async () => {
     try {
-      await signInWithGoogle({
-        referralCode: referralCode,
-      });
+      toast.promise(
+        signInWithGoogle({
+          referralCode: referralCode,
+        }),
+        {
+          pending: "Signing in...",
+        },
+      );
     } catch (error: any) {
       if (error instanceof InvalidCredentialsError) {
         toast.error("Invalid credentials");
@@ -39,7 +44,7 @@ export default function GoogleLogin({
 
   return (
     <div
-      className={`w-full h-12 flex flex-row gap-2 justify-center items-centerrounded-lg ${className}`}
+      className={`w-full h-12 flex flex-row gap-2 bg-background dark:bg-card justify-center items-center rounded-lg hover:cursor-pointer ${className}`}
       onClick={handleGoogleLogin}
     >
       <FcGoogle className="w-7 h-7" />

@@ -104,7 +104,6 @@ const ObligationComponent: React.FC<ObligationProps> = ({
             <br />
             <span className="font-semibold">{obligation.title}</span>
             <br />
-            {/* Remind the user that the promise will be removed from all of his contracts */}
             <div className="text-sm text-muted-foreground italic mt-4">
               This action will remove this promise from all of your contracts.
             </div>

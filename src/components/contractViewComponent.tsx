@@ -111,16 +111,18 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           contract.
         </p>
       </div>
-      <DialogFooter>
-        <div className="w-full flex justify-center items-center">
-          <DialogClose>
-            <Button onClick={() => onSign?.(contract)}>
-              Put your pinky in!
-            </Button>
-          </DialogClose>
-        </div>
-      </DialogFooter>
-    </DialogContent>
+      {!isSigned && (
+        <DialogFooter>
+          <div className="w-full flex justify-center items-center">
+            <DialogClose>
+              <Button onClick={() => onSign?.(contract)}>
+                Put your pinky in!
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogFooter>
+      )}
+    </DialogContent> 
   );
 
   const UnSignedNotice = () => (

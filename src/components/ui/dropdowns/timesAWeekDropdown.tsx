@@ -26,7 +26,7 @@ const TimesAWeekDropdown: React.FC<TimesAWeekDropdownProps> = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="border border-1 border-input rounded-md p-2 w-12 h-12">
+      <DropdownMenuTrigger className="border border-1 border-input rounded-md p-2 w-10 h-10">
         {selected}
       </DropdownMenuTrigger>
       <DropdownMenuContent defaultValue={defaultValue}>
