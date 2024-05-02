@@ -25,19 +25,16 @@ import AccountabilityPartnerComponent, {
 } from "../../../../components/accountabilityPartnerComponent";
 import { getNextWeekDate } from "../../../../lib/utils/dateUtils";
 import Divider from "../../../../components/ui/divider";
-import InvitePartnerComponent from "../../../../components/invitePartnerComponent";
-import { Label } from "@radix-ui/react-label";
 
 interface CreateContractPageProps {}
 
 interface FindPartnerProps {
-  onPartnerSelect: (partner: AccountabilityPartner) => void;
+  onPartnerSelect: (partner?: AccountabilityPartner) => void;
 }
 
 const FindPartner = ({
   onPartnerSelect,
 }: FindPartnerProps): React.ReactNode => {
-  const { user } = useAppSelector(state => state.auth);
   const { searchResult, searchUsers, status, error } = useSearchUser();
 
   return (
@@ -71,17 +68,17 @@ const FindPartner = ({
       </div>
       {(status === "no-results" || status === "success") && (
         <>
-          <Divider />
-          <div className="mt-2 flex flex-row gap-1 items-start bg-card p-3 rounded-lg">
-            <span className="text-sm text-muted-foreground mt-1.5">
-              Can&apos;t find your partner?
-            </span>
-            <InvitePartnerComponent
-              buttonText="Invite them!"
-              referralCode={user?.meta?.referralCode}
-              className="items-start"
-              variant="default"
-            />
+          <Divider className="mt-3" />
+          <div className="mt-2 flex flex-col gap-5 items-start rounded-lg">
+            <div className="flex flex-col">
+              <span className="text-sm text-muted-foreground mt-1.5">
+                Can&apos;t find your partner?
+              </span>
+              <span className="text-sm text-muted-foreground mt-1.5">
+                It&apos;s okay! You can invite them later.
+              </span>
+            </div>
+            <Button onClick={() => onPartnerSelect()}>Continue</Button>
           </div>
         </>
       )}
@@ -98,6 +95,8 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     useState<AccountabilityPartner | null>(null);
   const [previousAccountabilityPartner, setPreviousAccountabilityPartner] =
     useState<AccountabilityPartner | null>(null);
+  const [continueWithoutPartner, setContinueWithoutPartner] =
+    useState<boolean>(false);
   const [usedObligations, setObligationsUsed] = useState<Obligation[]>([]);
 
   const signatureRef = useRef<HTMLDivElement>(null);
@@ -129,12 +128,14 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
         });
         return;
       }
-      if (!user || !accountabilityPartner) return;
-
+      if (!user || (!accountabilityPartner && !continueWithoutPartner)) return;
+      const contractees = [user, accountabilityPartner].filter(
+        partner => partner !== null,
+      ) as AccountabilityPartner[];
       toast.promise(
         createContract({
           ...values,
-          contractees: [user, accountabilityPartner],
+          contractees,
         }),
         {
           pending: "Creating contract...",
@@ -187,9 +188,15 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
   const handleBack = () => {
     setPreviousAccountabilityPartner(accountabilityPartner);
     setAccountabilityPartner(null);
+    setContinueWithoutPartner(false);
   };
 
-  const handlePartnerSelect = (partner: AccountabilityPartner) => {
+  const handlePartnerSelect = (partner?: AccountabilityPartner) => {
+    if (!partner) {
+      // continue without partner
+      setContinueWithoutPartner(true);
+      return;
+    }
     setAccountabilityPartner(partner);
     setPreviousAccountabilityPartner(null);
   };
@@ -212,7 +219,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
   return (
     <div className="w-full h-full flex justify-center items-start">
       <AnimatePresence>
-        {!accountabilityPartner ? (
+        {!accountabilityPartner && !continueWithoutPartner ? (
           <motion.div
             // slide in from the right
             initial={{ x: "100%" }}
@@ -400,13 +407,15 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                         error={formik.errors.signatures}
                       />
                     </div>
-                    <div className="flex flex-col justify-center items-center gap-2 w-1/2 grayscale">
-                      <AccountabilityPartnerComponent
-                        className="flex-col !p-0"
-                        partner={accountabilityPartner}
-                      />
-                      <Checkbox disabled />
-                    </div>
+                    {accountabilityPartner && (
+                      <div className="flex flex-col justify-center items-center gap-2 w-1/2 grayscale">
+                        <AccountabilityPartnerComponent
+                          className="flex-col !p-0"
+                          partner={accountabilityPartner}
+                        />
+                        <Checkbox disabled />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>

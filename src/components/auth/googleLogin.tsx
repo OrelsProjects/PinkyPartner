@@ -9,26 +9,19 @@ import UserAlreadyExistsError from "../../models/errors/UserAlreadyExistsError";
 interface GoogleLoginProps {
   className?: string;
   signInTextPrefix?: string;
-  referralCode?: string;
 }
 
 export default function GoogleLogin({
   className,
   signInTextPrefix,
-  referralCode,
 }: GoogleLoginProps) {
   const { signInWithGoogle } = useAuth();
 
   const handleGoogleLogin = async () => {
     try {
-      toast.promise(
-        signInWithGoogle({
-          referralCode: referralCode,
-        }),
-        {
-          pending: "Signing in...",
-        },
-      );
+      toast.promise(signInWithGoogle(), {
+        pending: "Signing in...",
+      });
     } catch (error: any) {
       if (error instanceof InvalidCredentialsError) {
         toast.error("Invalid credentials");

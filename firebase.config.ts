@@ -25,10 +25,14 @@ if (typeof window !== "undefined") {
 
 const getUserToken = async () => {
   if (!messaging) return;
-  const token = await getToken(messaging, {
-    vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  });
-  return token;
+  try {
+    const token = await getToken(messaging, {
+      vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    });
+    return token;
+  } catch (error) {
+    console.error("An error occurred while retrieving token. ", error);
+  }
 };
 
 export { app, messaging, getUserToken };

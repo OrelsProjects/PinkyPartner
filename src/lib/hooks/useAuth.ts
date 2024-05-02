@@ -10,22 +10,12 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
-import Cookies from "js-cookie";
-
-interface SignUpOptions {
-  referralCode?: string;
-}
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
 
-  const saveReferralCode = (referralCode?: string) => {
-    Cookies.set("referralCode", referralCode || "");
-  };
-
-  const signInWithGoogle = useCallback(async (options?: SignUpOptions) => {
+  const signInWithGoogle = useCallback(async () => {
     try {
-      saveReferralCode(options?.referralCode);
       await signIn("google");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
@@ -39,10 +29,8 @@ const useAuth = () => {
     }
   }, []);
 
-  const signInWithApple = useCallback(async (options?: SignUpOptions) => {
+  const signInWithApple = useCallback(async () => {
     try {
-      saveReferralCode(options?.referralCode);
-
       await signIn("apple");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
@@ -83,7 +71,6 @@ const useAuth = () => {
       password: string,
       register?: boolean,
       displayName: string = "",
-      options?: SignUpOptions,
     ) => {
       try {
         const result = await signIn("credentials", {
@@ -92,7 +79,6 @@ const useAuth = () => {
           displayName: displayName,
           isSignIn: !register,
           redirect: false,
-          ...options,
         });
         if (!result?.ok) {
           throw new Error("Failed to sign in");
