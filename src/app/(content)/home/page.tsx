@@ -265,12 +265,14 @@ export default function Home() {
     [partnerData.obligationsCompleted],
   );
 
-  if (contracts.length === 0 && obligations.length === 0) {
-    return <EmptyObligations />;
-  }
+  if (!loadingData) {
+    if (contracts.length === 0 && obligations.length === 0) {
+      return <EmptyObligations />;
+    }
 
-  if (contracts.length === 0) {
-    return <EmptyContracts />;
+    if (contracts.length === 0) {
+      return <EmptyContracts />;
+    }
   }
 
   return (
