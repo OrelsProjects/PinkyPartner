@@ -15,10 +15,9 @@ export const initEventTracker = () => {
   const env = process.env.NODE_ENV;
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY ?? "", {
     api_host: "https://app.posthog.com",
-    disable_session_recording: false,
+    enable_heatmaps: env === "production",
+    disable_session_recording: env !== "production",
   });
-  posthog.capture("First init test");
-  posthog.startSessionRecording();
 };
 
 export const setUserEventTracker = (user?: AppUser | null) => {
