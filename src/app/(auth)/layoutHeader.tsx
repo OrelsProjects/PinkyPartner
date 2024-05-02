@@ -9,7 +9,7 @@ const AuthHeader = () => {
   const { theme } = useTheme();
 
   return (
-    <div className="h-[20rem] w-full absolute top-10 lg:top-10 flex flex-col items-center justify-start overflow-hidden rounded-md">
+    <div className="h-[10rem] w-full absolute top-10 lg:top-10 flex flex-col items-center justify-start overflow-hidden rounded-md">
       <Link
         className="md:text-7xl text-[2.5rem] lg:text-7xl font-bold text-center relative z-20 "
         href={"/"}

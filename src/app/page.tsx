@@ -309,7 +309,7 @@ export default function Home() {
       <HeroSection onNext={scrollToPartOne} />
       <div ref={partOneRef} className="z-20">
         <Section
-          title="Make a Promises"
+          title="Make a Promise"
           body="The beginning of every relationship is a promise. Make promises to keep each other accountable."
           onNext={scrollToPartTwo}
         >

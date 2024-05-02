@@ -49,7 +49,7 @@ model AppUserMetadata {
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  @@map("AppUserMetadata")
+@@map("appUserMetadata")
 }
 
 model Obligation {

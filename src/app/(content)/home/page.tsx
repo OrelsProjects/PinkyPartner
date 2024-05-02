@@ -16,12 +16,41 @@ import { cn } from "../../../lib/utils";
 import { Switch } from "../../../components/ui/switch";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import NotificationBadge from "../../../components/ui/notificationBadge";
+import { useContracts } from "../../../lib/hooks/useContracts";
+import { useRouter } from "next/navigation";
+import { Button } from "../../../components/ui/button";
 
 type GroupedObligations = {
   [key: string]: {
     contract: Contract;
     obligations: ObligationCompleted[];
   };
+};
+
+const EmptyContracts = () => (
+  <div className="w-full h-full flex justify-center items-center">
+    <h1 className="text-lg font-normal">No contracts to show</h1>
+  </div>
+);
+
+const EmptyObligations = () => {
+  const router = useRouter();
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+      <h1 className="text-xl font-semibold">
+        Seems like you didn't promise anyhting yet.. 🤔
+      </h1>
+      <div className="w-full flex justify-center items-center flex-col">
+      <div>Let's start with making a promise</div>
+      <Button
+        onClick={() => router.push("/promises/new")}
+        className="bg-primary text-white"
+      >
+        Create a promise
+      </Button>
+      </div>
+    </div>
+  );
 };
 
 const Loading = () =>
@@ -188,9 +217,12 @@ export default function Home() {
     obligationsToComplete,
     obligationsCompleted,
     partnerData,
+    obligations,
     loadingData,
     loadingPartner,
   } = useObligations();
+
+  const { contracts } = useContracts();
 
   const { newObligations, markObligationsAsViewed } = useNotifications();
 
@@ -233,6 +265,14 @@ export default function Home() {
     [partnerData.obligationsCompleted],
   );
 
+  if (contracts.length === 0 && obligations.length === 0) {
+    return <EmptyObligations />;
+  }
+
+  if (contracts.length === 0) {
+    return <EmptyContracts />;
+  }
+
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <Switch
@@ -260,7 +300,9 @@ export default function Home() {
         />
       </div>
       <Divider className="w-full" />
-      <h1 className="text-xl font-bold">Done</h1>
+      {Object.keys(groupedObligationsCompleted).length > 0 && (
+        <h1 className="text-xl font-bold">Done</h1>
+      )}
       <div className="w-full h-4/10 min-h-[40%] flex flex-row justify-between">
         <Done
           loading={loadingData}

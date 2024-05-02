@@ -409,6 +409,8 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
           setObligation(obligation);
           setShowDialog(true);
         }, 300); // Hack to let the data load
+      } else {
+        setShowDialog(true);
       }
     }
   }, [params, params.id, loadingData]);
@@ -429,7 +431,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
 
   const handleOnCreateNewClick = () => {
     setObligation(null);
-    setShowDialog(true);
+    router.push("/promises/new");
   };
 
   const hideDialog = () => {
@@ -485,7 +487,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
           onCreateNewClick={handleOnCreateNewClick}
         />
       </div>
-      <div className="flex flex-wrap gap-5 justify-between items-start overflow-auto mt-10 h-fit max-h-full pb-3">
+      <div className="flex flex-wrap gap-5 justify-between items-start overflow-auto mt-4 h-fit max-h-full pb-3">
         {loadingData
           ? Array.from({ length: obligations.length || 6 }).map((_, index) => (
               <ObligationComponentLoading
