@@ -74,7 +74,7 @@ const FindPartner = ({
           <Divider />
           <div className="mt-2 flex flex-row gap-1 items-start">
             <span className="text-sm text-muted-foreground mt-0.5">
-              Can&#39;t find your partner?
+              Can&apos;t find your partner?
             </span>
             <InvitePartnerComponent
               buttonText="Invite them!"
@@ -343,7 +343,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                           font-thin md:font-normal
                           "
                           >
-                            <div>You didn&#39;t make any promises yet.</div>
+                            <div>You didn&apos;t make any promises yet.</div>
                             <div className="hidden md:block">
                               Choose some from the left 💪
                             </div>

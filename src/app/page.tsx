@@ -191,12 +191,12 @@ const HeroSection = ({ onNext }: { onNext: () => void }) => (
       </div>
       <div className="flex flex-col lg:flex-row justify-start gap-1 tracking-tighter">
         <TextGenerateEffect
-          words="But it&#39;s easier when you have a"
+          words="But it&apos;s easier when you have a"
           delay={2}
           className="hidden lg:block !font-medium"
         />
         <TextGenerateEffect
-          words="But it&#39;s easier with a"
+          words="But it&apos;s easier with a"
           delay={2.5}
           className="lg:hidden !font-medium"
         />
@@ -350,7 +350,7 @@ export default function Home() {
       </div>
       <div ref={partFourRef} className="z-20">
         <Section
-          title="Let&#39;s get started!"
+          title="Let&apos;s get started!"
           className="flex !flex-col gap-2"
         >
           <Button

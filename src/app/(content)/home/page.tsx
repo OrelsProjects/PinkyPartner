@@ -38,16 +38,16 @@ const EmptyObligations = () => {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-3">
       <h1 className="text-xl font-semibold">
-        Seems like you didn't promise anyhting yet.. 🤔
+        Seems like you didn&apos;t promise anyhting yet.. 🤔
       </h1>
       <div className="w-full flex justify-center items-center flex-col">
-      <div>Let's start with making a promise</div>
-      <Button
-        onClick={() => router.push("/promises/new")}
-        className="bg-primary text-white"
-      >
-        Create a promise
-      </Button>
+        <div>Le&apos;s start with making a promise</div>
+        <Button
+          onClick={() => router.push("/promises/new")}
+          className="bg-primary text-white"
+        >
+          Create a promise
+        </Button>
       </div>
     </div>
   );

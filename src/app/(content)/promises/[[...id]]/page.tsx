@@ -283,7 +283,7 @@ const PromiseDialog = ({
           <SectionContainer>
             <SectionTitleContainer>
               <SectionTitle text="Repeat" />
-              <SectionTitleExplanation text="Choose how often you'd like to practice the new habit" />
+              <SectionTitleExplanation text="Choose how often you&apos;d like to practice the new habit" />
             </SectionTitleContainer>
 
             <RepeatText
