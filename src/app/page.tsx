@@ -349,7 +349,7 @@ export default function Home() {
         </Section>
       </div>
       <div ref={partFourRef} className="z-20">
-        <Section title="Let's get started!" className="flex !flex-col gap-2">
+        <Section title="Let&apos;s get started!" className="flex !flex-col gap-2">
           <Button
             variant="magic"
             className="bg-card dark:bg-background text-lg md:text-xl"
