@@ -18,6 +18,7 @@ export const initEventTracker = () => {
     disable_session_recording: false,
   });
   posthog.capture("First init test");
+  posthog.startSessionRecording();
 };
 
 export const setUserEventTracker = (user?: AppUser | null) => {
