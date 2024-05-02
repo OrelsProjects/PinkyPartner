@@ -9,7 +9,7 @@ import {
 } from "../../lib/features/auth/authSlice";
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
-import { setUserEventTracker } from "../../eventTracker";
+import { initEventTracker, setUserEventTracker } from "../../eventTracker";
 import { initLogger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
@@ -57,6 +57,7 @@ export default function AuthProvider({
       case "authenticated":
         setUser(session.user);
         initLogger();
+        initEventTracker();
         break;
       case "loading":
         break;
