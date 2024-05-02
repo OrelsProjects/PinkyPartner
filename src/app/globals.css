@@ -23,7 +23,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 4% 82%;
-    --ring: 346.8 77.2% 49.8%;
+    --ring: 240 4% 64%;
     --radius: 0.75rem;
   }
 
@@ -60,6 +60,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    
     background-image: linear-gradient(
       to right,
       rgba(255, 255, 255, 0) 0%,

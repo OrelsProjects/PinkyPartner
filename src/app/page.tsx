@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HeroHighlight, Highlight } from "../components/ui/heroHighlight";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { Button } from "../components/ui/button";
 import { FaArrowDownLong } from "react-icons/fa6";
+import { cn } from "../lib/utils";
 
 const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
   <div
@@ -18,32 +19,93 @@ const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
 
 const Video = ({ url }: { url: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const containerRef = useRef(null);
+
+  const variants = {
+    open: { opacity: 1 },
+    closed: { opacity: 0 },
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        const [entry] = entries;
+        // Only trigger the timeout if the component is visible
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setShowVideo(true);
+            if (videoRef.current) {
+              videoRef.current.play();
+            }
+          }, 4000);
+          // Stop observing after the element is shown
+          observer.disconnect();
+        }
+      },
+      {
+        root: null, // Observing for visibility in the viewport
+        rootMargin: "0px",
+        threshold: 0.1, // Trigger when 10% of the element is visible
+      },
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = 1;
+      videoRef.current.playbackRate = 2;
     }
   }, []);
 
   return (
-    <video
-      ref={videoRef}
-      autoPlay
-      loop
-      muted
-      controls
-      playsInline
-      className="rounded-3xl aspect-square w-72 sm:w-96 lg:w-[28rem] border-0 dark:border-2 border-base-content/20 dark:shadow-lg mb-8 object-fill"
-    >
-      <source src={url} type="video/mp4" />
-    </video>
+    <div ref={containerRef} className="relative">
+      <motion.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        transition={{
+          duration: 3,
+        }}
+      >
+        <video
+          ref={videoRef}
+          loop
+          muted
+          controls={false}
+          playsInline
+          className="rounded-3xl aspect-square w-72 sm:w-96 lg:w-[28rem] border-0 dark:border-2 border-base-content/20 dark:shadow-lg mb-8 object-fill"
+        >
+          <source src={url} type="video/mp4" />
+        </video>
+      </motion.div>
+      <motion.div
+        key={`video-placeholder - ${url}`}
+        variants={variants}
+        animate={!showVideo ? "open" : "closed"}
+        transition={{
+          duration: 4,
+        }}
+        className="absolute inset-0 bg-background dark:bg-card rounded-xl aspect-square w-72 sm:w-96 lg:w-[28rem] border-0 dark:border-2 border-base-content/20 dark:shadow-lg mb-8 shimmer-wrapper"
+      />
+    </div>
   );
 };
 
 const CreateObligationVideo = () => (
   <Video
     url={
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2Fcreate-obligation.mp4?alt=media&token=1093c545-4d34-4f92-988a-f4fd6fdd5fa6"
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FObligation_1.mp4?alt=media&token=5def98dd-2c41-4640-acd8-04204b928297"
     }
   />
 );
@@ -51,7 +113,15 @@ const CreateObligationVideo = () => (
 const CreateContractVideo = () => (
   <Video
     url={
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2Fcreate-contract.mp4?alt=media&token=92eaf488-6c4b-4998-9af4-21909b1b3456"
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FContract_1.mp4?alt=media&token=c7023ff5-49a2-462c-ab20-2eb63e948960"
+    }
+  />
+);
+
+const SignContractVideo = () => (
+  <Video
+    url={
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FSign%20contract_1.mp4?alt=media&token=46503962-c2bf-48e4-ba0f-7ac818525f42"
     }
   />
 );
@@ -68,11 +138,11 @@ const Header = () => (
           variant="outline"
           className="rounded-full h-12 bg-transparent"
         >
-          <a href="/login" className="hidden lg:flex text-base md:text-lg">
+          <a href="/login" className="hidden lg:flex text-base md:text-lg ">
             Login
           </a>
         </Button>
-        <Button asChild variant="magic">
+        <Button asChild variant="magic" className="bg-card dark:bg-background">
           <a href="/register" className="text-lg md:text-xl">
             Get Started
           </a>
@@ -144,15 +214,22 @@ const Section = ({
   title,
   body,
   onNext,
+  className,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title?: React.ReactNode;
   body?: React.ReactNode;
   onNext?: () => void;
+  className?: string;
 }) => {
   return (
     <div className="w-screen h-screen bg-background flex flex-col relative sm:px-80 sm:py-28">
-      <div className="w-full h-full flex flex-col sm:flex-row justify-center items-center gap-6 bg-card rounded-xl">
+      <div
+        className={cn(
+          "w-full h-full flex flex-col sm:flex-row justify-center items-center gap-6 bg-card rounded-xl",
+          className,
+        )}
+      >
         <div className="flex flex-col justify-center items-center sm:w-[30rem]">
           <h1 className="text-4xl font-medium text-foreground text-center">
             {title}
@@ -172,6 +249,7 @@ export default function Home() {
   const partOneRef = useRef<HTMLDivElement>(null);
   const partTwoRef = useRef<HTMLDivElement>(null);
   const partThreeRef = useRef<HTMLDivElement>(null);
+  const partFourRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -206,14 +284,21 @@ export default function Home() {
     });
   };
 
+  const scrollToPartFour = () => {
+    partFourRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <div className="h-full w-full gap-1 flex flex-col overflow-auto">
       <Header />
       <HeroSection />
       <div ref={partOneRef}>
         <Section
-          title="Create a Promise"
-          body="The beginning of every relationship is a promise. Create obligations to keep each other accountable."
+          title="Make a Promises"
+          body="The beginning of every relationship is a promise. Make promises to keep each other accountable."
           onNext={scrollToPartTwo}
         >
           <CreateObligationVideo />
@@ -246,12 +331,22 @@ export default function Home() {
               </span>
             </div>
           }
+          onNext={scrollToPartFour}
         >
-          <CreateContractVideo />
+          <SignContractVideo />
+        </Section>
+      </div>
+      <div ref={partFourRef}>
+        <Section title="Let's get started!" className="flex !flex-col gap-2">
+          <Button
+            variant="magic"
+            className="bg-card dark:bg-background text-lg md:text-xl"
+          >
+            <a href="/register">Get Started</a>
+          </Button>
         </Section>
       </div>
       <motion.div
-        // show with opacity after 4 seconds
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 5 }}

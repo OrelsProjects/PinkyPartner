@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Button } from "../../../components/ui/button";
 import { useRouter } from "next/navigation";
 import { useContracts } from "../../../lib/hooks/useContracts";
@@ -16,6 +16,19 @@ const ContractsPage: React.FC<ContractsProps> = () => {
   const router = useRouter();
 
   const { contracts: contractsData, loadingData } = useContracts();
+
+  const sortedContracts = useMemo(() => {
+    // Slice is required because array is frozen in strict mode
+    return contractsData.slice().sort((a, b) => {
+      if (a.createdAt < b.createdAt) {
+        return 1;
+      }
+      if (a.createdAt > b.createdAt) {
+        return -1;
+      }
+      return 0;
+    });
+  }, [contractsData]);
 
   return (
     <div className="h-full w-full flex flex-col gap-1">
@@ -46,7 +59,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
                 />
               ),
             )
-          : contractsData.map(contractData => (
+          : sortedContracts.map(contractData => (
               <ContractComponent
                 contract={contractData}
                 key={contractData.contractId}
