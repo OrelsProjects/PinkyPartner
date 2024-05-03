@@ -64,7 +64,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         <DialogTitle className="text-2xl">{contract.title}</DialogTitle>
       </DialogHeader>
       <div>
-        <h1 className="font-semibold">Obligations:</h1>
+        <h1 className="font-semibold">Promises:</h1>
         <div className="flex flex-col gap-1 max-h-56 overflow-auto">
           {contract.obligations.map((obligation: Obligation, index: number) => (
             <div key={index}>

@@ -19,13 +19,9 @@ import NotificationBadge from "../../../components/ui/notificationBadge";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
-
-type GroupedObligations = {
-  [key: string]: {
-    contract: Contract;
-    obligations: ObligationCompleted[];
-  };
-};
+import ContractAccordion, {
+  GroupedObligations,
+} from "../../../components/contractAccordion";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -290,6 +286,16 @@ export default function Home() {
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
+      <ContractAccordion
+        userData={{ obligationsToComplete, obligationsCompleted }}
+        partnerData={partnerData}
+      />
+    </div>
+  );
+}
+
+/**
+ * <div className="w-full h-full flex flex-col gap-4">
       <div className="w-full h-full sm:h-fit flex flex-row items-start justify-between pr-3 sm:pr-0 mt-16 sm:mt-0">
         <h1 className="text-xl font-bold">Next up</h1>
         <Switch
@@ -304,38 +310,8 @@ export default function Home() {
         <NextUp
           loading={loadingData}
           obligationsToComplete={obligationsToComplete}
-          user={{
-            photoURL: user?.photoURL,
-          }}
-          className={`${showPartner ? "hidden" : "flex"} lg:flex`}
-        />
-        <NextUp
-          loading={loadingPartner}
-          obligationsToComplete={partnerData.obligationsToComplete}
-          partner
-          className={`${showPartner ? "flex" : "hidden"} lg:flex`}
-        />
-      </div>
-      <Divider className="w-full" />
-      {Object.keys(groupedObligationsCompleted).length > 0 && (
-        <h1 className="text-xl font-bold">Done</h1>
-      )}
-      <div className="w-full h-4/10 min-h-[40%] flex flex-row justify-between">
-        <Done
-          loading={loadingData}
-          groupedObligations={groupedObligationsCompleted}
-          user={{
-            photoURL: user?.photoURL,
-          }}
-          className={`${showPartner ? "hidden" : "flex"} lg:flex`}
-        />
-        <Done
-          loading={loadingPartner}
-          groupedObligations={partnersGroupedObligationsCompleted}
-          partner
-          className={`${showPartner ? "flex" : "hidden"} lg:flex`}
-        />
-      </div>
+        obligationsCompleted={obligationsCompleted}
+      />
     </div>
-  );
-}
+
+ */

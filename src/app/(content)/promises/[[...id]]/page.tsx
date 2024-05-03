@@ -301,8 +301,12 @@ const PromiseDialog = ({
             </SectionTitleContainer>
 
             <RepeatText
-              days={formik.values.days}
-              timesAWeek={formik.values.timesAWeek}
+              days={formik.values.repeat === "Daily" ? formik.values.days : null}
+              timesAWeek={
+                formik.values.repeat === "Weekly"
+                  ? formik.values.timesAWeek
+                  : null
+              }
             />
             <div
               className={cn(

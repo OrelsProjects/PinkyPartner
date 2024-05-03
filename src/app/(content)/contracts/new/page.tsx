@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 import { Input } from "../../../../components/ui/input";
-import { TextArea } from "../../../../components/ui/textArea";
 import { useFormik } from "formik";
 import { CreateContract } from "../../../../models/contract";
 import { useObligations } from "../../../../lib/hooks/useObligations";
@@ -10,7 +9,6 @@ import ObligationComponent from "../../../../components/obligationComponent";
 import Obligation from "../../../../models/obligation";
 import { AccountabilityPartner } from "../../../../models/appUser";
 import useSearchUser from "../../../../lib/hooks/useSearchUser";
-import { Skeleton } from "../../../../components/ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
@@ -42,7 +40,7 @@ const FindPartner = ({
       <Input
         label="Search for your partner"
         type="text"
-        placeholder="Orel zilberman"
+        placeholder="Your pinky partner&apos;s name"
         onChange={e => searchUsers(e.target.value)}
         autoComplete="on"
         autoFocus
@@ -66,22 +64,27 @@ const FindPartner = ({
               />
             ))}
       </div>
-      {(status === "no-results" || status === "success") && (
-        <>
-          <Divider className="mt-3" />
-          <div className="mt-2 flex flex-col gap-5 items-start rounded-lg">
-            <div className="flex flex-col">
+
+      <>
+        <Divider className="mt-3" />
+        <div className="mt-2 flex flex-col gap-5 items-start rounded-lg">
+          <div className="flex flex-col">
+            {status === "no-results" || status === "success" ? (
               <span className="text-sm text-muted-foreground mt-1.5">
                 Can&apos;t find your partner?
               </span>
+            ) : (
               <span className="text-sm text-muted-foreground mt-1.5">
-                It&apos;s okay! You can invite them later.
+                Don&apos;t have a partner?
               </span>
-            </div>
-            <Button onClick={() => onPartnerSelect()}>Continue</Button>
+            )}
+            <span className="text-sm text-muted-foreground mt-1.5">
+              It&apos;s okay! You can invite them later.
+            </span>
           </div>
-        </>
-      )}
+          <Button onClick={() => onPartnerSelect()}>Continue</Button>
+        </div>
+      </>
     </div>
   );
 };
@@ -368,7 +371,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                 <div id="due-date">
                   <h1 className="text-xl font-bold">Due date</h1>
                   <Input
-                    className="w-full"
+                    className="w-fit"
                     type="date"
                     name="dueDate"
                     value={formik.values.dueDate.toISOString().split("T")[0]}

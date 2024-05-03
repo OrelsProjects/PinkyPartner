@@ -327,8 +327,8 @@ export default function Home() {
           body={
             <div>
               <span>
-                Now that you have obligations, create contracts to make sure you
-                both follow through.
+                Now that you have made some promises, create contracts to make
+                sure you both follow through.
               </span>
             </div>
           }

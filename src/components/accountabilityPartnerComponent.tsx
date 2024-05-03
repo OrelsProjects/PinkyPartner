@@ -32,6 +32,7 @@ const AccountabilityPartnerComponent: React.FC<{
       <UserAvatar
         displayName={partner.displayName}
         photoURL={partner.photoURL}
+        className="w-10 h-10"
       />
       <div key={partner.userId} className="truncate">
         {partner.displayName}

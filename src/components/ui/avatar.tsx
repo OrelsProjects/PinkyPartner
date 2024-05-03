@@ -16,7 +16,6 @@ export const UserAvatar = ({
 }) => {
   const userInitials = React.useMemo(() => {
     const firstLetter = displayName?.[0];
-    // first letter after space
     const secondLetter =
       displayName?.split(" ")[1]?.[0] || displayName?.[1] || "";
     return `${firstLetter}${secondLetter}`;
@@ -27,7 +26,7 @@ export const UserAvatar = ({
       {photoURL ? (
         <AvatarImage src={photoURL} alt={displayName ?? "User photo"} />
       ) : (
-        <AvatarFallback>{userInitials}</AvatarFallback>
+        <AvatarFallback className="bg-card">{userInitials}</AvatarFallback>
       )}
     </Avatar>
   );
