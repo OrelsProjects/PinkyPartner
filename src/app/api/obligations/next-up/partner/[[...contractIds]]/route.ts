@@ -1,25 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
-import {
-  ObligationsInContracts,
-  getObligationsToComplete,
-  getEndOfTheWeekDate,
-  getStartOfTheWeekDate,
-} from "../../../../obligation/_utils";
 import prisma from "../../../../_db/db";
 import { Logger } from "../../../../../../logger";
-import { Obligation, ObligationCompleted } from "@prisma/client";
-
-type UserBasicData = {
-  photoURL: string;
-  displayName: string;
-  userId: string;
-};
-
-type ObligationCompletedWithUser = ObligationCompleted & {
-  appUser?: UserBasicData;
-};
+import UserContractObligation from "../../../../../../models/userContractObligation";
+import {
+  getStartOfTheWeekDate,
+  getEndOfTheWeekDate,
+} from "../../../../obligation/_utils";
+import { createWeeksContractObligations } from "../../../../contract/_utils/contractUtils";
 
 export async function GET(
   req: NextRequest,
@@ -27,20 +16,31 @@ export async function GET(
 ): Promise<
   NextResponse<
     | {
-        toComplete: ObligationsInContracts;
-        completed: ObligationCompletedWithUser[];
+        userData: {
+          toComplete: UserContractObligation[];
+          completed: UserContractObligation[];
+        };
+        partnerData: {
+          toComplete: UserContractObligation[];
+          completed: UserContractObligation[];
+        };
       }
     | { error: string }
   >
 > {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // const session = await getServerSession(authOptions);
+  // if (!session) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // }
   try {
     const allContractIds = params.contractIds?.[0].split(",");
     const uniqueContractIds = Array.from(new Set(allContractIds));
-    const { user } = session;
+    // const { user } = session;
+    const user = {
+      userId: "102926335316336979769",
+      photoURL: "",
+      displayName: "",
+    };
     const now = new Date();
     const startOfWeekDate = getStartOfTheWeekDate();
     const endOfTheWeekDate = getEndOfTheWeekDate();
@@ -79,24 +79,17 @@ export async function GET(
         },
         contract: {
           include: {
-            contractObligations: {
-              include: {
-                obligation: true,
-              },
-            },
             userContracts: true,
-            obligationsCompleted: {
+            userContractObligations: {
               where: {
-                userId: {
-                  not: user.userId,
-                },
-                completedAt: {
+                dueDate: {
                   gte: startOfWeekDate,
                   lte: endOfTheWeekDate,
                 },
               },
+            },
+            contractObligations: {
               include: {
-                contract: true,
                 obligation: true,
               },
             },
@@ -113,64 +106,96 @@ export async function GET(
 
     if (signedContracts.length === 0) {
       return NextResponse.json(
-        { toComplete: [], completed: [] },
+        {
+          userData: { toComplete: [], completed: [] },
+          partnerData: { toComplete: [], completed: [] },
+        },
         { status: 200 },
       );
     }
 
-    const allContractObligations: ObligationsInContracts =
-      signedContracts.reduce((acc: ObligationsInContracts, userContract) => {
-        const { contractObligations, ...contract } = userContract.contract;
-        const obligations = contractObligations.map(
-          ({ obligation }) => obligation as Obligation,
+    const allUserContractObligations: UserContractObligation[] = [];
+
+    for (const signedContract of signedContracts) {
+      let userContractObligations =
+        signedContract.contract.userContractObligations;
+      if (signedContract.contract.userContractObligations.length === 0) {
+        let newObligations = await createWeeksContractObligations(
+          signedContract.contract.contractObligations.map(
+            ({ obligation }) => obligation,
+          ),
+          signedContract.contract,
+          [signedContract.appUser.userId, user.userId],
         );
+        userContractObligations = newObligations.userContractObligations;
+      }
 
-        let appUser: UserBasicData | undefined = undefined;
+      const signedContractUser = signedContract.appUser;
 
-        if (
-          userContract.appUser?.displayName &&
-          userContract.appUser?.photoURL
-        ) {
-          appUser = {
-            userId: userContract.appUser.userId,
-            photoURL: userContract.appUser.photoURL,
-            displayName: userContract.appUser.displayName,
-          };
-        }
+      for (const userContractObligation of userContractObligations) {
+        const obligation = signedContract.contract.contractObligations.find(
+          ({ obligationId }) =>
+            obligationId === userContractObligation.obligationId,
+        )?.obligation;
+        signedContracts;
 
-        acc.push({
-          obligations,
-          contract,
-          appUser,
-        });
-        return acc;
-      }, []);
-
-    const obligationsCompleted: ObligationCompletedWithUser[] =
-      signedContracts.flatMap(contract => {
-        const appUser: UserBasicData = {
-          userId: contract.appUser.userId,
-          photoURL: contract.appUser.photoURL || "",
-          displayName: contract.appUser.displayName || "",
+        const appUser = {
+          photoURL:
+            userContractObligation.userId === user.userId
+              ? user.photoURL
+              : signedContractUser.photoURL,
+          displayName:
+            userContractObligation.userId === user.userId
+              ? user.displayName
+              : signedContractUser.displayName,
+          userId:
+            userContractObligation.userId === user.userId
+              ? user.userId
+              : signedContractUser.userId,
         };
-        const obligationsCompleted = contract.contract.obligationsCompleted.map(
-          obligationCompleted => ({
-            ...obligationCompleted,
-            appUser,
-          }),
-        );
-        return obligationsCompleted;
-      });
 
-    const obligationsToComplete = getObligationsToComplete(
-      obligationsCompleted,
-      allContractObligations,
+        allUserContractObligations.push({
+          contractId: signedContract.contract.contractId,
+          userContractObligationId:
+            userContractObligation.userContractObligationId,
+          obligationId: userContractObligation.obligationId,
+          dueDate: userContractObligation.dueDate,
+          completedAt: userContractObligation.completedAt,
+          appUser,
+          obligation: obligation!,
+        });
+      }
+    }
+
+    const userObligations = allUserContractObligations.filter(
+      ({ appUser }) => appUser.userId === user.userId,
     );
+    const partnerObligations = allUserContractObligations.filter(
+      ({ appUser }) => appUser.userId !== user.userId,
+    );
+
+    const userObligationsToComplete: UserContractObligation[] =
+      userObligations.filter(({ completedAt }) => !completedAt) || [];
+
+    const userObligationsCompleted: UserContractObligation[] =
+      userObligations.filter(({ completedAt }) => completedAt) || [];
+
+    const partnerObligationsToComplete: UserContractObligation[] =
+      partnerObligations.filter(({ completedAt }) => !completedAt) || [];
+
+    const partnerObligationsCompleted: UserContractObligation[] =
+      partnerObligations.filter(({ completedAt }) => completedAt) || [];
 
     return NextResponse.json(
       {
-        toComplete: [...obligationsToComplete],
-        completed: [...obligationsCompleted],
+        userData: {
+          toComplete: userObligationsToComplete,
+          completed: userObligationsCompleted,
+        },
+        partnerData: {
+          toComplete: partnerObligationsToComplete,
+          completed: partnerObligationsCompleted,
+        },
       },
       { status: 200 },
     );

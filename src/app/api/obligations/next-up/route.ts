@@ -1,38 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
-import {
-  ObligationsCompletedWithObligation,
-  ObligationsInContracts,
-  getObligationsToComplete,
-  getEndOfTheWeekDate,
-  getStartOfTheWeekDate,
-} from "../../obligation/_utils";
 import prisma from "../../_db/db";
 import { Logger } from "../../../../logger";
-import { Obligation, ObligationCompleted } from "@prisma/client";
+import UserContractObligation from "../../../../models/userContractObligation";
+import {
+  getStartOfTheWeekDate,
+  getEndOfTheWeekDate,
+} from "../../obligation/_utils";
+import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
+
+export type GetNextUpObligationsResponse = {
+  userData: {
+    toComplete: UserContractObligation[];
+    completed: UserContractObligation[];
+  };
+  partnerData: {
+    toComplete: UserContractObligation[];
+    completed: UserContractObligation[];
+  };
+};
 
 export async function GET(
   req: NextRequest,
-): Promise<
-  NextResponse<
-    | { toComplete: ObligationsInContracts; completed: ObligationCompleted[] }
-    | { error: string }
-  >
-> {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  { params }: { params: { contractIds: string[] } },
+): Promise<NextResponse<GetNextUpObligationsResponse | { error: string }>> {
+  // const session = await getServerSession(authOptions);
+  // if (!session) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // }
   try {
-    const { user } = session;
+    const allContractIds = params.contractIds?.[0].split(",");
+    const uniqueContractIds = Array.from(new Set(allContractIds));
+    // const { user } = session;
+    const user = {
+      userId: "102926335316336979769",
+      photoURL: "",
+      displayName: "",
+    };
     const now = new Date();
     const startOfWeekDate = getStartOfTheWeekDate();
     const endOfTheWeekDate = getEndOfTheWeekDate();
 
     let signedContracts = await prisma.userContract.findMany({
       where: {
-        userId: user.userId,
+        contractId: {
+          in: uniqueContractIds,
+        },
+        userId: {
+          not: user.userId,
+        },
         signedAt: {
           not: null,
         },
@@ -50,14 +67,29 @@ export async function GET(
         },
       },
       include: {
+        appUser: {
+          select: {
+            photoURL: true,
+            displayName: true,
+            userId: true,
+          },
+        },
         contract: {
           include: {
+            userContracts: true,
+            userContractObligations: {
+              where: {
+                dueDate: {
+                  gte: startOfWeekDate,
+                  lte: endOfTheWeekDate,
+                },
+              },
+            },
             contractObligations: {
               include: {
                 obligation: true,
               },
             },
-            userContracts: true,
           },
         },
       },
@@ -69,43 +101,98 @@ export async function GET(
           .length > 1,
     );
 
-    const allContractObligations: ObligationsInContracts =
-      signedContracts.reduce((acc: ObligationsInContracts, userContract) => {
-        const { contractObligations, ...contract } = userContract.contract;
-        const obligations = contractObligations.map(
-          ({ obligation }) => obligation as Obligation,
+    if (signedContracts.length === 0) {
+      return NextResponse.json(
+        {
+          userData: { toComplete: [], completed: [] },
+          partnerData: { toComplete: [], completed: [] },
+        },
+        { status: 200 },
+      );
+    }
+
+    const allUserContractObligations: UserContractObligation[] = [];
+
+    for (const signedContract of signedContracts) {
+      let userContractObligations =
+        signedContract.contract.userContractObligations;
+      if (signedContract.contract.userContractObligations.length === 0) {
+        let newObligations = await createWeeksContractObligations(
+          signedContract.contract.contractObligations.map(
+            ({ obligation }) => obligation,
+          ),
+          signedContract.contract,
+          [signedContract.appUser.userId, user.userId],
         );
-        acc.push({
-          obligations,
-          contract,
+        userContractObligations = newObligations.userContractObligations;
+      }
+
+      const signedContractUser = signedContract.appUser;
+
+      for (const userContractObligation of userContractObligations) {
+        const obligation = signedContract.contract.contractObligations.find(
+          ({ obligationId }) =>
+            obligationId === userContractObligation.obligationId,
+        )?.obligation;
+        signedContracts;
+
+        const appUser = {
+          photoURL:
+            userContractObligation.userId === user.userId
+              ? user.photoURL
+              : signedContractUser.photoURL,
+          displayName:
+            userContractObligation.userId === user.userId
+              ? user.displayName
+              : signedContractUser.displayName,
+          userId:
+            userContractObligation.userId === user.userId
+              ? user.userId
+              : signedContractUser.userId,
+        };
+
+        allUserContractObligations.push({
+          contractId: signedContract.contract.contractId,
+          userContractObligationId:
+            userContractObligation.userContractObligationId,
+          obligationId: userContractObligation.obligationId,
+          dueDate: userContractObligation.dueDate,
+          completedAt: userContractObligation.completedAt,
+          appUser,
+          obligation: obligation!,
         });
-        return acc;
-      }, []);
+      }
+    }
 
-    const obligationsCompleted: ObligationCompleted[] =
-      await prisma.obligationCompleted.findMany({
-        where: {
-          userId: user.userId,
-          completedAt: {
-            gte: startOfWeekDate,
-            lte: endOfTheWeekDate,
-          },
-        },
-        include: {
-          obligation: true,
-          contract: true
-        },
-      });
-
-    const obligationsToComplete = getObligationsToComplete(
-      obligationsCompleted,
-      allContractObligations,
+    const userObligations = allUserContractObligations.filter(
+      ({ appUser }) => appUser.userId === user.userId,
     );
+    const partnerObligations = allUserContractObligations.filter(
+      ({ appUser }) => appUser.userId !== user.userId,
+    );
+
+    const userObligationsToComplete: UserContractObligation[] =
+      userObligations.filter(({ completedAt }) => !completedAt) || [];
+
+    const userObligationsCompleted: UserContractObligation[] =
+      userObligations.filter(({ completedAt }) => completedAt) || [];
+
+    const partnerObligationsToComplete: UserContractObligation[] =
+      partnerObligations.filter(({ completedAt }) => !completedAt) || [];
+
+    const partnerObligationsCompleted: UserContractObligation[] =
+      partnerObligations.filter(({ completedAt }) => completedAt) || [];
 
     return NextResponse.json(
       {
-        toComplete: [...obligationsToComplete],
-        completed: [...obligationsCompleted],
+        userData: {
+          toComplete: userObligationsToComplete,
+          completed: userObligationsCompleted,
+        },
+        partnerData: {
+          toComplete: partnerObligationsToComplete,
+          completed: partnerObligationsCompleted,
+        },
       },
       { status: 200 },
     );

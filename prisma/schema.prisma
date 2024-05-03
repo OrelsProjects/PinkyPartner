@@ -30,12 +30,12 @@ model AppUser {
   displayName String?
   photoURL    String?
 
-  userContracts       UserContract[]
+  userContracts      UserContract[]
   // on delete cascade
-  Obligation          Obligation[]
-  Contract            Contract[]
-  ObligationCompleted ObligationCompleted[]
-  meta                AppUserMetadata?
+  Obligation         Obligation[]
+  Contract           Contract[]
+  meta               AppUserMetadata?
+  ContractObligation UserContractObligation[]
 
   @@map("appUser")
 }
@@ -49,7 +49,7 @@ model AppUserMetadata {
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-@@map("appUserMetadata")
+  @@map("appUserMetadata")
 }
 
 model Obligation {
@@ -62,9 +62,9 @@ model Obligation {
   days         Int[]   @default([])
   timesAWeek   Int?
 
-  appUser              AppUser               @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  contractObligations  ContractObligation[]
-  ObligationsCompleted ObligationCompleted[]
+  appUser             AppUser                  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contractObligations UserContractObligation[]
+  ContractObligation  ContractObligation[]
 
   @@map("obligation")
 }
@@ -77,24 +77,12 @@ model Contract {
   dueDate     DateTime
   createdAt   DateTime @default(now())
 
-  appUser              AppUser               @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
-  contractObligations  ContractObligation[]
-  userContracts        UserContract[]
-  obligationsCompleted ObligationCompleted[]
+  appUser                 AppUser                  @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
+  userContractObligations UserContractObligation[]
+  userContracts           UserContract[]
+  contractObligations     ContractObligation[]
 
   @@map("contract")
-}
-
-model ContractObligation {
-  contractObligationId String @id @default(auto()) @map("_id") @db.ObjectId
-  contractId           String @db.ObjectId
-  obligationId         String @db.ObjectId
-  
-
-  contract   Contract?   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
-  obligation Obligation? @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
-
-  @@map("contractObligations")
 }
 
 model UserContract {
@@ -110,17 +98,32 @@ model UserContract {
   @@map("userContracts")
 }
 
-model ObligationCompleted {
-  obligationCompletedId String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId                String
-  obligationId          String    @db.ObjectId
-  contractId            String    @db.ObjectId
-  completedAt           DateTime
-  viewedAt              DateTime? // If the partner saw his partner's completion
+// This is to know which obligations are in which contracts, to create for the user.
+model ContractObligation {
+  contractObligationId String @id @default(auto()) @map("_id") @db.ObjectId
+  contractId           String @db.ObjectId
+  obligationId         String @db.ObjectId
+
+  contract   Contract   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
+  obligation Obligation @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
+
+  @@map("contractObligations")
+}
+
+// This will populate all the obligations of all the users.
+model UserContractObligation {
+  userContractObligationId String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId                   String
+  obligationId             String    @db.ObjectId
+  contractId               String    @db.ObjectId
+  dueDate                  DateTime? // If it's weekly, there is no due date.
+  completedAt              DateTime?
+  viewedAt                 DateTime? // If the partner saw his partner's completion
+  createdAt                DateTime  @default(now())
 
   appUser    AppUser    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   contract   Contract   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
   obligation Obligation @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
 
-  @@map("obligationsCompleted")
+  @@map("userContractObligations")
 }

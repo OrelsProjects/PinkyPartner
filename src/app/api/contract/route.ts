@@ -5,6 +5,8 @@ import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
 import Contract, { CreateContract } from "../../../models/contract";
 import { formatObligations } from "../_utils";
+import { Obligation } from "@prisma/client";
+import { createWeeksContractObligations } from "./_utils/contractUtils";
 
 export async function POST(
   req: NextRequest,
@@ -20,46 +22,44 @@ export async function POST(
       data as CreateContract;
     const now = new Date();
 
-    const contractResponse = await prisma.contract.create({
-      data: { ...contractData, creatorId: session.user.userId },
-    });
-
-    await prisma.contractObligation.createMany({
-      data: obligationIds.map((obligationId: string) => ({
-        obligationId: obligationId,
-        contractId: contractResponse.contractId,
-      })),
-    });
-
-    for (const contractee of contractees) {
-      await prisma.userContract.create({
-        data: {
-          contractId: contractResponse.contractId,
-          userId: contractee.userId,
-          signedAt: signatures.includes(contractee.userId) ? now : null,
-        },
-      });
-    }
-    const obligationsResponse = await prisma.obligation.findMany({
+    const obligations: Obligation[] = await prisma.obligation.findMany({
       where: {
         obligationId: {
           in: obligationIds,
         },
       },
     });
-    const obligations = formatObligations(obligationsResponse);
 
-    /**
- *   contractId: string;
-  creatorId?: string;
-  title: string;
-  dueDate: Date;
-  description?: string | null;
+    const contractResponse = await prisma.contract.create({
+      data: { ...contractData, creatorId: session.user.userId },
+    });
 
-  contractees: AccountabilityPartner[];
-  obligations: Obligation[];
-  signatures: AppUser[];
- */
+    let populatedObligations: Obligation[] = [];
+
+    for (const contractee of contractees) {
+      const createUserContractPromsie = prisma.userContract.create({
+        data: {
+          contractId: contractResponse.contractId,
+          userId: contractee.userId,
+          signedAt: signatures.includes(contractee.userId) ? now : null,
+        },
+      });
+      const createContractObligationsPromise = createWeeksContractObligations(
+        obligations,
+        contractResponse,
+        [contractee.userId],
+      );
+
+      const result = await Promise.all([
+        createUserContractPromsie,
+        createContractObligationsPromise,
+      ]);
+
+      populatedObligations = result[1].obligations;
+    }
+
+    const formattedObligations = formatObligations(populatedObligations);
+
     const contract: Contract = {
       contractId: contractResponse.contractId,
       creatorId: session.user.userId,
@@ -67,7 +67,7 @@ export async function POST(
       title: contractResponse.title,
       description: contractResponse.description,
       createdAt: contractResponse.createdAt,
-      obligations,
+      obligations: formattedObligations,
       signatures: [session.user],
       contractees,
     };
