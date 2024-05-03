@@ -3,21 +3,23 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "../../_db/db";
 import { Logger } from "../../../../logger";
-import UserContractObligation from "../../../../models/userContractObligation";
+import UserContractObligation, { UserBasicData } from "../../../../models/userContractObligation";
 import {
   getStartOfTheWeekDate,
   getEndOfTheWeekDate,
 } from "../../obligation/_utils";
 import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
+import { ObligationsInContract } from "../../../../models/obligation";
+import Contract from "../../../../models/contract";
 
 export type GetNextUpObligationsResponse = {
   userData: {
-    toComplete: UserContractObligation[];
-    completed: UserContractObligation[];
+    toComplete: ObligationsInContract[];
+    completed: ObligationsInContract[];
   };
   partnerData: {
-    toComplete: UserContractObligation[];
-    completed: UserContractObligation[];
+    toComplete: ObligationsInContract[];
+    completed: ObligationsInContract[];
   };
 };
 
@@ -76,7 +78,17 @@ export async function GET(
         },
         contract: {
           include: {
-            userContracts: true,
+            userContracts: {
+              include: {
+                appUser: {
+                  select: {
+                    photoURL: true,
+                    displayName: true,
+                    userId: true,
+                  },
+                },
+              }
+            },
             userContractObligations: {
               where: {
                 dueDate: {
@@ -136,7 +148,7 @@ export async function GET(
         )?.obligation;
         signedContracts;
 
-        const appUser = {
+        const appUser: UserBasicData = {
           photoURL:
             userContractObligation.userId === user.userId
               ? user.photoURL
@@ -171,17 +183,89 @@ export async function GET(
       ({ appUser }) => appUser.userId !== user.userId,
     );
 
-    const userObligationsToComplete: UserContractObligation[] =
-      userObligations.filter(({ completedAt }) => !completedAt) || [];
 
-    const userObligationsCompleted: UserContractObligation[] =
-      userObligations.filter(({ completedAt }) => completedAt) || [];
+    const userContractObligationToContractsWithUser = (
+      isUser?: boolean
+    ): ObligationsInContract[] => {
+      const contractIdToUserObligations: {
+        [key: string]: UserContractObligation[];
+      } = {};
+      const contracts: ObligationsInContract[] = [];
+      const userContractObligations = allUserContractObligations.filter(
+        ({ appUser }) =>  isUser ? appUser.userId === user.userId : appUser.userId !== user.userId,
+      );
+      for (const userContractObligation of userContractObligations) {
+        if (!contractIdToUserObligations[userContractObligation.contractId]) {
+          contractIdToUserObligations[userContractObligation.contractId] = [];
+        }
+        contractIdToUserObligations[userContractObligation.contractId].push(
+          userContractObligation,
+        );
+      }
+    
+      // for each contract, create a ContractWithUser object
+      for (const contractId in contractIdToUserObligations) {
+        const userObligations = contractIdToUserObligations[contractId];
+        const otherUser = userObligations.find(({ appUser }) => appUser.userId !== user.userId)?.appUser;
+        const dbContract = signedContracts.find(
+          contract => contract.contract.contractId === contractId,
+        );
+        if(!dbContract) continue;
 
-    const partnerObligationsToComplete: UserContractObligation[] =
-      partnerObligations.filter(({ completedAt }) => !completedAt) || [];
+        const obligations = userObligations.map(
+          userObligation => userObligation.obligation,
+        );
+        const contractees: UserBasicData[] = dbContract.contract.userContracts.map(({ appUser }) => appUser) || [];
+        const signatures: UserBasicData[] =  dbContract.contract.userContracts.filter(({ signedAt }) => signedAt !== null).map(({ appUser }) => appUser) || [];
+        const contract: Contract = {
+          contractId: contractId,
+          creatorId?: dbContract.contract.creatorId,
+          title: dbContract.contract.title,
+          dueDate: dbContract.contract.dueDate,
+          description: dbContract.contract.description,
+          createdAt: dbContract.contract.createdAt,
+          viewedAt: dbContract.viewedAt,
+            obligations,
+            contractees,
+            signatures
+            };
+    
+        const contractWithUser: ObligationsInContract = {
+          contract,
+          appUser: {
+            photoURL: isUser ? user.photoURL : otherUser?.photoURL || "",
+            displayName: isUser ? user.displayName : otherUser?.displayName || "",
+            userId: isUser ? user.userId : otherUser?.userId || "",
+          },
+          obligations: contract.obligations,
+          }
+          contracts.push(contractWithUser); 
+      }
+      return contracts;
+    }
 
-    const partnerObligationsCompleted: UserContractObligation[] =
-      partnerObligations.filter(({ completedAt }) => completedAt) || [];
+    const currentUserContractWithUser = userContractObligationToContractsWithUser(true);
+    const partnerContractWithUser = userContractObligationToContractsWithUser();
+
+    const userObligationsToComplete: ObligationsInContract[] =
+    currentUserContractWithUser.filter((contract) => {
+      contract.obligations
+      
+    const userObligationsCompleted: ObligationsInContract[] =
+      currentUserContractWithUser.map((contract) => {
+        const obligations = userObligations.filter(({ contractId }) => contract.contract.contractId === contractId);
+        
+      }) || [];
+
+    const partnerObligationsToComplete: ObligationsInContract[] =
+    partnerContractWithUser.filter((contract) => {
+      const obligations = partnerObligations.filter(({ contractId }) => contract.contract.contractId === contractId);
+      return obligations.some(({ completedAt }) => !completedAt);
+      }) || []
+
+    const partnerObligationsCompleted: ObligationsInContract[] =
+      partnerObligations.filter(({ completedAt }) => completedAt).map(
+
 
     return NextResponse.json(
       {

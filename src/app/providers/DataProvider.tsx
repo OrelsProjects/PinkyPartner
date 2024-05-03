@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { UserData } from "../../models/appUser";
 import { useObligations } from "../../lib/hooks/useObligations";
 import { useContracts } from "../../lib/hooks/useContracts";
-import { ObligationsInContracts } from "../../models/obligation";
+import { ContractsWithUser } from "../../models/obligation";
 import useAuth from "../../lib/hooks/useAuth";
 import { useAppSelector } from "../../lib/hooks/redux";
 import ObligationCompleted from "../../models/obligationCompleted";

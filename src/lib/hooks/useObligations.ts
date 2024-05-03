@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Obligation, {
   CreateObligation,
-  ObligationsInContracts,
+  ContractsWithUser,
 } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
 import {
@@ -22,6 +22,7 @@ import LoadingError from "../../models/errors/LoadingError";
 import ObligationCompleted from "../../models/obligationCompleted";
 import Contract from "../../models/contract";
 import { Logger } from "../../logger";
+import { GetNextUpObligationsResponse } from "../../app/api/obligations/next-up/route";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -125,7 +126,7 @@ export function useObligations() {
     }
   };
 
-  const setObligationsToComplete = (obligations: ObligationsInContracts) => {
+  const setObligationsToComplete = (obligations: ContractsWithUser) => {
     dispatch(setObligationsToCompleteAction([...obligations]));
   };
 
@@ -134,7 +135,7 @@ export function useObligations() {
   };
 
   const setPartnerData = (
-    obligationsInContracts: ObligationsInContracts,
+    obligationsInContracts: ContractsWithUser,
     obligationsCompleted: ObligationCompleted[],
   ) => {
     dispatch(
@@ -169,11 +170,12 @@ export function useObligations() {
   const fetchNextUpObligations = async () => {
     try {
       setLoadingData(true);
-      const response = await axios.get<{
-        toComplete: ObligationsInContracts;
-        completed: ObligationCompleted[];
-      }>("/api/obligations/next-up");
-      const { toComplete, completed } = response.data;
+      const response = await axios.get<GetNextUpObligationsResponse>(
+        "/api/obligations/next-up",
+      );
+      const { userData, partnerData } = response.data;
+
+      const { toComplete, completed } = userData;
       setObligationsToComplete(toComplete);
       setObligationsCompleted(completed);
     } catch (error: any) {
@@ -228,7 +230,7 @@ export function useObligations() {
     params.append("contractIds", contractIds.join(","));
     try {
       const response = await axios.get<{
-        toComplete: ObligationsInContracts;
+        toComplete: ContractsWithUser;
         completed: ObligationCompleted[];
       }>(`/api/obligations/next-up/partner/${contractIds.join(",")}`);
 

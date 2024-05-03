@@ -1,7 +1,7 @@
 import Contract from "./contract";
 import Obligation from "./obligation";
 
-type UserBasicData = {
+export type UserBasicData = {
   photoURL?: string | null;
   displayName?: string | null;
   userId: string;

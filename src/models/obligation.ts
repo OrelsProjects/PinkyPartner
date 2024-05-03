@@ -18,9 +18,8 @@ export default interface Obligation {
 
 export type CreateObligation = Omit<Obligation, "obligationId" | "userId">;
 
-export type ObligationsInContract = {
+export type ContractWithUser = {
   contract: Contract;
-  obligations: Obligation[];
   appUser?: {
     photoURL: string;
     displayName: string;
@@ -28,4 +27,4 @@ export type ObligationsInContract = {
   };
 };
 
-export type ObligationsInContracts = ObligationsInContract[];
+export type ContractsWithUser = ContractWithUser[];

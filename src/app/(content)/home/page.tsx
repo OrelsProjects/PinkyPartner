@@ -11,7 +11,7 @@ import Divider from "../../../components/ui/divider";
 import ObligationCompleted from "../../../models/obligationCompleted";
 import Contract from "../../../models/contract";
 import { useAppSelector } from "../../../lib/hooks/redux";
-import { ObligationsInContracts } from "../../../models/obligation";
+import { ContractsWithUser } from "../../../models/obligation";
 import { cn } from "../../../lib/utils";
 import { Switch } from "../../../components/ui/switch";
 import useNotifications from "../../../lib/hooks/useNotifications";
@@ -78,7 +78,7 @@ const NextUp = ({
   className,
 }: {
   loading?: boolean;
-  obligationsToComplete: ObligationsInContracts;
+  obligationsToComplete: ContractsWithUser;
   user?: { photoURL?: string | null } | null;
   partner?: boolean;
   className?: string;

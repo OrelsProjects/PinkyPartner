@@ -1,5 +1,6 @@
 import Contract from "./contract";
 import Obligation from "./obligation";
+import { UserBasicData } from "./userContractObligation";
 
 export default interface AppUser {
   userId: string;
@@ -20,7 +21,4 @@ export type UserData = {
 };
 
 // Select userId, displayName and photoURL from AppUser
-export type AccountabilityPartner = Pick<
-  AppUser,
-  "userId" | "displayName" | "photoURL"
-> & { signedAt?: Date | null };
+export type AccountabilityPartner = UserBasicData & { signedAt?: Date | null };

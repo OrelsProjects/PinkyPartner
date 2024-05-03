@@ -2,18 +2,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
 import Obligation, {
-  ObligationsInContract,
-  ObligationsInContracts,
+  ContractWithUser,
+  ContractsWithUser,
 } from "../../../models/obligation";
 import ObligationCompleted from "../../../models/obligationCompleted";
 
 interface ObligationsState {
   obligations: Obligation[];
-  obligationsToComplete: ObligationsInContracts;
+  obligationsToComplete: ContractsWithUser;
   obligationsCompleted: ObligationCompleted[];
   partnerData: {
     loading?: boolean;
-    obligationsToComplete: ObligationsInContracts;
+    obligationsToComplete: ContractsWithUser;
     obligationsCompleted: ObligationCompleted[];
   };
   loading: boolean;
@@ -60,7 +60,7 @@ const obligationsSlice = createSlice({
     },
     setObligationsToComplete(
       state,
-      action: PayloadAction<ObligationsInContracts>,
+      action: PayloadAction<ContractsWithUser>,
     ) {
       state.obligationsToComplete = action.payload;
     },
@@ -73,7 +73,7 @@ const obligationsSlice = createSlice({
     setPartnerData(
       state,
       action: PayloadAction<{
-        obligationsToComplete: ObligationsInContracts;
+        obligationsToComplete: ContractsWithUser;
         obligationsCompleted: ObligationCompleted[];
       }>,
     ) {
@@ -82,7 +82,7 @@ const obligationsSlice = createSlice({
 
     completeObligation(state, action: PayloadAction<ObligationCompleted>) {
       state.obligationsToComplete = state.obligationsToComplete.map(
-        (obligationsInContract: ObligationsInContract) => {
+        (obligationsInContract: ContractWithUser) => {
           const newObligations = obligationsInContract.obligations.filter(
             obligation =>
               obligation.obligationId !== action.payload.obligationId,

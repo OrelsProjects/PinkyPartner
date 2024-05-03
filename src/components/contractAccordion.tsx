@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import Obligation, { ObligationsInContract } from "../models/obligation";
+import Obligation, { ContractWithUser } from "../models/obligation";
 import ObligationCompleted from "../models/obligationCompleted";
 import Contract from "../models/contract";
 import {
@@ -19,11 +19,11 @@ export type GroupedObligations = {
 
 interface ContractAcccordionProps {
   userData: {
-    obligationsToComplete: ObligationsInContract[];
+    obligationsToComplete: ContractWithUser[];
     obligationsCompleted: ObligationCompleted[];
   };
   partnerData: {
-    obligationsToComplete: ObligationsInContract[];
+    obligationsToComplete: ContractWithUser[];
     obligationsCompleted: ObligationCompleted[];
   };
 }
@@ -227,11 +227,11 @@ export default function ContractAccordion({
         defaultValue={["Weekly"]}
         className="flex flex-col gap-3"
       >
-        {obligationsToComplete.map(({ contract, obligations }) => {
-          const weeklyObligations = obligations.filter(
+        {obligationsToComplete.map(({ contract }) => {
+          const weeklyObligations = contract.obligations.filter(
             obligation => obligation.repeat === "Weekly",
           );
-          const dailyObligations = obligations.filter(
+          const dailyObligations = contract.obligations.filter(
             obligation => obligation.repeat === "Daily",
           );
 
@@ -241,7 +241,7 @@ export default function ContractAccordion({
                 ({ contract: partnerContract }) =>
                   partnerContract.contractId === contract.contractId,
               )
-              ?.obligations.filter(
+              ?.contract.obligations.filter(
                 obligation => obligation.repeat === "Weekly",
               );
 
@@ -251,7 +251,7 @@ export default function ContractAccordion({
                 partnerContract.contractId === contract.contractId,
             );
           const partnerDailyObligations =
-            partnerDailyObligationsToComplete?.obligations.filter(
+            partnerDailyObligationsToComplete?.contract.obligations.filter(
               obligation => obligation.repeat === "Daily",
             );
 
