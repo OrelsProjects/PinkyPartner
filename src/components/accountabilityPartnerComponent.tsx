@@ -3,6 +3,7 @@ import Image from "next/image";
 import { AccountabilityPartner } from "../models/appUser";
 import { Skeleton } from "./ui/skeleton";
 import { FaUserCircle } from "react-icons/fa";
+import { UserAvatar } from "./ui/avatar";
 
 export const AccountabilityPartnerComponentLoading = ({
   className,
@@ -28,16 +29,10 @@ const AccountabilityPartnerComponent: React.FC<{
       className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale"} ${className}`}
       onClick={() => onClick?.(partner)}
     >
-      {partner?.photoURL ? (
-        <Image
-          src={partner.photoURL}
-          alt={"Partner photo"}
-          fill
-          className="rounded-full !relative !h-10 !w-10 flex-shrink-0"
-        />
-      ) : (
-        <FaUserCircle className="w-10 h-10 rounded-lg fill-gray-500" />
-      )}
+      <UserAvatar
+        displayName={partner.displayName}
+        photoURL={partner.photoURL}
+      />
       <div key={partner.userId} className="truncate">
         {partner.displayName}
       </div>

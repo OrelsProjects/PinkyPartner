@@ -42,7 +42,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mt-3">
       <div className="flex flex-row justify-between items-center">
         <span className="text-xl font-semibold">{user?.email}</span>
       </div>

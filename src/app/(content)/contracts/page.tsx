@@ -45,7 +45,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </Button>
       </div>
       <motion.div
-        className="h-full w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-8 md:justify-between overflow-auto mt-10"
+        className="h-fit w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 md:justify-between overflow-auto mt-10 pb-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

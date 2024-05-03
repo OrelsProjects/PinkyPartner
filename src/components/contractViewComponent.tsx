@@ -64,10 +64,10 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         <DialogTitle className="text-2xl">{contract.title}</DialogTitle>
       </DialogHeader>
       <div>
-        <h3 className="font-semibold">Obligations:</h3>
+        <h1 className="font-semibold">Obligations:</h1>
         <div className="flex flex-col gap-1 max-h-56 overflow-auto">
           {contract.obligations.map((obligation: Obligation, index: number) => (
-            <div key={index} className="p-2 border-t">
+            <div key={index}>
               <p className="font-semibold">
                 {obligation.title} {obligation.emoji}
               </p>
@@ -113,7 +113,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       </div>
       {!isSigned && (
         <DialogFooter>
-          <div className="w-full flex justify-center items-center">
+          <div className="w-full flex justify-start items-center">
             <DialogClose>
               <Button onClick={() => onSign?.(contract)}>
                 Put your pinky in!
@@ -149,10 +149,10 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         {!isSigned ? (
           <Button className="relative">
             Sign contract
-            <div className="shimmer-wrapper"></div>
+            <div className="shimmer-animation"></div>
           </Button>
         ) : (
-          <Button variant="outline" className="dark:bg-card">
+          <Button variant="outline" className="bg-transparent dark:bg-card">
             View Contract
           </Button>
         )}

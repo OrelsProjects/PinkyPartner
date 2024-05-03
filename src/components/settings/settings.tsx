@@ -3,6 +3,7 @@ import { FaCog } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "../../lib/hooks/redux";
 import Image from "next/image";
+import { UserAvatar } from "../ui/avatar";
 
 interface SettingsComponentProps {}
 
@@ -17,12 +18,10 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
       }}
       className="p-2 rounded-lg"
     >
-      <Image
-        src={user?.photoURL || "/images/default-profile.png"}
-        alt="profile"
-        width={40}
-        height={40}
-        className="rounded-full hover:cursor-pointer"
+      <UserAvatar
+        photoURL={user?.photoURL || "/images/default-profile.png"}
+        displayName={user?.displayName}
+        className="rounded-full hover:cursor-pointer w-10 h-10"
       />
     </div>
   );
