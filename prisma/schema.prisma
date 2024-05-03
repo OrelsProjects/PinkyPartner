@@ -89,6 +89,7 @@ model ContractObligation {
   contractObligationId String @id @default(auto()) @map("_id") @db.ObjectId
   contractId           String @db.ObjectId
   obligationId         String @db.ObjectId
+  
 
   contract   Contract?   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
   obligation Obligation? @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)

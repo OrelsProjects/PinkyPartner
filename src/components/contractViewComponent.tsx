@@ -13,6 +13,7 @@ import Obligation from "../models/obligation";
 import { Button } from "./ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { timesAWeekToText } from "../lib/utils/textUtils";
 
 interface ContractViewComponentProps {
   contract: Contract;
@@ -88,7 +89,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
                 <div className="flex flex-row gap-1">
                   <p className="flex-shrink-0">Repeat:</p>
                   <span className="font-thin">
-                    {obligation.timesAWeek} times a week
+                    {timesAWeekToText(obligation.timesAWeek)}
                   </span>
                 </div>
               )}

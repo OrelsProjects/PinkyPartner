@@ -39,6 +39,15 @@ export function dateToHourMinute(date: Date): string {
   });
 }
 
+/**
+ * Return sunday/monday/.../saturday based on the date
+ * @param date
+ * @returns
+ */
+export function dateToDayString(date: Date): string {
+  return dayNumberToName(date.getDay());
+}
+
 export function DaysToText(days?: number[]): string {
   if (!days || days.length === 0) {
     return "Never";

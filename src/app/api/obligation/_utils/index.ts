@@ -67,6 +67,25 @@ function isObligationDue(obligation: Obligation): boolean {
   }
 }
 
+/**
+ * Determines if the obligation has been completed for the given day.
+ * @param obligation Obligation to check.
+ * @param completedObligations List of completed obligations.
+ * @param day Day to check.
+ * @returns true if the obligation has been completed on the given day.
+ */
+function isCompletedOnDay(
+  obligation: Obligation,
+  completedObligations: ObligationCompleted[],
+  day: number,
+): boolean {
+  return completedObligations.some(
+    co =>
+      co.obligationId === obligation.obligationId &&
+      new Date(co.completedAt).getDay() >= day,
+  );
+}
+
 function isObligationCompletedWeekly(
   obligation: Obligation,
   completedObligations: ObligationCompleted[],
@@ -107,6 +126,55 @@ function isObligationCompleted(
   }
 }
 
+const getObligationsNotDue = (obligations: Obligation[]): Obligation[] => {
+  // return obligations.filter(obligation => !isObligationDue(obligation)); // -> Deprecated to allow user to complete overdue obligations
+  return obligations;
+};
+
+/**
+ * Calculates and returns obligations that need to be completed for the current week based on the given obligations and their completion status.
+ * @param weeksCompletedObligations Obligations that have been completed in the current week.
+ * @param weeksObligationsInContract A single contract's obligations for the week.
+ * @returns An array of Obligation objects that are due to be completed in the current week.
+ */
+export function populateObligationsToComplete(
+  weeksCompletedObligations: ObligationCompleted[],
+  weeksObligationsInContract: ObligationsInContract,
+): Obligation[] {
+  const today = new Date().getDay();
+  const { obligations } = weeksObligationsInContract;
+
+  let obligationsToAdd: Obligation[] = [];
+  for (const obligation of obligations) {
+    if (obligation.repeat.toLowerCase() === "daily") {
+      for (const day of obligation.days) {
+        if (
+          day >= today &&
+          !isCompletedOnDay(obligation, weeksCompletedObligations, day)
+        ) {
+          obligationsToAdd.push({
+            ...obligation,
+            days: [day],
+          });
+        }
+      }
+    } else {
+      const completedCount = weeksCompletedObligations.filter(
+        co => co.obligationId === obligation.obligationId,
+      ).length;
+      const remainingCount = (obligation.timesAWeek ?? 0) - completedCount;
+      for (let i = 0; i < remainingCount; i++) {
+        obligationsToAdd.push(obligation);
+      }
+    }
+  }
+  return obligationsToAdd;
+}
+
+/**
+ * Sets the obligation's days to the day they were completed at.
+ */
+
 /**
  * @param weeksCompletedObligations are the obligations that have been completed in the this week.
  * @param weeksObligationsInContracts are the obligations that are in the contracts.
@@ -119,21 +187,25 @@ export function getObligationsToComplete(
   let obligationsInContractsToComplete: ObligationsInContracts = [];
 
   for (const obligationsInContract of weeksObligationsInContracts) {
-    // Possible obligations to complete
-    const obligationsNotDue = obligationsInContract.obligations.filter(
-      obligation => !isObligationDue(obligation),
-    );
-    const obligationsToComplete = obligationsNotDue.filter(
+    const { obligations } = obligationsInContract;
+
+    const obligationsToComplete = obligations.filter(
       obligation =>
         !isObligationCompleted(obligation, weeksCompletedObligations),
     );
+
     if (obligationsToComplete.length === 0) {
       continue;
     }
 
+    const populatedObligationsToComplete = populateObligationsToComplete(
+      weeksCompletedObligations,
+      obligationsInContract,
+    );
+
     obligationsInContractsToComplete.push({
       contract: obligationsInContract.contract,
-      obligations: obligationsToComplete,
+      obligations: populatedObligationsToComplete,
       appUser: obligationsInContract.appUser,
     });
   }

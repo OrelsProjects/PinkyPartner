@@ -34,6 +34,7 @@ import { cn } from "../../../../lib/utils";
 import { motion } from "framer-motion";
 import { useContracts } from "../../../../lib/hooks/useContracts";
 import { useAppSelector } from "../../../../lib/hooks/redux";
+import { timesAWeekToText } from "../../../../lib/utils/textUtils";
 
 interface ObligationProps {
   params: {
@@ -142,22 +143,22 @@ const RepeatText = ({
   days,
   timesAWeek,
 }: {
-  days?: number[];
+  days?: number[] | null;
   timesAWeek?: number | null;
-}) => {
-  return (
-    <div className="text-muted-foreground font-light flex flex-row gap-1 text-sm">
-      {days ? (
-        <>
-          <div className="font-normal">Practice every:</div>
-          {DaysToText(days)}
-        </>
-      ) : (
-        <div className="font-normal">Practice {timesAWeek} times a week</div>
-      )}
-    </div>
-  );
-};
+}) => (
+  <div className="text-muted-foreground font-light flex flex-row gap-1 text-sm">
+    {days ? (
+      <>
+        <div className="font-normal">Practice every:</div>
+        {DaysToText(days)}
+      </>
+    ) : (
+      <div className="font-normal">
+        Practice: {timesAWeekToText(timesAWeek)}
+      </div>
+    )}
+  </div>
+);
 
 const SectionContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="w-full flex flex-col items-start gap-3 h-fit rounded-lg">
@@ -301,7 +302,9 @@ const PromiseDialog = ({
             </SectionTitleContainer>
 
             <RepeatText
-              days={formik.values.repeat === "Daily" ? formik.values.days : null}
+              days={
+                formik.values.repeat === "Daily" ? formik.values.days : null
+              }
               timesAWeek={
                 formik.values.repeat === "Weekly"
                   ? formik.values.timesAWeek

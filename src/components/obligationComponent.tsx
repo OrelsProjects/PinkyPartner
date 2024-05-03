@@ -11,7 +11,7 @@ import RepeatComponent from "./repeatComponent";
 import { toast } from "react-toastify";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
-import { dateToHourMinute } from "../lib/utils/dateUtils";
+import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
 import {
   Dialog,
@@ -26,15 +26,17 @@ import Contract from "../models/contract";
 interface ObligationProps {
   obligation: Obligation;
   contract?: Contract;
-  onClick?: (obligation: Obligation) => void;
-  onDelete?: (obligation: Obligation) => void;
-  showDelete?: boolean;
-  showComplete?: boolean;
-  deleteIcon?: ElementType;
-  className?: string;
   completedAt?: Date;
   ownerImageUrl?: string | null;
-  trailingIcon?: React.ReactNode;
+  showDelete?: boolean; // Show delete button
+  showComplete?: boolean; // Show complete checkbox
+  showRepeat?: boolean; // Show repeat component
+  showFullDay?: boolean; // Show full day (instead of su,mo,...)
+  deleteIcon?: ElementType; // Icon for delete button to replace default
+  trailingIcon?: React.ReactNode; // Icon to show at the end of the obligation
+  onClick?: (obligation: Obligation) => void;
+  onDelete?: (obligation: Obligation) => void;
+  className?: string;
 }
 
 export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
@@ -61,15 +63,17 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 const ObligationComponent: React.FC<ObligationProps> = ({
   obligation,
   contract,
-  onClick,
-  onDelete,
-  showDelete,
-  showComplete,
-  deleteIcon,
-  className,
   completedAt,
   ownerImageUrl,
+  deleteIcon,
   trailingIcon,
+  showDelete,
+  showComplete,
+  showRepeat = true,
+  showFullDay,
+  onClick,
+  onDelete,
+  className,
 }) => {
   const { deleteObligation } = useObligations();
 
@@ -147,7 +151,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
       `}
       onClick={() => onClick?.(obligation)}
     >
-      <div className="flex flex-col gap-1 flex-shrink-1"> 
+      <div className="h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center">
         <div className="flex flex-row gap-3">
           <span className="text-card-foreground">{obligation.emoji}</span>
           <span
@@ -161,9 +165,21 @@ const ObligationComponent: React.FC<ObligationProps> = ({
             {obligation.title}
           </span>
         </div>
-        <RepeatComponent obligation={obligation} />
+        {showRepeat && (
+          <RepeatComponent obligation={obligation} showFullDay={showFullDay} />
+        )}
       </div>
       <div className="h-full flex flex-row gap-2 items-center flex-shrink-0">
+        {completedAt && (
+          <div className="flex flex-col gap-1">
+            <span className="text-sm text-muted-foreground">
+              {dateToDayString(new Date(completedAt))}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {dateToHourMinute(completedAt)}
+            </span>
+          </div>
+        )}
         {ownerImageUrl && (
           <AccountabilityPartnerComponent
             signed
@@ -178,16 +194,6 @@ const ObligationComponent: React.FC<ObligationProps> = ({
         {trailingIcon}
         {contract && showComplete && (
           <CheckboxObligation obligation={obligation} contract={contract} />
-        )}
-        {completedAt && (
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-muted-foreground">
-              {new Date(completedAt).toLocaleDateString()}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {dateToHourMinute(completedAt)}
-            </span>
-          </div>
         )}
       </div>
     </div>

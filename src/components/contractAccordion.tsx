@@ -66,6 +66,8 @@ const AccordionObligations = ({
           <ObligationComponent
             obligation={obligation}
             showComplete
+            showFullDay
+            showRepeat={obligation.repeat.toLowerCase() === "daily"}
             contract={contract}
             className="!shadow-none bg-card/30 border-[1px] border-foreground/10"
           />
@@ -77,9 +79,13 @@ const AccordionObligations = ({
             <ObligationComponent
               obligation={obligationCompleted.obligation}
               contract={contract}
+              showFullDay
               completedAt={obligationCompleted.completedAt}
               ownerImageUrl={obligationCompleted.appUser?.photoURL}
               className="!shadow-none bg-gray-500/20 dark:bg-gray-500/10 border-[1px] border-foreground/10"
+              showRepeat={
+                obligationCompleted.obligation.repeat.toLowerCase() === "daily"
+              }
             />
           </div>
         ),
@@ -90,8 +96,10 @@ const AccordionObligations = ({
         <div key={obligation.obligationId}>
           <ObligationComponent
             obligation={obligation}
+            showFullDay
             ownerImageUrl={partner?.photoURL}
             className="!shadow-none bg-card/20 border-[1px] border-foreground/10"
+            showRepeat={obligation.repeat.toLowerCase() === "daily"}
           />
         </div>
       ))}
@@ -99,10 +107,14 @@ const AccordionObligations = ({
         obligationCompleted => (
           <div key={obligationCompleted.obligationId}>
             <ObligationComponent
+              showFullDay
               obligation={obligationCompleted.obligation}
               completedAt={obligationCompleted.completedAt}
               ownerImageUrl={partner?.photoURL}
               className="!shadow-none bg-gray-500/20 dark:bg-gray-500/10 border-[1px] border-foreground/10"
+              showRepeat={
+                obligationCompleted.obligation.repeat.toLowerCase() === "daily"
+              }
             />
           </div>
         ),

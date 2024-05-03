@@ -1,24 +1,33 @@
 import React from "react";
 import Obligation from "../models/obligation";
 import { dayNumberToName } from "../lib/utils/dateUtils";
+import { timesAWeekToText } from "../lib/utils/textUtils";
 
 interface RepeatComponentProps {
   obligation: Obligation;
+  showFullDay?: boolean;
 }
 
-const RepeatComponent: React.FC<RepeatComponentProps> = ({ obligation }) => {
+const RepeatComponent: React.FC<RepeatComponentProps> = ({
+  obligation,
+  showFullDay,
+}) => {
   if (obligation.repeat.toLocaleLowerCase() === "daily") {
-    return (
+    return ( 
       <span className="text-sm font-light text-muted-foreground">
         {obligation.days
-          .map(day => dayNumberToName(day).slice(0, 2))
+          .map(day =>
+            showFullDay
+              ? dayNumberToName(day)
+              : dayNumberToName(day).slice(0, 2),
+          )
           .join(", ")}
       </span>
     );
   } else {
     return (
       <span className="text-sm font-light text-muted-foreground">
-        {obligation.timesAWeek} times a week
+        {timesAWeekToText(obligation.timesAWeek)}
       </span>
     );
   }
