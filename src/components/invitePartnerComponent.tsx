@@ -12,11 +12,13 @@ import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
 import { cn } from "../lib/utils";
+import Contract from "../models/contract";
 interface InvitePartnerComponentProps {
   buttonText: string;
   referralCode?: string;
   className?: string;
   variant?: ButtonVariants;
+  contract?: Contract;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
@@ -24,13 +26,21 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   referralCode,
   className,
   variant,
+  contract,
 }) => {
   const url = useMemo(() => {
     const baseUrl = window.location.origin;
     const registerUrl = `${baseUrl}/register`;
-    return referralCode
+    let url = referralCode
       ? `${registerUrl}?referralCode=${referralCode}`
       : registerUrl;
+
+    if (contract) {
+      url += referralCode
+        ? `&contractId=${contract.contractId}`
+        : `?contractId=${contract.contractId}`;
+    }
+    return url;
   }, [referralCode]);
 
   const handleCopyLink = () => {
@@ -45,28 +55,23 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant={variant || "link"}
-          className={cn("py-0 pt-0.5 px-1", className)}
-        >
+        <Button variant={variant || "link"} className={cn(className)}>
           {buttonText}
         </Button>
       </DialogTrigger>
-      <DialogContent className="space-y-4">
-        <DialogHeader>
+      <DialogContent className="space-y-4 h-[18rem]">
+        <DialogHeader className="gap-3">
           <DialogTitle>Great choice!</DialogTitle>
           <DialogDescription>
             Copy this link and send it to your partner to invite them to sign up
             and put their pinky in!
           </DialogDescription>
+          <DialogDescription>
+            Once they join, you will be able to search for them :)
+          </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="w-full flex flex-col md:flex-row gap-1 justify-center items-center md:justify-start md:items-start">
-          <span className="text-sm text-muted-foreground">{url}</span>
-          <Button
-            variant="link"
-            onClick={handleCopyLink}
-            className="py-0 items-start px-1"
-          >
+        <DialogFooter className="w-full !flex flex-col gap-1 justify-center items-center md:!justify-end md:!items-center">
+          <Button variant="default" onClick={handleCopyLink}>
             Copy Link
           </Button>
         </DialogFooter>

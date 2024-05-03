@@ -10,11 +10,11 @@ export default function Divider({ className, textInCenter }: DividerProps) {
     <div
       className={`w-full flex flex-row items-center justify-center ${className}`}
     >
-      <div className="w-full h-px bg-muted"></div>
+      <div className="w-full h-px bg-muted-foreground/50 dark:bg-muted"></div>
       {textInCenter && (
-        <div className="mx-2 text-muted-foreground">{textInCenter}</div>
+        <div className="mx-2 text-muted-foreground/50">{textInCenter}</div>
       )}
-      <div className="w-full h-px bg-muted"></div>
+      <div className="w-full h-px bg-muted-foreground/50 dark:bg-muted"></div>
     </div>
   );
 }

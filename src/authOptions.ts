@@ -13,11 +13,46 @@ import UserAlreadyExistsError from "./models/errors/UserAlreadyExistsError";
 import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
+import { ReferralOptions } from "global";
+import { UserContract } from "@prisma/client";
+import { clear } from "console";
 
-const getReferralCode = (): string | undefined => {
-  const code = cookies().get("referralCode")?.value;
-  cookies().set("referralCode", "");
-  return code;
+const getReferralOptions = (): ReferralOptions => {
+  const referralCode = cookies().get("referralCode")?.value;
+  const contractId = cookies().get("contractId")?.value;
+  return {
+    referralCode,
+    contractId,
+  };
+};
+
+const clearReferralCode = () => {
+  cookies().set("referralCode", "", {
+    expires: new Date(0),
+  });
+};
+
+const clearContractId = () => {
+  cookies().set("contractId", "", {
+    expires: new Date(0),
+  });
+};
+
+const createNewUserContract = async (userId: string, contractId: string) => {
+  const currentUserContracts = await prisma.userContract.findMany({
+    where: {
+      contractId,
+    },
+  });
+  if (currentUserContracts.length > 1) {
+    return;
+  }
+  await prisma.userContract.create({
+    data: {
+      userId,
+      contractId,
+    },
+  });
 };
 
 export const authOptions: AuthOptions = {
@@ -25,6 +60,9 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET as string,
+      httpOptions: {
+        timeout: 10000
+      }
     }),
     AppleProvider({
       clientId: process.env.APPLE_ID as string,
@@ -91,20 +129,19 @@ export const authOptions: AuthOptions = {
             const data: {
               userId: string;
               referralCode: string;
-              referredBy?: string;
+              options?: ReferralOptions;
             } = {
               userId: newUser.id,
               referralCode: generateReferalCode(newUser.id),
             };
 
-            const referredBy = getReferralCode();
-            if (referredBy) {
-              data.referredBy = referredBy;
-            }
+            const referralOptions: ReferralOptions = getReferralOptions();
+            data.options = referralOptions;
 
             const appUserMetadata = await prisma.appUserMetadata.create({
               data,
             });
+            clearReferralCode();
             return { ...newUser, meta: appUserMetadata };
           } catch (e: any) {
             loggerServer.error("Error creating user", "new_user", { error: e });
@@ -151,15 +188,20 @@ export const authOptions: AuthOptions = {
             },
           });
         }
-        if (!token.sub) {
-          return session;
-        }
-        session.user.userId = token.sub;
+        session.user.userId = token.sub!;
         session.user.meta = {
           referralCode: userInDB?.meta?.referralCode || "",
           pushToken: userInDB?.meta?.pushToken || "",
         };
       }
+      const referralOptions: ReferralOptions = getReferralOptions();
+      if (referralOptions.contractId) {
+        await createNewUserContract(
+          session.user.userId,
+          referralOptions.contractId,
+        );
+      }
+      clearContractId();
       return session;
     },
     async signIn(session: any) {
@@ -183,10 +225,11 @@ export const authOptions: AuthOptions = {
               displayName: session.user.name || "",
             },
           });
+          const referralOptions: ReferralOptions = getReferralOptions();
           const appUserMetadata = await prisma.appUserMetadata.create({
             data: {
               userId: newUser.id,
-              referredBy: getReferralCode(),
+              referredBy: referralOptions.referralCode,
               referralCode: generateReferalCode(newUser.id),
             },
           });

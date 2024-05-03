@@ -56,6 +56,7 @@ export default function AuthProvider({
     switch (status) {
       case "authenticated":
         setUser(session.user);
+
         break;
       case "loading":
         break;

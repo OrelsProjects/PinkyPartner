@@ -21,6 +21,7 @@ export const initLogger = () => {
       service: process.env.NEXT_PUBLIC_DATADOG_SERVICE ?? "",
       env,
     });
+    datadogLogs.logger.info("Button clicked", { name: "buttonName", id: 123 });
   } catch (error: any) {
     Logger.error("Error initializing logger", {
       error,

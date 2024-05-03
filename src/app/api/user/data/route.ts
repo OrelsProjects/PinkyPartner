@@ -26,6 +26,7 @@ export async function GET(
   if (!session) {
     return NextResponse.json(undefined, { status: 401 });
   }
+
   try {
     const userObligations: Obligation[] = await prisma.obligation.findMany({
       where: {

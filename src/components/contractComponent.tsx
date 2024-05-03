@@ -13,6 +13,7 @@ import Contract from "../models/contract";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
 import { useObligations } from "../lib/hooks/useObligations";
+import InvitePartnerComponent from "./invitePartnerComponent";
 
 interface ContractComponentProps {
   contract: Contract;
@@ -59,6 +60,11 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
     [contract.signatures, user],
   );
 
+  const isContractHasPartner = useMemo(
+    () => contract.contractees.length > 1,
+    [contract.contractees],
+  );
+
   const handleSignContract = () => {
     toast.promise(signContract(contract.contractId, user), {
       pending: "Signing contract...",
@@ -75,20 +81,28 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-[23.5rem] h-60 shadow-md dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
+        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
         { "border-primary/50": !isUserSigned },
       )}
     >
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
-          {user && (
-            <ContractViewComponent
-              contract={contract}
-              isSigned={isUserSigned}
-              onSign={handleSignContract}
-            />
-          )}
+          {user &&
+            (isContractHasPartner ? (
+              <ContractViewComponent
+                contract={contract}
+                isSigned={isUserSigned}
+                onSign={handleSignContract}
+              />
+            ) : (
+              <InvitePartnerComponent
+                contract={contract}
+                referralCode={user.meta?.referralCode}
+                buttonText="Invite a partner"
+                variant="default"
+              />
+            ))}
         </div>
         <h3 className="font-normal text-base line-clamp-2">
           {contract.description}
