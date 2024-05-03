@@ -67,7 +67,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         <h1 className="font-semibold">Obligations:</h1>
         <div className="flex flex-col gap-1 max-h-56 overflow-auto">
           {contract.obligations.map((obligation: Obligation, index: number) => (
-            <div key={index} className="p-2">
+            <div key={index}>
               <p className="font-semibold">
                 {obligation.title} {obligation.emoji}
               </p>
@@ -149,7 +149,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         {!isSigned ? (
           <Button className="relative">
             Sign contract
-            <div className="shimmer-wrapper"></div>
+            <div className="shimmer-animation"></div>
           </Button>
         ) : (
           <Button variant="outline" className="bg-transparent dark:bg-card">

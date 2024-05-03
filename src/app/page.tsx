@@ -9,11 +9,16 @@ import { FaArrowDownLong } from "react-icons/fa6";
 import { cn } from "../lib/utils";
 
 const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
-  <div
-    className="h-10 lg:h-16 w-10 lg:w-16 lg:hover:cursor-pointer absolute bottom-6 left-[45%] sm:left-1/2 flex justify-center items-center rounded-full bg-card border-[1.5px] border-muted animate-bounce z-30"
-    onClick={onClick}
-  >
-    <FaArrowDownLong className="text-3xl text-primary h-6 lg:h-8 w-6 lg:w-8" />
+  <div>
+    <div
+      className={cn(
+        "h-12 lg:h-16 w-12 lg:w-16 bg-card absolute bottom-6 left-[45%] sm:left-1/2 flex justify-center items-center rounded-full animate-bounce z-30 lg:hover:cursor-pointer",
+        "mb-10 sm:mb-0", // Accomodate for browser top navigation bar
+      )}
+      onClick={onClick}
+    >
+      <FaArrowDownLong className="text-3xl text-primary h-6 lg:h-8 w-6 lg:w-8" />
+    </div>
   </div>
 );
 
@@ -38,7 +43,7 @@ const Video = ({ url }: { url: string }) => {
             if (videoRef.current) {
               videoRef.current.play();
             }
-          }, 4000);
+          }, 3000);
           // Stop observing after the element is shown
           observer.disconnect();
         }
@@ -96,7 +101,7 @@ const Video = ({ url }: { url: string }) => {
         transition={{
           duration: 4,
         }}
-        className="absolute inset-0 bg-background dark:bg-card rounded-xl aspect-square w-72 sm:w-96 lg:w-[28rem] border-0 dark:border-2 border-base-content/20 dark:shadow-lg mb-8 shimmer-wrapper"
+        className="absolute inset-0 bg-background dark:bg-card rounded-xl aspect-square w-72 sm:w-96 lg:w-[28rem] h-72 sm:h-96 lg:h-[28rem] border-0 dark:border-2 border-base-content/20 dark:shadow-lg mb-8 shimmer-animation"
       />
     </div>
   );
@@ -191,12 +196,12 @@ const HeroSection = ({ onNext }: { onNext: () => void }) => (
       </div>
       <div className="flex flex-col lg:flex-row justify-start gap-1 tracking-tighter">
         <TextGenerateEffect
-          words="But it&apos;s easier when you have a"
+          words="But it's easier when you have a"
           delay={2}
           className="hidden lg:block !font-medium"
         />
         <TextGenerateEffect
-          words="But it&apos;s easier with a"
+          words="But it's easier with a"
           delay={2.5}
           className="lg:hidden !font-medium"
         />
@@ -349,10 +354,7 @@ export default function Home() {
         </Section>
       </div>
       <div ref={partFourRef} className="z-20">
-        <Section
-          title="Let&apos;s get started!"
-          className="flex !flex-col gap-2"
-        >
+        <Section title="Let's get started!" className="flex !flex-col gap-2">
           <Button
             variant="magic"
             className="bg-card dark:bg-background text-lg md:text-xl"

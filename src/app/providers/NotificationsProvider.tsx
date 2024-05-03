@@ -6,12 +6,17 @@ import { getToken } from "../../lib/services/notification";
 import { Messaging, onMessage } from "firebase/messaging";
 import axios from "axios";
 import useNotifications from "../../lib/hooks/useNotifications";
+import { Logger } from "../../logger";
 
 const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   const { showNotification } = useNotifications();
   const init = async (messaging: Messaging) => {
-    const token = await getToken();
-    await axios.patch("/api/user", { token });
+    try {
+      const token = await getToken();
+      await axios.patch("/api/user", { token });
+    } catch (error: any) {
+      Logger.error("Error setting user token", { error });
+    }
 
     onMessage(messaging, payload => {
       showNotification({
