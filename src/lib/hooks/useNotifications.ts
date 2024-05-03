@@ -10,6 +10,7 @@ import { setContracts } from "../features/contracts/contractsSlice";
 import { NotificationData } from "../features/notifications/notificationsSlice";
 import NotificationComponent from "../../components/ui/notificationComponent";
 import { toast } from "react-toastify";
+import UserContractObligation from "../../models/userContractObligation";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
@@ -25,14 +26,15 @@ export default function useNotifications() {
 
   const [newContracts, setNewContracts] = React.useState<Contract[]>([]);
   const [newObligations, setNewObligations] = React.useState<
-    ObligationCompleted[]
+    UserContractObligation[]
   >([]);
 
   useEffect(() => {
-    if (partnerData.obligationsCompleted?.length > 0) {
-      const newObligations = partnerData.obligationsCompleted.filter(
-        obligation => !obligation.viewedAt,
-      );
+    if (partnerData.contractObligations.length > 0) {
+      const newObligations =
+        partnerData.contractObligations.filter(
+          obligation => !obligation.viewedAt,
+        ) || [];
       setNewObligations(newObligations);
 
       if (newObligations.length > 0 && canShowObligationsNotification()) {
@@ -46,7 +48,7 @@ export default function useNotifications() {
             }
             return acc;
           },
-          [] as ObligationCompleted[],
+          [] as UserContractObligation[],
         );
         // distinctPartnersObligations.forEach(obligation => {
         //   showNotification({
@@ -56,7 +58,7 @@ export default function useNotifications() {
         // });
       }
     }
-  }, [partnerData.obligationsCompleted]);
+  }, [partnerData.contractObligations]);
 
   useEffect(() => {
     if (contracts) {
@@ -102,7 +104,7 @@ export default function useNotifications() {
       await axios.post(`/api/obligations/viewed`, {
         obligations: newObligations,
       });
-      const updatedObligations = partnerData.obligationsCompleted.map(
+      const updatedObligations = partnerData.contractObligations.map(
         obligation =>
           !obligation.viewedAt
             ? { ...obligation, viewedAt: new Date().toISOString() }
@@ -113,7 +115,6 @@ export default function useNotifications() {
       dispatch(
         setPartnerData({
           ...partnerData,
-          obligationsCompleted: updatedObligations,
         }),
       );
     } catch (error) {}

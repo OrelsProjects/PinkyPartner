@@ -1,20 +1,16 @@
 // obligationsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
-import Obligation, {
-  ObligationsInContract,
-  ObligationsInContracts,
-} from "../../../models/obligation";
+import Obligation, { ObligationsInContracts } from "../../../models/obligation";
 import ObligationCompleted from "../../../models/obligationCompleted";
+import UserContractObligation from "../../../models/userContractObligation";
 
 interface ObligationsState {
   obligations: Obligation[];
-  obligationsToComplete: ObligationsInContracts;
-  obligationsCompleted: ObligationCompleted[];
+  contractObligations: UserContractObligation[];
   partnerData: {
     loading?: boolean;
-    obligationsToComplete: ObligationsInContracts;
-    obligationsCompleted: ObligationCompleted[];
+    contractObligations: UserContractObligation[];
   };
   loading: boolean;
   loadingData: boolean;
@@ -23,12 +19,10 @@ interface ObligationsState {
 
 const initialState: ObligationsState = {
   obligations: [],
-  obligationsToComplete: [],
-  obligationsCompleted: [],
+  contractObligations: [],
   partnerData: {
     loading: false,
-    obligationsToComplete: [],
-    obligationsCompleted: [],
+    contractObligations: [],
   },
   loading: false,
   loadingData: true,
@@ -58,42 +52,35 @@ const obligationsSlice = createSlice({
         obligation => obligation.obligationId !== action.payload,
       );
     },
-    setObligationsToComplete(
+    setContractObligations(
       state,
-      action: PayloadAction<ObligationsInContracts>,
+      action: PayloadAction<UserContractObligation[]>,
     ) {
-      state.obligationsToComplete = action.payload;
-    },
-    setObligationsCompleted(
-      state,
-      action: PayloadAction<ObligationCompleted[]>,
-    ) {
-      state.obligationsCompleted = action.payload;
+      state.contractObligations = action.payload;
     },
     setPartnerData(
       state,
       action: PayloadAction<{
-        obligationsToComplete: ObligationsInContracts;
-        obligationsCompleted: ObligationCompleted[];
+        contractObligations: UserContractObligation[];
       }>,
     ) {
       state.partnerData = action.payload;
     },
 
-    completeObligation(state, action: PayloadAction<ObligationCompleted>) {
-      state.obligationsToComplete = state.obligationsToComplete.map(
-        (obligationsInContract: ObligationsInContract) => {
-          const newObligations = obligationsInContract.obligations.filter(
-            obligation =>
-              obligation.obligationId !== action.payload.obligationId,
-          );
+    completeObligation(state, action: PayloadAction<UserContractObligation>) {
+      state.contractObligations = state.contractObligations.map(
+        (obligationsInContract: UserContractObligation) => {
+          if (
+            obligationsInContract.obligationId !== action.payload.obligationId
+          ) {
+            return obligationsInContract;
+          }
           return {
             ...obligationsInContract,
-            obligations: newObligations,
           };
         },
       );
-      state.obligationsCompleted.push(action.payload);
+      state.contractObligations.push(action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -118,13 +105,12 @@ export const {
   addObligation,
   updateObligation,
   deleteObligation,
-  setObligationsToComplete,
-  setObligationsCompleted,
   setPartnerData,
   completeObligation,
   setLoading,
   setLoadingData,
   setLoadingPartnerData,
+  setContractObligations,
   setError,
 } = obligationsSlice.actions;
 

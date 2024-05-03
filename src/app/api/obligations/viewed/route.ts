@@ -3,7 +3,7 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
-import { ObligationCompleted } from "@prisma/client";
+import { UserContractObligation } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -14,14 +14,14 @@ export async function POST(
   }
   try {
     const body = await req.json();
-    const { obligations }: { obligations: ObligationCompleted[] } = body;
+    const { obligations }: { obligations: UserContractObligation[] } = body;
     const obligationCompletedIds = obligations.map(
-      obligation => obligation.obligationCompletedId,
+      obligation => obligation.userContractObligationId,
     );
     const now = new Date();
-    await prisma.obligationCompleted.updateMany({
+    await prisma.userContractObligation.updateMany({
       where: {
-        obligationCompletedId: {
+        userContractObligationId: {
           in: obligationCompletedIds,
         },
       },

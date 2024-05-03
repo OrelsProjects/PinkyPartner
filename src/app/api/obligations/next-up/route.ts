@@ -3,23 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "../../_db/db";
 import { Logger } from "../../../../logger";
-import UserContractObligation from "../../../../models/userContractObligation";
+import UserContractObligation, {
+  GetNextUpObligationsResponse,
+} from "../../../../models/userContractObligation";
 import {
   getStartOfTheWeekDate,
   getEndOfTheWeekDate,
 } from "../../obligation/_utils";
 import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
-
-export type GetNextUpObligationsResponse = {
-  userData: {
-    toComplete: UserContractObligation[];
-    completed: UserContractObligation[];
-  };
-  partnerData: {
-    toComplete: UserContractObligation[];
-    completed: UserContractObligation[];
-  };
-};
 
 export async function GET(
   req: NextRequest,
@@ -104,8 +95,8 @@ export async function GET(
     if (signedContracts.length === 0) {
       return NextResponse.json(
         {
-          userData: { toComplete: [], completed: [] },
-          partnerData: { toComplete: [], completed: [] },
+          userContractObligations: [],
+          partnerContractObligations: [],
         },
         { status: 200 },
       );
@@ -164,35 +155,17 @@ export async function GET(
       }
     }
 
-    const userObligations = allUserContractObligations.filter(
+    const userContractObligations = allUserContractObligations.filter(
       ({ appUser }) => appUser.userId === user.userId,
     );
-    const partnerObligations = allUserContractObligations.filter(
+    const partnerContractObligations = allUserContractObligations.filter(
       ({ appUser }) => appUser.userId !== user.userId,
     );
 
-    const userObligationsToComplete: UserContractObligation[] =
-      userObligations.filter(({ completedAt }) => !completedAt) || [];
-
-    const userObligationsCompleted: UserContractObligation[] =
-      userObligations.filter(({ completedAt }) => completedAt) || [];
-
-    const partnerObligationsToComplete: UserContractObligation[] =
-      partnerObligations.filter(({ completedAt }) => !completedAt) || [];
-
-    const partnerObligationsCompleted: UserContractObligation[] =
-      partnerObligations.filter(({ completedAt }) => completedAt) || [];
-
     return NextResponse.json(
       {
-        userData: {
-          toComplete: userObligationsToComplete,
-          completed: userObligationsCompleted,
-        },
-        partnerData: {
-          toComplete: partnerObligationsToComplete,
-          completed: partnerObligationsCompleted,
-        },
+        userContractObligations,
+        partnerContractObligations,
       },
       { status: 200 },
     );

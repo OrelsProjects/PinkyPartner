@@ -18,7 +18,7 @@ import { useObligations } from "./useObligations";
 export function useContracts() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
-  const { fetchPartnerData, fetchNextUpObligations } = useObligations();
+  const { fetchNextUpObligations } = useObligations();
   const { contracts, error, loading, loadingData } = useAppSelector(
     state => state.contracts,
   );
@@ -116,15 +116,9 @@ export function useContracts() {
       }
       await axios.post(`/api/contract/${contractId}/sign`);
 
-      const fetchDataPromises = [
-        fetchPartnerData(contracts),
-        fetchNextUpObligations(),
-      ];
       dispatch(signContractAction({ contractId, user: accountabilityPartner }));
       dispatch(setError(null));
-      Promise.allSettled(fetchDataPromises).catch(err => {
-        Logger.error("Error fetching data after signing contract", err);
-      });
+      await fetchNextUpObligations();
     } catch (err: any) {
       dispatch(setError(err.message || "Error signing contract"));
       throw err;

@@ -21,11 +21,7 @@ export default function DataProvider({
   const { setDataFetched } = useAuth();
   const {
     setObligations,
-    setObligationsToComplete,
-    setObligationsCompleted,
     setLoadingData: setLoadingDataObligations,
-    setLoadingPartnerData,
-    fetchPartnerData,
     fetchNextUpObligations,
   } = useObligations();
   const { setContracts, setLoadingData: setLoadingDataContracts } =
@@ -38,10 +34,9 @@ export default function DataProvider({
       if (isFetchingData.current) return;
       isFetchingData.current = true;
       setLoadingDataContracts(true);
-      setLoadingPartnerData(true);
 
       // Making both API requests in parallel
-      const [userDataResponse, allObligationsResponse] =
+      const [userDataResponse, _] =
         await Promise.allSettled([
           axios.get<UserData>("/api/user/data"),
           fetchNextUpObligations(),
@@ -60,9 +55,7 @@ export default function DataProvider({
       setContracts(contracts || []);
       setLoadingDataContracts(false);
       setLoadingDataObligations(false);
-      // Fetch partner data - on signed contracts
       setDataFetched();
-      await fetchPartnerData(contracts);
     } catch (error: any) {
       Logger.error("Failed to fetch user data", error);
       setLoadingDataContracts(false);

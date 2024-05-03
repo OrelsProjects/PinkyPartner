@@ -2,7 +2,6 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Obligation, {
   CreateObligation,
-  ObligationsInContracts,
 } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
 import {
@@ -10,30 +9,22 @@ import {
   addObligation as createObligationAction,
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
-  setObligationsToComplete as setObligationsToCompleteAction,
   completeObligation as completeObligationAction,
-  setObligationsCompleted as setObligationsCompletedAction,
   setPartnerData as setPartnerDataAction,
   setLoadingData as setLoadingDataAction,
   setLoadingPartnerData as setLoadingPartnerDataAction,
+  setContractObligations as setContractObligationsAction,
   setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
-import ObligationCompleted from "../../models/obligationCompleted";
 import Contract from "../../models/contract";
 import { Logger } from "../../logger";
+import UserContractObligation, { GetNextUpObligationsResponse } from "../../models/userContractObligation";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const {
-    obligations,
-    error,
-    obligationsToComplete,
-    obligationsCompleted,
-    partnerData,
-    loading,
-    loadingData,
-  } = useAppSelector(state => state.obligations);
+  const { obligations, error, partnerData, loading, loadingData } =
+    useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
 
@@ -125,22 +116,16 @@ export function useObligations() {
     }
   };
 
-  const setObligationsToComplete = (obligations: ObligationsInContracts) => {
-    dispatch(setObligationsToCompleteAction([...obligations]));
-  };
-
-  const setObligationsCompleted = (obligations: ObligationCompleted[]) => {
-    dispatch(setObligationsCompletedAction([...obligations]));
-  };
-
-  const setPartnerData = (
-    obligationsInContracts: ObligationsInContracts,
-    obligationsCompleted: ObligationCompleted[],
+  const setUserContractObligations = (
+    obligations: UserContractObligation[],
   ) => {
+    dispatch(setContractObligationsAction([...obligations]));
+  };
+
+  const setPartnerData = (contractObligations: UserContractObligation[]) => {
     dispatch(
       setPartnerDataAction({
-        obligationsToComplete: obligationsInContracts,
-        obligationsCompleted,
+        contractObligations,
       }),
     );
   };
@@ -169,13 +154,13 @@ export function useObligations() {
   const fetchNextUpObligations = async () => {
     try {
       setLoadingData(true);
-      const response = await axios.get<{
-        toComplete: ObligationsInContracts;
-        completed: ObligationCompleted[];
-      }>("/api/obligations/next-up");
-      const { toComplete, completed } = response.data;
-      setObligationsToComplete(toComplete);
-      setObligationsCompleted(completed);
+      const response = await axios.get<GetNextUpObligationsResponse>(
+        "/api/obligations/next-up",
+      );
+      const { userContractObligations, partnerContractObligations } =
+        response.data;
+      setUserContractObligations(userContractObligations);
+      setPartnerData(partnerContractObligations);
     } catch (error: any) {
       Logger.error("Failed to fetch next up obligations", error);
     } finally {
@@ -199,7 +184,7 @@ export function useObligations() {
     }
 
     try {
-      const obligationCompletedResponse = await axios.post<ObligationCompleted>(
+      const obligationCompletedResponse = await axios.post<UserContractObligation>(
         `/api/obligation/${contract.contractId}/${obligation.obligationId}/complete`,
       );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
@@ -218,34 +203,8 @@ export function useObligations() {
     }
   };
 
-  const fetchPartnerData = async (contracts: Contract[]) => {
-    setLoadingPartnerData(true);
-    const signedContracts = contracts.filter(
-      ({ contractees }) => contractees.length > 1,
-    );
-    const contractIds = signedContracts.map(({ contractId }) => contractId);
-    const params = new URLSearchParams();
-    params.append("contractIds", contractIds.join(","));
-    try {
-      const response = await axios.get<{
-        toComplete: ObligationsInContracts;
-        completed: ObligationCompleted[];
-      }>(`/api/obligations/next-up/partner/${contractIds.join(",")}`);
-
-      const { toComplete, completed } = response.data;
-      setPartnerData(toComplete, completed);
-    } catch (error: any) {
-      Logger.error("Failed to fetch partner data", error);
-    } finally {
-      setLoadingPartnerData(false);
-    }
-  };
-
   return {
     obligations,
-    obligationsToComplete,
-    obligationsCompleted,
-    fetchPartnerData,
     partnerData,
     loading,
     loadingData,
@@ -258,8 +217,6 @@ export function useObligations() {
     createObligation,
     updateObligation,
     deleteObligation,
-    setObligationsToComplete,
-    setObligationsCompleted,
     setPartnerData,
     fetchNextUpObligations,
     completeObligation,

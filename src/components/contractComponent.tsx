@@ -51,7 +51,7 @@ export const ContractComponentLoading = ({
 
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
-  const { fetchPartnerData } = useObligations();
+  const { fetchNextUpObligations } = useObligations();
   const { user } = useAppSelector(state => state.auth);
 
   const isUserSigned = useMemo(
@@ -70,7 +70,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       pending: "Signing contract...",
       success: {
         async render() {
-          fetchPartnerData([contract]);
+          fetchNextUpObligations();
           return "Contract signed successfully";
         },
       },

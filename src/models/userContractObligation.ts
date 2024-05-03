@@ -18,3 +18,8 @@ export default interface UserContractObligation {
   appUser: UserBasicData;
   obligation: Obligation;
 }
+
+export type GetNextUpObligationsResponse = {
+  userContractObligations: UserContractObligation[];
+  partnerContractObligations: UserContractObligation[];
+};
