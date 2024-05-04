@@ -51,7 +51,7 @@ export default function AppleLogin({
           initial={{ opacity: 0 }}
           exit={{ opacity: 0 }}
         >
-          <h1>Thank you</h1>
+          <h1>We got your request :)</h1>
         </motion.div>
       ) : (
         <>
