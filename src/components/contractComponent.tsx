@@ -9,14 +9,14 @@ import { useAppSelector } from "../lib/hooks/redux";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import ContractViewComponent from "./contractViewComponent";
-import Contract from "../models/contract";
+import Contract, { ContractWithExtras } from "../models/contract";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
 import { useObligations } from "../lib/hooks/useObligations";
 import InvitePartnerComponent from "./invitePartnerComponent";
 
 interface ContractComponentProps {
-  contract: Contract;
+  contract: ContractWithExtras;
 }
 
 export const ContractComponentLoading = ({

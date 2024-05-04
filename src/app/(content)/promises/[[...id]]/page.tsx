@@ -413,7 +413,6 @@ const NoContractsDialog = () => {
     <Dialog
       open={true}
       onOpenChange={open => {
-        debugger;
         if (!open) {
           setIsFirstObligationView();
         }
@@ -573,7 +572,7 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
                 <ObligationComponent
                   obligation={obligation}
                   onClick={handleOnObligationClick}
-                  showDelete
+                  // showDelete
                 />
               </motion.div>
             ))}

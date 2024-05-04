@@ -9,14 +9,16 @@ export default interface Contract {
   description?: string | null;
   createdAt: Date;
   viewedAt?: string;
+}
 
+export type ContractWithExtras = Contract & {
   contractees: AccountabilityPartner[];
   obligations: Obligation[];
   signatures: AccountabilityPartner[];
-}
+};
 
 export type CreateContract = Omit<
-  Contract,
+ContractWithExtras,
   "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
   signatures: string[];

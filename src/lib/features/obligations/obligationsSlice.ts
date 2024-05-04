@@ -1,16 +1,15 @@
 // obligationsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
-import Obligation, { ObligationsInContracts } from "../../../models/obligation";
-import ObligationCompleted from "../../../models/obligationCompleted";
-import UserContractObligation from "../../../models/userContractObligation";
+import Obligation from "../../../models/obligation";
+import { UserContractObligationData } from "../../../models/userContractObligation";
 
 interface ObligationsState {
   obligations: Obligation[];
-  contractObligations: UserContractObligation[];
+  contractObligations: UserContractObligationData[];
   partnerData: {
     loading?: boolean;
-    contractObligations: UserContractObligation[];
+    contractObligations: UserContractObligationData[];
   };
   loading: boolean;
   loadingData: boolean;
@@ -54,22 +53,22 @@ const obligationsSlice = createSlice({
     },
     setContractObligations(
       state,
-      action: PayloadAction<UserContractObligation[]>,
+      action: PayloadAction<UserContractObligationData[]>,
     ) {
       state.contractObligations = action.payload;
     },
     setPartnerData(
       state,
       action: PayloadAction<{
-        contractObligations: UserContractObligation[];
+        contractObligations: UserContractObligationData[];
       }>,
     ) {
       state.partnerData = action.payload;
     },
 
-    completeObligation(state, action: PayloadAction<UserContractObligation>) {
+    completeObligation(state, action: PayloadAction<UserContractObligationData>) {
       state.contractObligations = state.contractObligations.map(
-        (obligationsInContract: UserContractObligation) => {
+        (obligationsInContract: UserContractObligationData) => {
           if (
             obligationsInContract.obligationId !== action.payload.obligationId
           ) {

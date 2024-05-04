@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ElementType } from "react";
+import React, { ElementType, useMemo } from "react";
 import Obligation from "../models/obligation";
 import { useObligations } from "../lib/hooks/useObligations";
 import { FiMinusCircle as Minus } from "react-icons/fi";
@@ -22,11 +22,13 @@ import {
 } from "./ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import Contract from "../models/contract";
+import UserContractObligation from "../models/userContractObligation";
 
 interface ObligationProps {
   obligation: Obligation;
+  userContractObligation?: UserContractObligation;
   contract?: Contract;
-  completedAt?: Date;
+  completedAt?: Date | null;
   ownerImageUrl?: string | null;
   showDelete?: boolean; // Show delete button
   showComplete?: boolean; // Show complete checkbox
@@ -62,6 +64,7 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 
 const ObligationComponent: React.FC<ObligationProps> = ({
   obligation,
+  userContractObligation,
   contract,
   completedAt,
   ownerImageUrl,
@@ -144,10 +147,11 @@ const ObligationComponent: React.FC<ObligationProps> = ({
         </DialogContent>
       </Dialog>
     );
+
   return (
     <div
       className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
-      shadow-md
+      shadow-md hover:cursor-pointer hover:shadow-lg
       `}
       onClick={() => onClick?.(obligation)}
     >

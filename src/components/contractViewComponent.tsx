@@ -8,7 +8,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import Contract from "../models/contract";
+import Contract, { ContractWithExtras } from "../models/contract";
 import Obligation from "../models/obligation";
 import { Button } from "./ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
@@ -16,9 +16,9 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { timesAWeekToText } from "../lib/utils/textUtils";
 
 interface ContractViewComponentProps {
-  contract: Contract;
+  contract: ContractWithExtras;
   isSigned?: boolean;
-  onSign?: (contract: Contract) => void;
+  onSign?: (contract: ContractWithExtras) => void;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({

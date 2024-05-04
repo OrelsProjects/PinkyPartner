@@ -2,7 +2,6 @@ import { Contract, Obligation, UserContractObligation } from "@prisma/client";
 import {
   CreateUserContractObligation,
   ObligationsToContractObligation,
-  populateObligationsToComplete,
 } from "../../obligation/_utils";
 import prisma from "../../_db/db";
 
@@ -16,27 +15,22 @@ export async function createWeeksContractObligations(
   obligations: Obligation[],
   contract: Contract,
   userIds: string[],
-): Promise<{
-  obligations: Obligation[];
-  userContractObligations: UserContractObligation[];
-}> {
-  const populatedObligations = populateObligationsToComplete(
-    {
-      obligations,
-      contract,
-    },
-    [],
-  );
+): Promise<UserContractObligation[]> {
+  const populatedObligations: Obligation[] = [];
 
   let allUserContractObligations: CreateUserContractObligation[] = [];
   for (const id of userIds) {
-    allUserContractObligations = allUserContractObligations.concat(
-      ObligationsToContractObligation(
-        populatedObligations,
-        contract.contractId,
-        id,
-      ),
-    );
+    const {
+      populatedObligations: populatedObligationsResult,
+      contractObligations,
+    } = ObligationsToContractObligation(obligations, contract.contractId, id);
+
+    allUserContractObligations =
+      allUserContractObligations.concat(contractObligations);
+
+    if (populatedObligations.length === 0) {
+      populatedObligations.push(...populatedObligationsResult);
+    }
   }
 
   const { count } = await prisma.userContractObligation.createMany({
@@ -52,7 +46,7 @@ export async function createWeeksContractObligations(
       },
       contractId: contract.contractId,
       obligationId: {
-        in: populatedObligations.map(ob => ob.obligationId),
+        in: allUserContractObligations.map(ob => ob.obligationId),
       },
     },
     orderBy: {
@@ -61,8 +55,5 @@ export async function createWeeksContractObligations(
     take: count,
   });
 
-  return {
-    obligations: populatedObligations,
-    userContractObligations: userContractObligations,
-  };
+  return userContractObligations;
 }

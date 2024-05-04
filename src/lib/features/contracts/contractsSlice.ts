@@ -1,11 +1,11 @@
 // contractsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
-import Contract from "../../../models/contract";
+import Contract, { ContractWithExtras } from "../../../models/contract";
 import { AccountabilityPartner } from "../../../models/appUser";
 
 interface ContractsState {
-  contracts: Contract[];
+  contracts: ContractWithExtras[];
   loading: boolean;
   loadingData: boolean;
   error: string | null;
@@ -22,13 +22,13 @@ const contractsSlice = createSlice({
   name: "contracts",
   initialState,
   reducers: {
-    setContracts(state, action: PayloadAction<Contract[]>) {
+    setContracts(state, action: PayloadAction<ContractWithExtras[]>) {
       state.contracts = action.payload;
     },
-    addContract(state, action: PayloadAction<Contract>) {
+    addContract(state, action: PayloadAction<ContractWithExtras>) {
       state.contracts = [action.payload, ...state.contracts];
     },
-    updateContract(state, action: PayloadAction<Contract>) {
+    updateContract(state, action: PayloadAction<ContractWithExtras>) {
       const index = state.contracts.findIndex(
         contract => contract.contractId === action.payload.contractId,
       );

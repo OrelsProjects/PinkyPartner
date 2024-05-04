@@ -17,9 +17,9 @@ import {
   setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
-import Contract from "../../models/contract";
+import Contract, { ContractWithExtras } from "../../models/contract";
 import { Logger } from "../../logger";
-import UserContractObligation, { GetNextUpObligationsResponse } from "../../models/userContractObligation";
+import UserContractObligation, { GetNextUpObligationsResponse, UserContractObligationData } from "../../models/userContractObligation";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -117,12 +117,12 @@ export function useObligations() {
   };
 
   const setUserContractObligations = (
-    obligations: UserContractObligation[],
+    obligations: UserContractObligationData[],
   ) => {
     dispatch(setContractObligationsAction([...obligations]));
   };
 
-  const setPartnerData = (contractObligations: UserContractObligation[]) => {
+  const setPartnerData = (contractObligations: UserContractObligationData[]) => {
     dispatch(
       setPartnerDataAction({
         contractObligations,
@@ -131,7 +131,7 @@ export function useObligations() {
   };
 
   const sendCompletedObligationNotification = async (
-    contract: Contract,
+    contract: ContractWithExtras,
     obligation: Obligation,
   ) => {
     try {
@@ -184,18 +184,18 @@ export function useObligations() {
     }
 
     try {
-      const obligationCompletedResponse = await axios.post<UserContractObligation>(
+      const obligationCompletedResponse = await axios.post<UserContractObligationData>(
         `/api/obligation/${contract.contractId}/${obligation.obligationId}/complete`,
       );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
-      sendCompletedObligationNotification(contract, obligation)
-        .then(() => {
-          Logger.info("Notification sent");
-        })
-        .catch(err => {
-          Logger.error("Failed to send notification", err);
-        });
+      // sendCompletedObligationNotification(contract, obligation)
+      //   .then(() => {
+      //     Logger.info("Notification sent");
+      //   })
+      //   .catch(err => {
+      //     Logger.error("Failed to send notification", err);
+      //   });
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;

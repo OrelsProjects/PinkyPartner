@@ -1,9 +1,4 @@
-import {
-  Contract,
-  ContractObligation,
-  Obligation,
-  UserContractObligation,
-} from "@prisma/client";
+import { Contract, Obligation, UserContractObligation } from "@prisma/client";
 
 /**
  * ({ obligationCompletedId: string; userId: string; obligationId: string; completedAt: Date; })[]
@@ -113,15 +108,23 @@ export function ObligationsToContractObligation(
   obligations: Obligation[],
   contractId: string,
   userId: string,
-): CreateUserContractObligation[] {
+): {
+  contractObligations: CreateUserContractObligation[];
+  populatedObligations: Obligation[];
+} {
   const contractObligations: CreateUserContractObligation[] = [];
-
+  const populatedObligations: Obligation[] = [];
   obligations.map(obligation => {
     if (obligation.repeat.toLowerCase() === "daily") {
       obligation.days.forEach(day => {
         const dueDate = new Date();
         dueDate.setHours(23, 59, 59, 999);
         dueDate.setDate(dueDate.getDate() + (day - dueDate.getDay()));
+        populatedObligations.push({
+          ...obligation,
+          userId: userId,
+          days: [day],
+        });
         contractObligations.push({
           userId: userId,
           obligationId: obligation.obligationId,
@@ -131,18 +134,17 @@ export function ObligationsToContractObligation(
       });
     } else {
       Array.from({ length: obligation.timesAWeek || 0 }).forEach((_, i) => {
-        const dueDate = new Date();
-        dueDate.setHours(23, 59, 59, 999);
-        dueDate.setDate(dueDate.getDate() + i * 7);
+        populatedObligations.push({ ...obligation, userId });
+        const endOfTheWeek = getEndOfTheWeekDate();
         contractObligations.push({
-          userId: obligation.userId,
+          userId: userId,
           obligationId: obligation.obligationId,
           contractId: contractId,
-          dueDate: dueDate,
+          dueDate: endOfTheWeek,
         });
       });
     }
   });
 
-  return contractObligations;
+  return { contractObligations, populatedObligations };
 }

@@ -61,8 +61,8 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET as string,
       httpOptions: {
-        timeout: 10000
-      }
+        timeout: 40000,
+      },
     }),
     AppleProvider({
       clientId: process.env.APPLE_ID as string,

@@ -8,7 +8,7 @@ import * as ClientContract from "../../../../models/contract";
 import { formatObligations } from "../../_utils";
 
 type UserData = {
-  contracts: ClientContract.default[];
+  contracts: ClientContract.ContractWithExtras[];
   obligations: Obligation[];
 };
 
@@ -69,7 +69,7 @@ export async function GET(
       },
     });
 
-    const contractsData: ClientContract.default[] = contracts.map(contract => {
+    const contractsData: ClientContract.ContractWithExtras[] = contracts.map(contract => {
       const { userContracts, contractObligations, ...contractData } = contract;
       const signatures = userContracts
         .filter(userContract => userContract.signedAt !== null)
@@ -84,7 +84,7 @@ export async function GET(
         session.user.userId,
       );
       const formattedObligations = formatObligations(obligations);
-      const clientContract: ClientContract.default = {
+      const clientContract: ClientContract.ContractWithExtras = {
         ...formattedContract,
         obligations: formattedObligations,
         contractees: userContracts.map(userContract => userContract.appUser),

@@ -3,7 +3,7 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import Contract, { CreateContract } from "../../../models/contract";
+import Contract, { ContractWithExtras, CreateContract } from "../../../models/contract";
 import { formatObligations } from "../_utils";
 import { Obligation } from "@prisma/client";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
@@ -60,7 +60,7 @@ export async function POST(
 
     const formattedObligations = formatObligations(populatedObligations);
 
-    const contract: Contract = {
+    const contract: ContractWithExtras = {
       contractId: contractResponse.contractId,
       creatorId: session.user.userId,
       dueDate: contractResponse.dueDate,

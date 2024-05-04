@@ -5,23 +5,26 @@ import { timesAWeekToText } from "../lib/utils/textUtils";
 
 interface RepeatComponentProps {
   obligation: Obligation;
+  dueDate?: string | null;
   showFullDay?: boolean;
 }
 
 const RepeatComponent: React.FC<RepeatComponentProps> = ({
   obligation,
+  dueDate,
   showFullDay,
 }) => {
   if (obligation.repeat.toLocaleLowerCase() === "daily") {
-    return ( 
+    return (
       <span className="text-sm font-light text-muted-foreground">
-        {obligation.days
-          .map(day =>
-            showFullDay
-              ? dayNumberToName(day)
-              : dayNumberToName(day).slice(0, 2),
-          )
-          .join(", ")}
+        {dueDate ||
+          obligation.days
+            .map(day =>
+              showFullDay
+                ? dayNumberToName(day)
+                : dayNumberToName(day).slice(0, 2),
+            )
+            .join(", ")}
       </span>
     );
   } else {

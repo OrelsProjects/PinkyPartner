@@ -2,8 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./redux";
-import Contract from "../../models/contract";
-import ObligationCompleted from "../../models/obligationCompleted";
+import { ContractWithExtras } from "../../models/contract";
 import { setPartnerData } from "../features/obligations/obligationsSlice";
 import axios from "axios";
 import { setContracts } from "../features/contracts/contractsSlice";
@@ -24,7 +23,7 @@ export default function useNotifications() {
   const lastShownNewContractsNotification = React.useRef<number>(0);
   const lastShownNewObligationsNotification = React.useRef<number>(0);
 
-  const [newContracts, setNewContracts] = React.useState<Contract[]>([]);
+  const [newContracts, setNewContracts] = React.useState<ContractWithExtras[]>([]);
   const [newObligations, setNewObligations] = React.useState<
     UserContractObligation[]
   >([]);
@@ -38,18 +37,18 @@ export default function useNotifications() {
       setNewObligations(newObligations);
 
       if (newObligations.length > 0 && canShowObligationsNotification()) {
-        lastShownNewObligationsNotification.current = Date.now();
-        const distinctPartnersObligations = newObligations.reduce(
-          (acc, obligation) => {
-            if (
-              !acc.some(o => o.appUser?.userId === obligation.appUser?.userId)
-            ) {
-              acc.push(obligation);
-            }
-            return acc;
-          },
-          [] as UserContractObligation[],
-        );
+        // lastShownNewObligationsNotification.current = Date.now();
+        // const distinctPartnersObligations = newObligations.reduce(
+        //   (acc, obligation) => {
+        //     if (
+        //       !acc.some(o => o.appUser?.userId === obligation.appUser?.userId)
+        //     ) {
+        //       acc.push(obligation);
+        //     }
+        //     return acc;
+        //   },
+        //   [] as UserContractObligation[],
+        // );
         // distinctPartnersObligations.forEach(obligation => {
         //   showNotification({
         //     title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
@@ -61,27 +60,27 @@ export default function useNotifications() {
   }, [partnerData.contractObligations]);
 
   useEffect(() => {
-    if (contracts) {
-      const newContracts = contracts.filter(
-        contract =>
-          !contract.signatures.some(
-            signature => signature.userId === user?.userId,
-          ),
-      );
-      setNewContracts(newContracts);
-      if (newContracts.length > 0 && canShowContractsNotification()) {
-        lastShownNewContractsNotification.current = Date.now();
-        const contractees = newContracts.map(contract =>
-          contract.contractees.find(
-            contractee => contractee.userId !== user?.userId,
-          ),
-        );
-        // showNotification({
-        //   title: "New contract!",
-        //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
-        // });
-      }
-    }
+  //   if (contracts) {
+  //     const newContracts = contracts.filter(
+  //       contract =>
+  //         !contract.signatures.some(
+  //           signature => signature.userId === user?.userId,
+  //         ),
+  //     );
+  //     setNewContracts(newContracts);
+  //     if (newContracts.length > 0 && canShowContractsNotification()) {
+  //       lastShownNewContractsNotification.current = Date.now();
+  //       const contractees = newContracts.map(contract =>
+  //         contract.contractees.find(
+  //           contractee => contractee.userId !== user?.userId,
+  //         ),
+  //       );
+  //       // showNotification({
+  //       //   title: "New contract!",
+  //       //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
+  //       // });
+  //     }
+    // }
   }, [contracts]);
 
   const canShowContractsNotification = () => {
