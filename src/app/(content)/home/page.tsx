@@ -7,6 +7,7 @@ import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
+import { EventTracker } from "../../../eventTracker";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -17,7 +18,10 @@ const EmptyContracts = () => {
       </h1>
       <div className="w-full flex justify-center items-center flex-col">
         <Button
-          onClick={() => router.push("/contracts/new")}
+          onClick={() => {
+            EventTracker.track("create_contract_from_home");
+            router.push("/contracts/new");
+          }}
           className="bg-primary text-white"
         >
           Make it official!
@@ -37,7 +41,10 @@ const EmptyObligations = () => {
       <div className="w-full flex justify-center items-center flex-col">
         <div>Le&apos;s start with making a promise</div>
         <Button
-          onClick={() => router.push("/promises/new")}
+          onClick={() => {
+            EventTracker.track("create_promise_from_home");
+            router.push("/promises/new");
+          }}
           className="bg-primary text-white"
         >
           Create a promise
@@ -48,9 +55,10 @@ const EmptyObligations = () => {
 };
 
 export default function Home() {
-  const { contractObligations, partnerData } = useAppSelector(state => state.obligations);
-  const { obligations, loadingData, loadingPartner } =
-    useObligations();
+  const { contractObligations, partnerData } = useAppSelector(
+    state => state.obligations,
+  );
+  const { obligations, loadingData, loadingPartner } = useObligations();
 
   const { contracts } = useContracts();
 

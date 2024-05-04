@@ -188,12 +188,43 @@ export const authOptions: AuthOptions = {
             },
           });
         }
+
+        if (!session.user.meta) {
+          session.user.meta = {
+            referralCode: "",
+            pushToken: "",
+          };
+        }
         session.user.userId = token.sub!;
         session.user.meta = {
           referralCode: userInDB?.meta?.referralCode || "",
           pushToken: userInDB?.meta?.pushToken || "",
         };
       }
+
+      if (!session.user.meta.referralCode) {
+        try {
+          const referralCode = generateReferalCode(session.user.userId);
+          await prisma.appUserMetadata.update({
+            where: {
+              userId: token.sub,
+            },
+            data: {
+              referralCode,
+            },
+          });
+          session.user.meta.referralCode = referralCode;
+        } catch (e: any) {
+          loggerServer.error(
+            "Error updating referral code",
+            session.user.userId,
+            {
+              error: e,
+            },
+          );
+        }
+      }
+
       const referralOptions: ReferralOptions = getReferralOptions();
       if (referralOptions.contractId) {
         await createNewUserContract(

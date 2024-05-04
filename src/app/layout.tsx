@@ -4,6 +4,7 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 import React from "react";
+import ToastProvider from "./providers/ToastProvider";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
@@ -62,7 +63,9 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
       <body className="!overscroll-none">
         <StoreProvider>
           <SessionWrapper>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
           </SessionWrapper>
         </StoreProvider>
       </body>

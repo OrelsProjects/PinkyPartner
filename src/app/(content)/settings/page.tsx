@@ -8,6 +8,7 @@ import useAuth from "../../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
 import InvitePartnerComponent from "../../../components/invitePartnerComponent";
 import { ThemeToggle } from "../../../components/theme-toggle";
+import { EventTracker } from "../../../eventTracker";
 
 interface SettingsProps {}
 
@@ -19,6 +20,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   const handleDeleteUserRequest = async () => {
     // Show alert that asks the user to insert their email. If email correct, delete user.
     // If email incorrect, show error message.
+    EventTracker.track("delete_user_request");
     const email = prompt(
       `Please enter your email (${user?.email}) to confirm deletion`,
     );
@@ -34,6 +36,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   };
 
   const handleSignOut = async () => {
+    EventTracker.track("sign_out");
     toast.promise(signOut(), {
       pending: "Signing out...",
       success: "Signed out",
@@ -67,7 +70,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
               variant="default"
               buttonText="Invite a partner"
               referralCode={user?.meta?.referralCode}
-              className="text-base w-fit px-2"
+              className="w-fit px-2"
             />
           </div>
         </div>

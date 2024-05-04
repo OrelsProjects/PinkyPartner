@@ -7,6 +7,7 @@ import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { Button } from "../components/ui/button";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { cn } from "../lib/utils";
+import { EventTracker } from "../eventTracker";
 
 const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
   <div>
@@ -287,14 +288,17 @@ export default function Home() {
   }, []);
 
   const scrollToPartOne = () => {
+    EventTracker.track("scroll_to_part_one");
     partOneRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const scrollToPartTwo = () => {
+    EventTracker.track("scroll_to_part_two");
     partTwoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const scrollToPartThree = () => {
+    EventTracker.track("scroll_to_part_three");
     partThreeRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -302,6 +306,7 @@ export default function Home() {
   };
 
   const scrollToPartFour = () => {
+    EventTracker.track("scroll_to_part_four");
     partFourRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -359,7 +364,14 @@ export default function Home() {
             variant="magic"
             className="bg-card dark:bg-background text-lg md:text-xl"
           >
-            <a href="/register">Take my pinky!</a>
+            <a
+              href="/register"
+              onClick={() => {
+                EventTracker.track("get_started_after_scroll");
+              }}
+            >
+              Take my pinky!
+            </a>
           </Button>
         </Section>
       </div>

@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "./ui/switch";
 import { cn } from "../lib/utils";
+import { EventTracker } from "../eventTracker";
 
 interface ThemeToggleProps {
   className?: string;
@@ -21,6 +22,9 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       uncheckedIcon={<Sun className="h-4 w-4" />}
       onCheckedChange={checked => {
         setTheme(checked ? "dark" : "light");
+        EventTracker.track("theme_toggle", {
+          theme: checked ? "dark" : "light",
+        });
       }}
     />
   );
