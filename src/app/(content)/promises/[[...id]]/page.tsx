@@ -277,7 +277,6 @@ const PromiseDialog = ({
               error={formik.errors.title}
               maxLength={24}
               className="h-11 rounded-md w-full"
-              disabled={disabled}
               required
             />
           </SectionContainer>
@@ -339,7 +338,6 @@ const PromiseDialog = ({
             <Button
               className="w-20 h-12 bg-card"
               variant={"outline"}
-              disabled={disabled}
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -355,15 +353,12 @@ const PromiseDialog = ({
           </SectionContainer>
           <DialogFooter className="w-full">
             <div className="w-full flex flex-col justify-end items-end">
-              {!obligation && (
-                <Button
-                  type="submit"
-                  disabled={disabled}
-                  className="px-12 !py-5 rounded-[5px]"
-                >
-                  {obligation ? "I repromise" : "I promise"}
-                </Button>
-              )}
+              <Button
+                type="submit"
+                className="px-12 !py-5 rounded-[5px]"
+              >
+                {obligation ? "I repromise" : "I promise"}
+              </Button>
             </div>
           </DialogFooter>
         </form>

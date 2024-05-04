@@ -75,7 +75,11 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
     const obligation = await prisma.obligation.update({
       where: { obligationId },
-      data: updateData, // Using the correct property name here
+      data: {
+        title: updateData.title,
+        emoji: updateData.emoji,
+        description: updateData.description,
+      }, // Using the correct property name here
     });
 
     return NextResponse.json({ result: obligation }, { status: 200 });
