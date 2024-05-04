@@ -5,9 +5,10 @@ import { Checkbox } from "./ui/checkbox";
 import Loading from "./ui/loading";
 import { toast } from "react-toastify";
 import Contract from "../models/contract";
+import { UserContractObligationData } from "../models/userContractObligation";
 
 interface CheckboxObligationProps {
-  obligation: Obligation;
+  obligation: UserContractObligationData;
   contract: Contract;
 }
 
@@ -23,7 +24,7 @@ const CheckboxObligation: React.FC<CheckboxObligationProps> = ({
     setLoadingComplete(true);
     try {
       await completeObligation(obligation, contract.contractId);
-      toast.success("You've completed " + obligation.title + "!");
+      toast.success("You've completed " + obligation.obligation.title + "!");
     } catch (error: any) {
       toast.error("Something happened... try again?");
       throw error;

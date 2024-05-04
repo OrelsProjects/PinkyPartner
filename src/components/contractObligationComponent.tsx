@@ -2,21 +2,18 @@
 
 import React, { useMemo } from "react";
 import Obligation from "../models/obligation";
-import { useObligations } from "../lib/hooks/useObligations";
 import CheckboxObligation from "./checkboxObligation";
 import RepeatComponent from "./repeatComponent";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
 import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
-import Contract from "../models/contract";
 import { UserContractObligationData } from "../models/userContractObligation";
 
 interface ObligationProps {
-  userContractObligation?: UserContractObligationData;
-  completedAt?: Date | null;
+  userContractObligation: UserContractObligationData;
   ownerImageUrl?: string | null;
-  onClick?: (obligation: Obligation) => void;
+  onClick?: (obligation: UserContractObligationData) => void;
   className?: string;
 }
 
@@ -43,12 +40,15 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 
 const ContractObligationComponent: React.FC<ObligationProps> = ({
   userContractObligation,
-  completedAt,
-  ownerImageUrl,
   onClick,
   className,
 }) => {
-  const { deleteObligation } = useObligations();
+  const completedAt = useMemo(() => {
+    if (userContractObligation) {
+      return userContractObligation.completedAt;
+    }
+    return null;
+  }, [userContractObligation]);
 
   const obligation = useMemo(() => {
     if (userContractObligation) {
@@ -66,7 +66,7 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
       className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
       shadow-md
       `}
-      onClick={() => onClick?.(obligation)}
+      onClick={() => onClick?.(userContractObligation)}
     >
       <div className="h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center">
         <div className="flex flex-row gap-3">
@@ -114,9 +114,9 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
           }}
         />
 
-        {userContractObligation?.contract && (
+        {userContractObligation?.contract && !completedAt && (
           <CheckboxObligation
-            obligation={obligation}
+            obligation={userContractObligation}
             contract={userContractObligation?.contract}
           />
         )}

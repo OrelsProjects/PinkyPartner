@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Obligation, {
-  CreateObligation,
-} from "../../models/obligation";
+import Obligation, { CreateObligation } from "../../models/obligation";
 import { setError } from "../features/auth/authSlice";
 import {
   setObligations as setObligationsAction,
@@ -19,7 +17,10 @@ import {
 import LoadingError from "../../models/errors/LoadingError";
 import Contract, { ContractWithExtras } from "../../models/contract";
 import { Logger } from "../../logger";
-import UserContractObligation, { GetNextUpObligationsResponse, UserContractObligationData } from "../../models/userContractObligation";
+import UserContractObligation, {
+  GetNextUpObligationsResponse,
+  UserContractObligationData,
+} from "../../models/userContractObligation";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
@@ -122,7 +123,9 @@ export function useObligations() {
     dispatch(setContractObligationsAction([...obligations]));
   };
 
-  const setPartnerData = (contractObligations: UserContractObligationData[]) => {
+  const setPartnerData = (
+    contractObligations: UserContractObligationData[],
+  ) => {
     dispatch(
       setPartnerDataAction({
         contractObligations,
@@ -169,7 +172,7 @@ export function useObligations() {
   };
 
   const completeObligation = async (
-    obligation: Obligation,
+    obligation: UserContractObligation,
     contractId: string,
   ) => {
     if (loading) {
@@ -184,9 +187,10 @@ export function useObligations() {
     }
 
     try {
-      const obligationCompletedResponse = await axios.post<UserContractObligationData>(
-        `/api/obligation/${contract.contractId}/${obligation.obligationId}/complete`,
-      );
+      const obligationCompletedResponse =
+        await axios.post<UserContractObligationData>(
+          `/api/obligation/${contract.contractId}/${obligation.userContractObligationId}/complete`,
+        );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
       // sendCompletedObligationNotification(contract, obligation)

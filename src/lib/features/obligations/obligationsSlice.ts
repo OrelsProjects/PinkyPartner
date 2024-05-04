@@ -66,20 +66,24 @@ const obligationsSlice = createSlice({
       state.partnerData = action.payload;
     },
 
-    completeObligation(state, action: PayloadAction<UserContractObligationData>) {
+    completeObligation(
+      state,
+      action: PayloadAction<UserContractObligationData>,
+    ) {
       state.contractObligations = state.contractObligations.map(
         (obligationsInContract: UserContractObligationData) => {
           if (
-            obligationsInContract.obligationId !== action.payload.obligationId
+            obligationsInContract.userContractObligationId !==
+            action.payload.userContractObligationId
           ) {
             return obligationsInContract;
           }
           return {
             ...obligationsInContract,
+            completedAt: action.payload.completedAt,
           };
         },
       );
-      state.contractObligations.push(action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;

@@ -121,10 +121,12 @@ export async function GET(
           signedContract.contract.contractObligations.map(
             ({ obligation }) => obligation,
           );
-        userContractObligations = await createWeeksContractObligations(
-          contractObligations,
-          signedContract.contract,
-          [signedContract.appUser.userId, user.userId],
+        userContractObligations = (
+          await createWeeksContractObligations(
+            contractObligations,
+            signedContract.contract,
+            [signedContract.appUser.userId, user.userId],
+          )
         );
       }
 

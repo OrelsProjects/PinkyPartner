@@ -6,7 +6,7 @@ import prisma from "@/app/api/_db/db";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { contractId: string; userContractObligationId: string } },
+  { params }: { params: { contractId: string; contractObligationId: string } },
 ): Promise<NextResponse<any>> {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -27,7 +27,8 @@ export async function POST(
 
     const completedObligation = await prisma.userContractObligation.update({
       where: {
-        userContractObligationId: params.userContractObligationId,
+        userContractObligationId: params.contractObligationId,
+        userId: user.userId,
       },
       data: {
         completedAt: now,

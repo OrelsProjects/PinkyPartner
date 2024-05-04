@@ -116,6 +116,13 @@ export default function ContractAccordion({
     return groupedObligations;
   };
 
+  const partnerGroupedObligationsCompleted = () => {
+    const groupedObligations = groupObligations(
+      partnerData.filter(obligation => obligation.completedAt),
+    );
+    return groupedObligations;
+  };
+
   return (
     <div className="max-h-full h-fit w-full flex flex-col gap-2  mt-16">
       <h1 className="font-bold tracking-wide">Contracts</h1>

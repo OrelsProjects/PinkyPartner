@@ -3,7 +3,10 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import Contract, { ContractWithExtras, CreateContract } from "../../../models/contract";
+import Contract, {
+  ContractWithExtras,
+  CreateContract,
+} from "../../../models/contract";
 import { formatObligations } from "../_utils";
 import { Obligation } from "@prisma/client";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
@@ -34,28 +37,23 @@ export async function POST(
       data: { ...contractData, creatorId: session.user.userId },
     });
 
+    await prisma.contractObligation.createMany({
+      data: obligations.map(obligation => ({
+        obligationId: obligation.obligationId,
+        contractId: contractResponse.contractId,
+      })),
+    });
+
     let populatedObligations: Obligation[] = [];
 
     for (const contractee of contractees) {
-      const createUserContractPromsie = prisma.userContract.create({
+      await prisma.userContract.create({
         data: {
           contractId: contractResponse.contractId,
           userId: contractee.userId,
           signedAt: signatures.includes(contractee.userId) ? now : null,
         },
       });
-      const createContractObligationsPromise = createWeeksContractObligations(
-        obligations,
-        contractResponse,
-        [contractee.userId],
-      );
-
-      const result = await Promise.all([
-        createUserContractPromsie,
-        createContractObligationsPromise,
-      ]);
-
-      populatedObligations = result[1].obligations;
     }
 
     const formattedObligations = formatObligations(populatedObligations);

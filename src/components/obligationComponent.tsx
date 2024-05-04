@@ -26,12 +26,9 @@ import UserContractObligation from "../models/userContractObligation";
 
 interface ObligationProps {
   obligation: Obligation;
-  userContractObligation?: UserContractObligation;
-  contract?: Contract;
   completedAt?: Date | null;
   ownerImageUrl?: string | null;
-  showDelete?: boolean; // Show delete button
-  showComplete?: boolean; // Show complete checkbox
+  showDelete?: boolean; // Show complete checkbox
   showRepeat?: boolean; // Show repeat component
   showFullDay?: boolean; // Show full day (instead of su,mo,...)
   deleteIcon?: ElementType; // Icon for delete button to replace default
@@ -64,14 +61,11 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 
 const ObligationComponent: React.FC<ObligationProps> = ({
   obligation,
-  userContractObligation,
-  contract,
   completedAt,
   ownerImageUrl,
   deleteIcon,
   trailingIcon,
   showDelete,
-  showComplete,
   showRepeat = true,
   showFullDay,
   onClick,
@@ -196,9 +190,6 @@ const ObligationComponent: React.FC<ObligationProps> = ({
         )}
         <DeleteButton />
         {trailingIcon}
-        {contract && showComplete && (
-          <CheckboxObligation obligation={obligation} contract={contract} />
-        )}
       </div>
     </div>
   );
