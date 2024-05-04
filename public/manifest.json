@@ -6,7 +6,7 @@
   "background_color": "#FFFFFF",
   "display": "standalone",
   "display_override": "standalone",
-  "description": "PinkyPartner is a fitness app that helps you to stay fit and healthy. It provides you with a variety of exercises and workouts to help you achieve your fitness goals.",
+  "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
   "orientation": "portrait",
   "start_url": "/",
   "dir": "auto",

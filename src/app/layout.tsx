@@ -4,8 +4,6 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 import React from "react";
-import ToastProvider from "./providers/ToastProvider";
-import Script from "next/script";
 import LiveChatProvider from "./providers/LiveChatProvider";
 
 const APP_NAME = "PinkyPartner";
