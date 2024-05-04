@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
-import ContractAccordion from "../../../components/contractAccordion/contractsAccordion";
+import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -55,16 +55,6 @@ export default function Home() {
 
   const { contracts } = useContracts();
 
-  const { newObligations, markObligationsAsViewed } = useNotifications();
-
-  useEffect(() => {
-    if (!loadingPartner && newObligations.length > 0) {
-      setTimeout(() => {
-        markObligationsAsViewed();
-      }, 2000);
-    }
-  }, [newObligations, loadingPartner]);
-
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {
       return <EmptyObligations />;
@@ -76,8 +66,8 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
-      <ContractAccordion
+    <div className="w-full h-full flex flex-col gap-4 relative">
+      <ContractsAccordion
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
       />

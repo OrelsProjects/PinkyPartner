@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import Contract from "../../models/contract";
 import { Accordion, AccordionContent, AccordionItem } from "../ui/accordion";
 import { UserContractObligationData } from "../../models/userContractObligation";
@@ -7,6 +7,8 @@ import AccordionTriggerMain from "./accordionTriggerMain";
 import AccordionTriggerSecondary from "./accordionTriggerSecondary";
 import ContractObligationComponent from "../contractObligationComponent";
 import SingleContractAccordion from "./singleContractAccordion";
+import useNotifications from "../../lib/hooks/useNotifications";
+import { cn } from "../../lib/utils";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -18,6 +20,7 @@ export type GroupedObligations = {
 interface ContractAcccordionProps {
   userData: UserContractObligationData[];
   partnerData: UserContractObligationData[];
+  loading?: boolean;
 }
 
 const AccordionObligations = ({
@@ -62,7 +65,6 @@ const AccordionObligations = ({
         <div key={obligation.obligationId}>
           <ContractObligationComponent
             userContractObligation={obligation}
-            // ownerImageUrl={partner?.photoURL}
             className="!shadow-none bg-card/20 border-[1px] border-foreground/10"
           />
         </div>
@@ -82,11 +84,35 @@ const AccordionObligations = ({
   </AccordionContent>
 );
 
-export default function ContractAccordion({
+export default function ContractsAccordion({
   userData,
   partnerData,
+  loading,
 }: ContractAcccordionProps) {
   const { user } = useAppSelector(state => state.auth);
+
+  const { newObligations, markObligationsAsViewed } = useNotifications();
+  const [newContracts, setNewContracts] = React.useState<Contract[]>([]);
+
+  useEffect(() => {
+    if (!loading && newObligations.length > 0) {
+      setTimeout(() => {
+        markObligationsAsViewed();
+        setNewContracts([]);
+      }, 8000);
+    }
+  }, [newObligations, loading]);
+
+  useEffect(() => {
+    const contracts = userData.map(obligation => obligation.contract);
+    setNewContracts(
+      contracts.filter(contract =>
+        newObligations.find(
+          obligation => obligation.contractId === contract.contractId,
+        ),
+      ),
+    );
+  }, [userData, newObligations]);
 
   if (!user) {
     return null;
@@ -116,13 +142,6 @@ export default function ContractAccordion({
     return groupedObligations;
   };
 
-  const partnerGroupedObligationsCompleted = () => {
-    const groupedObligations = groupObligations(
-      partnerData.filter(obligation => obligation.completedAt),
-    );
-    return groupedObligations;
-  };
-
   return (
     <div className="max-h-full h-fit w-full flex flex-col gap-2  mt-16">
       <h1 className="font-bold tracking-wide">Contracts</h1>
@@ -137,9 +156,22 @@ export default function ContractAccordion({
             <AccordionItem
               key={contract.contractId}
               value={contract.contractId}
-              className="border-0"
+              className={"border-0"}
             >
-              <AccordionTriggerMain>{contract.title}</AccordionTriggerMain>
+              <AccordionTriggerMain>
+                <div
+                  className={cn({
+                    "shimmer-animation-primary w-full h-full rounded-lg":
+                      newContracts.some(
+                        newContract =>
+                          newContract.contractId === contract.contractId,
+                      ),
+                  })}
+                />
+                <div className="w-full flex justify-start">
+                  {contract.title}
+                </div>
+              </AccordionTriggerMain>
               <AccordionContent>
                 <SingleContractAccordion
                   userContractObligations={obligations}
@@ -151,62 +183,4 @@ export default function ContractAccordion({
       </Accordion>
     </div>
   );
-
-  // return (
-  //   <Accordion type="multiple" defaultValue={["Weekly"]}>
-  //     {Object.values(groupedObligationsCompleted).map(
-  //       ({ contract, obligations }) => {
-  //         const weeklyObligations = obligations.filter(
-  //           obligation => obligation.obligation.repeat === "Weekly",
-  //         );
-  //         const dailyObligations = obligations.filter(
-  //           obligation => obligation.obligation.repeat === "Daily",
-  //         );
-
-  //         return (
-  //           <AccordionItem
-  //             key={contract.contractId}
-  //             value={contract.contractId}
-  //           >
-  //             <AccordionTrigger>{contract.title}</AccordionTrigger>
-  //             <AccordionContent>
-  //               {weeklyObligations.length > 0 && (
-  //                 <AccordionItem value={"Weekly"}>
-  //                   <AccordionTrigger>Weekly</AccordionTrigger>
-  //                   <AccordionContent>
-  //                     {weeklyObligations.map(obligation => (
-  //                       <div key={obligation.obligationCompletedId}>
-  //                         {obligation.obligation.title}
-  //                       </div>
-  //                     ))}
-  //                   </AccordionContent>
-  //                 </AccordionItem>
-  //               )}
-  //               {dailyObligations.length > 0 && (
-  //                 <AccordionItem value={"Daily"}>
-  //                   <AccordionTrigger>Daily</AccordionTrigger>
-  //                   <AccordionContent>
-  //                     {dailyObligations.map(obligation => (
-  //                       <AccordionItem
-  //                         key={obligation.obligationCompletedId}
-  //                         value={obligation.obligationCompletedId}
-  //                       >
-  //                         <AccordionTrigger>
-  //                           {obligation.obligation.title}
-  //                         </AccordionTrigger>
-  //                         <AccordionContent>
-  //                           <div>{obligation.obligation.title}</div>
-  //                         </AccordionContent>
-  //                       </AccordionItem>
-  //                     ))}
-  //                   </AccordionContent>
-  //                 </AccordionItem>
-  //               )}
-  //             </AccordionContent>
-  //           </AccordionItem>
-  //         );
-  //       },
-  //     )}
-  //   </Accordion>
-  // );
 }

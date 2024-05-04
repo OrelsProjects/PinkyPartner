@@ -17,10 +17,12 @@ type ObligationNotification = {
 
 export interface NotificationsState {
   obligationNotifications: ObligationNotification[];
+  didShowContractNotification: boolean;
 }
 
 export const initialState: NotificationsState = {
   obligationNotifications: [],
+  didShowContractNotification: false,
 };
 
 const notificationsSlice = createSlice({
@@ -44,6 +46,9 @@ const notificationsSlice = createSlice({
           notification.obligation !== action.payload.obligation,
       );
     },
+    setShownContractNotification(state, action: PayloadAction<boolean>) {
+      state.didShowContractNotification = action.payload;
+    },
     clearObligationNotifications(state) {
       state.obligationNotifications = [];
     },
@@ -53,6 +58,7 @@ const notificationsSlice = createSlice({
 export const {
   addObligationNotification,
   removeObligationNotification,
+  setShownContractNotification,
   clearObligationNotifications,
 } = notificationsSlice.actions;
 
