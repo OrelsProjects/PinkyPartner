@@ -56,9 +56,11 @@ const setIsFirstObligationView = () => {
 const Weekly = ({
   onChange,
   obligation,
+  disabled,
 }: {
   onChange: (timesAWeek: TimesAWeek) => void;
   obligation?: Obligation;
+  disabled?: boolean;
 }) => {
   const [selected, setSelected] = useState<TimesAWeek>(
     (obligation?.timesAWeek as TimesAWeek) || 1,
@@ -75,6 +77,7 @@ const Weekly = ({
         onSelect={(timesAWeek: TimesAWeek) => {
           setSelected(timesAWeek);
         }}
+        disabled={disabled}
       />
       <div className="text-muted-foreground">per week</div>
     </div>
@@ -84,10 +87,12 @@ const Weekly = ({
 const Daily = ({
   onChange,
   days,
+  disabled,
   showRepeatText = true,
 }: {
   onChange: (days: number[]) => void;
   days?: number[];
+  disabled?: boolean;
   showRepeatText?: boolean;
 }) => {
   const formik = useFormik<Record<string, boolean>>({
@@ -130,6 +135,7 @@ const Daily = ({
               checked={formik.values[day]}
               onCheckedChange={checked => formik.setFieldValue(day, checked)}
               variant="outline"
+              disabled={disabled}
             />
             <div>{day[0].toUpperCase()}</div>
           </div>
@@ -197,7 +203,6 @@ const PromiseDialog = ({
   obligation,
   onCreate,
   onEdit,
-  disabled = false,
   open,
   onOpenChange,
   onCreateNewClick,
@@ -205,7 +210,6 @@ const PromiseDialog = ({
   obligation?: Obligation | null;
   onCreate?: (data: CreateObligation) => Promise<void>;
   onEdit?: (data: Obligation) => Promise<void>;
-  disabled?: boolean;
   open?: boolean;
   onOpenChange?: (state: boolean) => void;
   onCreateNewClick?: () => void;
@@ -252,6 +256,11 @@ const PromiseDialog = ({
     }
   }, [obligation]);
 
+  // Disable edit for now because it requires massive changes in the db
+  const disabled = useMemo(() => {
+    return !!obligation;
+  }, [obligation]);
+
   return (
     <Dialog
       open={open}
@@ -292,6 +301,7 @@ const PromiseDialog = ({
               error={formik.errors.title}
               maxLength={24}
               className="h-11 rounded-md w-full"
+              disabled={disabled}
               required
             />
           </SectionContainer>
@@ -324,6 +334,7 @@ const PromiseDialog = ({
                   formik.setFieldValue("repeat", value);
                 }}
                 className="h-10"
+                disabled={disabled}
                 error={formik.errors.repeat}
               />
               <div className="flex flex-col items-start gap-2 w-fit h-fit rounded-lg">
@@ -332,6 +343,7 @@ const PromiseDialog = ({
                     onChange={timesAWeek =>
                       formik.setFieldValue("timesAWeek", timesAWeek)
                     }
+                    disabled={disabled}
                     obligation={obligation ?? undefined}
                   />
                 )}
@@ -339,6 +351,7 @@ const PromiseDialog = ({
                   <Daily
                     onChange={days => formik.setFieldValue("days", days)}
                     days={obligation?.days}
+                    disabled={disabled}
                   />
                 )}
               </div>
@@ -350,6 +363,7 @@ const PromiseDialog = ({
             <Button
               className="w-20 h-12 bg-card"
               variant={"outline"}
+              disabled={disabled}
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -365,13 +379,15 @@ const PromiseDialog = ({
           </SectionContainer>
           <DialogFooter className="w-full">
             <div className="w-full flex flex-col justify-end items-end">
-              <Button
-                type="submit"
-                disabled={disabled}
-                className="px-12 !py-5 rounded-[5px]"
-              >
-                {obligation ? "I repromise" : "I promise"}
-              </Button>
+              {!obligation && (
+                <Button
+                  type="submit"
+                  disabled={disabled}
+                  className="px-12 !py-5 rounded-[5px]"
+                >
+                  {obligation ? "I repromise" : "I promise"}
+                </Button>
+              )}
             </div>
           </DialogFooter>
         </form>
@@ -546,7 +562,6 @@ const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
         <PromiseDialog
           onCreate={handleCreateObligation}
           onEdit={handleUpdateObligation}
-          disabled={loadingData}
           open={showDialog}
           onOpenChange={handleOnOpenChange}
           obligation={obligation}

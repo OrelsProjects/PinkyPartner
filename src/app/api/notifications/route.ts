@@ -57,7 +57,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error creating obligation", error);
+    Logger.error("Error sending notification", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

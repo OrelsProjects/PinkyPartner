@@ -9,6 +9,7 @@ import { cn } from "../lib/utils";
 import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
 import { UserContractObligationData } from "../models/userContractObligation";
+import { useAppSelector } from "../lib/hooks/redux";
 
 interface ObligationProps {
   userContractObligation: UserContractObligationData;
@@ -43,6 +44,7 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
   onClick,
   className,
 }) => {
+  const { user } = useAppSelector(state => state.auth);
   const completedAt = useMemo(() => {
     if (userContractObligation) {
       return userContractObligation.completedAt;
@@ -60,6 +62,13 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
   const showRepeat = useMemo(() => {
     return userContractObligation?.obligation.repeat.toLowerCase() === "daily";
   }, [userContractObligation]);
+
+  const showCompleted = useMemo(() => {
+    return (
+      !completedAt &&
+      userContractObligation?.userId === user?.userId
+    );
+  }, [completedAt, userContractObligation, user]);
 
   return (
     <div
@@ -114,7 +123,7 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
           }}
         />
 
-        {userContractObligation?.contract && !completedAt && (
+        {showCompleted && (
           <CheckboxObligation
             obligation={userContractObligation}
             contract={userContractObligation?.contract}
