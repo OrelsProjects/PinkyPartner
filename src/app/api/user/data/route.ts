@@ -69,29 +69,35 @@ export async function GET(
       },
     });
 
-    const contractsData: ClientContract.ContractWithExtras[] = contracts.map(contract => {
-      const { userContracts, contractObligations, ...contractData } = contract;
-      const signatures = userContracts
-        .filter(userContract => userContract.signedAt !== null)
-        .map(signature => signature.appUser) as AppUser[];
+    const contractsData: ClientContract.ContractWithExtras[] = contracts.map(
+      contract => {
+        const { userContracts, contractObligations, ...contractData } =
+          contract;
+        const signatures = userContracts
+          .filter(userContract => userContract.signedAt !== null)
+          .map(signature => ({
+            ...signature.appUser,
+            signedAt: signature.signedAt,
+          }));
 
-      const obligations = contractObligations
-        .map(co => co.obligation)
-        .filter(obligation => obligation !== null) as Obligation[];
+        const obligations = contractObligations
+          .map(co => co.obligation)
+          .filter(obligation => obligation !== null) as Obligation[];
 
-      const formattedContract = formatContract(
-        contractData,
-        session.user.userId,
-      );
-      const formattedObligations = formatObligations(obligations);
-      const clientContract: ClientContract.ContractWithExtras = {
-        ...formattedContract,
-        obligations: formattedObligations,
-        contractees: userContracts.map(userContract => userContract.appUser),
-        signatures,
-      };
-      return clientContract;
-    });
+        const formattedContract = formatContract(
+          contractData,
+          session.user.userId,
+        );
+        const formattedObligations = formatObligations(obligations);
+        const clientContract: ClientContract.ContractWithExtras = {
+          ...formattedContract,
+          obligations: formattedObligations,
+          contractees: userContracts.map(userContract => userContract.appUser),
+          signatures,
+        };
+        return clientContract;
+      },
+    );
 
     return NextResponse.json(
       { obligations: userObligations, contracts: contractsData },

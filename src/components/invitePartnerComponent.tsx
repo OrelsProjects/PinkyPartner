@@ -46,8 +46,8 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   const handleCopyLink = () => {
     EventTracker.track("Copy Invite Link", { url });
     navigator.clipboard.writeText(url);
-    toast.success("Link copied to clipboard!", {
-      autoClose: 1000,
+    toast("Copied! Now send it to your friend 😊", {
+      autoClose: 3000,
       delay: 0,
     });
   };
@@ -72,7 +72,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         </DialogHeader>
         <DialogFooter className="w-full !flex flex-col gap-1 justify-center items-center md:!justify-end md:!items-center">
           <Button variant="default" onClick={handleCopyLink}>
-            Copy Link
+            Copy Invitation Link
           </Button>
         </DialogFooter>
       </DialogContent>

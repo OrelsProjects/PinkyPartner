@@ -18,14 +18,10 @@ const useSearchUser = (): SearchUserHook => {
   const [error, setError] = useState<string | null>(null);
 
   const lastSearchTimestamp = useRef<number>(0);
-  const status = useRef<
+  const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error" | "no-results"
   >("idle");
   const debouncedFetch = useRef<NodeJS.Timeout>();
-
-  useEffect(() => {
-    console.log("status", status.current);
-  }, [status.current]);
 
   useEffect(() => {
     if (debouncedFetch.current) {
@@ -34,11 +30,11 @@ const useSearchUser = (): SearchUserHook => {
 
     if (!query) {
       setSearchResult([]);
-      status.current = "idle";
+      setStatus("idle");
       return;
     }
 
-    status.current = "loading";
+    setStatus("loading");
 
     debouncedFetch.current = setTimeout(() => {
       fetchUsers();
@@ -55,12 +51,12 @@ const useSearchUser = (): SearchUserHook => {
     try {
       if (!query) {
         setSearchResult([]);
-        status.current = "idle";
+        setStatus("idle");
         return;
       }
 
       const now = Date.now();
-      status.current = "loading";
+      setStatus("loading");
       lastSearchTimestamp.current = now;
       setError(null);
 
@@ -70,13 +66,14 @@ const useSearchUser = (): SearchUserHook => {
       const data = response.data;
 
       if (lastSearchTimestamp.current !== now) return;
-      status.current = data.length > 0 ? "success" : "no-results";
+      const newStatus = data.length > 0 ? "success" : "no-results";
+      setStatus(newStatus);
       setSearchResult(data);
     } catch (error: any) {
       setError(
         `An error occurred while fetching users. ${error.response.data.error}`,
       );
-      status.current = "error";
+      setStatus("error");
     }
   };
 
@@ -92,7 +89,7 @@ const useSearchUser = (): SearchUserHook => {
 
   return {
     searchResult,
-    status: status.current,
+    status,
     error,
     searchUsers,
     fetchUsers,

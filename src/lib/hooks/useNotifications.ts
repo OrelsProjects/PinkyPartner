@@ -94,7 +94,7 @@ export default function useNotifications() {
   }, [contracts]);
 
   const canShowContractsNotification = () => {
-    debugger;
+  
     if (didShowContractNotification) return false;
     const now = Date.now();
     const timeSinceLastNotification =

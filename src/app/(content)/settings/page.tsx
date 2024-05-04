@@ -54,12 +54,12 @@ const SettingsButton: React.FC<SettingsProps> = () => {
             <ThemeToggle />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Notifications</span>
           <span className="text-base-content/75 pl-2">
             Manage notifications and reminders
           </span>
-        </div>
+        </div> */}
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Partners</span>
           <div className="pl-2">
@@ -82,8 +82,8 @@ const SettingsButton: React.FC<SettingsProps> = () => {
               LOGOUT
             </Button>
             <Button
-              variant="ghost"
-              className="w-fit !px-0"
+              variant="link"
+              className="w-fit !p-0 hover:no-underline text-destructive/60 text-sm"
               onClick={handleDeleteUserRequest}
             >
               DELETE

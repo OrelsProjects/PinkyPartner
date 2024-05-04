@@ -9,7 +9,7 @@ const AccordionTriggerMain: React.FC<AccordionTriggerMainProps> = ({
   children,
 }) => {
   return (
-    <AccordionTrigger className="font-semibold mt-2 tracking-wide shadow-sm hover:cursor-pointer rounded-lg px-3 border-[1px] border-foreground/5 bg-card/40">
+    <AccordionTrigger className="font-semibold mt-2 tracking-wide shadow-md hover:shadow-lg hover:cursor-pointer rounded-lg px-3 border-[1px] border-foreground/5 bg-card/70">
       {children}
     </AccordionTrigger>
   );

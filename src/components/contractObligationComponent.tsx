@@ -64,10 +64,7 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
   }, [userContractObligation]);
 
   const showCompleted = useMemo(() => {
-    return (
-      !completedAt &&
-      userContractObligation?.userId === user?.userId
-    );
+    return !completedAt && userContractObligation?.userId === user?.userId;
   }, [completedAt, userContractObligation, user]);
 
   return (
@@ -123,12 +120,10 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
           }}
         />
 
-        {showCompleted && (
-          <CheckboxObligation
-            obligation={userContractObligation}
-            contract={userContractObligation?.contract}
-          />
-        )}
+        <CheckboxObligation
+          obligation={userContractObligation}
+          contract={userContractObligation?.contract}
+        />
       </div>
     </div>
   );

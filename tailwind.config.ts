@@ -23,9 +23,13 @@ const config = {
       },
     },
     extend: {
-      fontFamily: {		
+      fontFamily: {
         montserrat: ["Montserrat", "Hauora", "sans-serif"],
         hauora: ["Hauora", "Montserrat", "sans-serif"],
+      },
+      boxShadow: {
+        "red-glow":
+          "0 0px 6px 1px rgba(255, 40, 40, 0.9), 0 2px 3px 0px rgba(255, 40, 40, 0.9)",
       },
       colors: {
         border: "hsl(var(--border))",

@@ -174,6 +174,7 @@ export function useObligations() {
   const completeObligation = async (
     obligation: UserContractObligation,
     contractId: string,
+    completed: boolean = true,
   ) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
@@ -190,6 +191,9 @@ export function useObligations() {
       const obligationCompletedResponse =
         await axios.post<UserContractObligationData>(
           `/api/obligation/${contract.contractId}/${obligation.userContractObligationId}/complete`,
+          {
+            completed,
+          },
         );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));

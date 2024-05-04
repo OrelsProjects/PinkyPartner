@@ -12,7 +12,7 @@ import useSearchUser from "../../../../lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdOutlineCancel, MdOutlineAddCircleOutline } from "react-icons/md";
 import { useAppSelector } from "../../../../lib/hooks/redux";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import { useContracts } from "../../../../lib/hooks/useContracts";
@@ -23,6 +23,12 @@ import AccountabilityPartnerComponent, {
 } from "../../../../components/accountabilityPartnerComponent";
 import { getNextWeekDate } from "../../../../lib/utils/dateUtils";
 import Divider from "../../../../components/ui/divider";
+import {
+  SectionContainer,
+  SectionTitle,
+  SectionTitleContainer,
+  SectionTitleExplanation,
+} from "../../../../components/ui/section";
 
 interface CreateContractPageProps {}
 
@@ -40,7 +46,7 @@ const FindPartner = ({
       <Input
         label="Search for your partner"
         type="text"
-        placeholder="Your pinky partner&apos;s name"
+        placeholder="Your pinky partner's name"
         onChange={e => searchUsers(e.target.value)}
         autoComplete="on"
         autoFocus
@@ -66,8 +72,7 @@ const FindPartner = ({
       </div>
 
       <>
-        <Divider className="mt-3" />
-        <div className="mt-2 flex flex-col gap-5 items-start rounded-lg">
+        <div className="mt-2 flex flex-col gap-5 items-start rounded-lg bg-card p-3">
           <div className="flex flex-col">
             {status === "no-results" || status === "success" ? (
               <span className="text-sm text-muted-foreground mt-1.5">
@@ -75,15 +80,16 @@ const FindPartner = ({
               </span>
             ) : (
               <span className="text-sm text-muted-foreground mt-1.5">
-                Don&apos;t have a partner?
+                You don&apos;t have your partner?
               </span>
             )}
             <span className="text-sm text-muted-foreground mt-1.5">
-              It&apos;s okay! You can invite them later.
+              It&apos;s okay! Create the contract and invite them later.
             </span>
           </div>
-          <Button onClick={() => onPartnerSelect()}>Continue</Button>
+          <Button onClick={() => onPartnerSelect()} className="self-end">Sounds good!</Button>
         </div>
+        <Divider className="mt-3" />
       </>
     </div>
   );
@@ -116,7 +122,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     },
     onSubmit: values => {
       if (values.obligationIds.length === 0) {
-        toast.error("You must add at least one obligation");
+        toast.error("You must add at least one promise");
         obligationsRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -274,8 +280,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                 </div>
               </Button>
               <div className="w-full h-full overflow-auto flex flex-col gap-12">
-                <div className="flex flex-col gap-1" id="title">
-                  <h1 className="text-xl font-bold">Title</h1>
+                <SectionContainer>
+                  <SectionTitleContainer>
+                    <SectionTitle text="Title" />
+                    <SectionTitleExplanation text="Give your contract a name" />
+                  </SectionTitleContainer>
                   <Input
                     maxLength={36}
                     type="text"
@@ -286,16 +295,17 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     required
                     error={formik.errors.title}
                   />
-                </div>
+                </SectionContainer>
 
-                <div className="flex flex-col gap-1" id="promises">
-                  <h1 className="text-xl font-bold">Promises</h1>
-                  <div className="flex flex-col-reverse md:flex-row md:max-h-[26rem] gap-6 md:gap-0.5">
+                <SectionContainer>
+                  <SectionTitleContainer>
+                    <SectionTitle text="Promises" />
+                    <SectionTitleExplanation text="Choose the promises you want to make in this contract" />
+                  </SectionTitleContainer>
+                  <div className="w-full md:max-h-[26rem] flex flex-col-reverse md:flex-row gap-6 md:gap-0.5">
                     <div className="flex flex-col gap-0 w-full">
-                      <div className="mt-1 font-semibold md:font-normal">
-                        Your promises
-                      </div>
-                      <div className="flex flex-col gap-3 justify-start items-start overflow-auto w-full">
+                      <div className="mt-1 font-light">Your promises</div>
+                      <div className="flex flex-col gap-3 justify-start items-start overflow-auto w-full pb-1">
                         {unusedObligations.map(obligation => (
                           <motion.div
                             initial={{ x: "100%" }}
@@ -308,17 +318,23 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                             <ObligationComponent
                               obligation={obligation}
                               onClick={handleAddObligationToContract}
+                              trailingIcon={
+                                <MdOutlineAddCircleOutline
+                                  className="w-6 h-6 fill-primary/70"
+                                  onClick={() =>
+                                    handleAddObligationToContract(obligation)
+                                  }
+                                />
+                              }
                             />
                           </motion.div>
                         ))}
                       </div>
                     </div>
                     <div className="flex flex-col gap-0 w-full">
-                      <div className="mt-1 font-semibold md:font-normal">
-                        In contract
-                      </div>
+                      <div className="mt-1 font-light">In contract</div>
                       <div
-                        className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full"
+                        className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full pb-1"
                         ref={obligationsRef}
                       >
                         {usedObligations.length > 0 ? (
@@ -333,11 +349,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                             >
                               <ObligationComponent
                                 obligation={obligation}
-                                onClick={handleAddObligationToContract}
+                                onClick={handleRemoveObligationFromContract}
                                 key={obligation.obligationId}
                                 trailingIcon={
                                   <MdOutlineCancel
-                                    className="w-6 h-6 fill-red-500"
+                                    className="w-6 h-6 fill-red-500/60"
                                     onClick={() =>
                                       handleRemoveObligationFromContract(
                                         obligation,
@@ -366,10 +382,13 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </SectionContainer>
 
-                <div id="due-date">
-                  <h1 className="text-xl font-bold">Due date</h1>
+                <SectionContainer>
+                  <SectionTitleContainer>
+                    <SectionTitle text="Due date" />
+                    <SectionTitleExplanation text="This is when the contract will expire" />
+                  </SectionTitleContainer>
                   <Input
                     className="w-fit"
                     type="date"
@@ -382,12 +401,12 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                       });
                     }}
                   />
-                </div>
-                <div
-                  className="flex flex-col gap-1 w-full h-fit"
-                  id="signatures"
-                >
-                  <h1 className="font-bold text-xl">Signatures</h1>
+                </SectionContainer>
+                <SectionContainer>
+                  <SectionTitleContainer>
+                    <SectionTitle text="Signatures" />
+                    <SectionTitleExplanation text="Put your pinky where your mouth is" />
+                  </SectionTitleContainer>
                   <div
                     className="flex flex-row gap-4 w-full justify-center items-center"
                     id="contract-signatures"
@@ -420,9 +439,9 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </SectionContainer>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  Create contract
+                  Seal your pinky
                 </Button>
               </div>
             </form>

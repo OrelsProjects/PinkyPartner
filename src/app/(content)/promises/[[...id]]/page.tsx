@@ -35,6 +35,12 @@ import { motion } from "framer-motion";
 import { useContracts } from "../../../../lib/hooks/useContracts";
 import { useAppSelector } from "../../../../lib/hooks/redux";
 import { timesAWeekToText } from "../../../../lib/utils/textUtils";
+import {
+  SectionContainer,
+  SectionTitleContainer,
+  SectionTitle,
+  SectionTitleExplanation,
+} from "../../../../components/ui/section";
 
 interface ObligationProps {
   params: {
@@ -166,39 +172,6 @@ const RepeatText = ({
   </div>
 );
 
-const SectionContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full flex flex-col items-start gap-3 h-fit rounded-lg">
-    {children}
-  </div>
-);
-
-const SectionTitleContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex flex-col gap-0 items-start justify-start">
-    {children}
-  </div>
-);
-
-const SectionTitle = ({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) => (
-  <Label
-    className={cn(
-      "text-right text-base md:text-lg font-normal tracking-wide",
-      className,
-    )}
-  >
-    {text}
-  </Label>
-);
-
-const SectionTitleExplanation = ({ text }: { text: string }) => (
-  <div className="text-xs font-thin">{text}</div>
-);
-
 const PromiseDialog = ({
   obligation,
   onCreate,
@@ -279,7 +252,10 @@ const PromiseDialog = ({
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-5/6 sm:max-w-[525px] sm:h-[525px] bg-card p-6">
+      <DialogContent
+        className="w-5/6 sm:max-w-[525px] sm:h-[525px] bg-card p-6"
+        closeOnOutsideClick={!!obligation}
+      >
         <form
           onSubmit={formik.handleSubmit}
           className="flex flex-col justify-start items-start w-full gap-4"

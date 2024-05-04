@@ -13,7 +13,6 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const now = new Date();
     const { user } = session;
     const isOwner = await prisma.userContract.findFirst({
       where: {
@@ -25,6 +24,9 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { completed } = await req.json();
+    const now: Date | null = completed ? new Date() : null;
+    
     const completedObligation = await prisma.userContractObligation.update({
       where: {
         userContractObligationId: params.contractObligationId,

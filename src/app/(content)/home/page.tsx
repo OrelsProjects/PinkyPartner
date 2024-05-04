@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import { useAppSelector } from "../../../lib/hooks/redux";
-import useNotifications from "../../../lib/hooks/useNotifications";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
