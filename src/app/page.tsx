@@ -44,7 +44,7 @@ const Video = ({ url }: { url: string }) => {
             if (videoRef.current) {
               videoRef.current.play();
             }
-          }, 3000);
+          }, 2000);
           // Stop observing after the element is shown
           observer.disconnect();
         }
