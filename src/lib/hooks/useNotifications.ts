@@ -148,10 +148,10 @@ export default function useNotifications() {
   };
 
   const showNotification = async (notification: NotificationData) => {
-    // const notificationComponent = () => NotificationComponent({ notification });
-    // toast(notificationComponent, {
-    //   autoClose: 3000,
-    // });
+    const notificationComponent = () => NotificationComponent({ notification });
+    toast(notificationComponent, {
+      autoClose: 3000,
+    });
   };
 
   // Using firebase messaging, send a push notification to thhe other user in the contract.

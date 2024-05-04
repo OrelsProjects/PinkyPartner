@@ -111,7 +111,7 @@ const Video = ({ url }: { url: string }) => {
 const CreateObligationVideo = () => (
   <Video
     url={
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FObligation_1.mp4?alt=media&token=5def98dd-2c41-4640-acd8-04204b928297"
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FObligation_1.mp4?alt=media&token=4fe803ce-9db8-4648-ab59-83103b3f9b66"
     }
   />
 );
@@ -119,7 +119,7 @@ const CreateObligationVideo = () => (
 const CreateContractVideo = () => (
   <Video
     url={
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FContract_1.mp4?alt=media&token=c7023ff5-49a2-462c-ab20-2eb63e948960"
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FContract_1.mp4?alt=media&token=0cec9ef7-090e-4448-b83a-bc8fe7fa1232"
     }
   />
 );
@@ -127,7 +127,7 @@ const CreateContractVideo = () => (
 const SignContractVideo = () => (
   <Video
     url={
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FSign%20contract_1.mp4?alt=media&token=46503962-c2bf-48e4-ba0f-7ac818525f42"
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/landing%2FSign%20contract_1.mp4?alt=media&token=12c8960b-a8e9-4a4d-ac97-e6de4b07e484"
     }
   />
 );
