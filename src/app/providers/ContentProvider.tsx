@@ -12,6 +12,7 @@ import { cn } from "../../lib/utils";
 import { useEffect } from "react";
 import * as NProgress from "nprogress";
 import { useTheme } from "next-themes";
+import LiveChatProvider from "./LiveChatProvider";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -54,12 +55,9 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   return (
     <div className="w-screen h-screen flex flex-col relative">
       <div
-        className={cn(
-          "w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative",
-          {
-            "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
-          },
-        )}
+        className={cn("w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative", {
+          "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
+        })}
         style={{
           height: contentHeight,
           maxHeight: contentHeight,
@@ -84,6 +82,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             {children}
           </div>
         </ThemeProvider>
+        <LiveChatProvider />
         {user && (
           <div className="absolute top-0 right-0 p-4 z-20">
             <SettingsComponent />

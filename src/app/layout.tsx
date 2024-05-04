@@ -5,6 +5,8 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 import React from "react";
 import ToastProvider from "./providers/ToastProvider";
+import Script from "next/script";
+import LiveChatProvider from "./providers/LiveChatProvider";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
@@ -61,11 +63,10 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
       <meta property="og:image:width" content="<generated>" />
       <meta property="og:image:height" content="<generated>" />
       <body className="!overscroll-none">
+        <LiveChatProvider />
         <StoreProvider>
           <SessionWrapper>
-            <ThemeProvider>
-              {children}
-            </ThemeProvider>
+            <ThemeProvider>{children}</ThemeProvider>
           </SessionWrapper>
         </StoreProvider>
       </body>
