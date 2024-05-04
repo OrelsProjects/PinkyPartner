@@ -1,7 +1,7 @@
 // contractsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
-import Contract, { ContractWithExtras } from "../../../models/contract";
+import { ContractWithExtras } from "../../../models/contract";
 import { AccountabilityPartner } from "../../../models/appUser";
 
 interface ContractsState {

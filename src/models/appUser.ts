@@ -1,4 +1,4 @@
-import Contract from "./contract";
+import Contract, { ContractWithExtras } from "./contract";
 import Obligation from "./obligation";
 
 export default interface AppUser {
@@ -14,7 +14,7 @@ export interface AppUserMetadata {
 }
 
 export type UserData = {
-  contracts: Contract[];
+  contracts: ContractWithExtras[];
   obligations: Obligation[];
   obligationsToComplete: Obligation[];
 };

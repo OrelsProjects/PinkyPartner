@@ -9,11 +9,10 @@ import Contract, {
 } from "../../../models/contract";
 import { formatObligations } from "../_utils";
 import { Obligation } from "@prisma/client";
-import { createWeeksContractObligations } from "./_utils/contractUtils";
 
 export async function POST(
   req: NextRequest,
-): Promise<NextResponse<{ error: string } | Contract>> {
+): Promise<NextResponse<{ error: string } | ContractWithExtras>> {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
