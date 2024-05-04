@@ -62,6 +62,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     const signedNames = new Set(
       contract.signatures
         .filter(signature => signature.signedAt !== null)
+        .filter(signature => signature.userId !== contract.creatorId)
         .map(signature => signature.displayName),
     );
     return contract.contractees
