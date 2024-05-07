@@ -1,5 +1,4 @@
 // @ts-check
-// import withPWAInit from "@ducanh2912/next-pwa";
 import * as PWA from "@ducanh2912/next-pwa";
 
 /** @type {import('next').NextConfig} */

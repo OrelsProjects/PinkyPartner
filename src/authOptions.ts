@@ -14,8 +14,6 @@ import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
-import { UserContract } from "@prisma/client";
-import { clear } from "console";
 
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
