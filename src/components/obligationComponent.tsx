@@ -1,12 +1,11 @@
 "use client";
 
-import React, { ElementType, useMemo } from "react";
+import React, { ElementType } from "react";
 import Obligation from "../models/obligation";
 import { useObligations } from "../lib/hooks/useObligations";
 import { FiMinusCircle as Minus } from "react-icons/fi";
 import { Button } from "./ui/button";
 
-import CheckboxObligation from "./checkboxObligation";
 import RepeatComponent from "./repeatComponent";
 import { toast } from "react-toastify";
 import { Skeleton } from "./ui/skeleton";
@@ -21,8 +20,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
-import Contract from "../models/contract";
-import UserContractObligation from "../models/userContractObligation";
 
 interface ObligationProps {
   obligation: Obligation;
@@ -35,6 +32,7 @@ interface ObligationProps {
   trailingIcon?: React.ReactNode; // Icon to show at the end of the obligation
   onClick?: (obligation: Obligation) => void;
   onDelete?: (obligation: Obligation) => void;
+  onDeleteBefore?: (obligation: Obligation) => void;
   className?: string;
 }
 
@@ -70,6 +68,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   showFullDay,
   onClick,
   onDelete,
+  onDeleteBefore,
   className,
 }) => {
   const { deleteObligation } = useObligations();
@@ -77,9 +76,15 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   const DeleteIcon: ElementType = deleteIcon ?? Minus;
 
   const handleDelete = () => {
+    onDeleteBefore?.(obligation);
     toast.promise(deleteObligation(obligation), {
       pending: "Deleting...",
-      success: `Deleted ${obligation.title}`,
+      success: {
+        render() {
+          onDelete?.(obligation);
+          return `Deleted ${obligation.title}`;
+        },
+      },
       error: "Something went wrong... Try again?",
     });
   };
@@ -105,9 +110,6 @@ const ObligationComponent: React.FC<ObligationProps> = ({
             <br />
             <span className="font-semibold">{obligation.title}</span>
             <br />
-            <div className="text-sm text-muted-foreground italic mt-4">
-              This action will remove this promise from all of your contracts.
-            </div>
           </DialogDescription>
 
           <div className="w-full flex items-center flex-col gap-0">
@@ -127,11 +129,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
                 onClick={(e: any) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  if (onDelete) {
-                    onDelete(obligation);
-                  } else {
-                    handleDelete();
-                  }
+                  handleDelete();
                 }}
               >
                 Yes, I give up

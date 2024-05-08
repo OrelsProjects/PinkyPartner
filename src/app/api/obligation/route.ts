@@ -20,7 +20,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         userId: session.user.userId,
       },
     });
-    return NextResponse.json({ result: obligation }, { status: 201 });
+    return NextResponse.json({ ...obligation }, { status: 201 });
   } catch (error: any) {
     Logger.error("Error creating obligation", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

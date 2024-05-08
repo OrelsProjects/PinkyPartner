@@ -1,63 +1,42 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useRef } from "react";
+
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "./ui/dialog";
+import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
+import { useFormik } from "formik";
+import { useTheme } from "next-themes";
+import { useState, useEffect, useMemo } from "react";
+import { FaPlus } from "react-icons/fa6";
+import { toast } from "react-toastify";
+import { cn } from "../lib/utils";
 import Obligation, {
   CreateObligation,
   Days,
   TimesAWeek,
-} from "../../../../models/obligation";
-import { useObligations } from "../../../../lib/hooks/useObligations";
-import EmojiPicker, { Theme } from "emoji-picker-react";
-import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
-import { Button } from "../../../../components/ui/button";
-import {
-  DialogFooter,
-  DialogTrigger,
-  Dialog,
-  DialogContent,
-} from "../../../../components/ui/dialog";
-import { Input } from "../../../../components/ui/input";
-import { Label } from "../../../../components/ui/label";
-import { useFormik } from "formik";
-import { toast } from "react-toastify";
-import ObligationComponent, {
-  ObligationComponentLoading,
-} from "../../../../components/obligationComponent";
-import { useRouter } from "next/navigation";
-import IntervalDropdown from "../../../../components/ui/dropdowns/intervalDropdown";
-import { Checkbox } from "../../../../components/ui/checkbox";
-import TimesAWeekDropdown from "../../../../components/ui/dropdowns/timesAWeekDropdown";
-import { useTheme } from "next-themes";
-import { DaysToText } from "../../../../lib/utils/dateUtils";
-import { cn } from "../../../../lib/utils";
-import { motion } from "framer-motion";
-import { useContracts } from "../../../../lib/hooks/useContracts";
-import { useAppSelector } from "../../../../lib/hooks/redux";
-import { timesAWeekToText } from "../../../../lib/utils/textUtils";
+} from "../models/obligation";
+import { Button } from "./ui/button";
+import IntervalDropdown from "./ui/dropdowns/intervalDropdown";
 import {
   SectionContainer,
   SectionTitleContainer,
   SectionTitle,
   SectionTitleExplanation,
-} from "../../../../components/ui/section";
-
-interface ObligationProps {
-  params: {
-    id?: string;
-  };
-}
-
-const isFirstObligationView = (): boolean => {
-  const isFirstObligationCreated = localStorage.getItem(
-    "isFirstObligationCreated",
-  );
-  return isFirstObligationCreated === "true";
-};
-
-const setIsFirstObligationView = () => {
-  localStorage.setItem("isFirstObligationCreated", "true");
-};
+} from "./ui/section";
+import { Input } from "./ui/input";
+import { DaysToText } from "../lib/utils/dateUtils";
+import { timesAWeekToText } from "../lib/utils/textUtils";
+import TimesAWeekDropdown from "./ui/dropdowns/timesAWeekDropdown";
+import { Checkbox } from "./ui/checkbox";
+import { useObligations } from "../lib/hooks/useObligations";
+import { useRouter } from "next/navigation";
 
 const Weekly = ({
   onChange,
@@ -91,16 +70,17 @@ const Weekly = ({
 };
 
 const Daily = ({
+  obligation,
   onChange,
-  days,
   disabled,
-  showRepeatText = true,
 }: {
-  onChange: (days: number[]) => void;
-  days?: number[];
+  obligation?: Obligation | null;
   disabled?: boolean;
+  onChange: (days: number[]) => void;
   showRepeatText?: boolean;
 }) => {
+  const days = obligation?.days;
+
   const formik = useFormik<Record<string, boolean>>({
     initialValues: {
       sunday: days ? days.includes(0) : true,
@@ -113,6 +93,12 @@ const Daily = ({
     },
     onSubmit: _ => {},
   });
+
+  const [firstTimeCheck, setFirstTimeCheck] = useState(true);
+
+  const isFirstTimeCheck = useMemo(() => {
+    return firstTimeCheck && !obligation?.obligationId;
+  }, []);
 
   useEffect(() => {
     const days: number[] = [];
@@ -139,7 +125,19 @@ const Daily = ({
               className="w-7 md:w-8 h-10 md:h-11"
               defaultChecked={formik.values[day]}
               checked={formik.values[day]}
-              onCheckedChange={checked => formik.setFieldValue(day, checked)}
+              onCheckedChange={checked => {
+                if (isFirstTimeCheck) {
+                  // set all to false besides the one that was clicked
+                  setFirstTimeCheck(false);
+                  for (const key in formik.values) {
+                    if (key !== day) {
+                      formik.setFieldValue(key, false);
+                    }
+                  }
+                } else {
+                  formik.setFieldValue(day, checked);
+                }
+              }}
               variant="outline"
               disabled={disabled}
             />
@@ -172,21 +170,25 @@ const RepeatText = ({
   </div>
 );
 
-const PromiseDialog = ({
-  obligation,
-  onCreate,
-  onEdit,
+const CreatePromise = ({
   open,
-  onOpenChange,
-  onCreateNewClick,
+  children,
+  obligation,
+  onOpen,
+  onClose,
+  onObligationCreated,
+  onObligationUpdated,
 }: {
+  open: boolean;
+  children?: React.ReactNode;
   obligation?: Obligation | null;
-  onCreate?: (data: CreateObligation) => Promise<void>;
-  onEdit?: (data: Obligation) => Promise<void>;
-  open?: boolean;
-  onOpenChange?: (state: boolean) => void;
-  onCreateNewClick?: () => void;
+  onOpen: () => void;
+  onClose: () => void;
+  onObligationCreated?: (obligation: Obligation) => void;
+  onObligationUpdated?: (obligation: Obligation) => void;
 }) => {
+  const { createObligation, updateObligation } = useObligations();
+
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { theme } = useTheme();
 
@@ -206,12 +208,38 @@ const PromiseDialog = ({
         return;
       }
       if (obligation) {
-        onEdit?.({ ...obligation, ...values });
+        handleUpdateObligation?.({ ...obligation, ...values });
       } else {
-        onCreate?.(values);
+        handleCreateObligation?.(values);
       }
     },
   });
+
+  const handleCreateObligation = async (data: CreateObligation) => {
+    toast.promise(createObligation(data), {
+      pending: "Creating obligation...",
+      success: {
+        render(response) {
+          onObligationCreated?.(response.data);
+          return "Obligation created!";
+        },
+      },
+      error: "Failed to create obligation",
+    });
+  };
+
+  const handleUpdateObligation = async (data: Obligation) => {
+    toast.promise(updateObligation(data), {
+      pending: "Updating obligation...",
+      success: {
+        render() {
+          onObligationUpdated?.(data);
+          return "Obligation updated!";
+        },
+      },
+      error: "Failed to update obligation",
+    });
+  };
 
   useEffect(() => {
     if (obligation) {
@@ -231,30 +259,35 @@ const PromiseDialog = ({
 
   // Disable edit for now because it requires massive changes in the db
   const disabled = useMemo(() => {
-    return !!obligation;
+    return false;
   }, [obligation]);
 
   return (
     <Dialog
       open={open}
-      onOpenChange={state => {
-        onOpenChange?.(state);
+      onOpenChange={open => {
+        if (!open) {
+          onClose();
+        } else {
+          onOpen();
+        }
       }}
     >
       <DialogTrigger asChild>
         <Button
           variant="ghost"
           className="text-2xl flex justify-center items-center p-2"
-          onClick={_ => {
-            onCreateNewClick?.();
-          }}
         >
-          <FaPlus className="w-5 h-5 fill-muted-foreground" />
+          {children ? (
+            children
+          ) : (
+            <FaPlus className="w-5 h-5 fill-muted-foreground" />
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent
         className="w-5/6 sm:max-w-[525px] sm:h-[525px] bg-card p-6"
-        closeOnOutsideClick={!!obligation}
+        closeOnOutsideClick={false}
       >
         <form
           onSubmit={formik.handleSubmit}
@@ -325,7 +358,7 @@ const PromiseDialog = ({
                 {formik.values.repeat === "Daily" && (
                   <Daily
                     onChange={days => formik.setFieldValue("days", days)}
-                    days={obligation?.days}
+                    obligation={obligation}
                     disabled={disabled}
                   />
                 )}
@@ -353,16 +386,13 @@ const PromiseDialog = ({
           </SectionContainer>
           <DialogFooter className="w-full">
             <div className="w-full flex flex-col justify-end items-end">
-              <Button
-                type="submit"
-                className="px-12 !py-5 rounded-[5px]"
-              >
+              <Button type="submit" className="px-12 !py-5 rounded-[5px]">
                 {obligation ? "I repromise" : "I promise"}
               </Button>
             </div>
           </DialogFooter>
         </form>
-        {open && showEmojiPicker && (
+        {showEmojiPicker && (
           <div className="h-full w-full absolute bottom-0 left-0">
             <div
               className="absolute w-full h-full z-10 bg-black/50 inset-0"
@@ -391,181 +421,4 @@ const PromiseDialog = ({
   );
 };
 
-const NoContractsDialog = () => {
-  const router = useRouter();
-  useEffect(() => {
-    setIsFirstObligationView();
-  }, []);
-  return (
-    <Dialog
-      open={true}
-      onOpenChange={open => {
-        if (!open) {
-          setIsFirstObligationView();
-        }
-      }}
-    >
-      <DialogContent className="w-5/6 sm:max-w-[450px] sm:h-[450px] bg-card p-6">
-        <div className="w-full h-full flex flex-col justify-center items-center gap-3">
-          <h1 className="text-xl font-semibold">
-            Seems like your pinky is ready to meet another pinky.. 😉
-          </h1>
-          <div className="w-full flex justify-center items-center flex-col">
-            <Button
-              onClick={() => {
-                setIsFirstObligationView();
-                router.push("/contracts/new");
-              }}
-              className="bg-primary text-white"
-            >
-              Make it official!
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const ObligationPage: React.FC<ObligationProps> = ({ params }) => {
-  const router = useRouter();
-  const {
-    getUserObligation,
-    createObligation,
-    updateObligation,
-    obligations,
-    loadingData,
-  } = useObligations();
-  const { contracts } = useAppSelector(state => state.contracts);
-  const [obligation, setObligation] = useState<Obligation | undefined | null>(
-    null,
-  );
-  const [showDialog, setShowDialog] = useState<boolean | undefined>();
-
-  useEffect(() => {
-    if (loadingData) return;
-    if (params.id && params.id.length > 0) {
-      const obligationId = params.id[0];
-      if (obligationId !== "new") {
-        setTimeout(() => {
-          const obligation = getUserObligation(params?.id?.[0] ?? "");
-          if (!obligation) router.push("/promises");
-          setObligation(obligation);
-          setShowDialog(true);
-        }, 300); // Hack to let the data load
-      } else {
-        setShowDialog(true);
-      }
-    }
-  }, [params, params.id, loadingData]);
-
-  useEffect(() => {
-    if (obligation) {
-      setShowDialog(true);
-    }
-  }, [obligation]);
-
-  const handleOnOpenChange = (state: boolean) => {
-    if (!state) {
-      router.push("/promises");
-      setObligation(null);
-    }
-    setShowDialog(state);
-  };
-
-  const handleOnCreateNewClick = () => {
-    setObligation(null);
-    router.push("/promises/new");
-  };
-
-  const hideDialog = () => {
-    setShowDialog(false);
-    router.push("/promises");
-  };
-
-  const handleCreateObligation = async (data: CreateObligation) => {
-    toast.promise(createObligation(data), {
-      pending: "Creating obligation...",
-      success: {
-        render() {
-          hideDialog();
-          return "Obligation created!";
-        },
-      },
-      error: "Failed to create obligation",
-    });
-  };
-
-  const handleUpdateObligation = async (data: Obligation) => {
-    toast.promise(updateObligation(data), {
-      pending: "Updating obligation...",
-      success: {
-        render() {
-          hideDialog();
-          return "Obligation updated!";
-        },
-      },
-      error: "Failed to update obligation",
-    });
-  };
-
-  const handleOnObligationClick = (obligation: Obligation) => {
-    // set window state to the obligation id
-    window.history.pushState({}, "", `/promises/${obligation.obligationId}`);
-    setObligation(obligation);
-  };
-
-  // If it's the first time the user is viewing the obligations page
-  const shouldShowCreateContract = useMemo(() => {
-    return (
-      !isFirstObligationView() &&
-      contracts.length === 0 &&
-      obligations.length > 0
-    );
-  }, [contracts]);
-
-  return (
-    <div className="w-full h-full flex flex-col gap-3">
-      <div className="flex flex-row gap-1">
-        <span className="text-lg lg:text-xl text-muted-foreground mt-1">
-          PROMISES {obligations.length > 0 && `(${obligations.length})`}
-        </span>
-        <PromiseDialog
-          onCreate={handleCreateObligation}
-          onEdit={handleUpdateObligation}
-          open={showDialog}
-          onOpenChange={handleOnOpenChange}
-          obligation={obligation}
-          onCreateNewClick={handleOnCreateNewClick}
-        />
-      </div>
-      <div className="flex flex-wrap gap-5 justify-between items-start overflow-auto mt-4 h-fit max-h-full pb-3">
-        {loadingData
-          ? Array.from({ length: obligations.length || 6 }).map((_, index) => (
-              <ObligationComponentLoading
-                key={`obligationComponentLoading - ${index}`}
-              />
-            ))
-          : obligations.map(obligation => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                key={obligation.obligationId}
-                className="w-full pr-2 md:pr-0 md:w-auto"
-              >
-                <ObligationComponent
-                  obligation={obligation}
-                  onClick={handleOnObligationClick}
-                  // showDelete
-                />
-              </motion.div>
-            ))}
-      </div>
-      {shouldShowCreateContract && <NoContractsDialog />}
-    </div>
-  );
-};
-
-export default ObligationPage;
+export default CreatePromise;

@@ -58,19 +58,22 @@ export function useObligations() {
     dispatch(setObligationsAction(obligations));
   };
 
-  const createObligation = async (obligationData: CreateObligation) => {
+  const createObligation = async (
+    obligationData: CreateObligation,
+  ): Promise<Obligation> => {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
     dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
-      const response = await axios.post("/api/obligation", {
+      const response = await axios.post<Obligation>("/api/obligation", {
         ...updatedObligation,
         userId: user?.userId,
       });
-      dispatch(createObligationAction(response.data.result));
+      dispatch(createObligationAction(response.data));
       dispatch(setError(null));
+      return response.data;
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating obligation"));
       throw err;
