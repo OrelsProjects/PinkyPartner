@@ -42,7 +42,7 @@ const createNewUserContract = async (userId: string, contractId: string) => {
       contractId,
     },
   });
-  if (currentUserContracts.length > 1) {
+  if (currentUserContracts.length >= 1) {
     return;
   }
   await prisma.userContract.create({
