@@ -5,13 +5,10 @@
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "window-controls-overlay"
-  ],
+  "display_override": ["standalone", "window-controls-overlay"],
   "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
   "orientation": "portrait",
-  "start_url": "https://www.pinkypartner.com/",
+  "start_url": "https://www.pinkypartner.com/home",
   "dir": "auto",
   "scope": "/",
   "icons": [
