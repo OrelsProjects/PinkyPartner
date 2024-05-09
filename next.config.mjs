@@ -1,5 +1,10 @@
-// @ts-check
-import * as PWA from "@ducanh2912/next-pwa";
+
+import PWA from "next-pwa";
+
+const withPWA = PWA({
+  dest: "public",
+  scope: "/app",
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -18,8 +23,4 @@ const nextConfig = {
   },
 };
 
-const withPWA = PWA.default({
-  dest: "public",
-});
-
-export default withPWA(nextConfig);
+module.exports = withPWA(nextConfig)
