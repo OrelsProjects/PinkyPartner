@@ -8,7 +8,7 @@
   "display_override": "standalone",
   "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
   "orientation": "portrait",
-  "start_url": "/",
+  "start_url": "https://www.pinkypartner.com/",
   "dir": "auto",
   "scope": "/",
 
