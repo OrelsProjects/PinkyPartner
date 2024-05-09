@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { messaging, getUserToken } from "../../../firebase.config";
 
 function isNotificationSupported() {
@@ -49,7 +50,7 @@ export function createNotification(title: string, body: string, image: string) {
   if (!isNotificationSupported()) {
     return;
   }
-  if (isPermissionGranted()) { 
+  if (isPermissionGranted()) {
     new Notification(title, { body, icon: image });
   }
 }
@@ -72,7 +73,7 @@ export async function getToken(): Promise<string | undefined> {
   }
 
   const token = await getUserToken();
-
   console.log(token);
+  await axios.patch("/api/user", { token });
   return token;
 }
