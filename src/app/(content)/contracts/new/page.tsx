@@ -5,7 +5,7 @@ import { Input } from "../../../../components/ui/input";
 import { useFormik } from "formik";
 import { CreateContract } from "../../../../models/contract";
 import { useObligations } from "../../../../lib/hooks/useObligations";
-import Obligation from "../../../../models/obligation";
+import Obligation, { CreateObligation } from "../../../../models/obligation";
 import { AccountabilityPartner } from "../../../../models/appUser";
 import useSearchUser from "../../../../lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
@@ -29,7 +29,6 @@ import {
 } from "../../../../components/ui/section";
 import { FaPlus } from "react-icons/fa";
 import CreatePromise from "../../../../components/createPromise";
-import { MdOutlineCancel } from "react-icons/md";
 import ObligationComponent from "../../../../components/obligationComponent";
 
 interface CreateContractPageProps {}
@@ -109,10 +108,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     useState<AccountabilityPartner | null>(null);
   const [continueWithoutPartner, setContinueWithoutPartner] =
     useState<boolean>(false);
-  const [obligations, setObligations] = useState<Obligation[]>([]);
-  const [obligaitonToEdit, setObligationToEdit] = useState<Obligation | null>(
-    null,
-  );
+  const [obligation, setObligation] = useState<CreateObligation | null>(null);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
@@ -126,11 +122,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       description: null,
       contractees: [],
       signatures: [],
-      obligationIds: [],
+      obligation: null,
     },
     onSubmit: values => {
-      if (values.obligationIds.length === 0) {
-        toast.error("You must add at least one promise");
+      if (!values.obligation) {
+        toast.error("You must add a promise");
         obligationsRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -169,39 +165,28 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     },
   });
 
-  const handleAddObligationToContract = (obligation: Obligation) => {
-    if (obligations.includes(obligation)) return;
-    setObligations([obligation, ...obligations]);
-    const obligationUsedIds = obligations.map(used => used.obligationId);
+  const handleAddObligationToContract = (obligation: CreateObligation) => {
+    setObligation(obligation);
 
     formik.setValues({
       ...formik.values,
-      obligationIds: [obligation.obligationId, ...obligationUsedIds],
+      obligation,
     });
-  };
 
-  const handleUpdateObligationInContract = (obligation: Obligation) => {
-    const updatedObligations = obligations.map(used => {
-      if (used.obligationId === obligation.obligationId) {
-        return obligation;
-      }
-      return used;
-    });
-    setObligations(updatedObligations);
     setShowDialog(false);
   };
 
-  const handleRemoveObligationFromContract = (obligation: Obligation) => {
-    const filteredObligations = obligations.filter(
-      used => used.obligationId !== obligation.obligationId,
-    );
-    setObligations(filteredObligations);
-    const filteredObligationIds = filteredObligations.map(
-      used => used.obligationId,
-    );
+  const handleUpdateObligationInContract = (obligation: CreateObligation) => {
+    setObligation(obligation);
+    setShowDialog(false);
+  };
+
+  const handleRemoveObligationFromContract = (obligation: CreateObligation) => {
+    if (!formik.values.obligation) return;
+    setObligation(null);
     formik.setValues({
       ...formik.values,
-      obligationIds: filteredObligationIds,
+      obligation: null,
     });
     setShowDialog(false);
   };
@@ -276,7 +261,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
           >
             <form
               onSubmit={formik.handleSubmit}
-              className="w-full flex flex-col gap-4 pr-8"
+              className="w-full flex flex-col gap-4"
             >
               <Button
                 variant="ghost"
@@ -308,56 +293,58 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
 
                 <SectionContainer>
                   <SectionTitleContainer>
-                    <SectionTitle text="Promises" />
-                    <SectionTitleExplanation text="Create the promises you want to make in this contract" />
+                    <SectionTitle text="Promise" />
+                    <SectionTitleExplanation text="Create a promise you want to make in this contract" />
                   </SectionTitleContainer>
-                  <div className="w-full md:max-h-[26rem] flex flex-col-reverse md:flex-row gap-6 md:gap-0.5">
-                    <CreatePromise
-                      obligation={obligaitonToEdit}
-                      open={showDialog}
-                      onOpen={() => {
-                        setObligationToEdit(null);
-                        setShowDialog(true);
-                      }}
-                      onClose={() => setShowDialog(false)}
-                      onObligationCreated={handleAddObligationToContract}
-                      onObligationUpdated={handleUpdateObligationInContract}
-                    >
-                      <Button variant="secondary" type="button">
-                        <div className="flex flex-row gap-1 justify-center items-center">
-                          <span>Create promise</span>
-                          <FaPlus className="w-4 h-4" />
-                        </div>
-                      </Button>
-                    </CreatePromise>
+                  <div className="w-full flex flex-col-reverse md:flex-row">
+                    {!obligation && (
+                      <CreatePromise
+                        obligation={obligation}
+                        open={showDialog}
+                        onOpen={() => {
+                          setShowDialog(true);
+                        }}
+                        onClose={() => setShowDialog(false)}
+                        onObligationCreated={handleAddObligationToContract}
+                        onObligationUpdated={handleUpdateObligationInContract}
+                      >
+                        <Button variant="secondary" type="button">
+                          <div className="flex flex-row gap-1 justify-center items-center">
+                            <span>Create a promise</span>
+                            <FaPlus className="w-4 h-4" />
+                          </div>
+                        </Button>
+                      </CreatePromise>
+                    )}
                     <div className="flex flex-col gap-0 w-full">
-                      <div className="mt-1 font-light">In contract</div>
                       <div
                         className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full pb-1"
                         ref={obligationsRef}
                       >
-                        {obligations.length > 0 &&
-                          obligations.map(obligation => (
+                        <AnimatePresence>
+                          {obligation && (
                             <motion.div
-                              initial={{ x: "-100%" }}
-                              animate={{ x: 0 }}
-                              exit={{ x: "100%" }}
-                              transition={{ duration: 0.2 }}
+                              initial={{ x: "-100%", opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              exit={{ x: "-100%", opacity: 0 }}
+                              transition={{ duration: 0.25 }}
                               className="w-full"
-                              key={`used-obligation-${obligation.obligationId}`}
+                              key={`obligation-in-contract`}
                             >
                               <ObligationComponent
-                                obligation={obligation}
+                                obligation={{
+                                  ...obligation,
+                                  obligationId: "1",
+                                }}
                                 onDelete={handleRemoveObligationFromContract}
-                                onClick={obligation => {
-                                  setObligationToEdit(obligation);
+                                onClick={() => {
                                   setShowDialog(true);
                                 }}
-                                key={obligation.obligationId}
                                 showDelete
                               />
                             </motion.div>
-                          ))}
+                          )}
+                        </AnimatePresence>
                       </div>
                     </div>
                   </div>

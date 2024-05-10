@@ -68,82 +68,31 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   showFullDay,
   onClick,
   onDelete,
-  onDeleteBefore,
   className,
 }) => {
-  const { deleteObligation } = useObligations();
 
   const DeleteIcon: ElementType = deleteIcon ?? Minus;
 
-  const handleDelete = () => {
-    onDeleteBefore?.(obligation);
-    toast.promise(deleteObligation(obligation), {
-      pending: "Deleting...",
-      success: {
-        render() {
-          onDelete?.(obligation);
-          return `Deleted ${obligation.title}`;
-        },
-      },
-      error: "Something went wrong... Try again?",
-    });
-  };
-
   const DeleteButton = () =>
     showDelete && (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className="!p-1 self-center"
-            onClick={(e: any) => {
-              e.stopPropagation();
-            }}
-          >
-            <DeleteIcon className="text-red-500 cursor-pointer text-2xl" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="space-y-4">
-          <DialogTitle>Giving up?</DialogTitle>
-          <DialogDescription>
-            {`Are you sure you want to go back on your promise to:`}
-            <br />
-            <span className="font-semibold">{obligation.title}</span>
-            <br />
-          </DialogDescription>
+      <Button
+        variant="ghost"
+        className="!p-1 self-center"
+        type="button"
+        onClick={(e: any) => {
+          e.stopPropagation();
 
-          <div className="w-full flex items-center flex-col gap-0">
-            <DialogClose asChild>
-              <Button
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                }}
-              >
-                I changed my mind
-              </Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button
-                variant="link"
-                className="font-light text-foreground hover:no-underline"
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleDelete();
-                }}
-              >
-                Yes, I give up
-              </Button>
-            </DialogClose>
-          </div>
-        </DialogContent>
-      </Dialog>
+          onDelete?.(obligation);
+        }}
+      >
+        <DeleteIcon className="text-red-500 cursor-pointer text-2xl" />
+      </Button>
     );
 
   return (
     <div
       className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
-      shadow-md hover:cursor-pointer hover:shadow-lg
+      shadow-sm hover:cursor-pointer hover:shadow-md
       `}
       onClick={() => onClick?.(obligation)}
     >

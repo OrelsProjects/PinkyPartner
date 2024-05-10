@@ -1,5 +1,5 @@
 import { AccountabilityPartner } from "./appUser";
-import Obligation from "./obligation";
+import Obligation, { CreateObligation } from "./obligation";
 
 export default interface Contract {
   contractId: string;
@@ -18,8 +18,8 @@ export type ContractWithExtras = Contract & {
 };
 
 export type CreateContract = Omit<
-ContractWithExtras,
+  ContractWithExtras,
   "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
   signatures: string[];
-} & { obligationIds: string[] };
+} & { obligation?: CreateObligation | null };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AccordionContent, AccordionTrigger } from "../ui/accordion";
 import ObligationComponent from "../obligationComponent";
 import UserContractObligation, {
@@ -13,8 +13,18 @@ const AccordionObligations = ({
 }: {
   obligations: UserContractObligationData[];
 }) => {
-  
   const { user } = useAppSelector(state => state.auth);
+  const { contracts } = useAppSelector(state => state.contracts);
+
+  const isPartnerSigned = useMemo(() => {
+    return !!contracts
+      .find(contract =>
+        contract.signatures.some(
+          signature => signature.userId === user?.userId,
+        ),
+      )
+      ?.signatures.find(signature => signature.userId !== user?.userId);
+  }, []);
 
   const partnerObligations = obligations.filter(
     obligation => obligation.userId !== user?.userId,
@@ -33,6 +43,7 @@ const AccordionObligations = ({
               userContractObligation={contractObligation}
               className="!shadow-none bg-card/30 border-[1px] border-foreground/10"
               key={`accordion-obligations-${contractObligation.userContractObligationId}`}
+              isSigned
             />
           ))}
         </div>
@@ -42,6 +53,7 @@ const AccordionObligations = ({
               userContractObligation={contractObligation}
               className="!shadow-none bg-card/30 border-[1px] border-foreground/10"
               key={`accordion-obligations-${contractObligation.userContractObligationId}`}
+              isSigned={isPartnerSigned}
             />
           ))}
         </div>

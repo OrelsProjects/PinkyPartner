@@ -14,6 +14,7 @@ import { useAppSelector } from "../lib/hooks/redux";
 interface ObligationProps {
   userContractObligation: UserContractObligationData;
   ownerImageUrl?: string | null;
+  isSigned?: boolean;
   onClick?: (obligation: UserContractObligationData) => void;
   className?: string;
 }
@@ -41,6 +42,7 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 
 const ContractObligationComponent: React.FC<ObligationProps> = ({
   userContractObligation,
+  isSigned,
   onClick,
   className,
 }) => {
@@ -63,17 +65,27 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
     return userContractObligation?.obligation.repeat.toLowerCase() === "daily";
   }, [userContractObligation]);
 
+  const isBelongToCurrentUser = useMemo(() => {
+    return userContractObligation?.userId === user?.userId;
+  }, [userContractObligation, user]);
+
   const showCompleted = useMemo(() => {
     return !completedAt && userContractObligation?.userId === user?.userId;
   }, [completedAt, userContractObligation, user]);
 
   return (
     <div
-      className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+      className={`rounded-lg relative h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
       shadow-md
       `}
       onClick={() => onClick?.(userContractObligation)}
     >
+      <div
+        className={cn({
+          "absolute w-full h-full inset-y-0 left-0 right-4 rounded-lg z-50 bg-black/60":
+            !isSigned,
+        })}
+      />
       <div className="h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center">
         <div className="flex flex-row gap-3">
           <span className="text-card-foreground">{obligation.emoji}</span>
@@ -118,6 +130,9 @@ const ContractObligationComponent: React.FC<ObligationProps> = ({
             displayName: "",
             userId: "",
           }}
+          className={cn({
+            hidden: isBelongToCurrentUser,
+          })}
         />
 
         <CheckboxObligation

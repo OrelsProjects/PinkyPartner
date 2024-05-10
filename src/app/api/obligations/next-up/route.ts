@@ -46,12 +46,6 @@ export async function GET(
         contractId: {
           in: userContractIds,
         },
-        userId: {
-          not: user.userId,
-        },
-        signedAt: {
-          not: null,
-        },
         contract: {
           dueDate: {
             gte: now,
@@ -97,7 +91,7 @@ export async function GET(
     signedContracts = signedContracts.filter(
       ({ contract }) =>
         contract.userContracts.filter(({ signedAt }) => signedAt != null)
-          .length > 1,
+          .length >= 1,
     );
 
     if (signedContracts.length === 0) {
@@ -121,23 +115,24 @@ export async function GET(
           signedContract.contract.contractObligations.map(
             ({ obligation }) => obligation,
           );
-        userContractObligations = (
-          await createWeeksContractObligations(
-            contractObligations,
-            signedContract.contract,
-            [signedContract.appUser.userId, user.userId],
-          )
+        userContractObligations = await createWeeksContractObligations(
+          contractObligations,
+          signedContract.contract,
+          [signedContract.appUser.userId, user.userId],
         );
       }
 
-      const signedContractUser = signedContract.appUser; // HERE
+      const signedContractUser = signedContract.appUser; 
+      const usersContractObligations = userContractObligations.filter(
+        ({ userId }) => userId === signedContract.userId,
+      );
 
-      for (const userContractObligation of userContractObligations) {
+      for (const userContractObligation of usersContractObligations) {
         const obligation = signedContract.contract.contractObligations.find(
           ({ obligationId }) =>
             obligationId === userContractObligation.obligationId,
         )?.obligation;
-        signedContracts;
+
 
         const appUser = {
           photoURL:
@@ -171,7 +166,7 @@ export async function GET(
     }
 
     const userContractObligations = allUserContractObligations.filter(
-      ({ appUser }) => appUser.userId === user.userId,
+      ({ appUser }) => appUser.userId === user.userId
     );
     const partnerContractObligations = allUserContractObligations.filter(
       ({ appUser }) => appUser.userId !== user.userId,

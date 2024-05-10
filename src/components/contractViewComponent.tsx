@@ -22,11 +22,14 @@ import {
   SectionTitleSecondary,
 } from "@/components/ui/section";
 import Divider from "./ui/divider";
+import { toast } from "react-toastify";
+import { useContracts } from "../lib/hooks/useContracts";
+import { useAppSelector } from "../lib/hooks/redux";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
-  onSign?: (contract: ContractWithExtras) => void;
+  onSign: (contract: ContractWithExtras) => void;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
@@ -135,7 +138,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         <DialogFooter>
           <div className="w-full flex justify-start items-center">
             <DialogClose>
-              <Button onClick={() => onSign?.(contract)}>
+              <Button onClick={() => onSign(contract)}>
                 Put your pinky in!
               </Button>
             </DialogClose>

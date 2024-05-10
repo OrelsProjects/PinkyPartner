@@ -14,6 +14,7 @@ import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
+import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
 
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
@@ -40,17 +41,35 @@ const createNewUserContract = async (userId: string, contractId: string) => {
   const currentUserContracts = await prisma.userContract.findMany({
     where: {
       contractId,
+      userId,
     },
   });
   if (currentUserContracts.length >= 1) {
     return;
   }
-  await prisma.userContract.create({
+  const { contract } = await prisma.userContract.create({
     data: {
       userId,
       contractId,
     },
+    include: {
+      contract: true,
+    },
   });
+  const contractObligations = await prisma.contractObligation.findMany({
+    where: {
+      contractId,
+    },
+    include: {
+      obligation: true,
+    },
+  });
+
+  await createWeeksContractObligations(
+    contractObligations.map(({ obligation }) => obligation),
+    contract,
+    [userId],
+  );
 };
 
 export const authOptions: AuthOptions = {
@@ -224,6 +243,7 @@ export const authOptions: AuthOptions = {
       }
 
       const referralOptions: ReferralOptions = getReferralOptions();
+
       if (referralOptions.contractId) {
         await createNewUserContract(
           session.user.userId,

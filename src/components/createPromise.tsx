@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import {
@@ -35,8 +35,8 @@ import { DaysToText } from "../lib/utils/dateUtils";
 import { timesAWeekToText } from "../lib/utils/textUtils";
 import TimesAWeekDropdown from "./ui/dropdowns/timesAWeekDropdown";
 import { Checkbox } from "./ui/checkbox";
-import { useObligations } from "../lib/hooks/useObligations";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "../lib/hooks/redux";
 
 const Weekly = ({
   onChange,
@@ -44,7 +44,7 @@ const Weekly = ({
   disabled,
 }: {
   onChange: (timesAWeek: TimesAWeek) => void;
-  obligation?: Obligation;
+  obligation?: Obligation | CreateObligation;
   disabled?: boolean;
 }) => {
   const [selected, setSelected] = useState<TimesAWeek>(
@@ -74,7 +74,7 @@ const Daily = ({
   onChange,
   disabled,
 }: {
-  obligation?: Obligation | null;
+  obligation?: Obligation | CreateObligation | null;
   disabled?: boolean;
   onChange: (days: number[]) => void;
   showRepeatText?: boolean;
@@ -94,12 +94,6 @@ const Daily = ({
     onSubmit: _ => {},
   });
 
-  const [firstTimeCheck, setFirstTimeCheck] = useState(true);
-
-  const isFirstTimeCheck = useMemo(() => {
-    return firstTimeCheck && !obligation?.obligationId;
-  }, []);
-
   useEffect(() => {
     const days: number[] = [];
     if (formik.values.sunday) days.push(0);
@@ -113,6 +107,25 @@ const Daily = ({
     onChange(days);
   }, [formik.values]);
 
+  const isFirstTimeCheck = useMemo(() => {
+    return Object.values(formik.values).every(value => value);
+  }, [formik.values]);
+
+  const handleCheck = useCallback(
+    (day: string, checked: boolean) => {
+      if (isFirstTimeCheck) {
+        for (const key in formik.values) {
+          if (key !== day) {
+            formik.setFieldValue(key, false);
+          }
+        }
+      } else {
+        formik.setFieldValue(day, checked);
+      }
+    },
+    [isFirstTimeCheck],
+  );
+
   return (
     <div className="flex flex-col h-fit w-full gap-0.5">
       <div className="flex flex-row justify-between items-start h-fit w-full gap-3">
@@ -125,18 +138,8 @@ const Daily = ({
               className="w-7 md:w-8 h-10 md:h-11"
               defaultChecked={formik.values[day]}
               checked={formik.values[day]}
-              onCheckedChange={checked => {
-                if (isFirstTimeCheck) {
-                  // set all to false besides the one that was clicked
-                  setFirstTimeCheck(false);
-                  for (const key in formik.values) {
-                    if (key !== day) {
-                      formik.setFieldValue(key, false);
-                    }
-                  }
-                } else {
-                  formik.setFieldValue(day, checked);
-                }
+              onCheckedChange={(checked: boolean) => {
+                handleCheck(day, checked);
               }}
               variant="outline"
               disabled={disabled}
@@ -181,19 +184,19 @@ const CreatePromise = ({
 }: {
   open: boolean;
   children?: React.ReactNode;
-  obligation?: Obligation | null;
+  obligation?: CreateObligation | null;
   onOpen: () => void;
   onClose: () => void;
-  onObligationCreated?: (obligation: Obligation) => void;
-  onObligationUpdated?: (obligation: Obligation) => void;
+  onObligationCreated?: (obligation: CreateObligation) => void;
+  onObligationUpdated?: (obligation: CreateObligation) => void;
 }) => {
-  const { createObligation, updateObligation } = useObligations();
-
+  const { user } = useAppSelector(state => state.auth);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { theme } = useTheme();
 
-  const formik = useFormik<Omit<CreateObligation, "userId">>({
+  const formik = useFormik<CreateObligation>({
     initialValues: {
+      userId: user?.userId as string,
       title: obligation ? obligation.title : "",
       description: obligation ? obligation.description : "",
       emoji: obligation ? obligation.emoji : "",
@@ -208,42 +211,17 @@ const CreatePromise = ({
         return;
       }
       if (obligation) {
-        handleUpdateObligation?.({ ...obligation, ...values });
+        onObligationUpdated?.({ ...obligation, ...values });
       } else {
-        handleCreateObligation?.(values);
+        onObligationCreated?.(values);
       }
     },
   });
 
-  const handleCreateObligation = async (data: CreateObligation) => {
-    toast.promise(createObligation(data), {
-      pending: "Creating obligation...",
-      success: {
-        render(response) {
-          onObligationCreated?.(response.data);
-          return "Obligation created!";
-        },
-      },
-      error: "Failed to create obligation",
-    });
-  };
-
-  const handleUpdateObligation = async (data: Obligation) => {
-    toast.promise(updateObligation(data), {
-      pending: "Updating obligation...",
-      success: {
-        render() {
-          onObligationUpdated?.(data);
-          return "Obligation updated!";
-        },
-      },
-      error: "Failed to update obligation",
-    });
-  };
-
   useEffect(() => {
     if (obligation) {
       formik.setValues({
+        userId: user?.userId as string,
         title: obligation.title,
         description: obligation.description,
         emoji: obligation.emoji,
@@ -286,7 +264,7 @@ const CreatePromise = ({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="w-5/6 sm:max-w-[525px] sm:h-[525px] bg-card p-6"
+        className="w-11/12 sm:max-w-[525px] sm:h-[525px] bg-card p-6"
         closeOnOutsideClick={false}
       >
         <form
@@ -337,14 +315,20 @@ const CreatePromise = ({
                 },
               )}
             >
-              <IntervalDropdown
+              <Daily
+                onChange={days => formik.setFieldValue("days", days)}
+                obligation={obligation}
+                disabled={disabled}
+              />
+            </div>
+            {/* <IntervalDropdown
                 onSelect={value => {
                   formik.setFieldValue("repeat", value);
                 }}
                 className="h-10"
                 disabled={disabled}
                 error={formik.errors.repeat}
-              />
+              /> 
               <div className="flex flex-col items-start gap-2 w-fit h-fit rounded-lg">
                 {formik.values.repeat === "Weekly" && (
                   <Weekly
@@ -364,6 +348,7 @@ const CreatePromise = ({
                 )}
               </div>
             </div>
+            */}
           </SectionContainer>
 
           <SectionContainer>

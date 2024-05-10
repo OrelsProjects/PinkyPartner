@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
 import { EventTracker } from "../../../eventTracker";
+import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function Home() {
   const { contractObligations, partnerData } = useAppSelector(
     state => state.obligations,
   );
-  const { obligations, loadingData, loadingPartner } = useObligations();
+  const { obligations, loadingData } = useObligations();
 
   const { contracts } = useContracts();
 
@@ -73,33 +74,12 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 relative">
-      <ContractsAccordion
+    <div className="w-full h-full flex flex-col gap-4 relative mt-11">
+      <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
+        loading={loadingData}
       />
     </div>
   );
 }
-
-/**
- * <div className="w-full h-full flex flex-col gap-4">
-      <div className="w-full h-full sm:h-fit flex flex-row items-start justify-between pr-3 sm:pr-0 mt-16 sm:mt-0">
-        <h1 className="text-xl font-bold">Next up</h1>
-        <Switch
-          checked={showPartner}
-          onCheckedChange={setShowPartner}
-          className="w-10"
-          containerClassName="sm:hidden w-12 flex items-center pt-1.5"
-          textUnder={showPartner ? "Partner" : "You"}
-        />
-      </div>
-      <div className="w-full h-4/10 min-h-[40%] flex-shrink-0 flex flex-row justify-between">
-        <NextUp
-          loading={loadingData}
-          obligationsToComplete={obligationsToComplete}
-        obligationsCompleted={obligationsCompleted}
-      />
-    </div>
-
- */

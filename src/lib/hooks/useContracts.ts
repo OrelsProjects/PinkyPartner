@@ -1,9 +1,6 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Contract, {
-  ContractWithExtras,
-  CreateContract,
-} from "../../models/contract";
+import { ContractWithExtras, CreateContract } from "../../models/contract";
 import { setError } from "../features/auth/authSlice";
 import {
   setContracts as setContractsAction,
@@ -47,6 +44,7 @@ export function useContracts() {
         "/api/contract",
         contractData,
       );
+      await fetchNextUpObligations();
       dispatch(addContractAction(response.data));
       dispatch(setError(null));
       const otherUser = contractData.contractees.find(

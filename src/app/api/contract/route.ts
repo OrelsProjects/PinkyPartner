@@ -9,6 +9,7 @@ import Contract, {
 } from "../../../models/contract";
 import { formatObligations } from "../_utils";
 import { Obligation } from "@prisma/client";
+import { createWeeksContractObligations } from "./_utils/contractUtils";
 
 export async function POST(
   req: NextRequest,
@@ -20,30 +21,32 @@ export async function POST(
 
   try {
     const data = await req.json();
-    const { obligationIds, signatures, contractees, ...contractData } =
+    const { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
+    if (!obligation) {
+      return NextResponse.json(
+        { error: "Obligation is required" },
+        { status: 400 },
+      );
+    }
     const now = new Date();
-
-    const obligations: Obligation[] = await prisma.obligation.findMany({
-      where: {
-        obligationId: {
-          in: obligationIds,
-        },
-      },
-    });
 
     const contractResponse = await prisma.contract.create({
       data: { ...contractData, creatorId: session.user.userId },
     });
 
-    await prisma.contractObligation.createMany({
-      data: obligations.map(obligation => ({
-        obligationId: obligation.obligationId,
-        contractId: contractResponse.contractId,
-      })),
+    const obligationWithId = await prisma.obligation.create({
+      data: {
+        ...obligation,
+      },
     });
 
-    let populatedObligations: Obligation[] = [];
+    await prisma.contractObligation.createMany({
+      data: {
+        obligationId: obligationWithId.obligationId,
+        contractId: contractResponse.contractId,
+      },
+    });
 
     for (const contractee of contractees) {
       await prisma.userContract.create({
@@ -54,8 +57,11 @@ export async function POST(
         },
       });
     }
-
-    const formattedObligations = formatObligations(populatedObligations);
+    await createWeeksContractObligations(
+      [obligationWithId],
+      contractResponse,
+      contractees.map(contractee => contractee.userId),
+    );
 
     const contract: ContractWithExtras = {
       contractId: contractResponse.contractId,
@@ -64,7 +70,7 @@ export async function POST(
       title: contractResponse.title,
       description: contractResponse.description,
       createdAt: contractResponse.createdAt,
-      obligations: formattedObligations,
+      obligations: [obligationWithId],
       signatures: [session.user],
       contractees,
     };
