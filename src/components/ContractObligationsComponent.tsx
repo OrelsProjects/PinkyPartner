@@ -221,7 +221,7 @@ export default function ContractObligationsComponent({
                   }
                 >
                   <h1 className="w-full text-center text-xl text-background font-semibold">
-                    You didn&apos;t commit your pinky on this one!
+                    Sign the contract to start!
                   </h1>
                   <ContractViewComponent
                     contract={contract}

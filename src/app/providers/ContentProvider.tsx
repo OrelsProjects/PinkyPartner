@@ -81,7 +81,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             />
           </div>
           <Button
-            className="absolute top-0 right-0 p-4 z-20 bg-primary text-white"
+            className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
             onClick={() => axios.post("/api/clear")}
           >
             Clear
