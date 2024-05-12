@@ -80,12 +80,12 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
               pauseOnHover={false}
             />
           </div>
-          <Button
+          {/* <Button
             className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
             onClick={() => axios.post("/api/clear")}
           >
             Clear
-          </Button>
+          </Button> */}
           <div className="w-full h-full relative z-10 overflow-auto">
             {children}
           </div>

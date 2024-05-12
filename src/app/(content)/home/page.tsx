@@ -74,7 +74,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 relative mt-11">
+    <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}

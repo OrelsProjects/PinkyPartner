@@ -22,17 +22,25 @@ export type ObligationsInContract = {
 //  * @returns Date object representing the start of the week (Sunday) at 00:00:00.000
 //  */
 export function getStartOfTheWeekDate(sunday: boolean = true): Date {
-  // Set day to 1 if it's Sunday, otherwise set it to 6 days before today
   const now = new Date();
-  const day = now.getDay();
-  let diff = now.getDate() - day + (day === 0 ? -7 : 0);
-  if (!sunday) {
-    diff += 1;
+  const nowDay = now.getDay();
+
+  now.setHours(0, 0, 0, 0);
+  if (sunday && nowDay === 0) {
+    return now;
+  } else {
+    const date = new Date(
+      now.setDate(now.getDate() - nowDay + (sunday ? 0 : 1)),
+    );
+    return date;
   }
+  // let diff = now.getDate() - day + (day === 0 ? -7 : 0);
+  // if (!sunday) {
+  //   diff += 1;
+  // }
   // Set hours to 0, minutes to 0, seconds to 0, milliseconds to 0
-  const date = new Date(now.setDate(diff));
-  date.setHours(0, 0, 0, 0);
-  return date;
+  // const date = new Date(now.setDate(diff));
+  // return date;
 }
 
 // /**

@@ -42,20 +42,21 @@ const ObligationsComponent = ({
 
   // Returns an array of all the indices of days the obligation was completedAt
   const daysObligationsCompleted = useMemo(() => {
-    return obligations.reduce((acc: number[], { obligation, completedAt }) => {
-      if (completedAt) {
-        acc.push(obligation.days[0]);
+    return obligations.reduce((acc: number[], { completedAt, dueDate }) => {
+      if (completedAt && dueDate) {
+        acc.push(new Date(dueDate).getDay());
       }
       return acc;
     }, []);
   }, [obligations]);
+  console.log("daysObligationsCompleted", daysObligationsCompleted);
 
   const handleCompleteObligation = async (
     day: string,
     completed: boolean = true,
   ) => {
-    const dayInObligationIndex = obligations.findIndex(
-      ({ obligation }) => obligation.days[0] === dayNameToNumber(day),
+    const dayInObligationIndex = obligations[0].obligation.days.findIndex(
+      obligationDay => obligationDay === dayNameToNumber(day),
     );
     const obligation = obligations[dayInObligationIndex];
     if (!obligation) return;
@@ -90,6 +91,21 @@ const ObligationsComponent = ({
     };
   }, [obligations, user]);
 
+  const obligationsDays = useMemo(() => {
+    if (obligations.length > 0) {
+      return obligations[0].obligation.days.map(day => daysOfWeek[day]);
+    }
+    return [];
+  }, [obligations]);
+
+  const isObligationCompleted = (
+    userContractObligation: UserContractObligationData,
+  ) => {
+    const dayOfObligation = userContractObligation.dueDate?.getDay();
+    if (dayOfObligation === undefined) return false;
+    return daysObligationsCompleted.includes(dayOfObligation);
+  };
+
   return (
     <div className="flex flex-col h-fit w-full gap-1">
       <UserAvatar {...userDetails} />
@@ -110,10 +126,7 @@ const ObligationsComponent = ({
                   handleCompleteObligation(day, checked);
                 }}
                 variant="outline"
-                disabled={
-                  !daysObligationsCompleted.includes(dayNameToNumber(day)) ||
-                  isPartner
-                }
+                disabled={!obligationsDays.includes(day) || isPartner}
               />
               <div>{day[0].toUpperCase()}</div>
             </div>
@@ -129,6 +142,8 @@ export default function ContractObligationsComponent({
   partnerData,
   loading,
 }: ContractAcccordionProps) {
+  console.log("my data", userData);
+  console.log("partner data", partnerData);
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const { signContract } = useContracts();
