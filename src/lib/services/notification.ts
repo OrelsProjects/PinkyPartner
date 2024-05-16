@@ -66,20 +66,19 @@ export function createNotification(title: string, body: string, image: string) {
  */
 export async function getToken(): Promise<string | undefined> {
   if (!("serviceWorker" in navigator)) {
-    return "";
+    return "service-worker-not-supported";
   }
   if (isNotificationSupported()) {
     const permissionGranted = await requestPermission();
     if (!permissionGranted) {
-      return ""; // TODO: Throw
+      return "permission-denied";
     }
   } else {
     Logger.error("Notifications not supported");
-    return ""; // TODO: Throw
+    return "notifications-not-supported";
   }
 
   const token = await getUserToken();
-  console.log(token);
   await axios.patch("/api/user", { token });
   return token;
 }
