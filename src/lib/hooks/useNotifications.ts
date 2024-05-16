@@ -9,19 +9,21 @@ import { setContracts } from "../features/contracts/contractsSlice";
 import {
   NotificationData,
   setShownContractNotification,
+  setStatus,
 } from "../features/notifications/notificationsSlice";
 import NotificationComponent from "../../components/ui/notificationComponent";
 import { toast } from "react-toastify";
 import UserContractObligation, {
   UserContractObligationData,
 } from "../../models/userContractObligation";
+import { usePathname } from "next/navigation";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
-
-  const { didShowContractNotification } = useAppSelector(
+  const pathname = usePathname();
+  const { didShowContractNotification, status } = useAppSelector(
     state => state.notifications,
   );
   const { user } = useAppSelector(state => state.auth);
@@ -39,6 +41,23 @@ export default function useNotifications() {
   const [newObligations, setNewObligations] = React.useState<
     UserContractObligation[]
   >([]);
+
+  useEffect(() => {
+    let promise: Promise<void> | null = null;
+    switch (pathname) {
+      case "/contracts":
+        promise = markContractsAsViewed();
+        break;
+      case "/home":
+        promise = markObligationsAsViewed();
+        break;
+    }
+    if (promise) {
+      setTimeout(async () => {
+        await promise;
+      }, 3000);
+    }
+  }, [pathname, newContracts, newObligations]);
 
   useEffect(() => {
     if (partnerContractObligations.length > 0) {
@@ -94,7 +113,6 @@ export default function useNotifications() {
   }, [contracts]);
 
   const canShowContractsNotification = () => {
-  
     if (didShowContractNotification) return false;
     const now = Date.now();
     const timeSinceLastNotification =
@@ -112,6 +130,8 @@ export default function useNotifications() {
   const markObligationsAsViewed = async () => {
     try {
       if (newObligations.length === 0) return;
+      if (status === "loading") return;
+      dispatch(setStatus("loading"));
       await axios.post(`/api/obligations/viewed`, {
         obligations: newObligations,
       });
@@ -130,13 +150,18 @@ export default function useNotifications() {
           }),
         );
       }
-    } catch (error) {}
+      dispatch(setStatus("succeeded"));
+    } catch (error) {
+      dispatch(setStatus("failed"));
+    }
   };
 
   const markContractsAsViewed = async () => {
     try {
       if (newContracts.length === 0) return;
-      //   await axios.post(`/api/contracts/viewed`);
+      if (status === "loading") return;
+      dispatch(setStatus("loading"));
+      await axios.post(`/api/contracts/viewed`);
       const updatedContracts = newContracts.map(contract =>
         !contract.viewedAt
           ? { ...contract, viewedAt: new Date().toISOString() }
@@ -144,7 +169,10 @@ export default function useNotifications() {
       );
       setNewContracts([]);
       dispatch(setContracts(updatedContracts));
-    } catch (error) {}
+      dispatch(setStatus("succeeded"));
+    } catch (error) {
+      dispatch(setStatus("failed"));
+    }
   };
 
   const showNotification = async (notification: NotificationData) => {

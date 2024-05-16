@@ -138,7 +138,7 @@ export function useObligations() {
 
   const sendCompletedObligationNotification = async (
     contract: ContractWithExtras,
-    obligation: Obligation,
+    obligation: UserContractObligationData,
   ) => {
     try {
       const otherUser = contract.contractees.find(
@@ -148,7 +148,7 @@ export function useObligations() {
 
       await axios.post("/api/notifications", {
         title: `${otherUser.displayName || "Your partner"} is progressing!`,
-        body: `${obligation.title} completed!`,
+        body: `${obligation.obligation.title} completed!`,
         userId: otherUser.userId,
       });
     } catch (error: any) {
@@ -175,7 +175,7 @@ export function useObligations() {
   };
 
   const completeObligation = async (
-    obligation: UserContractObligation,
+    obligation: UserContractObligationData,
     contractId: string,
     completed: boolean = true,
   ) => {
@@ -200,13 +200,13 @@ export function useObligations() {
         );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
-      // sendCompletedObligationNotification(contract, obligation)
-      //   .then(() => {
-      //     Logger.info("Notification sent");
-      //   })
-      //   .catch(err => {
-      //     Logger.error("Failed to send notification", err);
-      //   });
+      sendCompletedObligationNotification(contract, obligation)
+        .then(() => {
+          Logger.info("Notification sent");
+        })
+        .catch(err => {
+          Logger.error("Failed to send notification", err);
+        });
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;

@@ -16,11 +16,13 @@ type ObligationNotification = {
 };
 
 export interface NotificationsState {
+  status?: "idle" | "loading" | "succeeded" | "failed";
   obligationNotifications: ObligationNotification[];
   didShowContractNotification: boolean;
 }
 
 export const initialState: NotificationsState = {
+  status: "idle",
   obligationNotifications: [],
   didShowContractNotification: false,
 };
@@ -52,10 +54,17 @@ const notificationsSlice = createSlice({
     clearObligationNotifications(state) {
       state.obligationNotifications = [];
     },
+    setStatus(
+      state,
+      action: PayloadAction<"idle" | "loading" | "succeeded" | "failed">,
+    ) {
+      state.status = action.payload;
+    },
   },
 });
 
 export const {
+  setStatus,
   addObligationNotification,
   removeObligationNotification,
   setShownContractNotification,
