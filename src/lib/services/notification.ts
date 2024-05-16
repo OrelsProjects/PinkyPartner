@@ -78,7 +78,12 @@ export async function getToken(): Promise<string | undefined> {
     return "notifications-not-supported";
   }
 
-  const token = await getUserToken();
-  await axios.patch("/api/user", { token });
-  return token;
+  try {
+    const token = await getUserToken();
+    await axios.patch("/api/user", { token });
+    return token;
+  } catch (e: any) {
+    Logger.error("Failed to get token", e);
+    return "failed-to-get-token" + e.message;
+  }
 }
