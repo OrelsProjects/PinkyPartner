@@ -66,6 +66,8 @@ export default function Home() {
   const { obligations, loadingData } = useObligations();
   const { contracts } = useContracts();
 
+  const [token, setToken] = React.useState<string | null>(null);
+
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {
       return <EmptyObligations />;
@@ -77,13 +79,23 @@ export default function Home() {
   }
 
   const getPermission = async () => {
-    await getToken();
+    const token = await getToken();
+    setToken(token || null);
   };
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
       <Button onClick={() => getPermission()}>
         Get Permission for Notifications
+      </Button>
+      <span className="text-red-500">{token}</span>
+      <Button
+        onCanPlay={() => {
+          navigator.clipboard.writeText(token || "");
+          alert("Token copied to clipboard");
+        }}
+      >
+        Copy token
       </Button>
       <ContractObligationsComponent
         userData={contractObligations}
