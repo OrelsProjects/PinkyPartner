@@ -37,12 +37,16 @@ export async function sendPushNotification(
 
 export async function requestPermission(): Promise<boolean> {
   if (!isNotificationSupported()) {
+    alert("Notifications not supported");
     return false;
   }
   if (isPermissionGranted()) {
+    alert("Permission already granted");
     return true;
   } else {
+    alert("Requesting permission");
     const permissionResponse = await Notification.requestPermission();
+    alert(permissionResponse);
     return permissionResponse === "granted";
   }
 }
