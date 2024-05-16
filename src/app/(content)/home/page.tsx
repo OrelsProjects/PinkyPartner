@@ -9,6 +9,7 @@ import { Button } from "../../../components/ui/button";
 import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
+import { requestPermission } from "../../../lib/services/notification";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -60,7 +61,6 @@ export default function Home() {
     state => state.obligations,
   );
   const { obligations, loadingData } = useObligations();
-
   const { contracts } = useContracts();
 
   if (!loadingData) {
@@ -73,8 +73,15 @@ export default function Home() {
     }
   }
 
+  const getPermission = async () => {
+    await requestPermission();
+  };
+
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
+      <Button onClick={() => getPermission()}>
+        Get Permission for Notifications
+      </Button>
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
