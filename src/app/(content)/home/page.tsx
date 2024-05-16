@@ -9,7 +9,10 @@ import { Button } from "../../../components/ui/button";
 import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
-import { requestPermission } from "../../../lib/services/notification";
+import {
+  getToken,
+  requestPermission,
+} from "../../../lib/services/notification";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -74,7 +77,7 @@ export default function Home() {
   }
 
   const getPermission = async () => {
-    await requestPermission();
+    await getToken();
   };
 
   return (
