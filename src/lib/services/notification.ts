@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import { messaging, getUserToken } from "../../../firebase.config";
+import { Logger } from "../../logger";
 
 function isNotificationSupported() {
   return "Notification" in window;
@@ -69,6 +70,7 @@ export async function getToken(): Promise<string | undefined> {
       return ""; // TODO: Throw
     }
   } else {
+    Logger.error("Notifications not supported");
     return ""; // TODO: Throw
   }
 

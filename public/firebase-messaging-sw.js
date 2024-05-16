@@ -1,6 +1,6 @@
-importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
 importScripts(
-  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js",
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js",
 );
 
 const firebaseConfig = {
@@ -22,12 +22,14 @@ messaging.onBackgroundMessage(payload => {
     "[firebase-messaging-sw.js] Received background message ",
     payload,
   );
+  
   const title = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
     icon: "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/favicon.ico?alt=media&token=ee7ccd36-e269-4811-bdbb-048c2db34c54",
     image: payload.notification.image,
-    badge: "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/favicon.ico?alt=media&token=ee7ccd36-e269-4811-bdbb-048c2db34c54",
+    badge:
+      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/favicon.ico?alt=media&token=ee7ccd36-e269-4811-bdbb-048c2db34c54",
   };
   self.registration.showNotification(title, notificationOptions);
 });
