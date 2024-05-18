@@ -85,7 +85,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
-      <Button onClick={() => getPermission()}>
+      {/* <Button onClick={() => getPermission()}>
         Get Permission for Notifications
       </Button>
       <span className="text-red-500">{token}</span>
@@ -96,7 +96,7 @@ export default function Home() {
         }}
       >
         Copy token
-      </Button>
+      </Button> */}
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
