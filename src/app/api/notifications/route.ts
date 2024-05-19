@@ -51,9 +51,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         badge: image || "",
       },
     };
+    
     const imageUrl = process.env.LOGO_URL;
     if (imageUrl && !message.data.image) {
       message.data.image = imageUrl;
+      message.data.icon = imageUrl;
+      message.data.badge = imageUrl;
     }
 
     console.log("Sending notification", message);

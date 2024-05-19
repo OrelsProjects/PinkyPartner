@@ -45,9 +45,9 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
 
     onMessage(messaging, payload => {
       showNotification({
-        title: payload.notification?.title ?? "",
-        body: payload.notification?.body ?? "",
-        image: payload.notification?.image ?? "",
+        title: payload.data?.title ?? "",
+        body: payload.data?.body ?? "",
+        image: payload.data?.image ?? "",
       });
     });
   };
