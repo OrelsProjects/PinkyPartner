@@ -78,11 +78,6 @@ export default function Home() {
     }
   }
 
-  const getPermission = async () => {
-    const token = await getToken();
-    setToken(token || null);
-  };
-
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
       {/* <Button onClick={() => getPermission()}>
