@@ -33,8 +33,17 @@ messaging.onBackgroundMessage(payload => {
   const notificationOptions = {
     body: payload.data.body,
     icon: payload.data.icon,
+    vibrate: [200, 100, 200, 100, 200, 100, 200],
+    tag: "",
     image: payload.data.image,
     badge: payload.data.badge,
   };
   self.registration.showNotification(title, notificationOptions);
+});
+
+self.addEventListener("notificationclick", event => {
+  // Hide the notification
+  event.notification.close();
+
+  clients.openWindow("/home");
 });
