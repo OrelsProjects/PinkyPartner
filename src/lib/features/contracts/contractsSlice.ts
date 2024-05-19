@@ -36,6 +36,16 @@ const contractsSlice = createSlice({
         state.contracts[index] = action.payload;
       }
     },
+    updatedManyContracts(state, action: PayloadAction<ContractWithExtras[]>) {
+      action.payload.forEach(contract => {
+        const index = state.contracts.findIndex(
+          c => c.contractId === contract.contractId,
+        );
+        if (index !== -1) {
+          state.contracts[index] = contract;
+        }
+      });
+    },
     signContract(
       state,
       action: PayloadAction<{
@@ -72,6 +82,7 @@ export const {
   setContracts,
   addContract,
   updateContract,
+  updatedManyContracts,
   signContract,
   deleteContract,
   setLoadingData,

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Contract from "../../../models/contract";
+import Contract, { ContractWithExtras } from "../../../models/contract";
 import Obligation from "../../../models/obligation";
+import { UserContractObligationData } from "../../../models/userContractObligation";
 
 export type NotificationData = {
   title: string;
@@ -19,12 +20,16 @@ export interface NotificationsState {
   status?: "idle" | "loading" | "succeeded" | "failed";
   obligationNotifications: ObligationNotification[];
   didShowContractNotification: boolean;
+  newContracts: ContractWithExtras[];
+  newObligations: UserContractObligationData[];
 }
 
 export const initialState: NotificationsState = {
   status: "idle",
   obligationNotifications: [],
   didShowContractNotification: false,
+  newContracts: [],
+  newObligations: [],
 };
 
 const notificationsSlice = createSlice({
@@ -60,11 +65,22 @@ const notificationsSlice = createSlice({
     ) {
       state.status = action.payload;
     },
+    setNewContracts(state, action: PayloadAction<ContractWithExtras[]>) {
+      state.newContracts = action.payload;
+    },
+    setNewObligations(
+      state,
+      action: PayloadAction<UserContractObligationData[]>,
+    ) {
+      state.newObligations = action.payload;
+    },
   },
 });
 
 export const {
   setStatus,
+  setNewContracts,
+  setNewObligations,
   addObligationNotification,
   removeObligationNotification,
   setShownContractNotification,
