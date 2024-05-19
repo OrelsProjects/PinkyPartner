@@ -22,14 +22,19 @@ messaging.onBackgroundMessage(payload => {
     "[firebase-messaging-sw.js] Received background message ",
     payload,
   );
-  
-  const title = payload.notification.title;
+  // payload structure:
+  /*
+  {
+    token: string;
+    data: Record<string, string>;
+  }
+   */
+  const title = payload.data.title;
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/favicon.ico?alt=media&token=ee7ccd36-e269-4811-bdbb-048c2db34c54",
-    image: payload.notification.image,
-    badge:
-      "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/favicon.ico?alt=media&token=ee7ccd36-e269-4811-bdbb-048c2db34c54",
+    body: payload.data.body,
+    icon: payload.data.icon,
+    image: payload.data.image,
+    badge: payload.data.badge,
   };
   self.registration.showNotification(title, notificationOptions);
 });

@@ -6,6 +6,7 @@ import prisma from "../_db/db";
 import { Contract, Obligation } from "@prisma/client";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
+import { NotificationBody } from "global";
 
 interface SendNotificationBody {
   contract: Contract;
@@ -40,19 +41,22 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         { status: 400 },
       );
     }
-    const message = {
+    const message: NotificationBody = {
       token,
       data: {
         title,
         body: body || "",
         image: image || "",
+        icon: image || "",
+        badge: image || "",
       },
     };
-    const imageUrl = "/favicon-32x32.png";
+    const imageUrl = process.env.LOGO_URL;
     if (imageUrl && !message.data.image) {
       message.data.image = imageUrl;
     }
 
+    console.log("Sending notification", message);
     await messaging.send(message);
 
     return NextResponse.json({}, { status: 201 });
