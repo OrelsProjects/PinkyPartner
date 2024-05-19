@@ -41,14 +41,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       );
     }
     const message = {
-      token: "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+      token,
       data: {
         title,
         body: body || "",
         image: image || "",
       },
     };
-    const imageUrl = process.env.LOGO_URL;
+    const imageUrl = "/favicon-32x32.png";
     if (imageUrl && !message.data.image) {
       message.data.image = imageUrl;
     }
