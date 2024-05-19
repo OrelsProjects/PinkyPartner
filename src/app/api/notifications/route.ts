@@ -41,16 +41,16 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       );
     }
     const message = {
-      notification: {
+      token: "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+      data: {
         title,
-        body,
-        image,
+        body: body || "",
+        image: image || "",
       },
-      token,
     };
     const imageUrl = process.env.LOGO_URL;
-    if (imageUrl && !message.notification.image) {
-      message.notification.image = imageUrl;
+    if (imageUrl && !message.data.image) {
+      message.data.image = imageUrl;
     }
 
     await messaging.send(message);
