@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { useContracts } from "../../../lib/hooks/useContracts";
@@ -8,8 +8,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
-import { getToken } from "../../../lib/services/notification";
-import useNotifications from "../../../lib/hooks/useNotifications";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -62,17 +60,6 @@ export default function Home() {
   );
   const { obligations, loadingData } = useObligations();
   const { contracts } = useContracts();
-  const { getPermission } = useNotifications();
-
-  const [token, setToken] = React.useState<string | null>(null);
-
-  useEffect(() => {
-    const x = async () => {
-      const t = await getToken();
-      setToken(t || null);
-    };
-    x();
-  }, []);
 
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {

@@ -1,3 +1,4 @@
+
 export const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -61,3 +62,9 @@ export function DaysToText(days?: number[]): string {
   }
   return days.map(day => dayNumberToName(day).slice(0, 2)).join(", ");
 }
+
+export const isDateSameDay = (day: string, date: Date) => {
+  const dayNumber = dayNameToNumber(day);
+  const dayUTC = date.getUTCDay();
+  return dayUTC === dayNumber;
+};

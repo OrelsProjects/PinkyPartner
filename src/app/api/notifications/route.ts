@@ -71,7 +71,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       },
     };
 
-    await messaging.send(message);
+    // await messaging.send(message);
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {

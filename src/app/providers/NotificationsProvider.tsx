@@ -111,7 +111,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
             signature => signature.userId === user?.userId,
           ) && contract.viewedAt,
       );
-      debugger;
+
       dispatch(setNewContracts(newContracts));
       setTimeout(() => {
         if (newContracts.length > 0 && canShowContractsNotification()) {

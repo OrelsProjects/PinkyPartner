@@ -3,7 +3,11 @@ import { UserContractObligationData } from "../models/userContractObligation";
 import Contract, { ContractWithExtras } from "../models/contract";
 import { useAppSelector } from "../lib/hooks/redux";
 import { Checkbox } from "./ui/checkbox";
-import { dayNameToNumber, daysOfWeek } from "../lib/utils/dateUtils";
+import {
+  dayNameToNumber,
+  daysOfWeek,
+  isDateSameDay,
+} from "../lib/utils/dateUtils";
 import { useObligations } from "../lib/hooks/useObligations";
 import { toast } from "react-toastify";
 import { UserAvatar } from "./ui/avatar";
@@ -42,14 +46,13 @@ const ObligationsComponent = ({
 
   // Returns an array of all the indices of days the obligation was completedAt
   const daysObligationsCompleted = useMemo(() => {
-    return obligations.reduce((acc: number[], { completedAt, dueDate }) => {
+    return obligations.reduce((acc: Date[], { completedAt, dueDate }) => {
       if (completedAt && dueDate) {
-        acc.push(new Date(dueDate).getDay());
+        acc.push(new Date(dueDate));
       }
       return acc;
     }, []);
   }, [obligations]);
-  console.log("daysObligationsCompleted", daysObligationsCompleted);
 
   const handleCompleteObligation = async (
     day: string,
@@ -98,14 +101,6 @@ const ObligationsComponent = ({
     return [];
   }, [obligations]);
 
-  const isObligationCompleted = (
-    userContractObligation: UserContractObligationData,
-  ) => {
-    const dayOfObligation = userContractObligation.dueDate?.getDay();
-    if (dayOfObligation === undefined) return false;
-    return daysObligationsCompleted.includes(dayOfObligation);
-  };
-
   return (
     <div className="flex flex-col h-fit w-full gap-1">
       <UserAvatar {...userDetails} />
@@ -119,8 +114,8 @@ const ObligationsComponent = ({
             >
               <Checkbox
                 className="w-7 md:w-8 h-7 md:h-8 rounded-full data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-background"
-                checked={daysObligationsCompleted.includes(
-                  dayNameToNumber(day),
+                checked={daysObligationsCompleted.some(date =>
+                  isDateSameDay(day, date),
                 )}
                 onCheckedChange={(checked: boolean) => {
                   handleCompleteObligation(day, checked);
@@ -142,8 +137,6 @@ export default function ContractObligationsComponent({
   partnerData,
   loading,
 }: ContractAcccordionProps) {
-  console.log("my data", userData);
-  console.log("partner data", partnerData);
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const { signContract } = useContracts();
