@@ -18,7 +18,7 @@ firebase.initializeApp(firebaseConfig);
 
 class CustomPushEvent extends Event {
   constructor(data) {
-    super('push');
+    super("push");
 
     Object.assign(this, data);
     this.custom = true;
@@ -29,7 +29,7 @@ class CustomPushEvent extends Event {
  * Overrides push notification data, to avoid having 'notification' key and firebase blocking
  * the message handler from being called
  */
-self.addEventListener('push', (e) => {
+self.addEventListener("push", e => {
   // Skip if event is our own custom event
   if (e.custom) return;
 
@@ -63,21 +63,22 @@ self.addEventListener('push', (e) => {
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
+messaging.onBackgroundMessage(payload => {
   // console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
   const { title, body, icon, ...restPayload } = payload.data;
 
   const notificationOptions = {
     body,
-    icon: icon || '/icons/firebase-logo.png', // path to your "fallback" firebase notification logo
+    icon: icon || "/icons/firebase-logo.png", // path to your "fallback" firebase notification logo
+    badge: "favicon-32x32.png",
     data: restPayload,
   };
 
   return self.registration.showNotification(title, notificationOptions);
 });
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", event => {
   // console.log('[firebase-messaging-sw.js] notificationclick ', event);
 
   // click_action described at https://github.com/BrunoS3D/firebase-messaging-sw.js#click-action
@@ -86,7 +87,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     self.clients.openWindow(event.currentTarget.origin);
   }
-  
+
   // close notification after click
   event.notification.close();
 });
