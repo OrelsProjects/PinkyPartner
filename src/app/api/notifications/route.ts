@@ -45,22 +45,23 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       data: {
         title,
         body: body || "",
-        image: image || "",
-        icon: image || "",
-        badge: image || "",
+        image: process.env.LOGO_URL || "",
+        icon: process.env.LOGO_URL || "",
+        badge: process.env.LOGO_URL || "",
       },
-      notification: {
-        title,
-        body: body || "",
-        image: image || "",
+      webpush: {
+        fcmOptions: {
+          link: "https://www.pinkypartner.com/home",
+        },
       },
       android: {
-        priority: "high",
+        collapseKey: "complete-promise",
       },
       apns: {
         payload: {
           aps: {
             contentAvailable: true,
+            category: "complete-promise",
           },
         },
         headers: {
@@ -70,44 +71,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       },
     };
 
-    const imageUrl = process.env.LOGO_URL;
-    if (imageUrl && !message.data.image) {
-      message.data.image = imageUrl;
-      message.data.icon = imageUrl;
-      message.data.badge = imageUrl;
-      message.notification.image = imageUrl;
-    }
-
-    console.log("Sending notification", message);
-    await messaging.send({
-      token,
-      data: {
-        title,
-        body: body || "",
-        image: process.env.LOGO_URL || "",
-        icon: process.env.LOGO_URL || "",
-        badge: process.env.LOGO_URL || "",
-      },
-      webpush: {
-        fcmOptions: {
-          link: "https://www.pinkypartner.com",
-        },
-      },
-      android: {
-        priority: "high",
-      },
-      apns: {
-        payload: {
-          aps: {
-            contentAvailable: true,
-          },
-        },
-        headers: {
-          "apns-push-type": "background",
-          "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
-        },
-      },
-    });
+    await messaging.send(message);
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
