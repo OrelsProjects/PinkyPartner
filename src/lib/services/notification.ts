@@ -41,7 +41,6 @@ export async function requestPermission(): Promise<boolean> {
     return false;
   }
   if (isPermissionGranted()) {
-    debugger;
     alert("Permission already granted");
     return true;
   } else {

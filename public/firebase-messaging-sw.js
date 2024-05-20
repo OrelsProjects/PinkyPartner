@@ -33,11 +33,4 @@ messaging.onBackgroundMessage(payload => {
     badge: payload.data.badge,
   };
   self.registration.showNotification("LOLOL", notificationOptions);
-  // const notificationTitle = "Background Message Title";
-  // const notificationOptions = {
-  //   body: "Background Message body.",
-  //   icon: "/favicon-32x32.png",
-  // };
-
-  // self.registration.showNotification(notificationTitle, notificationOptions);
 });

@@ -86,7 +86,6 @@ export default function useNotifications() {
       return;
     }
     if (Notification.permission === "granted") {
-      debugger;
       alert("Permission already granted");
       return;
     }

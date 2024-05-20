@@ -92,9 +92,10 @@ export default function Home() {
     try {
       await requestPermission();
       const token = await getToken();
-      setToken(token || "");
-    } catch (error) {
+      setToken(token || "No token?");
+    } catch (error: any) {
       console.error("Error requesting permission", error);
+      alert("Error requesting permission: " + error.message);
     }
   };
   return (
