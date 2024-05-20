@@ -16,61 +16,77 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Initialize Firebase Messaging
-const messaging = firebase.messaging();
+class CustomPushEvent extends Event {
+  constructor(data) {
+    super('push');
 
-// Handle background messages
-messaging.onBackgroundMessage(payload => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload,
-  );
+    Object.assign(this, data);
+    this.custom = true;
+  }
+}
 
-  // Define the notification options
-  // const notificationOptions = {
-  //   body: "No body",
-  //   icon: payload.data.icon || '/default-icon.png',
-  //   vibrate: [200, 100, 200, 100, 200, 100, 200],
-  //   tag: payload.data.tag || '',
-  //   image: payload.data.image || '',
-  //   badge: payload.data.badge || ''
-  // };
-
-  // // Show notification
-  // self.registration.showNotification(payload.data.title || "Notification", notificationOptions);
-  const notificationTitle = "Background Message Title";
-  const notificationOptions = {
-    body: "Background Message body.",
-    icon: "/favicon-32x32.png",
-  };
-  addEventListener("notificationclick", (event) => {
-    event.notification.close();
-    event.waitUntil(clients.openWindow("https://www.pinkypartner.com/"));
-  });
-  self.registration.showNotification(notificationTitle, notificationOptions);
-
-});
-
-self.addEventListener('push', function (e) {
+/*
+ * Overrides push notification data, to avoid having 'notification' key and firebase blocking
+ * the message handler from being called
+ */
+self.addEventListener('push', (e) => {
   // Skip if event is our own custom event
   if (e.custom) return;
 
-  // Create a new event to dispatch
-  var newEvent = new Event('push');
-  newEvent.waitUntil = e.waitUntil.bind(e);
-  newEvent.data = {
-     json: function() {
-         var newData = e.data.json();
-         newData._notification = newData.notification;
-         delete newData.notification;
-         return newData;
-     },
-  };     
-  newEvent.custom = true;          
+  // Kep old event data to override
+  const oldData = e.data;
+
+  // Create a new event to dispatch, pull values from notification key and put it in data key,
+  // and then remove notification key
+  const newEvent = new CustomPushEvent({
+    data: {
+      ehheh: oldData.json(),
+      json() {
+        const newData = oldData.json();
+        newData.data = {
+          ...newData.data,
+          ...newData.notification,
+        };
+        delete newData.notification;
+        return newData;
+      },
+    },
+    waitUntil: e.waitUntil.bind(e),
+  });
 
   // Stop event propagation
   e.stopImmediatePropagation();
 
   // Dispatch the new wrapped event
   dispatchEvent(newEvent);
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  // console.log('[firebase-messaging-sw.js] Received background message ', payload);
+
+  const { title, body, icon, ...restPayload } = payload.data;
+
+  const notificationOptions = {
+    body,
+    icon: icon || '/icons/firebase-logo.png', // path to your "fallback" firebase notification logo
+    data: restPayload,
+  };
+
+  return self.registration.showNotification(title, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  // console.log('[firebase-messaging-sw.js] notificationclick ', event);
+
+  // click_action described at https://github.com/BrunoS3D/firebase-messaging-sw.js#click-action
+  if (event.notification.data && event.notification.data.click_action) {
+    self.clients.openWindow(event.notification.data.click_action);
+  } else {
+    self.clients.openWindow(event.currentTarget.origin);
+  }
+  
+  // close notification after click
+  event.notification.close();
 });
