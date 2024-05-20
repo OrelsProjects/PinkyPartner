@@ -41,7 +41,7 @@ messaging.onBackgroundMessage(payload => {
   const notificationTitle = "Background Message Title";
   const notificationOptions = {
     body: "Background Message body.",
-    icon: "/firebase-logo.png",
+    icon: "/favicon-32x32.png",
   };
   addEventListener("notificationclick", (event) => {
     event.notification.close();
