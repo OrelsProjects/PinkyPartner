@@ -40,7 +40,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         { status: 400 },
       );
     }
-    const t = `d90Wy7kx00-uhryN6yxgjc:APA91bFsdy_Vjxx2SjW0HWXHpKwFyBeLzHFzoqwobS3F-2h9FIbWUnGsJKrcTBGH0BgOMUu1Cc4GbPv9I2fv-uNmT5Y9mSckApYdW8Qc_lx-AX_VOIYW38zGB-4_HVDMpxHKaidrNky_`;
     const message = {
       token,
       data: {
@@ -81,7 +80,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     console.log("Sending notification", message);
     await messaging.send({
-      token: t,
+      token,
       data: {
         title,
         body: body || "",
@@ -112,7 +111,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-     Logger.error("Error sending notification", error);
+    Logger.error("Error sending notification", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

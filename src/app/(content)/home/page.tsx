@@ -6,13 +6,9 @@ import { useAppSelector } from "../../../lib/hooks/redux";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
-import ContractsAccordion from "../../../components/contractAccordion/contractsAccordion";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
-import {
-  getToken,
-  requestPermission,
-} from "../../../lib/services/notification";
+import { getToken } from "../../../lib/services/notification";
 import useNotifications from "../../../lib/hooks/useNotifications";
 
 const EmptyContracts = () => {
@@ -88,30 +84,8 @@ export default function Home() {
     }
   }
 
-  const handleGetPermission = async () => {
-    try {
-      // await requestPermission();
-      const token = await getToken();
-      setToken(token || "No token?");
-    } catch (error: any) {
-      console.error("Error requesting permission", error);
-      alert("Error requesting permission: " + error.message);
-    }
-  };
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
-      <Button onClick={handleGetPermission}>
-        Get Permission for Notifications
-      </Button>
-      <span className="text-red-500">{token}</span>
-      <Button
-        onCanPlay={() => {
-          navigator.clipboard.writeText(token || "");
-          alert("Token copied to clipboard");
-        }}
-      >
-        Copy token
-      </Button>
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
