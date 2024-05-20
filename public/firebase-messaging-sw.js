@@ -23,28 +23,21 @@ messaging.onBackgroundMessage(payload => {
     payload,
   );
 
-  // const title = payload.data.title;
-  // const notificationOptions = {
-  //   body: payload.data.body,
-  //   icon: payload.data.icon,
-  //   vibrate: [200, 100, 200, 100, 200, 100, 200],
-  //   tag: "",
-  //   image: payload.data.image,
-  //   badge: payload.data.badge,
-  // };
-  // self.registration.showNotification("LOLOL", notificationOptions);
-  const notificationTitle = "Background Message Title";
+  const title = payload.data.title;
   const notificationOptions = {
-    body: "Background Message body.",
-    icon: "/favicon-32x32.png",
+    body: payload.data.body,
+    icon: payload.data.icon,
+    vibrate: [200, 100, 200, 100, 200, 100, 200],
+    tag: "",
+    image: payload.data.image,
+    badge: payload.data.badge,
   };
+  self.registration.showNotification("LOLOL", notificationOptions);
+  // const notificationTitle = "Background Message Title";
+  // const notificationOptions = {
+  //   body: "Background Message body.",
+  //   icon: "/favicon-32x32.png",
+  // };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
-
-self.addEventListener("notificationclick", event => {
-  // Hide the notification
-  event.notification.close();
-
-  clients.openWindow("/home");
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 });
