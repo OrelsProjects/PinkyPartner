@@ -22,13 +22,7 @@ messaging.onBackgroundMessage(payload => {
     "[firebase-messaging-sw.js] Received background message ",
     payload,
   );
-  // payload structure:
-  /*
-  {
-    token: string;
-    data: Record<string, string>;
-  }
-   */
+
   const title = payload.data.title;
   const notificationOptions = {
     body: payload.data.body,
@@ -38,7 +32,7 @@ messaging.onBackgroundMessage(payload => {
     image: payload.data.image,
     badge: payload.data.badge,
   };
-  self.registration.showNotification(title, notificationOptions);
+  // self.registration.showNotification(title, notificationOptions);
 });
 
 self.addEventListener("notificationclick", event => {
@@ -46,35 +40,4 @@ self.addEventListener("notificationclick", event => {
   event.notification.close();
 
   clients.openWindow("/home");
-});
-
-self.addEventListener("push", e => {
-  // Skip if event is our own custom event
-  if (e.custom) return;
-
-  // Kep old event data to override
-  const oldData = e.data;
-
-  // Create a new event to dispatch, pull values from notification key and put it in data key,
-  // and then remove notification key
-  const newEvent = new CustomPushEvent({
-    data: {
-      json() {
-        const newData = oldData.json();
-        newData.data = {
-          ...newData.data,
-          ...newData.notification,
-        };
-        delete newData.notification;
-        return newData;
-      },
-    },
-    waitUntil: e.waitUntil.bind(e),
-  });
-
-  // Stop event propagation
-  e.stopImmediatePropagation();
-
-  // Dispatch the new wrapped event
-  dispatchEvent(newEvent);
 });
