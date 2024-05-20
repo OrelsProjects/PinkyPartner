@@ -90,7 +90,7 @@ export default function Home() {
 
   const handleGetPermission = async () => {
     try {
-      await requestPermission();
+      // await requestPermission();
       const token = await getToken();
       setToken(token || "No token?");
     } catch (error: any) {

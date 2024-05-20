@@ -68,20 +68,20 @@ export async function getToken(): Promise<string | undefined> {
   if (!("serviceWorker" in navigator)) {
     return "service-worker-not-supported";
   }
-  if (isNotificationSupported()) {
-    const permissionGranted = await requestPermission();
-    if (!permissionGranted) {
-      return "permission-denied";
-    }
-  } else {
-    Logger.error("Notifications not supported");
-    return "notifications-not-supported";
-  }
+  // if (isNotificationSupported()) {
+  //   const permissionGranted = await requestPermission();
+  //   if (!permissionGranted) {
+  //     return "permission-denied";
+  //   }
+  // } else {
+  //   Logger.error("Notifications not supported");
+  //   return "notifications-not-supported";
+  // }
 
   try {
     const token = await getUserToken();
     await axios.patch("/api/user", { token });
-    return token;
+    return token || "no-token";
   } catch (e: any) {
     Logger.error("Failed to get token", e);
     return "failed-to-get-token" + e.message;
