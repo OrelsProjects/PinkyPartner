@@ -6,7 +6,6 @@ import prisma from "../_db/db";
 import { Contract, Obligation } from "@prisma/client";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
-import { NotificationBody } from "global";
 
 interface SendNotificationBody {
   contract: Contract;
@@ -41,7 +40,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         { status: 400 },
       );
     }
-    const message: NotificationBody = {
+    const t = `d90Wy7kx00-uhryN6yxgjc:APA91bFsdy_Vjxx2SjW0HWXHpKwFyBeLzHFzoqwobS3F-2h9FIbWUnGsJKrcTBGH0BgOMUu1Cc4GbPv9I2fv-uNmT5Y9mSckApYdW8Qc_lx-AX_VOIYW38zGB-4_HVDMpxHKaidrNky_`;
+    const message = {
       token,
       data: {
         title,
@@ -50,21 +50,69 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         icon: image || "",
         badge: image || "",
       },
+      notification: {
+        title,
+        body: body || "",
+        image: image || "",
+      },
+      android: {
+        priority: "high",
+      },
+      apns: {
+        payload: {
+          aps: {
+            contentAvailable: true,
+          },
+        },
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
+        },
+      },
     };
-    
+
     const imageUrl = process.env.LOGO_URL;
     if (imageUrl && !message.data.image) {
       message.data.image = imageUrl;
       message.data.icon = imageUrl;
       message.data.badge = imageUrl;
+      message.notification.image = imageUrl;
     }
 
     console.log("Sending notification", message);
-    await messaging.send(message);
+    await messaging.send({
+      token: t,
+      data: {
+        title,
+        body: body || "",
+        image: process.env.LOGO_URL || "",
+        icon: process.env.LOGO_URL || "",
+        badge: process.env.LOGO_URL || "",
+      },
+      webpush: {
+        fcmOptions: {
+          link: "https://www.pinkypartner.com",
+        },
+      },
+      android: {
+        priority: "high",
+      },
+      apns: {
+        payload: {
+          aps: {
+            contentAvailable: true,
+          },
+        },
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
+        },
+      },
+    });
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error sending notification", error);
+     Logger.error("Error sending notification", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
