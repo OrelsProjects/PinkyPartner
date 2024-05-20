@@ -43,6 +43,34 @@ messaging.onBackgroundMessage(payload => {
     body: "Background Message body.",
     icon: "/firebase-logo.png",
   };
-
+  addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    event.waitUntil(clients.openWindow("https://www.pinkypartner.com/"));
+  });
   self.registration.showNotification(notificationTitle, notificationOptions);
+
+});
+
+self.addEventListener('push', function (e) {
+  // Skip if event is our own custom event
+  if (e.custom) return;
+
+  // Create a new event to dispatch
+  var newEvent = new Event('push');
+  newEvent.waitUntil = e.waitUntil.bind(e);
+  newEvent.data = {
+     json: function() {
+         var newData = e.data.json();
+         newData._notification = newData.notification;
+         delete newData.notification;
+         return newData;
+     },
+  };     
+  newEvent.custom = true;          
+
+  // Stop event propagation
+  e.stopImmediatePropagation();
+
+  // Dispatch the new wrapped event
+  dispatchEvent(newEvent);
 });
