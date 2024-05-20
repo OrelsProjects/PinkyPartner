@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { useContracts } from "../../../lib/hooks/useContracts";
@@ -68,6 +68,13 @@ export default function Home() {
 
   const [token, setToken] = React.useState<string | null>(null);
 
+  useEffect(() => {
+    const x = async () => {
+      const t = await getToken();
+      setToken(t || null);
+    };
+    x();
+  }, []);
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {
       return <EmptyObligations />;
@@ -82,7 +89,7 @@ export default function Home() {
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
       {/* <Button onClick={() => getPermission()}>
         Get Permission for Notifications
-      </Button>
+      </Button> */}
       <span className="text-red-500">{token}</span>
       <Button
         onCanPlay={() => {
@@ -91,7 +98,7 @@ export default function Home() {
         }}
       >
         Copy token
-      </Button> */}
+      </Button>
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
