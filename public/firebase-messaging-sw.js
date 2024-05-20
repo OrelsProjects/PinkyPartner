@@ -23,7 +23,7 @@ messaging.onBackgroundMessage((payload) => {
 
   // Define the notification options
   const notificationOptions = {
-    body: payload.data.body || "No body",
+    body: "No body",
     icon: payload.data.icon || '/default-icon.png',
     vibrate: [200, 100, 200, 100, 200, 100, 200],
     tag: payload.data.tag || '',
