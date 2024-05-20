@@ -80,9 +80,24 @@ export default function useNotifications() {
     });
   };
 
+  const getPermission = async () => {
+    if (!("serviceWorker" in navigator)) {
+      alert("Service worker not supported");
+      return;
+    }
+    if (Notification.permission === "granted") {
+      debugger;
+      alert("Permission already granted");
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    alert(permission);
+  };
+
   return {
     newContracts,
     newObligations,
+    getPermission,
     markObligationsAsViewed,
     markContractsAsViewed,
     showNotification,

@@ -13,6 +13,7 @@ import {
   getToken,
   requestPermission,
 } from "../../../lib/services/notification";
+import useNotifications from "../../../lib/hooks/useNotifications";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -65,6 +66,7 @@ export default function Home() {
   );
   const { obligations, loadingData } = useObligations();
   const { contracts } = useContracts();
+  const { getPermission } = useNotifications();
 
   const [token, setToken] = React.useState<string | null>(null);
 
@@ -75,6 +77,7 @@ export default function Home() {
     };
     x();
   }, []);
+
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {
       return <EmptyObligations />;
@@ -85,11 +88,20 @@ export default function Home() {
     }
   }
 
+  const handleGetPermission = async () => {
+    try {
+      await requestPermission();
+      const token = await getToken();
+      setToken(token || "");
+    } catch (error) {
+      console.error("Error requesting permission", error);
+    }
+  };
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
-      {/* <Button onClick={() => getPermission()}>
+      <Button onClick={handleGetPermission}>
         Get Permission for Notifications
-      </Button> */}
+      </Button>
       <span className="text-red-500">{token}</span>
       <Button
         onCanPlay={() => {
