@@ -32,7 +32,7 @@ messaging.onBackgroundMessage(payload => {
     image: payload.data.image,
     badge: payload.data.badge,
   };
-  // self.registration.showNotification(title, notificationOptions);
+  self.registration.showNotification("LOLOL", notificationOptions);
 });
 
 self.addEventListener("notificationclick", event => {
