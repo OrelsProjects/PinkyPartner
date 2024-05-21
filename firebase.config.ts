@@ -30,8 +30,9 @@ const getUserToken = async () => {
       vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     });
     return token;
-  } catch (error) {
+  } catch (error: any) {
     console.error("An error occurred while retrieving token. ", error);
+    return "an error: " + error.message;
   }
 };
 

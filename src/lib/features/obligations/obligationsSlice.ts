@@ -65,7 +65,28 @@ const obligationsSlice = createSlice({
     ) {
       state.partnerData = action.payload;
     },
-
+    setViewedAt(
+      state,
+      action: PayloadAction<{
+        userContractObligationId: string;
+        viewedAt: Date;
+      }>,
+    ) {
+      state.contractObligations = state.contractObligations.map(
+        (obligation: UserContractObligationData) => {
+          if (
+            obligation.userContractObligationId ===
+            action.payload.userContractObligationId
+          ) {
+            return {
+              ...obligation,
+              viewedAt: action.payload.viewedAt,
+            };
+          }
+          return obligation;
+        },
+      );
+    },
     completeObligation(
       state,
       action: PayloadAction<UserContractObligationData>,
@@ -109,6 +130,7 @@ export const {
   updateObligation,
   deleteObligation,
   setPartnerData,
+  setViewedAt,
   completeObligation,
   setLoading,
   setLoadingData,

@@ -29,7 +29,7 @@ const NotificationBadge: React.FC<NotificationBadgeProps> = ({
           }}
           transition={{ duration: 2 }}
           className={cn(
-            "inline-block w-2.5 h-2.5 mr-2 bg-primary rounded-full",
+            "inline-block w-3 h-3 mr-2 bg-red-500 rounded-full shadow-red-glow",
             className,
           )}
         ></motion.span>

@@ -26,7 +26,7 @@ export const UserAvatar = ({
       {photoURL ? (
         <AvatarImage src={photoURL} alt={displayName ?? "User photo"} />
       ) : (
-        <AvatarFallback className="bg-card">{userInitials}</AvatarFallback>
+        <AvatarFallback className="bg-card">{userInitials || "AN"}</AvatarFallback>
       )}
     </Avatar>
   );

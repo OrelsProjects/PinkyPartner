@@ -242,9 +242,6 @@ export default function ContractObligationsComponent({
             <h1 className="font-semibold text-2xl tracking-wide">
               {contract.title}
             </h1>
-            {userObligations.length > 0 && (
-              <h2>{userObligations[0].obligation.title}</h2>
-            )}
             <ObligationsComponent
               obligations={userObligations}
               contract={contract}

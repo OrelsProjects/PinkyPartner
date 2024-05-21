@@ -58,19 +58,22 @@ export function useObligations() {
     dispatch(setObligationsAction(obligations));
   };
 
-  const createObligation = async (obligationData: CreateObligation) => {
+  const createObligation = async (
+    obligationData: CreateObligation,
+  ): Promise<Obligation> => {
     if (loading) {
       throw new LoadingError("Already deleting obligation");
     }
     dispatch(setLoading(true));
     try {
       const updatedObligation = updateObligationRepeat(obligationData);
-      const response = await axios.post("/api/obligation", {
+      const response = await axios.post<Obligation>("/api/obligation", {
         ...updatedObligation,
         userId: user?.userId,
       });
-      dispatch(createObligationAction(response.data.result));
+      dispatch(createObligationAction(response.data));
       dispatch(setError(null));
+      return response.data;
     } catch (err: any) {
       dispatch(setError(err.message || "Error creating obligation"));
       throw err;
@@ -135,7 +138,7 @@ export function useObligations() {
 
   const sendCompletedObligationNotification = async (
     contract: ContractWithExtras,
-    obligation: Obligation,
+    obligation: UserContractObligationData,
   ) => {
     try {
       const otherUser = contract.contractees.find(
@@ -145,7 +148,7 @@ export function useObligations() {
 
       await axios.post("/api/notifications", {
         title: `${otherUser.displayName || "Your partner"} is progressing!`,
-        body: `${obligation.title} completed!`,
+        body: `${obligation.obligation.title} completed!`,
         userId: otherUser.userId,
       });
     } catch (error: any) {
@@ -172,8 +175,9 @@ export function useObligations() {
   };
 
   const completeObligation = async (
-    obligation: UserContractObligation,
+    obligation: UserContractObligationData,
     contractId: string,
+    completed: boolean = true,
   ) => {
     if (loading) {
       throw new LoadingError("Already completing obligation");
@@ -190,16 +194,19 @@ export function useObligations() {
       const obligationCompletedResponse =
         await axios.post<UserContractObligationData>(
           `/api/obligation/${contract.contractId}/${obligation.userContractObligationId}/complete`,
+          {
+            completed,
+          },
         );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
-      // sendCompletedObligationNotification(contract, obligation)
-      //   .then(() => {
-      //     Logger.info("Notification sent");
-      //   })
-      //   .catch(err => {
-      //     Logger.error("Failed to send notification", err);
-      //   });
+      sendCompletedObligationNotification(contract, obligation)
+        .then(() => {
+          Logger.info("Notification sent");
+        })
+        .catch(err => {
+          Logger.error("Failed to send notification", err);
+        });
     } catch (err: any) {
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;

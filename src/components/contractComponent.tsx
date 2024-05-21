@@ -70,7 +70,6 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       pending: "Signing contract...",
       success: {
         async render() {
-          fetchNextUpObligations();
           return "Contract signed successfully";
         },
       },

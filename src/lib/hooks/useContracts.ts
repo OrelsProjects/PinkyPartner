@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Contract, { CreateContract } from "../../models/contract";
+import { ContractWithExtras, CreateContract } from "../../models/contract";
 import { setError } from "../features/auth/authSlice";
 import {
   setContracts as setContractsAction,
@@ -40,10 +40,11 @@ export function useContracts() {
   const createContract = async (contractData: CreateContract) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.post<Contract>(
+      const response = await axios.post<ContractWithExtras>(
         "/api/contract",
         contractData,
       );
+      await fetchNextUpObligations();
       dispatch(addContractAction(response.data));
       dispatch(setError(null));
       const otherUser = contractData.contractees.find(
@@ -70,26 +71,26 @@ export function useContracts() {
     dispatch(setLoadingDataAction(loading));
   };
 
-  const setContracts = (contracts: Contract[]) => {
+  const setContracts = (contracts: ContractWithExtras[]) => {
     dispatch(setContractsAction(contracts));
   };
 
-  const updateContract = async (contractData: Contract) => {
-    dispatch(setLoading(true));
-    try {
-      const response = await axios.patch<Contract>(
-        `/api/contract/${contractData.contractId}`,
-        contractData,
-      );
-      dispatch(updateContractAction(response.data));
-      dispatch(setError(null));
-    } catch (err: any) {
-      dispatch(setError(err.message || "Error updating contract"));
-      throw err;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
+  // const updateContract = async (contractData: Contract) => {
+  //   dispatch(setLoading(true));
+  //   try {
+  //     const response = await axios.patch<Contract>(
+  //       `/api/contract/${contractData.contractId}`,
+  //       contractData,
+  //     );
+  //     dispatch(updateContractAction(response.data));
+  //     dispatch(setError(null));
+  //   } catch (err: any) {
+  //     dispatch(setError(err.message || "Error updating contract"));
+  //     throw err;
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //   }
+  // };
 
   const deleteContract = async (contractId: string) => {
     dispatch(setLoading(true));
@@ -137,7 +138,7 @@ export function useContracts() {
     signContract,
     fetchContracts,
     createContract,
-    updateContract,
+    // updateContract,
     deleteContract,
   };
 }

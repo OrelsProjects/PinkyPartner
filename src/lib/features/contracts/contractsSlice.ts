@@ -1,7 +1,7 @@
 // contractsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
-import Contract, { ContractWithExtras } from "../../../models/contract";
+import { ContractWithExtras } from "../../../models/contract";
 import { AccountabilityPartner } from "../../../models/appUser";
 
 interface ContractsState {
@@ -35,6 +35,16 @@ const contractsSlice = createSlice({
       if (index !== -1) {
         state.contracts[index] = action.payload;
       }
+    },
+    updatedManyContracts(state, action: PayloadAction<ContractWithExtras[]>) {
+      action.payload.forEach(contract => {
+        const index = state.contracts.findIndex(
+          c => c.contractId === contract.contractId,
+        );
+        if (index !== -1) {
+          state.contracts[index] = contract;
+        }
+      });
     },
     signContract(
       state,
@@ -72,6 +82,7 @@ export const {
   setContracts,
   addContract,
   updateContract,
+  updatedManyContracts,
   signContract,
   deleteContract,
   setLoadingData,

@@ -10,7 +10,7 @@ const ANONYMOUS_USER_ID = "115424106856837030343";
 
 export async function POST(
   req: NextRequest,
-): Promise<NextResponse<{ error: string } | Contract>> {
+): Promise<NextResponse<{ error: string } | ContractWithExtras>> {
   const session = await getServerSession(authOptions);
   if (!session) {
     // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,31 +18,8 @@ export async function POST(
 
   try {
     const data = await req.json();
-    const { obligationIds, signatures, contractees, ...contractData } =
+    const { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
-    let user = session?.user;
-    if (!user) {
-      const annonymousUser = await prisma.appUser.findUnique({
-        where: { userId: ANONYMOUS_USER_ID },
-        include: { meta: true },
-      });
-      if (!annonymousUser) {
-        return NextResponse.json(
-          { error: "Annonymous user not found" },
-          { status: 404 },
-        );
-      }
-      user = {
-        userId: annonymousUser.userId,
-        email: annonymousUser.email,
-        name: annonymousUser.displayName,
-        image: annonymousUser.photoURL,
-        meta: {
-          referralCode: annonymousUser.meta?.referralCode || "",
-        },
-      };
-    }
-
     if (!obligation) {
       return NextResponse.json(
         { error: "Obligation is required" },
@@ -51,14 +28,6 @@ export async function POST(
     }
     const now = new Date();
 
-    const obligations: Obligation[] = await prisma.obligation.findMany({
-      where: {
-        obligationId: {
-          in: obligationIds,
-        },
-      },
-    });
-
     const contractResponse = await prisma.contract.create({
       data: {
         ...contractData,
@@ -66,14 +35,18 @@ export async function POST(
       },
     });
 
-    await prisma.contractObligation.createMany({
-      data: obligations.map(obligation => ({
-        obligationId: obligation.obligationId,
-        contractId: contractResponse.contractId,
-      })),
+    const obligationWithId = await prisma.obligation.create({
+      data: {
+        ...obligation,
+      },
     });
 
-    let populatedObligations: Obligation[] = [];
+    await prisma.contractObligation.createMany({
+      data: {
+        obligationId: obligationWithId.obligationId,
+        contractId: contractResponse.contractId,
+      },
+    });
 
     for (const contractee of contractees) {
       await prisma.userContract.create({
@@ -84,8 +57,11 @@ export async function POST(
         },
       });
     }
-
-    const formattedObligations = formatObligations(populatedObligations);
+    await createWeeksContractObligations(
+      [obligationWithId],
+      contractResponse,
+      contractees.map(contractee => contractee.userId),
+    );
 
     const contract: ContractWithExtras = {
       contractId: contractResponse.contractId,
@@ -95,7 +71,7 @@ export async function POST(
       description: contractResponse.description,
       createdAt: contractResponse.createdAt,
       obligations: [obligationWithId],
-      signatures: [user],
+      signatures: [session.user],
       contractees,
     };
 

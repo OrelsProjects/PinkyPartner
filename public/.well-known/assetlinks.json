@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.orels.pinkypartner",
+      "sha256_cert_fingerprints": [
+        "DC:D1:38:49:D1:C8:F1:A3:69:D8:09:B4:21:FF:4D:86:EC:70:12:F5:84:C3:F8:43:51:FA:23:D0:D6:11:8E:C9"
+      ]
+    }
+  }
+]

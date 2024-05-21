@@ -14,19 +14,24 @@ import { TimesAWeek } from "../../../models/obligation";
 interface TimesAWeekDropdownProps {
   onSelect: (timesAWeek: TimesAWeek) => void;
   defaultValue?: TimesAWeek;
+  disabled?: boolean;
   error?: string;
 }
 
 const TimesAWeekDropdown: React.FC<TimesAWeekDropdownProps> = ({
   onSelect,
   defaultValue = 1,
+  disabled,
   error,
 }) => {
   const [selected, setSelected] = useState<TimesAWeek>(defaultValue);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="border border-1 border-input rounded-md p-2 w-10 h-10">
+      <DropdownMenuTrigger
+        className="border border-1 border-input rounded-md p-2 w-10 h-10"
+        disabled={disabled}
+      >
         {selected}
       </DropdownMenuTrigger>
       <DropdownMenuContent defaultValue={defaultValue}>

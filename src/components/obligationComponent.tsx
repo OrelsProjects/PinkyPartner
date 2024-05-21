@@ -1,12 +1,11 @@
 "use client";
 
-import React, { ElementType, useMemo } from "react";
+import React, { ElementType } from "react";
 import Obligation from "../models/obligation";
 import { useObligations } from "../lib/hooks/useObligations";
 import { FiMinusCircle as Minus } from "react-icons/fi";
 import { Button } from "./ui/button";
 
-import CheckboxObligation from "./checkboxObligation";
 import RepeatComponent from "./repeatComponent";
 import { toast } from "react-toastify";
 import { Skeleton } from "./ui/skeleton";
@@ -21,8 +20,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
-import Contract from "../models/contract";
-import UserContractObligation from "../models/userContractObligation";
 
 interface ObligationProps {
   obligation: Obligation;
@@ -35,6 +32,7 @@ interface ObligationProps {
   trailingIcon?: React.ReactNode; // Icon to show at the end of the obligation
   onClick?: (obligation: Obligation) => void;
   onDelete?: (obligation: Obligation) => void;
+  onDeleteBefore?: (obligation: Obligation) => void;
   className?: string;
 }
 
@@ -72,80 +70,29 @@ const ObligationComponent: React.FC<ObligationProps> = ({
   onDelete,
   className,
 }) => {
-  const { deleteObligation } = useObligations();
 
   const DeleteIcon: ElementType = deleteIcon ?? Minus;
 
-  const handleDelete = () => {
-    toast.promise(deleteObligation(obligation), {
-      pending: "Deleting...",
-      success: `Deleted ${obligation.title}`,
-      error: "Something went wrong... Try again?",
-    });
-  };
-
   const DeleteButton = () =>
     showDelete && (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className="!p-1 self-center"
-            onClick={(e: any) => {
-              e.stopPropagation();
-            }}
-          >
-            <DeleteIcon className="text-red-500 cursor-pointer text-2xl" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="space-y-4">
-          <DialogTitle>Giving up?</DialogTitle>
-          <DialogDescription>
-            {`Are you sure you want to go back on your promise to:`}
-            <br />
-            <span className="font-semibold">{obligation.title}</span>
-            <br />
-            <div className="text-sm text-muted-foreground italic mt-4">
-              This action will remove this promise from all of your contracts.
-            </div>
-          </DialogDescription>
+      <Button
+        variant="ghost"
+        className="!p-1 self-center"
+        type="button"
+        onClick={(e: any) => {
+          e.stopPropagation();
 
-          <div className="w-full flex items-center flex-col gap-0">
-            <DialogClose asChild>
-              <Button
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                }}
-              >
-                I changed my mind
-              </Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button
-                variant="link"
-                className="font-light text-foreground hover:no-underline"
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  if (onDelete) {
-                    onDelete(obligation);
-                  } else {
-                    handleDelete();
-                  }
-                }}
-              >
-                Yes, I give up
-              </Button>
-            </DialogClose>
-          </div>
-        </DialogContent>
-      </Dialog>
+          onDelete?.(obligation);
+        }}
+      >
+        <DeleteIcon className="text-red-500 cursor-pointer text-2xl" />
+      </Button>
     );
 
   return (
     <div
       className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
-      shadow-md hover:cursor-pointer hover:shadow-lg
+      shadow-sm hover:cursor-pointer hover:shadow-md
       `}
       onClick={() => onClick?.(obligation)}
     >

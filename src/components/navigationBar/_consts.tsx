@@ -22,12 +22,12 @@ export const BottomBarItems: NavigationBarItem[] = [
     label: "Home",
     href: "/home",
   },
-  {
-    icon: () => <Obligation className={className} />,
-    iconActive: () => <ObligationActive className={classNameActive} />,
-    label: "Promises",
-    href: "/promises",
-  },
+  // {
+  //   icon: () => <Obligation className={className} />,
+  //   iconActive: () => <ObligationActive className={classNameActive} />,
+  //   label: "Promises",
+  //   href: "/promises",
+  // },
   {
     icon: () => <Contracts className={className} />,
     iconActive: () => <ContractsActive className={classNameActive} />,

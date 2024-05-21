@@ -39,7 +39,7 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       onInteractOutside={event =>
-        closeOnOutsideClick ? event.preventDefault() : null
+        !closeOnOutsideClick ? event.preventDefault() : null
       }
       ref={ref}
       className={cn(

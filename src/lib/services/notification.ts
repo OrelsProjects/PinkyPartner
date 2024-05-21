@@ -1,5 +1,7 @@
 "use client";
+import axios from "axios";
 import { messaging, getUserToken } from "../../../firebase.config";
+import { Logger } from "../../logger";
 
 function isNotificationSupported() {
   return "Notification" in window;
@@ -35,12 +37,16 @@ export async function sendPushNotification(
 
 export async function requestPermission(): Promise<boolean> {
   if (!isNotificationSupported()) {
+    alert("Notifications not supported");
     return false;
   }
   if (isPermissionGranted()) {
+    alert("Permission already granted");
     return true;
   } else {
+    alert("Requesting permission");
     const permissionResponse = await Notification.requestPermission();
+    alert(permissionResponse);
     return permissionResponse === "granted";
   }
 }
@@ -49,7 +55,7 @@ export function createNotification(title: string, body: string, image: string) {
   if (!isNotificationSupported()) {
     return;
   }
-  if (isPermissionGranted()) { 
+  if (isPermissionGranted()) {
     new Notification(title, { body, icon: image });
   }
 }
@@ -60,19 +66,24 @@ export function createNotification(title: string, body: string, image: string) {
  */
 export async function getToken(): Promise<string | undefined> {
   if (!("serviceWorker" in navigator)) {
-    return "";
+    return "service-worker-not-supported";
   }
-  if (isNotificationSupported()) {
-    const permissionGranted = await requestPermission();
-    if (!permissionGranted) {
-      return ""; // TODO: Throw
-    }
-  } else {
-    return ""; // TODO: Throw
+  // if (isNotificationSupported()) {
+  //   const permissionGranted = await requestPermission();
+  //   if (!permissionGranted) {
+  //     return "permission-denied";
+  //   }
+  // } else {
+  //   Logger.error("Notifications not supported");
+  //   return "notifications-not-supported";
+  // }
+
+  try {
+    const token = await getUserToken();
+    await axios.patch("/api/user", { token });
+    return token || "no-token";
+  } catch (e: any) {
+    Logger.error("Failed to get token", e);
+    return "failed-to-get-token" + e.message;
   }
-
-  const token = await getUserToken();
-
-  console.log(token);
-  return token;
 }

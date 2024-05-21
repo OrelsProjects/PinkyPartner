@@ -21,8 +21,8 @@ export const AccountabilityPartnerComponentLoading = ({
 const AccountabilityPartnerComponent: React.FC<{
   partner: AccountabilityPartner;
   signed?: boolean;
-  onClick?: (partner: AccountabilityPartner) => void;
   className?: string;
+  onClick?: (partner: AccountabilityPartner) => void;
 }> = ({ partner, signed, onClick, className }) => {
   return (
     <div

@@ -16,7 +16,7 @@ export default interface Obligation {
   emoji: string | null;
 }
 
-export type CreateObligation = Omit<Obligation, "obligationId" | "userId">;
+export type CreateObligation = Omit<Obligation, "obligationId">;
 
 export type ObligationsInContract = {
   contract: Contract;

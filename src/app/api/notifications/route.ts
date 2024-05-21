@@ -41,23 +41,41 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       );
     }
     const message = {
-      notification: {
-        title,
-        body,
-        image,
-      },
       token,
+      data: {
+        title,
+        body: body || "",
+        image: process.env.LOGO_URL || "",
+        icon: process.env.LOGO_URL || "",
+        badge: process.env.LOGO_URL || "",
+      },
+      webpush: {
+        fcmOptions: {
+          link: "https://www.pinkypartner.com/home",
+        },
+      },
+      android: {
+        collapseKey: "complete-promise",
+      },
+      apns: {
+        payload: {
+          aps: {
+            contentAvailable: true,
+            category: "complete-promise",
+          },
+        },
+        headers: {
+          "apns-push-type": "background",
+          "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
+        },
+      },
     };
-    const imageUrl = process.env.LOGO_URL;
-    if (imageUrl && !message.notification.image) {
-      message.notification.image = imageUrl;
-    }
 
-    await messaging.send(message);
+    // await messaging.send(message);
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error creating obligation", error);
+    Logger.error("Error sending notification", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

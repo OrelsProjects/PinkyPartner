@@ -14,8 +14,7 @@ import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
-import { UserContract } from "@prisma/client";
-import { clear } from "console";
+import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
 
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
@@ -42,17 +41,35 @@ const createNewUserContract = async (userId: string, contractId: string) => {
   const currentUserContracts = await prisma.userContract.findMany({
     where: {
       contractId,
+      userId,
     },
   });
-  if (currentUserContracts.length > 1) {
+  if (currentUserContracts.length >= 1) {
     return;
   }
-  await prisma.userContract.create({
+  const { contract } = await prisma.userContract.create({
     data: {
       userId,
       contractId,
     },
+    include: {
+      contract: true,
+    },
   });
+  const contractObligations = await prisma.contractObligation.findMany({
+    where: {
+      contractId,
+    },
+    include: {
+      obligation: true,
+    },
+  });
+
+  await createWeeksContractObligations(
+    contractObligations.map(({ obligation }) => obligation),
+    contract,
+    [userId],
+  );
 };
 
 export const authOptions: AuthOptions = {
@@ -188,13 +205,45 @@ export const authOptions: AuthOptions = {
             },
           });
         }
+
+        if (!session.user.meta) {
+          session.user.meta = {
+            referralCode: "",
+            pushToken: "",
+          };
+        }
         session.user.userId = token.sub!;
         session.user.meta = {
           referralCode: userInDB?.meta?.referralCode || "",
           pushToken: userInDB?.meta?.pushToken || "",
         };
       }
+
+      if (!session.user.meta.referralCode) {
+        try {
+          const referralCode = generateReferalCode(session.user.userId);
+          await prisma.appUserMetadata.update({
+            where: {
+              userId: token.sub,
+            },
+            data: {
+              referralCode,
+            },
+          });
+          session.user.meta.referralCode = referralCode;
+        } catch (e: any) {
+          loggerServer.error(
+            "Error updating referral code",
+            session.user.userId,
+            {
+              error: e,
+            },
+          );
+        }
+      }
+
       const referralOptions: ReferralOptions = getReferralOptions();
+
       if (referralOptions.contractId) {
         await createNewUserContract(
           session.user.userId,

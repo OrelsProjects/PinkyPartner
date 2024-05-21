@@ -1,18 +1,18 @@
 import React, { useMemo } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+  EmailIcon,
+  EmailShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
 import { cn } from "../lib/utils";
 import Contract from "../models/contract";
+import { FaCopy } from "react-icons/fa";
+
 interface InvitePartnerComponentProps {
   buttonText: string;
   referralCode?: string;
@@ -45,14 +45,44 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     return url;
   }, [referralCode]);
 
+  const summary = useMemo(() => {
+    if (contract) {
+      return `Join my contract to: ${contract.title} on Pinky Promise!`;
+    } else {
+      return "Join me on Pinky Promise!";
+    }
+  }, [contract]);
+
+  const body = useMemo(() => {
+    if (contract) {
+      return `Join my contract to: ${contract.title} on Pinky Promise!`;
+    } else {
+      return "Join me on Pinky Promise!";
+    }
+  }, [contract]);
+
   const handleCopyLink = () => {
     EventTracker.track("Copy Invite Link", { url });
     navigator.clipboard.writeText(url);
-    toast.success("Link copied to clipboard!", {
-      autoClose: 1000,
+    toast("Copied! Now send it to your friend 😊", {
+      autoClose: 3000,
       delay: 0,
     });
   };
+
+  const ShareButtons = () => (
+    <div className="flex flex-row gap-3 justify-center items-center">
+      <div className="w-16 h-16 flex justify-center items-center rounded-full bg-gray-300 dark:bg-gray-700">
+        <FaCopy className="cursor-pointer" size={32} onClick={handleCopyLink} />
+      </div>
+      <WhatsappShareButton title="Join me on Pinky Promise!" url={url}>
+        <WhatsappIcon size={64} round={true} />
+      </WhatsappShareButton>
+      <EmailShareButton subject={summary} url={url} body={body}>
+        <EmailIcon size={64} round={true} />
+      </EmailShareButton>
+    </div>
+  );
 
   return (
     <Dialog>
@@ -66,21 +96,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         </Button>
       </DialogTrigger>
       <DialogContent className="space-y-4 h-[18rem]">
-        <DialogHeader className="gap-3">
-          <DialogTitle>Great choice!</DialogTitle>
-          <DialogDescription>
-            Copy this link and send it to your partner to invite them to sign up
-            and put their pinky in!
-          </DialogDescription>
-          <DialogDescription>
-            Once they join, you will be able to search for them :)
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="w-full !flex flex-col gap-1 justify-center items-center md:!justify-end md:!items-center">
-          <Button variant="default" onClick={handleCopyLink}>
-            Copy Link
-          </Button>
-        </DialogFooter>
+        <ShareButtons />
       </DialogContent>
     </Dialog>
   );

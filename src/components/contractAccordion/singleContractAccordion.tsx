@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { AccordionContent, AccordionItem } from "../ui/accordion";
-import AccordionTriggerMain from "./accordionTriggerMain";
 import AccordionTriggerSecondary from "./accordionTriggerSecondary";
-import UserContractObligation, {
+import {
   UserContractObligationData,
 } from "../../models/userContractObligation";
-import { useAppSelector } from "../../lib/hooks/redux";
 import AccordionObligations from "./accordionObligations";
 
 interface SingleContractAccordionProps {
@@ -50,7 +48,7 @@ const SingleContractAccordion: React.FC<SingleContractAccordionProps> = ({
       )}
       {dailyObligations.length > 0 && (
         <AccordionItem
-          value={`Daily-${contract.contractId}`}
+          value={`daily-accordion-${contract.contractId}`}
           className="w-[96%] border-0"
         >
           <AccordionTriggerSecondary>Daily</AccordionTriggerSecondary>

@@ -8,6 +8,7 @@ import useAuth from "../../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
 import InvitePartnerComponent from "../../../components/invitePartnerComponent";
 import { ThemeToggle } from "../../../components/theme-toggle";
+import { EventTracker } from "../../../eventTracker";
 
 interface SettingsProps {}
 
@@ -19,6 +20,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   const handleDeleteUserRequest = async () => {
     // Show alert that asks the user to insert their email. If email correct, delete user.
     // If email incorrect, show error message.
+    EventTracker.track("delete_user_request");
     const email = prompt(
       `Please enter your email (${user?.email}) to confirm deletion`,
     );
@@ -34,6 +36,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   };
 
   const handleSignOut = async () => {
+    EventTracker.track("sign_out");
     toast.promise(signOut(), {
       pending: "Signing out...",
       success: "Signed out",
@@ -54,12 +57,12 @@ const SettingsButton: React.FC<SettingsProps> = () => {
             <ThemeToggle />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Notifications</span>
           <span className="text-base-content/75 pl-2">
             Manage notifications and reminders
           </span>
-        </div>
+        </div> */}
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Partners</span>
           <div className="pl-2">
@@ -67,7 +70,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
               variant="default"
               buttonText="Invite a partner"
               referralCode={user?.meta?.referralCode}
-              className="text-base w-fit px-2"
+              className="w-fit px-2"
             />
           </div>
         </div>
@@ -83,7 +86,11 @@ const SettingsButton: React.FC<SettingsProps> = () => {
             </Button>
             <Button
               variant="link"
+<<<<<<< HEAD
               className="w-fit px-1 md:hover:bg-slate-400/40 hover:no-underline text-destructive/60 text-sm"
+=======
+              className="w-fit !p-0 hover:no-underline text-destructive/60 text-sm"
+>>>>>>> master
               onClick={handleDeleteUserRequest}
             >
               DELETE

@@ -37,6 +37,7 @@ export async function POST(
         signedAt: userContract.signedAt,
       },
     });
+    
     return NextResponse.json({ message: "Contract signed" }, { status: 200 }); 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

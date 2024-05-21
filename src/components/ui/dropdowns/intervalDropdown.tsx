@@ -16,6 +16,7 @@ interface IntervalDropdownProps {
   onSelect: (interval: ObligationRepeat) => void;
   defaultValue?: ObligationRepeat;
   error?: string;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -23,12 +24,14 @@ const IntervalDropdown: React.FC<IntervalDropdownProps> = ({
   onSelect,
   defaultValue = "Daily",
   className,
+  disabled,
   error,
 }) => {
   const [selected, setSelected] = useState<ObligationRepeat>(defaultValue);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        disabled={disabled}
         className={`border border-1 border-input rounded-md p-2 ${className || ""}
         ${error ? "border-red-400" : ""}
         `}
