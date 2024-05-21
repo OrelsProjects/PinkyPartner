@@ -86,11 +86,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
             </Button>
             <Button
               variant="link"
-<<<<<<< HEAD
               className="w-fit px-1 md:hover:bg-slate-400/40 hover:no-underline text-destructive/60 text-sm"
-=======
-              className="w-fit !p-0 hover:no-underline text-destructive/60 text-sm"
->>>>>>> master
               onClick={handleDeleteUserRequest}
             >
               DELETE

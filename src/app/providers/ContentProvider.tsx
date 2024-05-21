@@ -13,8 +13,8 @@ import { useEffect } from "react";
 import * as NProgress from "nprogress";
 import { useTheme } from "next-themes";
 import LiveChatProvider from "./LiveChatProvider";
-import { Button } from "../../components/ui/button";
 import axios from "axios";
+import { Button } from "../../components/ui/button";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -80,22 +80,18 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
               pauseOnHover={false}
             />
           </div>
-          {/* <Button
+          <Button
             className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
             onClick={() => axios.post("/api/clear")}
           >
             Clear
-          </Button> */}
-          <div className="w-full h-full relative z-10 overflow-auto">
+          </Button>
+          <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
+            {user && <SettingsComponent />}
             {children}
           </div>
         </ThemeProvider>
         <LiveChatProvider />
-        {user && (
-          <div className="absolute top-0 right-0 p-4 z-20">
-            <SettingsComponent />
-          </div>
-        )}
       </div>
     </div>
   );

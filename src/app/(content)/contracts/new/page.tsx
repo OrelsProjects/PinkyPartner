@@ -89,7 +89,11 @@ const FindPartner = ({
               It&apos;s okay! Create the contract and invite them later.
             </span>
           </div>
-          <Button onClick={() => onPartnerSelect()} className="self-end">
+          <Button
+            onClick={() => onPartnerSelect()}
+            className="self-end"
+            data-onboarding-id="no-partner"
+          >
             Sounds good!
           </Button>
         </div>

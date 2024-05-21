@@ -43,7 +43,7 @@ const EmptyObligations = () => {
         <Button
           onClick={() => {
             EventTracker.track("create_promise_from_home");
-            router.push("/promises/new");
+            router.push("/contracts/new");
           }}
           className="bg-primary text-white"
         >
@@ -72,7 +72,10 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
+    <div
+      className="w-full h-fit flex flex-col gap-4 relative"
+      data-onboarding-id="home-start-doing"
+    >
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}

@@ -20,6 +20,29 @@ export async function POST(
     const data = await req.json();
     const { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
+    let user = session?.user;
+    if (!user) {
+      const annonymousUser = await prisma.appUser.findUnique({
+        where: { userId: ANONYMOUS_USER_ID },
+        include: { meta: true },
+      });
+      if (!annonymousUser) {
+        return NextResponse.json(
+          { error: "Annonymous user not found" },
+          { status: 404 },
+        );
+      }
+      user = {
+        userId: annonymousUser.userId,
+        email: annonymousUser.email,
+        name: annonymousUser.displayName,
+        image: annonymousUser.photoURL,
+        meta: {
+          referralCode: annonymousUser.meta?.referralCode || "",
+        },
+      };
+    }
+
     if (!obligation) {
       return NextResponse.json(
         { error: "Obligation is required" },
@@ -71,7 +94,7 @@ export async function POST(
       description: contractResponse.description,
       createdAt: contractResponse.createdAt,
       obligations: [obligationWithId],
-      signatures: [session.user],
+      signatures: [user],
       contractees,
     };
 

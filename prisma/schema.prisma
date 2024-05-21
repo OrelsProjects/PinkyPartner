@@ -127,3 +127,7 @@ model UserContractObligation {
 
   @@map("userContractObligations")
 }
+
+// model UserOnboarding {
+
+// }
