@@ -1,8 +1,4 @@
 import { ElementType } from "react";
-import {
-  IoCheckboxOutline as Obligation,
-  IoCheckbox as ObligationActive,
-} from "react-icons/io5";
 import { GoHomeFill as HomeActive, GoHome as Home } from "react-icons/go";
 import {
   RiFilePaper2Line as Contracts,

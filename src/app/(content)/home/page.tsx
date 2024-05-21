@@ -8,6 +8,8 @@ import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import ContractAccordion from "../../../components/contractAccordion/contractsAccordion";
+import { EventTracker } from "../../../eventTracker";
+import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -36,12 +38,15 @@ const EmptyObligations = () => {
         Seems like you didn&apos;t promise anything yet.. 🤔
       </h1>
       <div className="w-full flex justify-center items-center flex-col">
-        <div>Le&apos;s start with making a promise</div>
+        <div>Le&apos;s start with making a contract</div>
         <Button
-          onClick={() => router.push("/promises/new")}
+          onClick={() => {
+            EventTracker.track("create_promise_from_home");
+            router.push("/contracts/new");
+          }}
           className="bg-primary text-white"
         >
-          Create a promise
+          Create a contract
         </Button>
       </div>
     </div>
@@ -76,8 +81,11 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
-      <ContractAccordion
+    <div
+      className="w-full h-fit flex flex-col gap-4 relative"
+      data-onboarding-id="home-start-doing"
+    >
+      <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
       />

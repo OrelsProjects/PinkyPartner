@@ -76,14 +76,14 @@ const SettingsButton: React.FC<SettingsProps> = () => {
           <div className="flex flex-col gap-1 pl-2">
             <Button
               variant="ghost"
-              className="w-fit !px-0"
+              className="w-fit px-1 md:hover:bg-slate-400/40"
               onClick={handleSignOut}
             >
               LOGOUT
             </Button>
             <Button
-              variant="ghost"
-              className="w-fit !px-0"
+              variant="link"
+              className="w-fit px-1 md:hover:bg-slate-400/40 hover:no-underline text-destructive/60 text-sm"
               onClick={handleDeleteUserRequest}
             >
               DELETE

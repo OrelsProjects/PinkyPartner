@@ -45,6 +45,7 @@ const FindPartner = ({
         autoComplete="on"
         autoFocus
         error={error ?? undefined}
+        data-onboarding-id="search-partner"
       />
       <div className="max-h-80 w-full flex flex-col gap-5 overflow-auto">
         {status === "loading"
@@ -82,7 +83,13 @@ const FindPartner = ({
               It&apos;s okay! You can invite them later.
             </span>
           </div>
-          <Button onClick={() => onPartnerSelect()}>Continue</Button>
+          <Button
+            onClick={() => onPartnerSelect()}
+            className="self-end"
+            data-onboarding-id="no-partner"
+          >
+            Sounds good!
+          </Button>
         </div>
       </>
     </div>
@@ -231,6 +238,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             exit={{ x: "-100%" }}
             transition={{ duration: 0.2 }}
             key="find-partner"
+            data-onboarding-id="find-partner"
             className="flex flex-col gap-4 justify-start md:justify-center items-start w-full h-fit max-h-full p-3 overflow-auto mt-6 md:w-96"
           >
             <div className="flex flex-col gap-4 max-h-full w-full">
@@ -266,9 +274,9 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 !rounded-none"
+                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 hover:bg-transparent"
               >
-                <div className="flex flex-row gap-1 items-start">
+                <div className="flex flex-row gap-1 items-start md:hover:bg-slate-400/40 p-2 rounded-full">
                   <IoArrowBack className="w-6 h-6" />
                   Back
                 </div>
@@ -390,7 +398,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                   <h1 className="font-bold text-xl">Signatures</h1>
                   <div
                     className="flex flex-row gap-4 w-full justify-center items-center"
-                    id="contract-signatures"
+                    data-onboarding-id="contract-signatures"
                   >
                     <div
                       className="flex flex-col justify-center items-center gap-2 w-1/2"

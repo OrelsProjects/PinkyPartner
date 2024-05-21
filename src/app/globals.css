@@ -112,3 +112,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .hole {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.5);
+    clip-path: circle(50px at center);
+  }
+}

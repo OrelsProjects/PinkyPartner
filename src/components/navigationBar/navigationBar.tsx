@@ -43,7 +43,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     }
   };
 
-  const Item = (item: NavigationBarItem) => (
+  const Item = ({ item, id }: { item: NavigationBarItem; id: string }) => (
     <div
       className={cn(
         "flex-1 flex items-center justify-center lg:justify-start lg:hover:bg-muted-foreground/20  lg:rounded-lg lg:p-4 cursor-pointer",
@@ -53,6 +53,8 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
       )}
       key={item.href}
       onClick={() => handleItemClick(item)}
+      // data-onboarding-id={`navigation-bar-item-${item.label}`}
+      data-onboarding-id={id}
     >
       <div className="flex flex-col lg:flex-row gap-2 justify-center items-center">
         <span className="indicator">
@@ -82,7 +84,11 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     >
       <div className="h-16 w-fit flex flex-col gap-2">
         {items.map(item => (
-          <Item {...item} key={item.href} />
+          <Item
+            item={item}
+            key={item.href}
+            id={`navigation-bar-item-${item.label}`}
+          />
         ))}
       </div>
     </div>
@@ -95,7 +101,11 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     >
       <div className="h-16 w-full flex flex-row">
         {items.map(item => (
-          <Item {...item} key={item.href} />
+          <Item
+            item={item}
+            key={item.href}
+            id={`navigation-bar-item-${item.label}-mobile`}
+          />
         ))}
       </div>
     </div>
