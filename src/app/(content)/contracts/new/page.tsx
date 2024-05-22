@@ -232,7 +232,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       <AnimatePresence>
         {!accountabilityPartner && !continueWithoutPartner ? (
           <motion.div
-            initial={{ x: "100%" }}
+            initial={{ x: 0 }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.2 }}
