@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";
+import loggerServer from "../../../loggerServer";
 
 export async function POST(
   req: NextRequest,
@@ -12,14 +13,29 @@ export async function POST(
     return NextResponse.json(undefined, { status: 401 });
   }
   try {
-    //Clear all data from all tables but appUser and appUserMetadata
+    const env = process.env.NODE_ENV;
+    if (env !== "development") {
+      loggerServer.warn(
+        "Clear route called in production",
+        session.user?.userId || "unknown",
+      );
+      return NextResponse.json(
+        { error: "Clear route can only be called in development" },
+        { status: 400 },
+      );
+    }
+
+    if (session.user?.userId !== "102926335316336979769") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await prisma.userContract.deleteMany();
     await prisma.contractObligation.deleteMany();
     await prisma.obligation.deleteMany();
     await prisma.contract.deleteMany();
     await prisma.userContractObligation.deleteMany();
 
-    return NextResponse.json({ message: "Contract signed" }, { status: 200 }); 
+    return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
