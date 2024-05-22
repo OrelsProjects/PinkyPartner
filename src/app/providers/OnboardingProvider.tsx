@@ -1,22 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import { cn } from "../../lib/utils";
-import { Button } from "../../components/ui/button";
+import { FaArrowDownLong } from "react-icons/fa6";
 import useOnboarding, {
   Stage,
   hasMobileVersion,
+  shouldFetchElement,
 } from "../../lib/hooks/useOnboarding";
+import { useRouter } from "next/navigation";
+import { Button } from "../../components/ui/button";
 
-const leftMultipliers: Record<Stage, number> = {
-  "navigation-bar-item-Contracts": 2,
-  "search-partner": 7,
-  "no-partner": 2,
-  "fill-contract": 2,
-  "invite-partner-button": 2,
-  "home-start-doing": 10,
-  done: 2,
-};
+const specialSigns = ["~", "-"];
 
 const stageText: Record<
   Stage,
@@ -25,29 +19,46 @@ const stageText: Record<
     description: string;
   }
 > = {
+  welcome: {
+    title: "Welcome to Pinky Partner!",
+    description: `With Pinky Partner you can easily build new habits with your partner.\n-(Click anywhere to continue.)-`,
+  },
   "navigation-bar-item-Contracts": {
-    title: "Create a contract",
-    description: "Start by creating a contract with your partner",
+    title: "Let's begin!",
+    description:
+      "Go to your contracts section.\n-(Click on the highlighted section.)-",
+  },
+  "contracts-plus-button": {
+    title: "",
+    description: "Create your first contract by clicking the plus button.",
   },
   "search-partner": {
-    title: "Search for your partner",
-    description: "Search for your partner to create a contract",
+    title: "Find your Pinky Partner",
+    description:
+      "Here you can search for your partner.\n~-hint: if your partner is not in PinkyPartner, invite them from the settings menu-~",
   },
   "no-partner": {
-    title: "No partner found",
-    description: "No partner found, create a contract with a new partner",
+    title: "Continue solo! For now...",
+    description: "You can start solo and invite your partner later on.",
   },
   "fill-contract": {
-    title: "Fill the contract",
-    description: "Fill the contract with the details",
+    title: "",
+    description: "",
   },
   "invite-partner-button": {
     title: "Invite your partner",
-    description: "Invite your partner to sign the contract",
+    description:
+      "Here you can share a link via your selected platform.\n Send it to your future Pinky Partner ;)",
+  },
+  "wait-for-partner": {
+    title: "Wait for your partner's pinky!",
+    description:
+      "Now your pinky partner got a notification to come sign the contract. Make sure to remind them ;)\n~-hint: You can start solo and your partner will join later.-~",
   },
   "home-start-doing": {
-    title: "Start doing",
-    description: "Start doing the contract",
+    title: "Get to work!",
+    description:
+      "Now start building your habits while your partner is on the way.",
   },
   done: {
     title: "Done",
@@ -55,22 +66,28 @@ const stageText: Record<
   },
 };
 
-const topMultipliers: Record<Stage, number> = {
-  "navigation-bar-item-Contracts": 1.7,
-  "search-partner": 2,
-  "no-partner": 2,
-  "fill-contract": 2,
-  "invite-partner-button": 2,
-  "home-start-doing": 1,
-  done: 2,
+const backgroundForNextStage: Record<Stage, boolean> = {
+  welcome: true,
+  "navigation-bar-item-Contracts": false,
+  "contracts-plus-button": false,
+  "search-partner": false,
+  "no-partner": false,
+  "fill-contract": false,
+  "invite-partner-button": false,
+  "wait-for-partner": true,
+  "home-start-doing": false,
+  done: false,
 };
 
 const showBackground: Record<Stage, boolean> = {
+  welcome: true,
   "navigation-bar-item-Contracts": true,
+  "contracts-plus-button": true,
   "search-partner": true,
   "no-partner": true,
   "fill-contract": false,
   "invite-partner-button": true,
+  "wait-for-partner": true,
   "home-start-doing": true,
   done: false,
 };
@@ -78,53 +95,138 @@ const showBackground: Record<Stage, boolean> = {
 export default function OnboardingProvider() {
   const {
     isMobile,
-    setElement,
+    nextStage,
     elementSize,
     currentStage,
+    elementsActions,
     elementPosition,
     onboardingElement,
     isOnboardingViewed,
     setOnboardingViewed,
   } = useOnboarding();
 
+  const router = useRouter();
+
   const Arrow = () => {
     const mobile = isMobile && hasMobileVersion[currentStage];
-    const leftMultiplier = leftMultipliers[currentStage];
-    const topMultiplier = topMultipliers[currentStage];
+    const showArrow = shouldFetchElement[currentStage];
+
     const elementTop = elementPosition?.top || 0;
     const elementLeft = elementPosition?.left || 0;
-    const top = mobile
-      ? elementTop - elementSize[0] * topMultiplier - 50
-      : elementTop + elementSize[0] * topMultiplier - 50;
-    const left = mobile
-      ? elementLeft - 50
-      : elementLeft - elementSize[1] / (1 / leftMultiplier) - 50;
+
+    let top = `${
+      mobile
+        ? elementTop - (elementSize?.height || 0)
+        : elementTop + (elementSize?.height || 0)
+    }px`;
+
+    let left = `${elementLeft + (elementSize?.width || 0) / 2 - 20}px`;
+
+    top = showArrow ? top : "10%";
+    left = showArrow ? left : "40%";
+
+    const className = showArrow
+      ? ""
+      : isMobile
+        ? "!top-32 !left-[20%]"
+        : "!top-10 !left-[40%]";
 
     return (
-      elementPosition && (
-        <Image
-          src="/arrow.png"
-          alt="Arrow"
-          height={150}
-          width={150}
-          className="absolute "
+      (elementPosition || !showArrow) && (
+        <div
+          className={cn(
+            "w-fit h-fit rounded-full absolute",
+            {
+              "rotate-180": !mobile,
+            },
+            className,
+          )}
           style={{
-            // if isMobile && hasMobileVersion[currentStage] flip 180deg
-            transform: `${mobile ? "scale(1,-1)" : ""}`,
-            top: mobile
-              ? elementTop - elementSize[0]
-              : elementTop + elementSize[0],
-            left: elementLeft - elementSize[1] / leftMultipliers[currentStage],
+            top,
+            left,
           }}
-        />
+        >
+          {showArrow && (
+            <FaArrowDownLong //TODO: Consider using an icon of an arrow instead of an image
+              className={cn("text-slate-200/90 w-10 h-10 animate-bounce")}
+            />
+          )}
+        </div>
       )
+    );
+  };
+
+  const cleanText = (text: string) => {
+    let newText = text;
+    specialSigns.forEach(sign => {
+      newText = newText.replaceAll(sign, "");
+    });
+    return newText;
+  };
+
+  const Text = () => {
+    let textLines = stageText[currentStage].description.split("\n");
+    // All lines that start with ~ and end with ~ will be italic
+    const italicText = textLines
+      .filter(line => line.startsWith("~") && line.endsWith("~"))
+      .map(line => line.slice(1, -1))
+      .map(cleanText);
+
+    const textLinesNoItalic = textLines.map(line => {
+      if (line.startsWith("~") && line.endsWith("~")) {
+        return line.slice(1, -1);
+      }
+      return line;
+    });
+    // All lines that start with - and end with - will be slimText
+    const slimText = textLinesNoItalic
+      .filter(line => line.startsWith("-") && line.endsWith("-"))
+      .map(line => line.slice(1, -1))
+      .map(cleanText);
+
+    const cleanTextLines = textLines.map(cleanText);
+
+    return (
+      <div className="absolute flex flex-col gap-2 text-white text-center p-2 md:p-0">
+        <h1 className="text-2xl md:text-3xl font-medium md:font-semibold">
+          {stageText[currentStage].title}
+        </h1>
+        {cleanTextLines.map((line, index) => (
+          <p
+            key={`onboarding-description-${index}`}
+            className={cn("text-lg font-normal tracking-wide", {
+              "font-thin": slimText.includes(line),
+              italic: italicText.includes(line),
+            })}
+          >
+            {line}
+          </p>
+        ))}
+      </div>
     );
   };
 
   return (
     !isOnboardingViewed() &&
     showBackground[currentStage] && (
-      <div className="h-[100svh] w-[100vw] absolute inset-0 bg-black/70 z-50">
+      <div
+        className={cn(
+          "h-[100svh] w-[100vw] absolute inset-0 bg-black/80 z-50 flex justify-center items-center",
+          {
+            "hover:cursor-pointer": backgroundForNextStage[currentStage],
+          },
+        )}
+        onClick={() => {
+          if (currentStage === "welcome") {
+            if (window.location.pathname !== "/home") {
+              router.push("/home");
+            }
+          }
+          if (backgroundForNextStage[currentStage]) {
+            elementsActions[currentStage]?.();
+          }
+        }}
+      >
         <div
           id="_PRIVATE_ONBOARDING_ELEMENT"
           ref={onboardingElement}
@@ -136,19 +238,28 @@ export default function OnboardingProvider() {
             bottom: elementPosition?.bottom,
             left: elementPosition?.left,
             right: elementPosition?.right,
-            height: elementSize[0],
-            width: elementSize[1],
+            height: elementSize?.height,
+            width: elementSize?.width,
           }}
         />
         <Button
-          className="absolute top-10 right-10 md:bottom-10"
+          className="absolute top-10 right-10 md:bottom-10 md:top-auto"
           onClick={() => {
             setOnboardingViewed();
           }}
+          variant={"link"}
         >
           Skip
         </Button>
+
         <Arrow />
+        <div
+          className={cn(
+            "w-full md:w-full h-fit absolute flex justify-center items-center px-2",
+          )}
+        >
+          <Text />
+        </div>
       </div>
     )
   );

@@ -29,6 +29,11 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Only if route comes from localhost
+    if (req.headers.get("host") !== "localhost:3000") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await prisma.userContract.deleteMany();
     await prisma.contractObligation.deleteMany();
     await prisma.obligation.deleteMany();

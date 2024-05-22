@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { HeroHighlight, Highlight } from "../components/ui/heroHighlight";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { Button } from "../components/ui/button";
 import { FaArrowDownLong } from "react-icons/fa6";

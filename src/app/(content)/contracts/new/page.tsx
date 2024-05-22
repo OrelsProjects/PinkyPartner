@@ -4,8 +4,7 @@ import React, { useRef, useState } from "react";
 import { Input } from "../../../../components/ui/input";
 import { useFormik } from "formik";
 import { CreateContract } from "../../../../models/contract";
-import { useObligations } from "../../../../lib/hooks/useObligations";
-import Obligation, { CreateObligation } from "../../../../models/obligation";
+import { CreateObligation } from "../../../../models/obligation";
 import { AccountabilityPartner } from "../../../../models/appUser";
 import useSearchUser from "../../../../lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
@@ -67,7 +66,7 @@ const FindPartner = ({
                 partner={partner}
                 key={partner.userId}
                 onClick={onPartnerSelect}
-                className="!items-start"
+                className="!items-start hover:cursor-pointer"
                 signed
               />
             ))}
@@ -248,6 +247,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     partner={previousAccountabilityPartner}
                     onClick={handlePartnerSelect}
                     signed
+                    className="hover:cursor-pointer"
                   />
                 </div>
               )}
@@ -263,7 +263,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start"
+            className="h-full w-full flex flex-col gap-5 justify-start items-start pb-10 md:pb-0"
           >
             <form
               onSubmit={formik.handleSubmit}
@@ -279,7 +279,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                   Back
                 </div>
               </Button>
-              <div className="w-full h-full overflow-auto flex flex-col gap-12">
+              <div className="w-full h-full overflow-auto flex flex-col gap-8 md:gap-10">
                 <SectionContainer>
                   <SectionTitleContainer>
                     <SectionTitle text="Title" />
