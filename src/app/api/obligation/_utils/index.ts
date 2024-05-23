@@ -23,14 +23,14 @@ export type ObligationsInContract = {
 //  */
 export function getStartOfTheWeekDate(sunday: boolean = true): Date {
   const now = new Date();
-  const nowDay = now.getDay();
+  const nowDay = now.getUTCDay();
 
   now.setHours(0, 0, 0, 0);
   if (sunday && nowDay === 0) {
     return now;
   } else {
     const date = new Date(
-      now.setDate(now.getDate() - nowDay + (sunday ? 0 : 1)),
+      now.setDate(now.getUTCDate() - nowDay + (sunday ? 0 : 1)),
     );
     return date;
   }
@@ -50,7 +50,7 @@ export function getEndOfTheWeekDate(): Date {
   const startOfTheWeek = getStartOfTheWeekDate();
   // Set hours to 23, minutes to 59, seconds to 59, milliseconds to 999
   const endOfTheWeek = new Date(startOfTheWeek);
-  endOfTheWeek.setDate(startOfTheWeek.getDate() + 6);
+  endOfTheWeek.setDate(startOfTheWeek.getUTCDate() + 6);
   endOfTheWeek.setHours(23, 59, 59, 999);
   return endOfTheWeek;
 }
@@ -127,7 +127,7 @@ export function ObligationsToContractObligation(
       obligation.days.forEach(day => {
         const dueDate = new Date();
         dueDate.setHours(23, 59, 59, 999);
-        dueDate.setDate(dueDate.getDate() + (day - dueDate.getDay()));
+        dueDate.setDate(dueDate.getUTCDate() + (day - dueDate.getUTCDay()));
         populatedObligations.push({
           ...obligation,
           userId: userId,

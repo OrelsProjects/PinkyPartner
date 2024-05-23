@@ -78,7 +78,7 @@ export const dayToThisWeekDate = (day: string): Date => {
   const now = new Date();
   const dayUTC = now.getUTCDay();
   const diff = dayNumber - dayUTC;
-  now.setDate(now.getDate() + diff);
+  now.setDate(now.getUTCDate() + diff);
   return now;
 };
 
