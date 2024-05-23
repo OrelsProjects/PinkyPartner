@@ -57,7 +57,8 @@ export function dateToHourMinute(date: Date): string {
  * @returns
  */
 export function dateToDayString(date: Date): string {
-  return dayNumberToName(date.getDay());
+  const safeDate = new Date(date);
+  return dayNumberToName(safeDate.getDay());
 }
 
 export function DaysToText(days?: number[]): string {
