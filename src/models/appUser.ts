@@ -7,10 +7,15 @@ export default interface AppUser {
   displayName?: string | null;
   photoURL?: string | null;
   meta?: AppUserMetadata;
+  settings: AppUserSettings;
 }
 
 export interface AppUserMetadata {
   referralCode: string;
+}
+
+export interface AppUserSettings {
+  showNotifications: boolean;
 }
 
 export type UserData = {

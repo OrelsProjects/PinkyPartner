@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { HeroHighlight, Highlight } from "../components/ui/heroHighlight";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { TextGenerateEffect } from "../components/ui/textGenerateEffect";
 import { Button } from "../components/ui/button";
 import { FaArrowDownLong } from "react-icons/fa6";
@@ -158,7 +158,7 @@ const Header = () => (
   </header>
 );
 
-const HeroSection = ({ onNext }: { onNext: () => void }) => (
+const HeroSection = ({ onNext }: { onNext?: () => void }) => (
   <HeroHighlight
     containerClassName="items-center h-screen w-full relative"
     className="h-screen flex justify-start items-center pt-20 md:pt-0"
@@ -215,14 +215,17 @@ const HeroSection = ({ onNext }: { onNext: () => void }) => (
         </Highlight>
       </div>
     </motion.div>
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 5 }}
-      className="z-30 absolute bottom-0 inset-x-0"
-    >
-      <ArrowDown onClick={onNext} />
-    </motion.div>
+
+    {onNext && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 5 }}
+        className="z-30 absolute bottom-0 inset-x-0"
+      >
+        <ArrowDown onClick={onNext} />
+      </motion.div>
+    )}
   </HeroHighlight>
 );
 
@@ -316,8 +319,8 @@ export default function Home() {
   return (
     <div className="h-full w-full gap-1 flex flex-col overflow-auto relative">
       <Header />
-      <HeroSection onNext={scrollToPartOne} />
-      <div ref={partOneRef} className="z-20">
+      <HeroSection />
+      {/* <div ref={partOneRef} className="z-20">
         <Section
           title="Make a Promise"
           body="The beginning of every relationship is a promise. Make promises to keep each other accountable."
@@ -374,7 +377,7 @@ export default function Home() {
             </a>
           </Button>
         </Section>
-      </div>
+      </div> */}
     </div>
   );
 }

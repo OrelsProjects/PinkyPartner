@@ -8,6 +8,9 @@ declare module "next-auth" {
         referralCode?: string;
         pushToken?: string;
       };
+      settings: {
+        showNotifications: boolean;
+      };
     } & DefaultSession["user"];
   }
 }

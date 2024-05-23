@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/ContractObligationsComponent";
+import useOnboarding from "../../../lib/hooks/useOnboarding";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -32,25 +33,28 @@ const EmptyContracts = () => {
 };
 
 const EmptyObligations = () => {
+  const { isOnboardingViewed } = useOnboarding();
   const router = useRouter();
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-3">
-      <h1 className="text-xl font-semibold">
-        Seems like you didn&apos;t promise anything yet.. 🤔
-      </h1>
-      <div className="w-full flex justify-center items-center flex-col">
-        <div>Le&apos;s start with making a promise</div>
-        <Button
-          onClick={() => {
-            EventTracker.track("create_promise_from_home");
-            router.push("/promises/new");
-          }}
-          className="bg-primary text-white"
-        >
-          Create a promise
-        </Button>
+    isOnboardingViewed() && (
+      <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+        <h1 className="text-xl font-semibold">
+          Seems like you didn&apos;t promise anything yet.. 🤔
+        </h1>
+        <div className="w-full flex justify-center items-center flex-col">
+          <div>Le&apos;s start with making a contract</div>
+          <Button
+            onClick={() => {
+              EventTracker.track("create_promise_from_home");
+              router.push("/contracts/new");
+            }}
+            className="bg-primary text-white"
+          >
+            Create a contract
+          </Button>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
@@ -72,7 +76,9 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-fit flex flex-col gap-4 relative mt-11">
+    <div
+      className="w-full h-fit flex flex-col gap-4 relative"
+    >
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}

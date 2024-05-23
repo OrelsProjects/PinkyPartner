@@ -36,6 +36,7 @@ model AppUser {
   Contract           Contract[]
   meta               AppUserMetadata?
   ContractObligation UserContractObligation[]
+  settings           AppUserSettings?
 
   @@map("appUser")
 }
@@ -50,6 +51,17 @@ model AppUserMetadata {
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@map("appUserMetadata")
+}
+
+model AppUserSettings {
+  appUserSettingsId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String @unique
+
+  showNotifications Boolean @default(true)
+
+  appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("appUserSettings")
 }
 
 model Obligation {
@@ -127,3 +139,7 @@ model UserContractObligation {
 
   @@map("userContractObligations")
 }
+
+// model UserOnboarding {
+
+// }

@@ -9,6 +9,7 @@ import AuthProvider from "../providers/AuthProvider";
 import DataProvider from "../providers/DataProvider";
 import NextTopLoader from "nextjs-toploader";
 import NotificationsProvider from "../providers/NotificationsProvider";
+import OnboardingProvider from "../providers/OnboardingProvider";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ export default function ContentLayout({ children }: RootLayoutProps) {
               </ContentProvider>
             </HeightProvider>
           </DataProvider>
+          <OnboardingProvider />
         </NotificationsProvider>
       </AuthProvider>
     </main>

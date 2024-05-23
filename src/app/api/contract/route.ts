@@ -3,26 +3,49 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import Contract, {
-  ContractWithExtras,
-  CreateContract,
-} from "../../../models/contract";
-import { formatObligations } from "../_utils";
-import { Obligation } from "@prisma/client";
+import { ContractWithExtras, CreateContract } from "../../../models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
+
+const ANONYMOUS_USER_ID = "115424106856837030343";
 
 export async function POST(
   req: NextRequest,
 ): Promise<NextResponse<{ error: string } | ContractWithExtras>> {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const data = await req.json();
     const { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
+    let user = session?.user;
+    if (!user) {
+      const annonymousUser = await prisma.appUser.findUnique({
+        where: { userId: ANONYMOUS_USER_ID },
+        include: { meta: true },
+      });
+      if (!annonymousUser) {
+        return NextResponse.json(
+          { error: "Annonymous user not found" },
+          { status: 404 },
+        );
+      }
+      user = {
+        userId: annonymousUser.userId,
+        email: annonymousUser.email,
+        name: annonymousUser.displayName,
+        image: annonymousUser.photoURL,
+        meta: {
+          referralCode: annonymousUser.meta?.referralCode || "",
+        },
+        settings: {
+          showNotifications: false,
+        },
+      };
+    }
+
     if (!obligation) {
       return NextResponse.json(
         { error: "Obligation is required" },
@@ -32,7 +55,10 @@ export async function POST(
     const now = new Date();
 
     const contractResponse = await prisma.contract.create({
-      data: { ...contractData, creatorId: session.user.userId },
+      data: {
+        ...contractData,
+        creatorId: user.userId,
+      },
     });
 
     const obligationWithId = await prisma.obligation.create({
@@ -65,13 +91,13 @@ export async function POST(
 
     const contract: ContractWithExtras = {
       contractId: contractResponse.contractId,
-      creatorId: session.user.userId,
+      creatorId: user.userId,
       dueDate: contractResponse.dueDate,
       title: contractResponse.title,
       description: contractResponse.description,
       createdAt: contractResponse.createdAt,
       obligations: [obligationWithId],
-      signatures: [session.user],
+      signatures: [user],
       contractees,
     };
 

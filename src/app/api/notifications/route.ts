@@ -25,14 +25,34 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       image,
       userId,
     }: NotificationData & { userId: string } = await req.json();
-    const user = await prisma.appUserMetadata.findUnique({
+    const user = await prisma.appUser.findUnique({
       where: { userId },
+      include: {
+        meta: {
+          select: {
+            pushToken: true,
+          },
+        },
+        settings: {
+          select: {
+            showNotifications: true,
+          },
+        },
+      },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    const token = user.pushToken;
+
+    if (!user.settings?.showNotifications) {
+      return NextResponse.json(
+        { error: "User has disabled notifications" },
+        { status: 400 },
+      );
+    }
+
+    const token = user.meta?.pushToken;
 
     if (!token) {
       return NextResponse.json(

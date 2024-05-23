@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { messaging, getUserToken } from "../../../firebase.config";
+import { getUserToken } from "../../../firebase.config";
 import { Logger } from "../../logger";
 
 function isNotificationSupported() {
@@ -35,16 +35,13 @@ export async function sendPushNotification(
   };
 }
 
-export async function requestPermission(): Promise<boolean> {
+export async function requestNotificationsPermission(): Promise<boolean> {
   if (!isNotificationSupported()) {
-    alert("Notifications not supported");
     return false;
   }
   if (isPermissionGranted()) {
-    alert("Permission already granted");
     return true;
   } else {
-    alert("Requesting permission");
     const permissionResponse = await Notification.requestPermission();
     alert(permissionResponse);
     return permissionResponse === "granted";
@@ -80,7 +77,6 @@ export async function getToken(): Promise<string | undefined> {
 
   try {
     const token = await getUserToken();
-    await axios.patch("/api/user", { token });
     return token || "no-token";
   } catch (e: any) {
     Logger.error("Failed to get token", e);

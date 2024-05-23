@@ -40,6 +40,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
           variant="link"
           onClick={() => router.push("/contracts/new")}
           className="text-2xl flex justify-center items-center p-2 hover:bg-muted/50"
+          data-onboarding-id="contracts-plus-button"
         >
           <FaPlus className="w-5 h-5 fill-muted-foreground" />
         </Button>

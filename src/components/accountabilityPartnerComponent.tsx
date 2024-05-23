@@ -26,7 +26,7 @@ const AccountabilityPartnerComponent: React.FC<{
 }> = ({ partner, signed, onClick, className }) => {
   return (
     <div
-      className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale"} ${className}`}
+      className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale opacity-50"} ${className}`}
       onClick={() => onClick?.(partner)}
     >
       <UserAvatar

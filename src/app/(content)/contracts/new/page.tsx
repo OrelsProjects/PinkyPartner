@@ -4,8 +4,7 @@ import React, { useRef, useState } from "react";
 import { Input } from "../../../../components/ui/input";
 import { useFormik } from "formik";
 import { CreateContract } from "../../../../models/contract";
-import { useObligations } from "../../../../lib/hooks/useObligations";
-import Obligation, { CreateObligation } from "../../../../models/obligation";
+import { CreateObligation } from "../../../../models/obligation";
 import { AccountabilityPartner } from "../../../../models/appUser";
 import useSearchUser from "../../../../lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
@@ -52,6 +51,7 @@ const FindPartner = ({
         autoComplete="on"
         autoFocus
         error={error ?? undefined}
+        data-onboarding-id="search-partner"
       />
       <div className="max-h-80 w-full flex flex-col gap-5 overflow-auto">
         {status === "loading"
@@ -66,7 +66,7 @@ const FindPartner = ({
                 partner={partner}
                 key={partner.userId}
                 onClick={onPartnerSelect}
-                className="!items-start"
+                className="!items-start hover:cursor-pointer"
                 signed
               />
             ))}
@@ -88,7 +88,11 @@ const FindPartner = ({
               It&apos;s okay! Create the contract and invite them later.
             </span>
           </div>
-          <Button onClick={() => onPartnerSelect()} className="self-end">
+          <Button
+            onClick={() => onPartnerSelect()}
+            className="self-end"
+            data-onboarding-id="no-partner"
+          >
             Sounds good!
           </Button>
         </div>
@@ -227,11 +231,12 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       <AnimatePresence>
         {!accountabilityPartner && !continueWithoutPartner ? (
           <motion.div
-            initial={{ x: "100%" }}
+            initial={{ x: 0 }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.2 }}
             key="find-partner"
+            data-onboarding-id="find-partner"
             className="flex flex-col gap-4 justify-start md:justify-center items-start w-full h-fit max-h-full p-3 overflow-auto mt-6 md:w-96"
           >
             <div className="flex flex-col gap-4 max-h-full w-full">
@@ -242,6 +247,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     partner={previousAccountabilityPartner}
                     onClick={handlePartnerSelect}
                     signed
+                    className="hover:cursor-pointer"
                   />
                 </div>
               )}
@@ -257,7 +263,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start"
+            className="h-full w-full flex flex-col gap-5 justify-start items-start pb-10 md:pb-0"
           >
             <form
               onSubmit={formik.handleSubmit}
@@ -266,14 +272,14 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 !rounded-none"
+                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 hover:bg-transparent"
               >
-                <div className="flex flex-row gap-1 items-start">
+                <div className="flex flex-row gap-1 items-start md:hover:bg-slate-400/40 p-2 rounded-full">
                   <IoArrowBack className="w-6 h-6" />
                   Back
                 </div>
               </Button>
-              <div className="w-full h-full overflow-auto flex flex-col gap-12">
+              <div className="w-full h-full overflow-auto flex flex-col gap-8 md:gap-10">
                 <SectionContainer>
                   <SectionTitleContainer>
                     <SectionTitle text="Title" />
@@ -375,7 +381,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                   </SectionTitleContainer>
                   <div
                     className="flex flex-row gap-4 w-full justify-center items-center"
-                    id="contract-signatures"
+                    data-onboarding-id="contract-signatures"
                   >
                     <div
                       className="flex flex-col justify-center items-center gap-2 w-1/2"

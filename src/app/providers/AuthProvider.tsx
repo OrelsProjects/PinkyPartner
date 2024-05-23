@@ -34,6 +34,9 @@ export default function AuthProvider({
     meta: {
       referralCode?: string | null;
     };
+    settings: {
+      showNotifications?: boolean;
+    };
   }) => {
     try {
       const appUser: AppUser = {
@@ -43,6 +46,9 @@ export default function AuthProvider({
         userId: user?.userId || "",
         meta: {
           referralCode: user?.meta.referralCode || "",
+        },
+        settings: {
+          showNotifications: user?.settings.showNotifications || true,
         },
       };
       dispatch(setUserAction(appUser));
@@ -56,7 +62,6 @@ export default function AuthProvider({
     switch (status) {
       case "authenticated":
         setUser(session.user);
-
         break;
       case "loading":
         break;

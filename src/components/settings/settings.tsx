@@ -1,8 +1,6 @@
 import React from "react";
-import { FaCog } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "../../lib/hooks/redux";
-import Image from "next/image";
 import { UserAvatar } from "../ui/avatar";
 
 interface SettingsComponentProps {}
@@ -16,13 +14,15 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
       onClick={() => {
         router.push("/settings");
       }}
-      className="p-2 rounded-lg"
+      className="p-2 rounded-lg w-full flex flex-col items-end "
     >
-      <UserAvatar
-        photoURL={user?.photoURL || "/images/default-profile.png"}
-        displayName={user?.displayName}
-        className="rounded-full hover:cursor-pointer w-10 h-10"
-      />
+      <div className="h-fit w-fit md:hover:shadow-lg md:hover:cursor-pointer rounded-full">
+        <UserAvatar
+          photoURL={user?.photoURL || "/images/default-profile.png"}
+          displayName={user?.displayName}
+          className="rounded-full hover:cursor-pointer w-10 h-10 shadow-md"
+        />
+      </div>
     </div>
   );
 };

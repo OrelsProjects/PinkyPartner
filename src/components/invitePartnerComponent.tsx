@@ -19,6 +19,7 @@ interface InvitePartnerComponentProps {
   className?: string;
   variant?: ButtonVariants;
   contract?: Contract;
+  id?: string;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
@@ -27,6 +28,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   className,
   variant,
   contract,
+  id,
 }) => {
   const url = useMemo(() => {
     const baseUrl = window.location.origin;
@@ -85,7 +87,11 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={variant || "link"} className={cn(className)}>
+        <Button
+          variant={variant || "link"}
+          className={cn(className)}
+          data-onboarding-id="invite-partner-button"
+        >
           {buttonText}
         </Button>
       </DialogTrigger>

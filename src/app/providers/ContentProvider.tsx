@@ -13,8 +13,8 @@ import { useEffect } from "react";
 import * as NProgress from "nprogress";
 import { useTheme } from "next-themes";
 import LiveChatProvider from "./LiveChatProvider";
-import { Button } from "../../components/ui/button";
 import axios from "axios";
+import { Button } from "../../components/ui/button";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -71,7 +71,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             <toast.ToastContainer
               stacked
               newestOnTop
-              theme={theme}
+              theme={theme === "system" ? "light" : theme}
               autoClose={2500}
               draggablePercent={60}
               className="!mb-16 z-[51]"
@@ -82,23 +82,22 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           </div>
           {/* <Button
             className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
-            onClick={() => axios.post("/api/clear")}
-          >
-            Clear
+            onClick={() => {
+              axios.post("/api/clear");
+              localStorage.clear();
+            }}
+          > */}
+            {/* Clear
           </Button> */}
-          <div className="w-full h-full relative z-10 overflow-auto">
+          <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
+            {user && <SettingsComponent />}
             {children}
-          </div>
-        </ThemeProvider>
-        <LiveChatProvider />
-        {user && (
-          <div className="absolute top-0 right-0 p-4 z-20">
-            <SettingsComponent />
-          </div>
-        )}
+            </div>
+          </ThemeProvider>
+          <LiveChatProvider />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default ContentProvider;
