@@ -263,22 +263,24 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
             }}
             transition={{ duration: 0.2 }}
             key="create-contract"
-            className="h-full w-full flex flex-col gap-5 justify-start items-start pb-10 md:pb-0"
+            className="h-full w-full flex flex-col gap-5 justify-start items-start"
           >
             <form
               onSubmit={formik.handleSubmit}
-              className="w-full flex flex-col gap-4"
+              className="w-full flex flex-col gap-4 pb-10 md:pb-0"
             >
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                className="self-start sticky p-0 top-0 left-0 w-fit flex justify-start items-center bg-background z-20 hover:bg-transparent"
-              >
-                <div className="flex flex-row gap-1 items-start md:hover:bg-slate-400/40 p-2 rounded-full">
-                  <IoArrowBack className="w-6 h-6" />
-                  Back
-                </div>
-              </Button>
+              <div className="w-full md:w-fit bg-background sticky p-0 top-0 left-0 flex justify-start items-center z-20 hover:bg-transparent">
+                <Button
+                  variant="ghost"
+                  onClick={handleBack}
+                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent"
+                >
+                  <div className="flex flex-row gap-1 items-start md:hover:bg-slate-400/40 p-2 md:rounded-full">
+                    <IoArrowBack className="w-6 h-6" />
+                    Back
+                  </div>
+                </Button>
+              </div>
               <div className="w-full h-full overflow-auto flex flex-col gap-8 md:gap-10">
                 <SectionContainer>
                   <SectionTitleContainer>
@@ -380,11 +382,11 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     <SectionTitleExplanation text="Put your pinky where your mouth is" />
                   </SectionTitleContainer>
                   <div
-                    className="flex flex-row gap-4 w-full justify-center items-center"
+                    className="flex flex-row gap-4 w-full justify-start items-center"
                     data-onboarding-id="contract-signatures"
                   >
                     <div
-                      className="flex flex-col justify-center items-center gap-2 w-1/2"
+                      className="flex flex-col justify-center items-center gap-2 w-fit md:w-1/2"
                       ref={signatureRef}
                     >
                       <AccountabilityPartnerComponent
@@ -399,15 +401,16 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                       <Checkbox
                         onCheckedChange={handleSignContract}
                         error={formik.errors.signatures}
+                        className="h-7 w-7"
                       />
                     </div>
                     {accountabilityPartner && (
-                      <div className="flex flex-col justify-center items-center gap-2 w-1/2 grayscale">
+                      <div className="flex flex-col justify-center items-center gap-2 w-fit md:w-1/2 grayscale">
                         <AccountabilityPartnerComponent
                           className="flex-col !p-0"
                           partner={accountabilityPartner}
                         />
-                        <Checkbox disabled />
+                        <Checkbox disabled className="h-8 w-8" />
                       </div>
                     )}
                   </div>

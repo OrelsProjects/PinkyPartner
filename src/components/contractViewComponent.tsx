@@ -62,14 +62,14 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   );
 
   const missingSignatures = useMemo(() => {
-    const signedNames = new Set(
+    const signedUserIds = new Set(
       contract.signatures
         .filter(signature => signature.signedAt !== null)
-        .filter(signature => signature.userId !== contract.creatorId)
-        .map(signature => signature.displayName),
+        .map(signature => signature.userId),
     );
+    
     return contract.contractees
-      .filter(ce => !signedNames.has(ce.displayName))
+      .filter(ce => !signedUserIds.has(ce.userId))
       .map(ce => ce.displayName);
   }, [contract]);
 
