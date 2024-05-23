@@ -19,6 +19,7 @@ export const daysOfWeek = [
  * @returns The name of the day.
  */
 export function dayNumberToName(dayNumber: number): string {
+  console.log(dayNumber, daysOfWeek[dayNumber]);
   return daysOfWeek[dayNumber];
 }
 
