@@ -3,6 +3,7 @@ import { UserContractObligationData } from "../models/userContractObligation";
 import Contract, { ContractWithExtras } from "../models/contract";
 import { useAppSelector } from "../lib/hooks/redux";
 import {
+  dateToDayString,
   dayNameToNumber,
   daysOfWeek,
   getWeekRangeFormatted,
@@ -85,11 +86,15 @@ const ObligationsComponent = ({
   const handleCompleteObligation = async (day: string, completed: boolean) => {
     const loading = loadingObligationDays[day];
     if (loading) return;
-
-    const dayInObligationIndex = obligations[0].obligation.days.findIndex(
-      obligationDay => obligationDay === dayNameToNumber(day),
+    console.log("Completing obligation", day, completed);
+    const dayInObligationIndex = obligations.findIndex(
+      obligation =>
+        obligation.dueDate && dateToDayString(obligation.dueDate) === day,
     );
+
+    console.log("dayInObligationIndex", dayInObligationIndex);
     const obligation = obligations[dayInObligationIndex];
+    console.log("obligation", obligation);
     if (!obligation) return;
     // const completed = !!obligation.completedAt;
 
@@ -109,8 +114,10 @@ const ObligationsComponent = ({
       }
       await completeObligation(obligation, contract.contractId, completed);
       if (completed) {
-        toast("Good job! Your partner will be notified", {
-          autoClose: 3000,
+        const hasPartner = partnerData && partnerData.length > 0;
+        const completedText = `Good job! ${hasPartner ? " Your partner will be notified" : ""}`;
+        toast(completedText, {
+          autoClose: hasPartner ? 3000 : 1500,
           theme: "light",
         });
       }
