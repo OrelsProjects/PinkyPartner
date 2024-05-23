@@ -41,7 +41,7 @@ export function dayNumbersToNames(dayNumbers: number[]): string[] {
 export function getNextWeekDate(): Date {
   const now = new Date();
   const nextWeek = new Date(now);
-  nextWeek.setDate(now.getDate() + 7);
+  nextWeek.setDate(now.getUTCDate() + 7);
   return nextWeek;
 }
 
@@ -59,7 +59,7 @@ export function dateToHourMinute(date: Date): string {
  */
 export function dateToDayString(date: Date): string {
   const safeDate = new Date(date);
-  return dayNumberToName(safeDate.getDay());
+  return dayNumberToName(safeDate.getUTCDay());
 }
 
 export function DaysToText(days?: number[]): string {
