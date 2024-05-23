@@ -78,7 +78,6 @@ export default function Home() {
   return (
     <div
       className="w-full h-fit flex flex-col gap-4 relative"
-      data-onboarding-id="home-start-doing"
     >
       <ContractObligationsComponent
         userData={contractObligations}

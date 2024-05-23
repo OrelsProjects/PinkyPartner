@@ -1,3 +1,7 @@
+import {
+  getEndOfTheWeekDate,
+  getStartOfTheWeekDate,
+} from "../../app/api/obligation/_utils";
 
 export const daysOfWeek = [
   "Sunday",
@@ -67,4 +71,36 @@ export const isDateSameDay = (day: string, date: Date) => {
   const dayNumber = dayNameToNumber(day);
   const dayUTC = date.getUTCDay();
   return dayUTC === dayNumber;
+};
+
+export const dayToThisWeekDate = (day: string): Date => {
+  const dayNumber = dayNameToNumber(day);
+  const now = new Date();
+  const dayUTC = now.getUTCDay();
+  const diff = dayNumber - dayUTC;
+  now.setDate(now.getDate() + diff);
+  return now;
+};
+
+export const getWeekRangeFormatted = (): string => {
+  const startWeekDate = getStartOfTheWeekDate();
+  const endWeekDate = getEndOfTheWeekDate();
+  const startOfWeekDay = startWeekDate.getUTCDate();
+  const startOfWeekMonth = startWeekDate.getUTCMonth() + 1;
+  const endOfWeekDay = endWeekDate.getUTCDate();
+  const endOfWeekMonth = endWeekDate.getUTCMonth() + 1;
+  return startOfWeekMonth !== endOfWeekMonth
+    ? `${startOfWeekDay}/${startOfWeekMonth} - ${endOfWeekDay}/${endOfWeekMonth}`
+    : `${startOfWeekDay} - ${endOfWeekDay}/${endOfWeekMonth}`;
+};
+
+export const getDateFormatted = (
+  day: string,
+  dayShortened?: boolean,
+): string => {
+  // dddddd or ddd, mm MMM(3 letters month)
+  const date = dayToThisWeekDate(day);
+  const month = date.getUTCDate() + 1;
+  const monthName = date.toLocaleString("default", { month: "short" });
+  return dayShortened ? `${day} ${monthName}` : `${day}, ${month} ${monthName}`;
 };

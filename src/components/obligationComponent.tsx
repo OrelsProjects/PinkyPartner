@@ -2,24 +2,14 @@
 
 import React, { ElementType } from "react";
 import Obligation from "../models/obligation";
-import { useObligations } from "../lib/hooks/useObligations";
 import { FiMinusCircle as Minus } from "react-icons/fi";
 import { Button } from "./ui/button";
 
 import RepeatComponent from "./repeatComponent";
-import { toast } from "react-toastify";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "../lib/utils";
 import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { DialogClose } from "@radix-ui/react-dialog";
 
 interface ObligationProps {
   obligation: Obligation;
@@ -58,19 +48,18 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
 );
 
 const ObligationComponent: React.FC<ObligationProps> = ({
-  obligation,
-  completedAt,
-  ownerImageUrl,
-  deleteIcon,
-  trailingIcon,
-  showDelete,
-  showRepeat = true,
-  showFullDay,
   onClick,
   onDelete,
   className,
+  obligation,
+  deleteIcon,
+  showDelete,
+  showFullDay,
+  completedAt,
+  trailingIcon,
+  ownerImageUrl,
+  showRepeat = true,
 }) => {
-
   const DeleteIcon: ElementType = deleteIcon ?? Minus;
 
   const DeleteButton = () =>

@@ -71,7 +71,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             <toast.ToastContainer
               stacked
               newestOnTop
-              theme={theme}
+              theme={theme === "system" ? "light" : theme}
               autoClose={2500}
               draggablePercent={60}
               className="!mb-16 z-[51]"
@@ -82,10 +82,13 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           </div>
           {/* <Button
             className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
-            onClick={() => axios.post("/api/clear")}
-          >
+            onClick={() => {
+              axios.post("/api/clear");
+              localStorage.clear();
+            }}
+          > */}
             Clear
-          </Button> */}
+          </Button>
           <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
             {user && <SettingsComponent />}
             {children}

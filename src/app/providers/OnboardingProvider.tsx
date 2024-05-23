@@ -2,95 +2,18 @@
 
 import { cn } from "../../lib/utils";
 import { FaArrowDownLong } from "react-icons/fa6";
-import useOnboarding, {
-  Stage,
-  hasMobileVersion,
-  shouldFetchElement,
-} from "../../lib/hooks/useOnboarding";
 import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
-
-const specialSigns = ["~", "-"];
-
-const stageText: Record<
-  Stage,
-  {
-    title: string;
-    description: string;
-  }
-> = {
-  welcome: {
-    title: "Welcome to Pinky Partner!",
-    description: `With Pinky Partner you can easily build new habits with your partner.\n-(Click anywhere to continue.)-`,
-  },
-  "navigation-bar-item-Contracts": {
-    title: "Let's begin!",
-    description:
-      "Go to your contracts section.\n-(Click on the highlighted section.)-",
-  },
-  "contracts-plus-button": {
-    title: "",
-    description: "Create your first contract by clicking the plus button.",
-  },
-  "search-partner": {
-    title: "Find your Pinky Partner",
-    description:
-      "Here you can search for your partner.\n~-hint: if your partner is not in PinkyPartner, invite them from the settings menu-~",
-  },
-  "no-partner": {
-    title: "Continue solo! For now...",
-    description: "You can start solo and invite your partner later on.",
-  },
-  "fill-contract": {
-    title: "",
-    description: "",
-  },
-  "invite-partner-button": {
-    title: "Invite your partner",
-    description:
-      "Here you can share a link via your selected platform.\n Send it to your future Pinky Partner ;)",
-  },
-  "wait-for-partner": {
-    title: "Wait for your partner's pinky!",
-    description:
-      "Now your pinky partner got a notification to come sign the contract. Make sure to remind them ;)\n~-hint: You can start solo and your partner will join later.-~",
-  },
-  "home-start-doing": {
-    title: "Get to work!",
-    description:
-      "Now start building your habits while your partner is on the way.",
-  },
-  done: {
-    title: "Done",
-    description: "You have completed the onboarding",
-  },
-};
-
-const backgroundForNextStage: Record<Stage, boolean> = {
-  welcome: true,
-  "navigation-bar-item-Contracts": false,
-  "contracts-plus-button": false,
-  "search-partner": false,
-  "no-partner": false,
-  "fill-contract": false,
-  "invite-partner-button": false,
-  "wait-for-partner": true,
-  "home-start-doing": false,
-  done: false,
-};
-
-const showBackground: Record<Stage, boolean> = {
-  welcome: true,
-  "navigation-bar-item-Contracts": true,
-  "contracts-plus-button": true,
-  "search-partner": true,
-  "no-partner": true,
-  "fill-contract": false,
-  "invite-partner-button": true,
-  "wait-for-partner": true,
-  "home-start-doing": true,
-  done: false,
-};
+import {
+  hasMobileVersion,
+  shouldFetchElement,
+  specialSigns,
+  stageText,
+  showBackground,
+  backgroundForNextStage,
+} from "../../lib/consts/onboarding";
+import useOnboarding from "../../lib/hooks/useOnboarding";
+import { useMemo } from "react";
 
 export default function OnboardingProvider() {
   const {
@@ -107,8 +30,12 @@ export default function OnboardingProvider() {
 
   const router = useRouter();
 
-  const Arrow = () => {
+  const mobile = useMemo(() => {
     const mobile = isMobile && hasMobileVersion[currentStage];
+    return mobile;
+  }, [isMobile, currentStage]);
+
+  const Arrow = () => {
     const showArrow = shouldFetchElement[currentStage];
 
     const elementTop = elementPosition?.top || 0;
@@ -147,7 +74,7 @@ export default function OnboardingProvider() {
           }}
         >
           {showArrow && (
-            <FaArrowDownLong //TODO: Consider using an icon of an arrow instead of an image
+            <FaArrowDownLong
               className={cn("text-slate-200/90 w-10 h-10 animate-bounce")}
             />
           )}
@@ -187,7 +114,7 @@ export default function OnboardingProvider() {
     const cleanTextLines = textLines.map(cleanText);
 
     return (
-      <div className="absolute flex flex-col gap-2 text-white text-center p-2 md:p-0">
+      <div className="flex flex-col gap-2 text-white text-center p-2 md:p-0">
         <h1 className="text-2xl md:text-3xl font-medium md:font-semibold">
           {stageText[currentStage].title}
         </h1>
@@ -215,6 +142,10 @@ export default function OnboardingProvider() {
           {
             "hover:cursor-pointer": backgroundForNextStage[currentStage],
           },
+          {
+            "items-end pb-20 md:items-center md:pb-0":
+              currentStage === "no-partner",
+          },
         )}
         onClick={() => {
           if (currentStage === "welcome") {
@@ -231,7 +162,7 @@ export default function OnboardingProvider() {
           id="_PRIVATE_ONBOARDING_ELEMENT"
           ref={onboardingElement}
           className={cn(
-            "absolute bg-background h-fit w-fit flex justify-center items-center",
+            "absolute bg-background h-fit w-fit flex justify-center items-center md:hover:cursor-pointer",
           )}
           style={{
             top: elementPosition?.top,
@@ -255,7 +186,7 @@ export default function OnboardingProvider() {
         <Arrow />
         <div
           className={cn(
-            "w-full md:w-full h-fit absolute flex justify-center items-center px-2",
+            "w-full md:w-full h-fit flex justify-center items-center px-2",
           )}
         >
           <Text />

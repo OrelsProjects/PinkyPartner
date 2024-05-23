@@ -2,19 +2,21 @@ import React, { useEffect, useMemo } from "react";
 import { UserContractObligationData } from "../models/userContractObligation";
 import Contract, { ContractWithExtras } from "../models/contract";
 import { useAppSelector } from "../lib/hooks/redux";
-import { Checkbox } from "./ui/checkbox";
 import {
   dayNameToNumber,
   daysOfWeek,
+  getWeekRangeFormatted,
   isDateSameDay,
 } from "../lib/utils/dateUtils";
 import { useObligations } from "../lib/hooks/useObligations";
 import { toast } from "react-toastify";
-import { UserAvatar } from "./ui/avatar";
 import { cn } from "../lib/utils";
 import ContractViewComponent from "./contractViewComponent";
 import { useContracts } from "../lib/hooks/useContracts";
 import { AnimatePresence, motion } from "framer-motion";
+import { Checkbox } from "./ui/checkbox";
+import { Logger } from "../logger";
+import { Avatar, UserAvatar } from "./ui/avatar";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -33,16 +35,33 @@ interface ContractAcccordionProps {
 }
 
 const ObligationsComponent = ({
+  isPartnerSigned,
   obligations,
+  partnerData,
   contract,
 }: {
-  obligations: UserContractObligationData[];
   contract: Contract;
+  isPartnerSigned?: boolean;
+  obligations: UserContractObligationData[];
+  partnerData?: UserContractObligationData[];
 }) => {
   if (!obligations.length) return null;
 
   const { user } = useAppSelector(state => state.auth);
   const { completeObligation } = useObligations();
+  const [loadingObligationDays, setLoadingObligationDays] = React.useState<
+    Record<string, boolean>
+  >({});
+
+  useEffect(() => {
+    console.log(loadingObligationDays);
+  }, [loadingObligationDays]);
+
+  const userContractObligation = useMemo(() => {
+    if (obligations.length > 0) {
+      return obligations[0];
+    }
+  }, [obligations]);
 
   // Returns an array of all the indices of days the obligation was completedAt
   const daysObligationsCompleted = useMemo(() => {
@@ -54,44 +73,59 @@ const ObligationsComponent = ({
     }, []);
   }, [obligations]);
 
-  const handleCompleteObligation = async (
-    day: string,
-    completed: boolean = true,
-  ) => {
+  const daysObligationsCompletedPartner = useMemo(() => {
+    return partnerData?.reduce((acc: Date[], { completedAt, dueDate }) => {
+      if (completedAt && dueDate) {
+        acc.push(new Date(dueDate));
+      }
+      return acc;
+    }, []);
+  }, [obligations]);
+
+  const handleCompleteObligation = async (day: string, completed: boolean) => {
+    const loading = loadingObligationDays[day];
+    if (loading) return;
+
     const dayInObligationIndex = obligations[0].obligation.days.findIndex(
       obligationDay => obligationDay === dayNameToNumber(day),
     );
     const obligation = obligations[dayInObligationIndex];
     if (!obligation) return;
-    toast.promise(
-      completeObligation(obligation, contract.contractId, completed),
-      {
-        pending: completed
-          ? "Completing obligation..."
-          : "Uncompleting obligation...",
-        success: completed ? "Obligation completed" : "Obligation uncompleted",
-        error: completed
-          ? "Failed to complete obligation"
-          : "Failed to uncomplete obligation",
-      },
-    );
+    // const completed = !!obligation.completedAt;
+
+    try {
+      setLoadingObligationDays(prev => ({
+        ...prev,
+        [day]: true,
+      }));
+      if (!completed) {
+        // show yes no alert
+        const shouldContinue = window.confirm(
+          "Are you sure you want to mark this obligation as incomplete?",
+        );
+        if (!shouldContinue) {
+          return;
+        }
+      }
+      await completeObligation(obligation, contract.contractId, completed);
+      if (completed) {
+        toast("Good job! Your partner will be notified", {
+          autoClose: 3000,
+          theme: "light",
+        });
+      }
+    } catch (e: any) {
+      Logger.error(e);
+    } finally {
+      setLoadingObligationDays(prev => ({
+        ...prev,
+        [day]: false,
+      }));
+    }
   };
 
   const isPartner = useMemo(() => {
     return obligations[0].userId !== user?.userId;
-  }, [obligations, user]);
-
-  const userDetails = useMemo(() => {
-    if (isPartner) {
-      return {
-        photoURL: obligations[0].appUser.photoURL,
-        displayName: obligations[0].appUser.displayName,
-      };
-    }
-    return {
-      photoURL: user?.photoURL,
-      displayName: user?.displayName,
-    };
   }, [obligations, user]);
 
   const obligationsDays = useMemo(() => {
@@ -101,41 +135,118 @@ const ObligationsComponent = ({
     return [];
   }, [obligations]);
 
-  return (
-    <div className="flex flex-col h-fit w-full gap-1">
-      <UserAvatar {...userDetails} />
+  const isObligationCompleted = (day: string) =>
+    daysObligationsCompleted.some(date => isDateSameDay(day, date));
 
-      <div className="flex flex-row justify-between items-start h-fit w-full gap-3">
-        {daysOfWeek.map(day => {
-          return (
-            <div
-              key={`obligation-in-contract-${day}`}
-              className="flex flex-col justify-start items-center text-muted-foreground"
-            >
-              <Checkbox
-                className="w-7 md:w-8 h-7 md:h-8 rounded-full data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-background"
-                checked={daysObligationsCompleted.some(date =>
-                  isDateSameDay(day, date),
+  const isPartnerObligationCompleted = (day: string) =>
+    daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
+
+  const partnerDetails = useMemo(() => {
+    return partnerData?.[0]?.appUser;
+  }, [partnerData]);
+
+  return (
+    userContractObligation && (
+      <div className="w-full h-fit flex flex-col gap-3">
+        <div className="w-full h-full flex flex-row gap-1 justify-start items-center">
+          <span className="text-card-foreground">
+            {userContractObligation.obligation.emoji}
+          </span>
+          <h1 className="font-semibold text-lg lg:text-2xl tracking-wide">
+            {contract.title}
+          </h1>
+        </div>
+        <div className="flex flex-col justify-between items-start h-fit w-full gap-1">
+          <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
+          {obligationsDays.map((day, index) => {
+            return (
+              <div
+                className={cn(
+                  "rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm hover:cursor-pointer hover:shadow-md transition-all duration-200",
+                  {
+                    "bg-card/50": isObligationCompleted(day),
+                  },
                 )}
-                onCheckedChange={(checked: boolean) => {
-                  handleCompleteObligation(day, checked);
-                }}
-                variant="outline"
-                disabled={!obligationsDays.includes(day) || isPartner}
-              />
-              <div>{day[0].toUpperCase()}</div>
-            </div>
-          );
-        })}
+                key={`obligation-in-contract-${day}`}
+                data-onboarding-id={`${index === 0 ? "home-start-doing" : ""}`}
+              >
+                <div
+                  className={cn(
+                    "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
+                    {
+                      "opacity-50": isObligationCompleted(day),
+                    },
+                  )}
+                >
+                  <div className="flex flex-row gap-3 justify-center items-center">
+                    <span
+                      className={cn(
+                        "text-card-foreground line-clamp-1 font-medium",
+                      )}
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span
+                          className={cn("transition-all  duration-200", {
+                            "line-through text-muted-foreground font-normal":
+                              isObligationCompleted(day),
+                          })}
+                        >
+                          {userContractObligation.obligation.title}
+                        </span>
+                        <span className="text-foreground text-sm font-thin">
+                          {/* {getDateFormatted(day)} */}
+                          {day}
+                        </span>
+                      </div>
+                    </span>
+                  </div>
+                </div>
+                <div className="self-center flex flex-row gap-6">
+                  <div className="self-center flex flex-row gap-3">
+                    <UserAvatar
+                      displayName={user?.displayName}
+                      photoURL={user?.photoURL}
+                      className={cn("w-7 h-7", {
+                        grayscale: !isObligationCompleted(day),
+                      })}
+                    />
+                    {partnerDetails && (
+                      <UserAvatar
+                        displayName={partnerDetails?.displayName}
+                        photoURL={partnerDetails?.photoURL}
+                        className={cn(
+                          "w-7 h-7",
+                          {
+                            grayscale: !isPartnerObligationCompleted(day),
+                          },
+                          { "opacity-30": !isPartnerSigned },
+                        )}
+                      />
+                    )}
+                  </div>
+                  <Checkbox
+                    className="w-7 md:w-8 h-7 md:h-8 self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary"
+                    checked={isObligationCompleted(day)}
+                    onCheckedChange={(checked: boolean) => {
+                      handleCompleteObligation(day, checked);
+                    }}
+                    variant="default"
+                    disabled={!obligationsDays.includes(day) || isPartner}
+                    loading={loadingObligationDays[day]}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
 export default function ContractObligationsComponent({
   userData,
   partnerData,
-  loading,
 }: ContractAcccordionProps) {
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
@@ -202,20 +313,23 @@ export default function ContractObligationsComponent({
   };
 
   return (
-    <div className="h-full w-full flex flex-col gap-10 overflow-auto relative">
+    <div className="h-full w-full flex flex-col gap-10 overflow-auto relative pb-10">
       {Object.values(groupedObligations).map(
-        ({
-          userObligations,
-          partnerObligation,
-          contract,
-          isSigned,
-          isPartnerSigned,
-        }) => (
+        (
+          {
+            userObligations,
+            partnerObligation,
+            contract,
+            isSigned,
+            isPartnerSigned,
+          },
+          index,
+        ) => (
           <div
             className={cn("w-full h-fit relative", {
               "p-2": !isSigned,
             })}
-            key={contract.contractId}
+            key={`contract.contractId-${index}`}
           >
             <AnimatePresence>
               {!isSigned && (
@@ -239,19 +353,11 @@ export default function ContractObligationsComponent({
                 </motion.div>
               )}
             </AnimatePresence>
-            <h1 className="font-semibold text-2xl tracking-wide">
-              {contract.title}
-            </h1>
-            {userObligations.length > 0 && (
-              <h2>{userObligations[0].obligation.title}</h2>
-            )}
             <ObligationsComponent
               obligations={userObligations}
+              partnerData={partnerData}
               contract={contract}
-            />
-            <ObligationsComponent
-              obligations={partnerObligation}
-              contract={contract}
+              isPartnerSigned={isPartnerSigned}
             />
           </div>
         ),

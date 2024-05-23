@@ -3,70 +3,13 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "./redux";
-
-export type Stage =
-  | "welcome"
-  | "navigation-bar-item-Contracts"
-  | "contracts-plus-button"
-  | "search-partner"
-  | "no-partner"
-  | "fill-contract"
-  | "invite-partner-button"
-  | "wait-for-partner"
-  | "home-start-doing"
-  | "done";
-
-const stages: Stage[] = [
-  "welcome",
-  "navigation-bar-item-Contracts",
-  "contracts-plus-button",
-  "search-partner",
-  "no-partner",
-  "fill-contract",
-  "invite-partner-button",
-  "wait-for-partner",
-  "home-start-doing",
-  "done",
-];
-
-const timeDelays: Record<Stage, number> = {
-  welcome: 0,
-  "navigation-bar-item-Contracts": 2000,
-  "contracts-plus-button": 200,
-  "search-partner": 2500,
-  "no-partner": 2300,
-  "fill-contract": 0,
-  "invite-partner-button": 0,
-  "wait-for-partner": 200,
-  "home-start-doing": 3000,
-  done: 0,
-};
-
-export const shouldFetchElement: Record<Stage, boolean> = {
-  welcome: false,
-  "navigation-bar-item-Contracts": true,
-  "contracts-plus-button": true,
-  "search-partner": true,
-  "no-partner": true,
-  "fill-contract": false,
-  "invite-partner-button": true,
-  "wait-for-partner": false,
-  "home-start-doing": true,
-  done: false,
-};
-
-export const hasMobileVersion: Record<Stage, boolean> = {
-  welcome: false,
-  "navigation-bar-item-Contracts": true,
-  "contracts-plus-button": false,
-  "search-partner": false,
-  "no-partner": false,
-  "fill-contract": false,
-  "invite-partner-button": false,
-  "wait-for-partner": false,
-  "home-start-doing": false,
-  done: false,
-};
+import {
+  Stage,
+  stages,
+  shouldFetchElement,
+  hasMobileVersion,
+  timeDelays,
+} from "../consts/onboarding";
 
 export default function useOnboarding() {
   const router = useRouter();
@@ -256,8 +199,11 @@ export default function useOnboarding() {
         setElement();
         return;
       }
-
+      
+      el.className += " !cursor-pointer";
       const clone = el.cloneNode(true);
+      // add cursor-pointer to className of the element
+
       if (elementsActions[currentStage]) {
         clone.addEventListener("click", () => {
           while (onboardingElement.current?.firstChild) {
