@@ -40,6 +40,9 @@ export async function POST(
         meta: {
           referralCode: annonymousUser.meta?.referralCode || "",
         },
+        settings: {
+          showNotifications: false,
+        },
       };
     }
 

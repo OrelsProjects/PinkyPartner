@@ -87,17 +87,17 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
               localStorage.clear();
             }}
           > */}
-            Clear
-          </Button>
+            {/* Clear
+          </Button> */}
           <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
             {user && <SettingsComponent />}
             {children}
-          </div>
-        </ThemeProvider>
-        <LiveChatProvider />
+            </div>
+          </ThemeProvider>
+          <LiveChatProvider />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default ContentProvider;
