@@ -70,8 +70,8 @@ messaging.onBackgroundMessage(payload => {
 
   const notificationOptions = {
     body,
-    icon: icon || "favicon-32x32.png",
-    badge: badge || "favicon-32x32.png",
+    icon: "favicon-32x32.png",
+    badge:"favicon-32x32.png",
     data: restPayload,
   };
 
