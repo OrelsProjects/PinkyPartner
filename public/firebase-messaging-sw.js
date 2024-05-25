@@ -74,7 +74,7 @@ messaging.onBackgroundMessage(payload => {
     badge: badge,
     data: restPayload,
     image: icon,
-    tag: restPayload.tag || "default",
+    // tag: restPayload.tag || "default",
   };
 
   return self.registration.showNotification(title, notificationOptions);
