@@ -13,6 +13,7 @@ import {
   setNewObligations,
   setNewContracts,
   setShownContractNotification,
+  NotificationType,
 } from "../../lib/features/notifications/notificationsSlice";
 import { UserContractObligationData } from "../../models/userContractObligation";
 
@@ -48,6 +49,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
         title: payload.data?.title ?? "",
         body: payload.data?.body ?? "",
         image: payload.data?.image ?? "",
+        type: (payload.data?.type as NotificationType) || "contract",
       });
     });
   };
@@ -97,6 +99,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
           showNotification({
             title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
             body: `${newObligations.length > 1 ? newObligations.length + " promises" : newObligations[0]?.obligation.title} completed!`,
+            type: "obligation",
           });
         });
       }
@@ -122,10 +125,11 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
               contractee => contractee.userId !== user?.userId,
             ),
           );
-          // showNotification({
-          //   title: "New contract!",
-          //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
-          // });
+          showNotification({
+            title: "New contract!",
+            body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
+            type: "contract",
+          });
         }
       }, 3000);
     }

@@ -24,6 +24,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       body,
       image,
       userId,
+      type,
     }: NotificationData & { userId: string } = await req.json();
     const user = await prisma.appUser.findUnique({
       where: { userId },
@@ -60,28 +61,28 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         { status: 400 },
       );
     }
+
+    const t =
+      "d90Wy7kx00-uhryN6yxgjc:APA91bFsdy_Vjxx2SjW0HWXHpKwFyBeLzHFzoqwobS3F-2h9FIbWUnGsJKrcTBGH0BgOMUu1Cc4GbPv9I2fv-uNmT5Y9mSckApYdW8Qc_lx-AX_VOIYW38zGB-4_HVDMpxHKaidrNky_";
+
     const message = {
-      token,
+      token: t,
       data: {
         title,
         body: body || "",
-        image: process.env.LOGO_URL || "",
-        icon: process.env.LOGO_URL || "",
-        badge: process.env.LOGO_URL || "",
+        icon: process.env.LOGO_URL || "/notification-icon.png",
+        badge: "/notification-icon.png",
       },
       webpush: {
         fcmOptions: {
           link: "https://www.pinkypartner.com/home",
         },
       },
-      android: {
-        collapseKey: "complete-promise",
-      },
       apns: {
         payload: {
           aps: {
             contentAvailable: true,
-            category: "complete-promise",
+            threadId: type,
           },
         },
         headers: {
@@ -91,7 +92,18 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       },
     };
 
-    // await messaging.send(message);
+    // await messaging.send({
+    //   ...message,
+    //   android: {
+    //     notification: {
+    //       icon: process.env.LOGO_URL || "",
+    //       channelId: type,
+    //       color: "#FF0000",
+    //       tag: type,
+    //       notificationCount: 4,
+    //     },
+    //   },
+    // });
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {

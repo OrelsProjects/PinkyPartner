@@ -18,6 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Checkbox } from "./ui/checkbox";
 import { Logger } from "../logger";
 import { Avatar, UserAvatar } from "./ui/avatar";
+import { sendPushNotification } from "../lib/services/notification";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -86,15 +87,14 @@ const ObligationsComponent = ({
   const handleCompleteObligation = async (day: string, completed: boolean) => {
     const loading = loadingObligationDays[day];
     if (loading) return;
-    console.log("Completing obligation", day, completed);
+
     const dayInObligationIndex = obligations.findIndex(
       obligation =>
         obligation.dueDate && dateToDayString(obligation.dueDate) === day,
     );
 
-    console.log("dayInObligationIndex", dayInObligationIndex);
     const obligation = obligations[dayInObligationIndex];
-    console.log("obligation", obligation);
+
     if (!obligation) return;
     // const completed = !!obligation.completedAt;
 
@@ -121,6 +121,7 @@ const ObligationsComponent = ({
           theme: "light",
         });
       }
+      
     } catch (e: any) {
       Logger.error(e);
     } finally {

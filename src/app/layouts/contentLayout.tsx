@@ -10,6 +10,7 @@ import DataProvider from "../providers/DataProvider";
 import NextTopLoader from "nextjs-toploader";
 import NotificationsProvider from "../providers/NotificationsProvider";
 import OnboardingProvider from "../providers/OnboardingProvider";
+import AnimationProvider from "../providers/AnimationProvider";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -34,7 +35,7 @@ export default function ContentLayout({ children }: RootLayoutProps) {
                   speed={1500}
                   shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
                 />
-                {children}
+                <AnimationProvider>{children}</AnimationProvider>
               </ContentProvider>
             </HeightProvider>
           </DataProvider>

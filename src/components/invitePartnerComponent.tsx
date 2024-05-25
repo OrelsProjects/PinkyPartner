@@ -73,7 +73,14 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   const ShareButtons = () => (
     <div className="flex flex-row gap-3 justify-center items-center">
       <div className="w-16 h-16 flex justify-center items-center rounded-full bg-gray-300 dark:bg-gray-700">
-        <FaCopy className="cursor-pointer" size={32} onClick={handleCopyLink} />
+        <FaCopy
+          className="cursor-pointer"
+          size={32}
+          onClick={e => {
+            handleCopyLink();
+            e.stopPropagation();
+          }}
+        />
       </div>
       <WhatsappShareButton title="Join me on Pinky Promise!" url={url}>
         <WhatsappIcon size={64} round={true} />
@@ -91,6 +98,10 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
           variant={variant || "link"}
           className={cn(className)}
           data-onboarding-id="invite-partner-button"
+          onClick={e => {
+            EventTracker.track("Invite Partner", { id });
+            e.stopPropagation();
+          }}
         >
           {buttonText}
         </Button>

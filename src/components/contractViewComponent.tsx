@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,21 +22,29 @@ import {
   SectionTitleSecondary,
 } from "@/components/ui/section";
 import Divider from "./ui/divider";
-import { toast } from "react-toastify";
-import { useContracts } from "../lib/hooks/useContracts";
-import { useAppSelector } from "../lib/hooks/redux";
+import { cn } from "../lib/utils";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
   onSign: (contract: ContractWithExtras) => void;
+  hideButton?: boolean;
+  open?: boolean | undefined;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
+  hideButton,
   contract,
   isSigned,
   onSign,
+  open,
 }) => {
+  const [isOpen, setIsOpen] = React.useState(open);
+
+  useEffect(() => {
+    setIsOpen(open);
+  }, [open]);
+
   const SignedNames = useMemo(() => {
     const names = contract.contractees.map(ce => ce.displayName);
     if (names.length > 1) {
@@ -67,7 +75,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         .filter(signature => signature.signedAt !== null)
         .map(signature => signature.userId),
     );
-    
+
     return contract.contractees
       .filter(ce => !signedUserIds.has(ce.userId))
       .map(ce => ce.displayName);
@@ -168,9 +176,8 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       </div>
     </DialogContent>
   );
-
   return (
-    <Dialog>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
         {!isSigned ? (
           <Button className="relative">
@@ -178,7 +185,12 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
             <div className="shimmer-animation rounded-lg"></div>
           </Button>
         ) : (
-          <Button variant="outline" className="bg-transparent dark:bg-card">
+          <Button
+            variant="outline"
+            className={cn("bg-transparent dark:bg-card", {
+              hidden: hideButton,
+            })}
+          >
             View Contract
           </Button>
         )}

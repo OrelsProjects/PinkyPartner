@@ -73,8 +73,8 @@ messaging.onBackgroundMessage(payload => {
     icon: icon,
     badge: badge,
     data: restPayload,
-    image: icon,
-    // tag: restPayload.tag || "default",
+    // image: icon,
+    tag: restPayload.tag || "default", // This is used to make sure all notifications with
   };
 
   return self.registration.showNotification(title, notificationOptions);

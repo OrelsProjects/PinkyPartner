@@ -53,6 +53,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
   const { fetchNextUpObligations } = useObligations();
   const { user } = useAppSelector(state => state.auth);
+  const [showContract, setShowContract] = React.useState(false);
 
   const isUserSigned = useMemo(
     () =>
@@ -80,28 +81,33 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3",
+        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3 hover:cursor-pointer",
         { "border-primary/50": !isUserSigned },
       )}
+      onClick={() => setShowContract(!showContract)}
     >
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <h1 className="font-semibold text-lg truncate">{contract.title}</h1>
-          {user &&
-            (isContractHasPartner ? (
+          {user && (
+            <>
               <ContractViewComponent
                 contract={contract}
                 isSigned={isUserSigned}
                 onSign={handleSignContract}
+                open={showContract}
+                hideButton={!isContractHasPartner}
               />
-            ) : (
+
               <InvitePartnerComponent
+                className={cn({ hidden: isContractHasPartner })}
                 contract={contract}
                 referralCode={user.meta?.referralCode}
                 buttonText="Invite a partner"
                 variant="default"
               />
-            ))}
+            </>
+          )}
         </div>
         <h3 className="font-normal text-base line-clamp-2">
           {contract.description}

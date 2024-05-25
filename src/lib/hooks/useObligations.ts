@@ -141,7 +141,8 @@ export function useObligations() {
     obligation: UserContractObligationData,
   ) => {
     try {
-      const otherUser = contract.contractees.find(
+      debugger;
+      const otherUser = contract.signatures.find(
         contractee => contractee.userId !== user?.userId,
       );
       if (!otherUser) return;
@@ -200,6 +201,7 @@ export function useObligations() {
         );
       dispatch(completeObligationAction(obligationCompletedResponse.data));
       dispatch(setError(null));
+      if (!completed) return;
       sendCompletedObligationNotification(contract, obligation)
         .then(() => {
           Logger.info("Notification sent");

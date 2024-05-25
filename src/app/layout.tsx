@@ -66,7 +66,9 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
         <StoreProvider>
           <SessionWrapper>
             <ThemeProvider>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
             </ThemeProvider>
           </SessionWrapper>
         </StoreProvider>

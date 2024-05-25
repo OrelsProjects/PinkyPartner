@@ -141,11 +141,25 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
   try {
     const contractId = req.nextUrl.searchParams.get("id") as string;
     const data = await req.json();
-    const contract = await prisma.contract.update({
+
+    const contract = await prisma.contract.findUnique({
       where: { contractId },
-      data,
     });
-    return NextResponse.json({ result: contract }, { status: 200 });
+
+    if (contract?.creatorId !== session.user.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const updatedContarct = await prisma.contract.update({
+      where: { contractId },
+      data: {
+        ...contract,
+        title: data.title,
+        description: data.description,
+        dueDate: data.dueDate,
+      },
+    });
+    return NextResponse.json({ result: updatedContarct }, { status: 200 });
   } catch (error: any) {
     Logger.error("Error updating contract", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

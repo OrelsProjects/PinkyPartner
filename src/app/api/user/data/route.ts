@@ -51,7 +51,7 @@ export async function GET(
       },
       include: {
         userContracts: {
-          include: {
+          select: {
             appUser: {
               select: {
                 photoURL: true,
@@ -59,6 +59,7 @@ export async function GET(
                 userId: true,
               },
             },
+            signedAt: true,
           },
         },
         contractObligations: {
@@ -67,7 +68,7 @@ export async function GET(
           },
         },
       },
-    });
+    }); 
 
     const contractsData: ClientContract.ContractWithExtras[] = contracts.map(
       contract => {
