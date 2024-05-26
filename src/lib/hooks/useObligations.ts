@@ -148,7 +148,7 @@ export function useObligations() {
       if (!otherUser) return;
 
       await axios.post("/api/notifications", {
-        title: `${otherUser.displayName || "Your partner"} is progressing!`,
+        title: `${user?.displayName || "Your partner"} is progressing!`,
         body: `${obligation.obligation.title} completed!`,
         userId: otherUser.userId,
       });
