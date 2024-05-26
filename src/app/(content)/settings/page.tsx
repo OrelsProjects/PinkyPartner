@@ -11,7 +11,10 @@ import { ThemeToggle } from "../../../components/theme-toggle";
 import { EventTracker } from "../../../eventTracker";
 import { Switch } from "../../../components/ui/switch";
 import axios from "axios";
-import { requestNotificationsPermission } from "../../../lib/services/notification";
+import {
+  getToken,
+  requestNotificationsPermission,
+} from "../../../lib/services/notification";
 
 interface SettingsProps {}
 
@@ -31,8 +34,11 @@ const SettingsButton: React.FC<SettingsProps> = () => {
       changeNotificationTimeout.current = null;
       try {
         await axios.patch("/api/user/settings", { showNotifications: value });
+        if (value) {
+          const token = await getToken();
+          await axios.patch("/api/user", { token });
+        }
       } catch (e) {
-        debugger;
         toast.error("Failed to update notification settings");
       }
     }, 1000);
