@@ -74,7 +74,7 @@ messaging.onBackgroundMessage(payload => {
     badge: badge,
     data: restPayload,
     // image: icon,
-    tag: restPayload.tag || "default", // This is used to make sure all notifications with
+    tag: restPayload.tag || "pinky-partner", // This is used to make sure all notifications with
   };
 
   return self.registration.showNotification(title, notificationOptions);

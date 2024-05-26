@@ -68,7 +68,10 @@ export async function GET(
           },
         },
       },
-    }); 
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     const contractsData: ClientContract.ContractWithExtras[] = contracts.map(
       contract => {

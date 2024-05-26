@@ -1,22 +1,22 @@
 import React, { useEffect, useMemo } from "react";
-import { UserContractObligationData } from "../../models/userContractObligation";
-import Contract, { ContractWithExtras } from "../../models/contract";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { UserContractObligationData } from "../models/userContractObligation";
+import Contract, { ContractWithExtras } from "../models/contract";
+import { useAppSelector } from "../lib/hooks/redux";
 import {
   dateToDayString,
   daysOfWeek,
   getWeekRangeFormatted,
   isDateSameDay,
-} from "../../lib/utils/dateUtils";
-import { useObligations } from "../../lib/hooks/useObligations";
+} from "../lib/utils/dateUtils";
+import { useObligations } from "../lib/hooks/useObligations";
 import { toast } from "react-toastify";
-import { cn } from "../../lib/utils";
-import ContractViewComponent from "../contractViewComponent";
-import { useContracts } from "../../lib/hooks/useContracts";
+import { cn } from "../lib/utils";
+import ContractViewComponent from "./contractViewComponent";
+import { useContracts } from "../lib/hooks/useContracts";
 import { AnimatePresence, motion } from "framer-motion";
-import { Checkbox } from "./checkbox";
-import { Logger } from "../../logger";
-import { UserAvatar } from "./avatar";
+import { Checkbox } from "./ui/checkbox";
+import { Logger } from "../logger";
+import { UserAvatar } from "./ui/avatar";
 import { FaLock } from "react-icons/fa";
 
 export type GroupedObligations = {

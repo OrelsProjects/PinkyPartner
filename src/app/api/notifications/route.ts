@@ -92,18 +92,16 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       },
     };
 
-    // await messaging.send({
-    //   ...message,
-    //   android: {
-    //     notification: {
-    //       icon: process.env.LOGO_URL || "",
-    //       channelId: type,
-    //       color: "#FF0000",
-    //       tag: type,
-    //       notificationCount: 4,
-    //     },
-    //   },
-    // });
+    await messaging.send({
+      ...message,
+      android: {
+        notification: {
+          icon: process.env.LOGO_URL || "",
+          channelId: type,
+          tag: type,
+        },
+      },
+    });
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {

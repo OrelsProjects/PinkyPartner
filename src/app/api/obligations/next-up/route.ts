@@ -86,6 +86,11 @@ export async function GET(
           },
         },
       },
+      orderBy: {
+        contract: {
+          createdAt: "desc",
+        },
+      },
     });
 
     signedContracts = signedContracts.filter(
@@ -115,14 +120,14 @@ export async function GET(
           signedContract.contract.contractObligations.map(
             ({ obligation }) => obligation,
           );
-        userContractObligations = await  createWeeksContractObligations(
+        userContractObligations = await createWeeksContractObligations(
           contractObligations,
           signedContract.contract,
           [signedContract.appUser.userId],
         );
       }
 
-      const signedContractUser = signedContract.appUser; 
+      const signedContractUser = signedContract.appUser;
       const usersContractObligations = userContractObligations.filter(
         ({ userId }) => userId === signedContract.userId,
       );
@@ -132,7 +137,6 @@ export async function GET(
           ({ obligationId }) =>
             obligationId === userContractObligation.obligationId,
         )?.obligation;
-
 
         const appUser = {
           photoURL:
@@ -166,7 +170,7 @@ export async function GET(
     }
 
     const userContractObligations = allUserContractObligations.filter(
-      ({ appUser }) => appUser.userId === user.userId
+      ({ appUser }) => appUser.userId === user.userId,
     );
     const partnerContractObligations = allUserContractObligations.filter(
       ({ appUser }) => appUser.userId !== user.userId,

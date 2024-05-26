@@ -83,11 +83,10 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           {/* <Button
             className="absolute top-0 right-0 p-4 z-[5555] bg-primary text-white"
             onClick={() => {
-              axios.post("/api/clear");
-              localStorage.clear();
+              axios.post("/api/migrate");
             }}
-          > */}
-            {/* Clear
+          >
+            Migrate
           </Button> */}
           <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
             {user && <SettingsComponent />}
