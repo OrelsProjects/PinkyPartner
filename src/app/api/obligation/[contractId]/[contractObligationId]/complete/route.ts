@@ -38,7 +38,7 @@ export async function POST(
     });
     return NextResponse.json(completedObligation, { status: 200 });
   } catch (error: any) {
-    Logger.error("Error getting obligation", error);
+    Logger.error("Error getting obligation", session.user.userId,error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

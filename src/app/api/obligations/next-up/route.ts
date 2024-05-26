@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import Logger from "@/loggerServer";
 import { authOptions } from "@/authOptions";
 import prisma from "../../_db/db";
-import { Logger } from "../../../../logger";
 import {
   UserContractObligationData,
   GetNextUpObligationsResponse,
@@ -184,7 +184,7 @@ export async function GET(
       { status: 200 },
     );
   } catch (error: any) {
-    Logger.error("Error getting obligations", error);
+    Logger.error("Error getting obligations", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

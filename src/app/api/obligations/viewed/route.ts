@@ -32,7 +32,7 @@ export async function POST(
 
     return NextResponse.json({}, { status: 200 });
   } catch (error: any) {
-    Logger.error("Error creating viewed", error);
+    Logger.error("Error creating viewed", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

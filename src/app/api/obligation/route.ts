@@ -22,7 +22,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
     return NextResponse.json({ ...obligation }, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error creating obligation", error);
+    Logger.error("Error creating obligation", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json({ result: obligation }, { status: 200 });
   } catch (error: any) {
-    Logger.error("Error fetching obligation", error);
+    Logger.error("Error fetching obligation", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -84,7 +84,7 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ result: obligation }, { status: 200 });
   } catch (error: any) {
-    Logger.error("Error updating obligation", error);
+    Logger.error("Error updating obligation", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -115,7 +115,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ result: "Obligation deleted" }, { status: 200 });
   } catch (error: any) {
-    Logger.error("Error deleting obligation", error);
+    Logger.error("Error deleting obligation", session.user.userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

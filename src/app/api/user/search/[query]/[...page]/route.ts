@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { Logger } from "../../../../../../logger";
+import Logger from "@/loggerServer";
 import prisma from "../../../../_db/db";
 import AppUser from "../../../../../../models/appUser";
 import { authOptions } from "../../../../../../authOptions";
@@ -31,7 +31,13 @@ export async function GET(
     });
     return NextResponse.json(users, { status: 200 });
   } catch (error: any) {
-    Logger.error(error);
+    Logger.error("error searching for users", currentUserId, {
+      data: {
+        error,
+        query,
+        page,
+      },
+    });
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

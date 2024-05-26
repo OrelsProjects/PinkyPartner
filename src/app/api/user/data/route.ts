@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
-import { Logger } from "../../../../logger";
+import Logger from "@/loggerServer";
 import { authOptions } from "../../../../authOptions";
 import { AppUser, Contract, Obligation } from "@prisma/client";
 import * as ClientContract from "../../../../models/contract";
@@ -108,7 +108,7 @@ export async function GET(
       { status: 200 },
     );
   } catch (error: any) {
-    Logger.error(error);
+    Logger.error("Error getting user data", session.user.userId, error);
     return NextResponse.json(undefined, { status: 500 });
   }
 }
