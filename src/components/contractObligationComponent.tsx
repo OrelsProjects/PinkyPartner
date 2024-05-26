@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Obligation from "../../models/obligation";
-import CheckboxObligation from "../checkboxObligation";
-import RepeatComponent from "../repeatComponent";
-import { Skeleton } from "../ui/skeleton";
-import { cn } from "../../lib/utils";
-import { dateToDayString, dateToHourMinute } from "../../lib/utils/dateUtils";
-import AccountabilityPartnerComponent from "../accountabilityPartnerComponent";
-import { UserContractObligationData } from "../../models/userContractObligation";
-import { useAppSelector } from "../../lib/hooks/redux";
+import Obligation from "../models/obligation";
+import CheckboxObligation from "./checkboxObligation";
+import RepeatComponent from "./repeatComponent";
+import { Skeleton } from "./ui/skeleton";
+import { cn } from "../lib/utils";
+import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
+import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
+import { UserContractObligationData } from "../models/userContractObligation";
+import { useAppSelector } from "../lib/hooks/redux";
 
 interface ObligationProps {
   userContractObligation: UserContractObligationData;

@@ -5,7 +5,7 @@ import UserContractObligation, {
   UserBasicData,
   UserContractObligationData,
 } from "../../models/userContractObligation";
-import ContractObligationComponent from "../deprecated/contractObligationComponent";
+import ContractObligationComponent from "../contractObligationComponent";
 import { useAppSelector } from "../../lib/hooks/redux";
 
 const AccordionObligations = ({
