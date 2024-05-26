@@ -4,7 +4,6 @@ import Contract, { ContractWithExtras } from "../models/contract";
 import { useAppSelector } from "../lib/hooks/redux";
 import {
   dateToDayString,
-  dayNameToNumber,
   daysOfWeek,
   getWeekRangeFormatted,
   isDateSameDay,
@@ -17,13 +16,12 @@ import { useContracts } from "../lib/hooks/useContracts";
 import { AnimatePresence, motion } from "framer-motion";
 import { Checkbox } from "./ui/checkbox";
 import { Logger } from "../logger";
-import { Avatar, UserAvatar } from "./ui/avatar";
-import { sendPushNotification } from "../lib/services/notification";
+import { UserAvatar } from "./ui/avatar";
 
 export type GroupedObligations = {
   [key: string]: {
     userObligations: UserContractObligationData[];
-    partnerObligation: UserContractObligationData[];
+    partnerObligations: UserContractObligationData[];
     contract: ContractWithExtras;
     isSigned: boolean;
     isPartnerSigned: boolean;
@@ -54,10 +52,6 @@ const ObligationsComponent = ({
   const [loadingObligationDays, setLoadingObligationDays] = React.useState<
     Record<string, boolean>
   >({});
-
-  useEffect(() => {
-    console.log(loadingObligationDays);
-  }, [loadingObligationDays]);
 
   const userContractObligation = useMemo(() => {
     if (obligations.length > 0) {
@@ -103,15 +97,15 @@ const ObligationsComponent = ({
         ...prev,
         [day]: true,
       }));
-      if (!completed) {
-        // show yes no alert
-        const shouldContinue = window.confirm(
-          "Are you sure you want to mark this obligation as incomplete?",
-        );
-        if (!shouldContinue) {
-          return;
-        }
-      }
+      // if (!completed) {
+      //   // show yes no alert
+      //   const shouldContinue = window.confirm(
+      //     "Are you sure you want to mark this obligation as incomplete?",
+      //   );
+      //   if (!shouldContinue) {
+      //     return;
+      //   }
+      // }
       await completeObligation(obligation, contract.contractId, completed);
       if (completed) {
         const hasPartner = partnerData && partnerData.length > 0;
@@ -121,7 +115,6 @@ const ObligationsComponent = ({
           theme: "light",
         });
       }
-      
     } catch (e: any) {
       Logger.error(e);
     } finally {
@@ -138,6 +131,8 @@ const ObligationsComponent = ({
 
   const obligationsDays = useMemo(() => {
     if (obligations.length > 0) {
+      console.log(obligations[0].contract.title);
+      console.log(obligations[0]);
       return obligations[0].obligation.days.map(day => daysOfWeek[day]);
     }
     return [];
@@ -150,7 +145,10 @@ const ObligationsComponent = ({
     daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
 
   const partnerDetails = useMemo(() => {
-    return partnerData?.[0]?.appUser;
+    if (partnerData && partnerData.length > 0) {
+      return partnerData[0].appUser;
+    }
+    return null;
   }, [partnerData]);
 
   return (
@@ -170,7 +168,7 @@ const ObligationsComponent = ({
             return (
               <div
                 className={cn(
-                  "rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm hover:cursor-pointer hover:shadow-md transition-all duration-200",
+                  "rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200",
                   {
                     "bg-card/50": isObligationCompleted(day),
                   },
@@ -239,7 +237,7 @@ const ObligationsComponent = ({
                       handleCompleteObligation(day, checked);
                     }}
                     variant="default"
-                    disabled={!obligationsDays.includes(day) || isPartner}
+                    // disabled={!obligationsDays.includes(day) || isPartner}
                     loading={loadingObligationDays[day]}
                   />
                 </div>
@@ -289,7 +287,7 @@ export default function ContractObligationsComponent({
 
             acc[contractId] = {
               userObligations: [],
-              partnerObligation: [],
+              partnerObligations: [],
               contract: userContract,
               isSigned,
               isPartnerSigned,
@@ -297,7 +295,7 @@ export default function ContractObligationsComponent({
           }
 
           if (isPartner) {
-            acc[contractId].partnerObligation.push(obligation);
+            acc[contractId].partnerObligations.push(obligation);
           } else {
             acc[contractId].userObligations.push(obligation);
           }
@@ -305,6 +303,7 @@ export default function ContractObligationsComponent({
         },
         {},
       );
+    console.log("groupedObligations: ", partnerData);
     setGroupedObligations(groupedObligations);
   }, [userData, partnerData]);
 
@@ -326,7 +325,7 @@ export default function ContractObligationsComponent({
         (
           {
             userObligations,
-            partnerObligation,
+            partnerObligations,
             contract,
             isSigned,
             isPartnerSigned,
@@ -363,7 +362,7 @@ export default function ContractObligationsComponent({
             </AnimatePresence>
             <ObligationsComponent
               obligations={userObligations}
-              partnerData={partnerData}
+              partnerData={partnerObligations}
               contract={contract}
               isPartnerSigned={isPartnerSigned}
             />
