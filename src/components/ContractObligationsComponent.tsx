@@ -168,7 +168,7 @@ const ObligationsComponent = ({
             return (
               <div
                 className={cn(
-                  "rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200",
+                  "rounded-lg h-16 w-full bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200",
                   {
                     "bg-card/50": isObligationCompleted(day),
                   },
@@ -213,7 +213,7 @@ const ObligationsComponent = ({
                       displayName={user?.displayName}
                       photoURL={user?.photoURL}
                       className={cn("w-7 h-7", {
-                        grayscale: !isObligationCompleted(day),
+                        "opacity-50": !isObligationCompleted(day),
                       })}
                     />
                     {partnerDetails && (
@@ -223,9 +223,9 @@ const ObligationsComponent = ({
                         className={cn(
                           "w-7 h-7",
                           {
-                            grayscale: !isPartnerObligationCompleted(day),
+                            "opacity-50": !isPartnerObligationCompleted(day),
                           },
-                          { "opacity-30": !isPartnerSigned },
+                          { grayscale: !isPartnerSigned },
                         )}
                       />
                     )}

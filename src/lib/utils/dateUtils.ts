@@ -85,12 +85,13 @@ export const dayToThisWeekDate = (day: string): Date => {
 };
 
 export const getWeekRangeFormatted = (): string => {
-  const startWeekDate = getStartOfTheWeekDate();
+  debugger;
+  const startWeekDate = getStartOfTheWeekDate(true);
   const endWeekDate = getEndOfTheWeekDate();
-  const startOfWeekDay = startWeekDate.getUTCDate();
-  const startOfWeekMonth = startWeekDate.getUTCMonth() + 1;
-  const endOfWeekDay = endWeekDate.getUTCDate();
-  const endOfWeekMonth = endWeekDate.getUTCMonth() + 1;
+  const startOfWeekDay = startWeekDate.getDate();
+  const startOfWeekMonth = startWeekDate.getMonth() + 1;
+  const endOfWeekDay = endWeekDate.getDate();
+  const endOfWeekMonth = endWeekDate.getMonth() + 1;
   return startOfWeekMonth !== endOfWeekMonth
     ? `${startOfWeekDay}/${startOfWeekMonth} - ${endOfWeekDay}/${endOfWeekMonth}`
     : `${startOfWeekDay} - ${endOfWeekDay}/${endOfWeekMonth}`;

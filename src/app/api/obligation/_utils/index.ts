@@ -26,6 +26,7 @@ export function getStartOfTheWeekDate(sunday: boolean = true): Date {
   const nowDay = now.getUTCDay();
 
   now.setHours(0, 0, 0, 0);
+
   if (sunday && nowDay === 0) {
     return now;
   } else {
@@ -50,7 +51,7 @@ export function getEndOfTheWeekDate(): Date {
   const startOfTheWeek = getStartOfTheWeekDate();
   // Set hours to 23, minutes to 59, seconds to 59, milliseconds to 999
   const endOfTheWeek = new Date(startOfTheWeek);
-  endOfTheWeek.setDate(startOfTheWeek.getUTCDate() + 6);
+  endOfTheWeek.setDate(startOfTheWeek.getDate() + 6);
   endOfTheWeek.setHours(23, 59, 59, 999);
   return endOfTheWeek;
 }

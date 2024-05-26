@@ -95,13 +95,13 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
           },
           [] as UserContractObligationData[],
         );
-        distinctPartnersObligations.forEach(obligation => {
-          showNotification({
-            title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
-            body: `${newObligations.length > 1 ? newObligations.length + " promises" : newObligations[0]?.obligation.title} completed!`,
-            type: "obligation",
-          });
-        });
+        // distinctPartnersObligations.forEach(obligation => {
+        //   showNotification({
+        //     title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
+        //     body: `${newObligations.length > 1 ? newObligations.length + " promises" : newObligations[0]?.obligation.title} completed!`,
+        //     type: "obligation",
+        //   });
+        // });
       }
     }
   }, [partnerContractObligations]);
@@ -125,11 +125,11 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
               contractee => contractee.userId !== user?.userId,
             ),
           );
-          showNotification({
-            title: "New contract!",
-            body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
-            type: "contract",
-          });
+          // showNotification({
+          //   title: "New contract!",
+          //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
+          //   type: "contract",
+          // });
         }
       }, 3000);
     }
