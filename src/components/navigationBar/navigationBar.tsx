@@ -17,13 +17,24 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   const [activeItem, setActiveItem] = useState<NavigationBarItem | undefined>(
     items[0],
   );
-  const { newContracts, newObligations } = useNotifications();
+  const { newContracts, newObligations, markObligationsAsViewed } =
+    useNotifications();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     setActiveItem(items.find(i => pathname.includes(i.href)));
   }, [pathname]);
+
+  useEffect(() => {
+    if (activeItem?.label === "Home") {
+      if (newObligations.length > 0) {
+        setTimeout(() => {
+          markObligationsAsViewed();
+        }, 3500);
+      }
+    }
+  }, [activeItem, newObligations]);
 
   const handleItemClick = (item: NavigationBarItem) => {
     router.push(item.href);
