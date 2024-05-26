@@ -7,7 +7,7 @@ import { useContracts } from "../../../lib/hooks/useContracts";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
-import ContractObligationsComponent from "../../../components/contractObligationsComponent";
+import ContractObligationsComponent from "../../../components/ui/contractObligationsComponent";
 import useOnboarding from "../../../lib/hooks/useOnboarding";
 
 const EmptyContracts = () => {
