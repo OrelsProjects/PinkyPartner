@@ -4,15 +4,24 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 export const UserAvatar = ({
+  badge,
   photoURL,
-  displayName,
   className,
+  displayName,
+  imageClassName,
+  badgeClassName,
+  tooltipContent,
 }: {
+  className?: string;
+  imageClassName?: string;
+  badgeClassName?: string;
+  badge?: React.ReactNode;
   photoURL?: string | null;
   displayName?: string | null;
-  className?: string;
+  tooltipContent?: React.ReactNode;
 }) => {
   const userInitials = React.useMemo(() => {
     const firstLetter = displayName?.[0];
@@ -22,13 +31,38 @@ export const UserAvatar = ({
   }, [displayName]);
 
   return (
-    <Avatar className={className}>
-      {photoURL ? (
-        <AvatarImage src={photoURL} alt={displayName ?? "User photo"} />
-      ) : (
-        <AvatarFallback className="bg-card">{userInitials || "AN"}</AvatarFallback>
-      )}
-    </Avatar>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Avatar className={cn("relative rounded-none", className)}>
+            {photoURL ? (
+              <AvatarImage
+                src={photoURL}
+                alt={displayName ?? "User photo"}
+                className={cn("rounded-full", imageClassName)}
+              />
+            ) : (
+              <AvatarFallback className="bg-card">
+                {userInitials || "AN"}
+              </AvatarFallback>
+            )}
+            {badge && (
+              <div
+                className={cn(
+                  "w-fit h-fit absolute top-0 right-0 flex",
+                  badgeClassName,
+                )}
+              >
+                {badge}
+              </div>
+            )}
+          </Avatar>
+          <TooltipContent className="bg-background">
+            {tooltipContent || displayName || ""}
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

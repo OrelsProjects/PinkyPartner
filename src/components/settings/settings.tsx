@@ -20,7 +20,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
         <UserAvatar
           photoURL={user?.photoURL || "/images/default-profile.png"}
           displayName={user?.displayName}
-          className="rounded-full hover:cursor-pointer w-10 h-10 shadow-md"
+          imageClassName="rounded-full hover:cursor-pointer w-10 h-10 shadow-md"
         />
       </div>
     </div>

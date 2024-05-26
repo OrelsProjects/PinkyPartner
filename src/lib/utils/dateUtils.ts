@@ -85,7 +85,7 @@ export const dayToThisWeekDate = (day: string): Date => {
 };
 
 export const getWeekRangeFormatted = (): string => {
-  debugger;
+  
   const startWeekDate = getStartOfTheWeekDate(true);
   const endWeekDate = getEndOfTheWeekDate();
   const startOfWeekDay = startWeekDate.getDate();

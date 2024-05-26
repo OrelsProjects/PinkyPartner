@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Checkbox } from "./ui/checkbox";
 import { Logger } from "../logger";
 import { UserAvatar } from "./ui/avatar";
+import { FaLock } from "react-icons/fa";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -97,15 +98,15 @@ const ObligationsComponent = ({
         ...prev,
         [day]: true,
       }));
-      // if (!completed) {
-      //   // show yes no alert
-      //   const shouldContinue = window.confirm(
-      //     "Are you sure you want to mark this obligation as incomplete?",
-      //   );
-      //   if (!shouldContinue) {
-      //     return;
-      //   }
-      // }
+      if (!completed) {
+        // show yes no alert
+        const shouldContinue = window.confirm(
+          "Are you sure you want to mark this obligation as incomplete?",
+        );
+        if (!shouldContinue) {
+          return;
+        }
+      }
       await completeObligation(obligation, contract.contractId, completed);
       if (completed) {
         const hasPartner = partnerData && partnerData.length > 0;
@@ -212,21 +213,26 @@ const ObligationsComponent = ({
                     <UserAvatar
                       displayName={user?.displayName}
                       photoURL={user?.photoURL}
-                      className={cn("w-7 h-7", {
-                        "opacity-50": !isObligationCompleted(day),
+                      className={cn("h-9 w-9", {
+                        "border-2 border-green-500 rounded-full":
+                          isObligationCompleted(day),
                       })}
+                      imageClassName={cn()}
                     />
                     {partnerDetails && (
                       <UserAvatar
                         displayName={partnerDetails?.displayName}
                         photoURL={partnerDetails?.photoURL}
-                        className={cn(
-                          "w-7 h-7",
-                          {
-                            "opacity-50": !isPartnerObligationCompleted(day),
-                          },
-                          { grayscale: !isPartnerSigned },
-                        )}
+                        // badge={!isPartnerSigned && badgeNotSigned}
+                        className={cn("h-9 w-9", {
+                          "border-2 border-green-500 rounded-full":
+                            isPartnerObligationCompleted(day),
+                        })}
+                        badgeClassName="w-full h-full flex justify-center items-center rounded-full"
+                        imageClassName={cn({ "opacity-50": !isPartnerSigned })}
+                        tooltipContent={
+                          isPartnerSigned ? "" : "Partner didn't sign yet"
+                        }
                       />
                     )}
                   </div>
