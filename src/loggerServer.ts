@@ -37,7 +37,24 @@ const logger: () => Logger = () => {
     } catch (error: any) {
       console.log("Error logging", error);
     }
-    console.log(message, user_id, data);
+
+    switch (level) {
+      case "info":
+        console.info(message, user_id, data);
+        break;
+      case "error":
+        console.error(message, user_id, data);
+        break;
+      case "warn":
+        console.warn(message, user_id, data);
+        break;
+      case "debug":
+        console.debug(message, user_id, data);
+        break;
+      default:
+        console.log(message, user_id, data);
+        break;
+    }
   };
 
   return {
