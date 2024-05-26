@@ -18,6 +18,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  let token = "";
   try {
     const {
       title,
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       );
     }
 
-    const token = user.meta?.pushToken;
+    token = user.meta?.pushToken || "";
 
     if (!token) {
       return NextResponse.json(
@@ -62,11 +63,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       );
     }
 
-    const t =
-      "d90Wy7kx00-uhryN6yxgjc:APA91bFsdy_Vjxx2SjW0HWXHpKwFyBeLzHFzoqwobS3F-2h9FIbWUnGsJKrcTBGH0BgOMUu1Cc4GbPv9I2fv-uNmT5Y9mSckApYdW8Qc_lx-AX_VOIYW38zGB-4_HVDMpxHKaidrNky_";
-
     const message = {
-      token: t,
+      token,
       data: {
         title,
         body: body || "",
@@ -105,7 +103,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error sending notification", session.user.userId, error);
+    Logger.error("Error sending notification", session.user.userId, {
+      data: { error, token },
+    });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
