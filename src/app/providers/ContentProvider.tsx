@@ -58,7 +58,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
     <div className="w-screen h-screen flex flex-col relative">
       <div
         className={cn("w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative", {
-          "pb-[calc(max(env(safe-area-inset-bottom),16px)-16px)]": user,
+          "pb-[calc(max(env(safe-area-inset-bottom), 24px) - 16px)]": user,
         })}
         style={{
           height: contentHeight,
@@ -91,12 +91,12 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
             {user && <SettingsComponent />}
             {children}
-            </div>
-          </ThemeProvider>
-          <LiveChatProvider />
-        </div>
+          </div>
+        </ThemeProvider>
+        <LiveChatProvider />
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default ContentProvider;
