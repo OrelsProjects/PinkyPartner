@@ -141,7 +141,6 @@ export function useObligations() {
     obligation: UserContractObligationData,
   ) => {
     try {
-      debugger;
       const otherUser = contract.signatures.find(
         contractee => contractee.userId !== user?.userId,
       );

@@ -43,7 +43,9 @@ export const UserAvatar = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Avatar className={cn("relative rounded-none", className)}>
+          <Avatar
+            className={cn("relative rounded-none cursor-default", className)}
+          >
             {photoURL ? (
               <Image
                 id={`avatar-${displayName}`}

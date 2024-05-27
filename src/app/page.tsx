@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { cn } from "../lib/utils";
 import { EventTracker } from "../eventTracker";
+import Link from "next/link";
 
 const ArrowDown = ({ onClick }: { onClick?: () => void }) => (
   <div>
@@ -144,14 +145,14 @@ const Header = () => (
           variant="outline"
           className="rounded-full h-12 bg-transparent"
         >
-          <a href="/login" className="hidden lg:flex text-base md:text-lg ">
+          <Link href="/login" className="hidden lg:flex text-base md:text-lg ">
             Login
-          </a>
+          </Link>
         </Button>
-        <Button asChild variant="magic" className="bg-card dark:bg-background">
-          <a href="/register" className="text-lg md:text-xl">
+        <Button asChild variant="magic" className="bg-card">
+          <Link href="/register" className="text-lg md:text-xl">
             Get Started
-          </a>
+          </Link>
         </Button>
       </div>
     </div>

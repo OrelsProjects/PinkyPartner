@@ -4,6 +4,7 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 import React from "react";
+import NextTopLoader from "nextjs-toploader";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 
@@ -67,6 +68,17 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
           <SessionWrapper>
             <ThemeProvider>
               <AuthProvider>
+                <NextTopLoader
+                  color="hsl(var(--primary))"
+                  initialPosition={0.08}
+                  crawlSpeed={250}
+                  height={3}
+                  crawl={true}
+                  showSpinner={false}
+                  easing="ease"
+                  speed={1500}
+                  shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
+                />
                 {children}
               </AuthProvider>
             </ThemeProvider>

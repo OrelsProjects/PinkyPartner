@@ -47,5 +47,5 @@ export default function ContentLayout({ children }: RootLayoutProps) {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: "#121212",
 };

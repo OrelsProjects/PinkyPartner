@@ -58,7 +58,9 @@ const SettingsButton: React.FC<SettingsProps> = () => {
         error: "Failed to delete user",
       });
     } else {
-      alert("Email is incorrect");
+      if (email) {
+        alert("Email is incorrect");
+      }
     }
   };
 
@@ -133,7 +135,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
             </Button>
             <Button
               variant="link"
-              className="w-fit px-1 md:hover:bg-slate-400/40 hover:no-underline text-destructive/60 text-sm"
+              className="w-fit px-1 md:hover:bg-destructive/40 md:hover:text-destructive-foreground hover:no-underline text-destructive/60 text-sm"
               onClick={handleDeleteUserRequest}
             >
               DELETE

@@ -36,35 +36,47 @@ export default function useOnboarding() {
     | undefined
   >();
 
+  useEffect(() => {
+    const lastStage = getLastStage();
+    if (lastStage) {
+      setCurrentStage(lastStage);
+    }
+  }, []);
+
+  const handleNextStage = (stage: Stage) => {
+    localStorage.setItem("lastOnboardingStage", stage);
+    setCurrentStage(stage);
+  };
+
   const elementsActions: Record<Stage, (() => void) | null> = {
     welcome: () => {
-      setCurrentStage("navigation-bar-item-Contracts");
+      handleNextStage("navigation-bar-item-Contracts");
     },
     "navigation-bar-item-Contracts": () => {
       router.push("/contracts");
-      setCurrentStage("contracts-plus-button");
+      handleNextStage("contracts-plus-button");
     },
     "contracts-plus-button": () => {
       router.push("/contracts/new");
-      setCurrentStage("search-partner");
+      handleNextStage("search-partner");
     },
     "search-partner": () => {
-      setCurrentStage("no-partner");
+      handleNextStage("no-partner");
     },
     "no-partner": () => {
-      setCurrentStage("fill-contract");
+      handleNextStage("fill-contract");
     },
     "fill-contract": null,
     "invite-partner-button": () => {
       router.push("/home");
-      setCurrentStage("home-start-doing");
+      handleNextStage("home-start-doing");
     },
     "wait-for-partner": () => {
       router.push("/home");
-      setCurrentStage("home-start-doing");
+      handleNextStage("home-start-doing");
     },
     "home-start-doing": () => {
-      setCurrentStage("done");
+      handleNextStage("done");
       setOnboardingViewed();
     },
     done: null,
@@ -199,9 +211,21 @@ export default function useOnboarding() {
         setElement();
         return;
       }
-      
+
       el.className += " !cursor-pointer";
-      const clone = el.cloneNode(true);
+      let clone = el.cloneNode(true);
+      // clear all onClicks
+      clone.removeEventListener("click", null);
+
+      // Avoid z
+      if (clone.nodeName.toLowerCase() === "a") {
+        const div = document.createElement("div");
+        const a = clone as HTMLAnchorElement;
+        div.innerHTML = a.innerHTML;
+        div.className = a.className;
+        div.className += " !cursor-pointer";
+        clone = div.cloneNode(true);
+      }
       // add cursor-pointer to className of the element
 
       if (elementsActions[currentStage]) {

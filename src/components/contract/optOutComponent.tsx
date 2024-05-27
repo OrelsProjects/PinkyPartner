@@ -91,7 +91,7 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
               onClose?.();
             }}
           >
-            I&apos;ll keep my promise!
+            Nevermind, I&apos;ll keep my promise!
           </Button>
           <Button
             onClick={e => {
@@ -104,7 +104,7 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
             variant="link"
             className="text-destructive"
           >
-            I give up
+            Yes, I give up
           </Button>
         </div>
       </DialogContent>

@@ -56,7 +56,7 @@ export default function AppleLogin({
       ) : (
         <>
           <FaApple className="w-7 h-7" />
-          <h1>Request apple sign in</h1>
+          <h1>Request apple sign up</h1>
         </>
       )}
     </div>

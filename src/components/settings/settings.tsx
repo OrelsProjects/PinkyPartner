@@ -10,11 +10,8 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
   const { user } = useAppSelector(state => state.auth);
 
   return (
-    <Link
-      href="/settings"
-      className="p-2 rounded-lg w-full flex flex-col items-end "
-    >
-      <div className="h-fit w-fit">
+    <div className="p-2 rounded-lg w-full flex flex-col items-end">
+      <Link href="/settings" className="w-fit h-fit">
         <UserAvatar
           photoURL={user?.photoURL || "/images/default-profile.png"}
           displayName={user?.displayName}
@@ -22,8 +19,8 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
           className="w-12 h-12 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
           hideTooltip
         />
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
