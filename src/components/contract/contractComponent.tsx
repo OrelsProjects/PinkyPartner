@@ -89,7 +89,11 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       <div className="absolute top-1.5 right-0.5">
         <ContractViewDropdown
           onView={() => setShowContract(true)}
-          onInvite={() => setShowInvite(true)}
+          onInvite={
+            contract.contractees.length <= 1
+              ? () => setShowInvite(true)
+              : undefined
+          }
           onOptOut={() => setShowOptOut(true)}
         />
       </div>

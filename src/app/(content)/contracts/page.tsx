@@ -9,12 +9,11 @@ import ContractComponent, {
 } from "../../../components/contract/contractComponent";
 import { FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface ContractsProps {}
 
 const ContractsPage: React.FC<ContractsProps> = () => {
-  const router = useRouter();
-
   const { contracts: contractsData, loadingData } = useContracts();
 
   const sortedContracts = useMemo(() => {
@@ -38,11 +37,13 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </span>
         <Button
           variant="link"
-          onClick={() => router.push("/contracts/new")}
           className="text-2xl flex justify-center items-center p-2 hover:bg-muted/50"
           data-onboarding-id="contracts-plus-button"
+          asChild
         >
-          <FaPlus className="w-5 h-5 fill-muted-foreground" />
+          <Link href="/contracts/new">
+            <FaPlus className="w-5 h-5 fill-muted-foreground" />
+          </Link>
         </Button>
       </div>
       <motion.div

@@ -6,6 +6,7 @@ import { NavigationBarItem, BottomBarItems } from "./_consts";
 import { cn } from "../../lib/utils";
 import NotificationBadge from "../ui/notificationBadge";
 import useNotifications from "../../lib/hooks/useNotifications";
+import Link from "next/link";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -36,10 +37,6 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     }
   }, [activeItem, newObligations]);
 
-  const handleItemClick = (item: NavigationBarItem) => {
-    router.push(item.href);
-  };
-
   const isItemActive = (item: NavigationBarItem) =>
     item.href === activeItem?.href;
 
@@ -55,7 +52,8 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   };
 
   const Item = ({ item, id }: { item: NavigationBarItem; id: string }) => (
-    <div
+    <Link
+      href={item.href}
       className={cn(
         "flex-1 flex items-center justify-center lg:justify-start lg:hover:bg-muted-foreground/20  lg:rounded-lg lg:p-4 cursor-pointer",
         {
@@ -63,7 +61,6 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
         },
       )}
       key={item.href}
-      onClick={() => handleItemClick(item)}
       // data-onboarding-id={`navigation-bar-item-${item.label}`}
       data-onboarding-id={id}
     >
@@ -82,7 +79,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
           {item.label}
         </span>
       </div>
-    </div>
+    </Link>
   );
 
   const SideNavigationBar = () => (

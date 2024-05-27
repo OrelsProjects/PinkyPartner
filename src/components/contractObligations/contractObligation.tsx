@@ -211,7 +211,6 @@ const ObligationsComponent = ({
                       <UserAvatar
                         displayName={partnerDetails?.displayName}
                         photoURL={partnerDetails?.photoURL}
-                        // badge={!isPartnerSigned && badgeNotSigned}
                         className={cn("h-9 w-9", {
                           "border-2 border-green-500 rounded-full":
                             isPartnerObligationCompleted(day),

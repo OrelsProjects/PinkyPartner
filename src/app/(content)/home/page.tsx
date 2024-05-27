@@ -9,6 +9,7 @@ import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
 import useOnboarding from "../../../lib/hooks/useOnboarding";
+import Link from "next/link";
 
 const EmptyContracts = () => {
   const router = useRouter();
@@ -21,11 +22,11 @@ const EmptyContracts = () => {
         <Button
           onClick={() => {
             EventTracker.track("create_contract_from_home");
-            router.push("/contracts/new");
           }}
           className="bg-primary text-white"
+          asChild
         >
-          Make it official!
+          <Link href="/contracts/new">Make it official!</Link>
         </Button>
       </div>
     </div>
@@ -76,9 +77,7 @@ export default function Home() {
   }
 
   return (
-    <div
-      className="w-full h-fit flex flex-col gap-4 relative"
-    >
+    <div className="w-full h-fit flex flex-col gap-4 relative">
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}

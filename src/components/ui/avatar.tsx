@@ -2,9 +2,14 @@
 
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 
 export const UserAvatar = ({
   badge,
@@ -23,6 +28,8 @@ export const UserAvatar = ({
   displayName?: string | null;
   tooltipContent?: React.ReactNode;
 }) => {
+  console.log(photoURL);
+
   const userInitials = React.useMemo(() => {
     const firstLetter = displayName?.[0];
     const secondLetter =
@@ -36,13 +43,18 @@ export const UserAvatar = ({
         <TooltipTrigger>
           <Avatar className={cn("relative rounded-none", className)}>
             {photoURL ? (
-              <AvatarImage
+              <Image
+                id={`avatar-${displayName}`}
                 src={photoURL}
                 alt={displayName ?? "User photo"}
-                className={cn("rounded-full", imageClassName)}
+                fill
+                className={cn("relative h-9 w-9 rounded-full", imageClassName)}
               />
             ) : (
-              <AvatarFallback className="bg-card">
+              <AvatarFallback
+                className="bg-card"
+                id={`avatar-fallback-${displayName}`}
+              >
                 {userInitials || "AN"}
               </AvatarFallback>
             )}
