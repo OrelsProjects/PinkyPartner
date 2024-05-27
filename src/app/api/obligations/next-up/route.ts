@@ -12,7 +12,7 @@ import {
   getEndOfTheWeekDate,
 } from "../../obligation/_utils";
 import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
-import { Obligation } from "@prisma/client";
+import moment from "moment";
 
 export async function GET(
   req: NextRequest,
@@ -26,7 +26,7 @@ export async function GET(
     // const allContractIds = params.contractIds?.[0].split(",");
     // const uniqueContractIds = Array.from(new Set(allContractIds));
     const { user } = session;
-    const now = new Date();
+    const now = moment().utc().toDate();
     const startOfWeekDate = getStartOfTheWeekDate();
     const endOfTheWeekDate = getEndOfTheWeekDate();
 

@@ -1,5 +1,5 @@
 import { Contract, Obligation, UserContractObligation } from "@prisma/client";
-
+import moment from "moment";
 /**
  * ({ obligationCompletedId: string; userId: string; obligationId: string; completedAt: Date; })[]
  */
@@ -22,28 +22,13 @@ export type ObligationsInContract = {
 //  * @returns Date object representing the start of the week (Sunday) at 00:00:00.000
 //  */
 export function getStartOfTheWeekDate(sunday: boolean = true): Date {
-  const now = new Date();
-  const nowDay = now.getUTCDay();
+  const now = moment();
+  const nowDay = now.clone().weekday(0);
 
-  now.setHours(0, 0, 0, 0);
-
-  if (sunday && nowDay === 0) {
-    return now;
-  } else {
-    const date = new Date(
-      now.setDate(now.getUTCDate() - nowDay + (sunday ? 0 : 1)),
-    );
-    return date;
-  }
-  // let diff = now.getDate() - day + (day === 0 ? -7 : 0);
-  // if (!sunday) {
-  //   diff += 1;
-  // }
-  // Set hours to 0, minutes to 0, seconds to 0, milliseconds to 0
-  // const date = new Date(now.setDate(diff));
-  // return date;
+  // set hours to 0, minutes to 0, seconds to 0, milliseconds to 0
+  nowDay.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  return nowDay.toDate();
 }
-
 // /**
 //  * @returns Date object representing the end of the week (Saturday) at 23:59:59.999
 //  */
