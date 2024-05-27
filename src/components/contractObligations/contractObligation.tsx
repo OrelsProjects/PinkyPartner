@@ -230,7 +230,6 @@ const ObligationsComponent = ({
                       handleCompleteObligation(day, checked);
                     }}
                     variant="default"
-                    // disabled={!obligationsDays.includes(day) || isPartner}
                     loading={loadingObligationDays[day]}
                   />
                 </div>

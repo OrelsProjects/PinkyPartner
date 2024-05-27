@@ -53,13 +53,14 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
 
   const SignedNames = useMemo(() => {
     if (contracteesNames.length > 1) {
+      const maxContractees = 2;
       const last = contracteesNames[contracteesNames.length - 1];
       return (
         <>
-          {contracteesNames.map((name, index) => (
+          {contracteesNames.slice(0, -1).map((name, index) => (
             <React.Fragment key={index}>
               <strong>{name}</strong>
-              {index < contracteesNames.length - 1 ? ", " : " "}
+              {index < contracteesNames.length - maxContractees ? ", " : " "}
             </React.Fragment>
           ))}
           and <strong>{last}</strong>
@@ -122,7 +123,6 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
                       </span>
                     </div>
                   )}
-                  <Divider className="mt-3" />
                 </div>
               ),
             )}

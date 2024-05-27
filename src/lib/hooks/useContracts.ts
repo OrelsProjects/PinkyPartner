@@ -1,6 +1,10 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { ContractWithExtras, CreateContract } from "../../models/contract";
+import Contract, {
+  ContractWithExtras,
+  CreateContract,
+  UpdateContract,
+} from "../../models/contract";
 import { setError } from "../features/auth/authSlice";
 import {
   setContracts as setContractsAction,
@@ -128,6 +132,27 @@ export function useContracts() {
     }
   };
 
+  const updateContract = async (
+    contract: ContractWithExtras,
+    values: UpdateContract,
+  ) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axios.patch(
+        `/api/contract/${contract.contractId}`,
+        values,
+      );
+      const newContract = { ...contract, ...values };
+      dispatch(updateContractAction(newContract));
+      dispatch(setError(null));
+    } catch (err: any) {
+      dispatch(setError(err.message || "Error updating contract"));
+      throw err;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const optOut = async (contractId: string) => {
     dispatch(setLoading(true));
     try {
@@ -173,7 +198,7 @@ export function useContracts() {
     fetchContracts,
     setLoadingData,
     createContract,
-    // updateContract,
+    updateContract,
     deleteContract,
   };
 }

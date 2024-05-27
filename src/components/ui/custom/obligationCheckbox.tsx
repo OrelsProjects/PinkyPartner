@@ -43,6 +43,12 @@ const CheckboxLayout = ({
       )}
       onClick={onClick}
     >
+      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#98caff_0%,#1272d7_50%,#b5c5ff_100%)]" />
+      <span
+        className={cn(
+          "inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-background px-3 py-1 text-sm font-medium backdrop-blur-3xl",
+        )}
+      />
       <span className="text-xs">{dayString}</span>
       <Line className="w-8 h-4 px-1 -rotate-12" />
       <span className="text-xs">{dayOfMonth}</span>

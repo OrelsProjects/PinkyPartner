@@ -14,11 +14,12 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
       href="/settings"
       className="p-2 rounded-lg w-full flex flex-col items-end "
     >
-      <div className="h-fit w-fit md:hover:shadow-lg md:hover:cursor-pointer rounded-full">
+      <div className="h-fit w-fit">
         <UserAvatar
           photoURL={user?.photoURL || "/images/default-profile.png"}
           displayName={user?.displayName}
-          imageClassName="rounded-full hover:cursor-pointer w-10 h-10 shadow-md"
+          imageClassName="rounded-full hover:cursor-pointer !w-12 !h-12 shadow-md"
+          className="w-12 h-12 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
           hideTooltip
         />
       </div>

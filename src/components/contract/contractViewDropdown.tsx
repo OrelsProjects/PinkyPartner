@@ -31,62 +31,53 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
 }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <HiDotsVertical className="h-5 w-5 hover:cursor-pointer hover:bg-slate-400/40 rounded-full" />
+      <DropdownMenuTrigger className="!outline-none">
+        <HiDotsVertical className="h-5 w-5 hover:cursor-pointer rounded-full" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn("w-fit bg-card", className)}>
         <DropdownMenuGroup>
           {onInvite && (
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                onInvite();
+              }}
+            >
               <Invite className="mr-2 h-4 w-4" />
-              <span
-                onClick={e => {
-                  e.stopPropagation();
-                  onInvite();
-                }}
-              >
-                Invite
-              </span>
+              <span>Invite</span>
             </DropdownMenuItem>
           )}
           {onView && (
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                onView();
+              }}
+            >
               <View className="mr-2 h-4 w-4" />
-              <span
-                onClick={e => {
-                  e.stopPropagation();
-                  onView();
-                }}
-              >
-                View
-              </span>
+              <span>View</span>
             </DropdownMenuItem>
           )}
           {onEdit && (
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
               <Edit className="mr-2 h-4 w-4" />
-              <span
-                onClick={e => {
-                  e.stopPropagation();
-                  onEdit();
-                }}
-              >
-                Edit
-              </span>
+              <span>Edit</span>
             </DropdownMenuItem>
           )}
           {onOptOut && (
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                onOptOut?.();
+              }}
+            >
               <OptOut className="mr-2 h-4 w-4 text-destructive" />
-              <span
-                onClick={e => {
-                  e.stopPropagation();
-                  onOptOut?.();
-                }}
-                className="text-destructive"
-              >
-                Opt out
-              </span>
+              <span className="text-destructive">Opt out</span>
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>

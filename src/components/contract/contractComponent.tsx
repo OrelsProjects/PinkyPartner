@@ -14,6 +14,7 @@ import { cn } from "../../lib/utils";
 import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
+import EditContractComponent from "./editContractComponent";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;
@@ -30,11 +31,11 @@ export const ContractComponentLoading = ({
       className,
     )}
   >
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 relative">
       <div className="flex flex-row justify-between">
         <Skeleton className="w-40 h-6 rounded-lg" />
-        <Skeleton className="w-32 h-9 rounded-lg" />
       </div>
+      <Skeleton className="absolute -top-1 -right-1 w-1.5 h-5 rounded-lg" />
       <Skeleton className="w-4/6 h-5 rounded-lg" />
       <Skeleton className="w-32 h-5 rounded-lg" />
     </div>
@@ -55,6 +56,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const [showContract, setShowContract] = React.useState(false);
   const [showInvite, setShowInvite] = React.useState(false);
   const [showOptOut, setShowOptOut] = React.useState(false);
+  const [showEdit, setShowEdit] = React.useState(false);
 
   const isUserSigned = useMemo(
     () =>
@@ -71,7 +73,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
     toast.promise(signContract(contract.contractId, user), {
       pending: "Signing contract...",
       success: {
-        async render() {
+        render() {
           return "Contract signed successfully";
         },
       },
@@ -82,7 +84,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   return (
     <div
       className={cn(
-        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3 hover:cursor-pointer relative",
+        "w-full md:w-[23.5rem] h-60 shadow-md bg-card/70 dark:bg-card rounded-md flex flex-col justify-between gap-1 p-3 relative",
         { "border-primary/50": !isUserSigned },
       )}
     >
@@ -95,6 +97,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
               : undefined
           }
           onOptOut={() => setShowOptOut(true)}
+          onEdit={() => setShowEdit(true)}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -141,6 +144,12 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
         <OptOutComponent
           onClose={() => setShowOptOut(false)}
           open={showOptOut}
+          contract={contract}
+        />
+
+        <EditContractComponent
+          onClose={() => setShowEdit(false)}
+          open={showEdit}
           contract={contract}
         />
       </div>

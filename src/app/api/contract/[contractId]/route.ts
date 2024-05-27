@@ -3,6 +3,9 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import prisma from "../../_db/db";
 import { authOptions } from "../../../../authOptions";
+import { Contract } from "@prisma/client";
+
+type ContractUpdateBody = Pick<Contract, "title" | "description">;
 
 export async function DELETE(
   req: NextRequest,
@@ -32,6 +35,29 @@ export async function DELETE(
     );
   } catch (error: any) {
     Logger.error("Error deleting obligation", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { contractId: string } },
+): Promise<NextResponse> {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { title, description } = body as ContractUpdateBody;
+    await prisma.contract.update({
+      where: { contractId: params.contractId },
+      data: { title, description },
+    });
+    return NextResponse.json({}, { status: 200 });
+  } catch (error: any) {
+    Logger.error("Error updating obligation", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

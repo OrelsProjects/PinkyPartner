@@ -23,3 +23,5 @@ export type CreateContract = Omit<
 > & {
   signatures: string[];
 } & { obligation?: CreateObligation | null };
+
+export type UpdateContract = Pick<Contract, "title" | "description">;
