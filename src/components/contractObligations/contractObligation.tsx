@@ -1,48 +1,31 @@
-import React, { useEffect, useMemo } from "react";
-import { UserContractObligationData } from "../models/userContractObligation";
-import Contract, { ContractWithExtras } from "../models/contract";
-import { useAppSelector } from "../lib/hooks/redux";
+import React, { useMemo } from "react";
+import { toast } from "react-toastify";
+import { Logger } from "../../logger";
+import { useAppSelector } from "../../lib/hooks/redux";
+import { useObligations } from "../../lib/hooks/useObligations";
+import { cn } from "../../lib/utils";
 import {
   dateToDayString,
   daysOfWeek,
-  getWeekRangeFormatted,
   isDateSameDay,
-} from "../lib/utils/dateUtils";
-import { useObligations } from "../lib/hooks/useObligations";
-import { toast } from "react-toastify";
-import { cn } from "../lib/utils";
-import ContractViewComponent from "./contractViewComponent";
-import { useContracts } from "../lib/hooks/useContracts";
-import { AnimatePresence, motion } from "framer-motion";
-import { Checkbox } from "./ui/checkbox";
-import { Logger } from "../logger";
-import { UserAvatar } from "./ui/avatar";
-import { FaLock } from "react-icons/fa";
-
-export type GroupedObligations = {
-  [key: string]: {
-    userObligations: UserContractObligationData[];
-    partnerObligations: UserContractObligationData[];
-    contract: ContractWithExtras;
-    isSigned: boolean;
-    isPartnerSigned: boolean;
-  };
-};
-
-interface ContractAcccordionProps {
-  userData: UserContractObligationData[];
-  partnerData: UserContractObligationData[];
-  loading?: boolean;
-}
+  getWeekRangeFormatted,
+} from "../../lib/utils/dateUtils";
+import { UserContractObligationData } from "../../models/userContractObligation";
+import { UserAvatar } from "../ui/avatar";
+import { Checkbox } from "../ui/checkbox";
+import Contract from "../../models/contract";
+import NotificationBadge from "../ui/notificationBadge";
 
 const ObligationsComponent = ({
   isPartnerSigned,
+  newObligations,
   obligations,
   partnerData,
   contract,
 }: {
   contract: Contract;
   isPartnerSigned?: boolean;
+  newObligations: UserContractObligationData[];
   obligations: UserContractObligationData[];
   partnerData?: UserContractObligationData[];
 }) => {
@@ -126,14 +109,8 @@ const ObligationsComponent = ({
     }
   };
 
-  const isPartner = useMemo(() => {
-    return obligations[0].userId !== user?.userId;
-  }, [obligations, user]);
-
   const obligationsDays = useMemo(() => {
     if (obligations.length > 0) {
-      console.log(obligations[0].contract.title);
-      console.log(obligations[0]);
       return obligations[0].obligation.days.map(day => daysOfWeek[day]);
     }
     return [];
@@ -144,6 +121,12 @@ const ObligationsComponent = ({
 
   const isPartnerObligationCompleted = (day: string) =>
     daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
+
+  const isNewObligation = (day: string) =>
+    newObligations.some(
+      obligation =>
+        obligation.dueDate && isDateSameDay(day, obligation.dueDate),
+    );
 
   const partnerDetails = useMemo(() => {
     if (partnerData && partnerData.length > 0) {
@@ -169,7 +152,7 @@ const ObligationsComponent = ({
             return (
               <div
                 className={cn(
-                  "rounded-lg h-16 w-full bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200",
+                  "rounded-lg h-16 w-full bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200 relative",
                   {
                     "bg-card/50": isObligationCompleted(day),
                   },
@@ -177,6 +160,12 @@ const ObligationsComponent = ({
                 key={`obligation-in-contract-${day}`}
                 data-onboarding-id={`${index === 0 ? "home-start-doing" : ""}`}
               >
+                {isNewObligation(day) && (
+                  <NotificationBadge
+                    className="h-2.5 w-2.5  absolute -top-1 left-0.5 bg-primary bg-red-500 text-xs font-semibold rounded-full"
+                    count={1}
+                  />
+                )}
                 <div
                   className={cn(
                     "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
@@ -201,7 +190,6 @@ const ObligationsComponent = ({
                           {userContractObligation.obligation.title}
                         </span>
                         <span className="text-foreground text-sm font-thin">
-                          {/* {getDateFormatted(day)} */}
                           {day}
                         </span>
                       </div>
@@ -256,125 +244,4 @@ const ObligationsComponent = ({
   );
 };
 
-export default function ContractObligationsComponent({
-  userData,
-  partnerData,
-}: ContractAcccordionProps) {
-  const { user } = useAppSelector(state => state.auth);
-  const { contracts } = useAppSelector(state => state.contracts);
-  const { signContract } = useContracts();
-
-  const [groupedObligations, setGroupedObligations] =
-    React.useState<GroupedObligations>({});
-
-  useEffect(() => {
-    const groupedObligations = userData
-      .concat(partnerData)
-      .reduce(
-        (acc: GroupedObligations, obligation: UserContractObligationData) => {
-          const contractId = obligation.contract.contractId;
-          const isPartner = obligation.userId !== user?.userId;
-
-          if (!acc[contractId]) {
-            const userContract = contracts.find(
-              contract => contract.contractId === contractId,
-            );
-            if (!userContract) return acc;
-
-            const isSigned =
-              userContract?.signatures.some(
-                signature => signature.userId === user?.userId,
-              ) || false;
-
-            const isPartnerSigned =
-              userContract?.signatures.some(
-                signature => signature.userId !== user?.userId,
-              ) || false;
-
-            acc[contractId] = {
-              userObligations: [],
-              partnerObligations: [],
-              contract: userContract,
-              isSigned,
-              isPartnerSigned,
-            };
-          }
-
-          if (isPartner) {
-            acc[contractId].partnerObligations.push(obligation);
-          } else {
-            acc[contractId].userObligations.push(obligation);
-          }
-          return acc;
-        },
-        {},
-      );
-    console.log("groupedObligations: ", partnerData);
-    setGroupedObligations(groupedObligations);
-  }, [userData, partnerData]);
-
-  const handleOnSign = (contract: ContractWithExtras) => {
-    toast.promise(signContract(contract.contractId, user), {
-      pending: "Signing contract...",
-      success: {
-        async render() {
-          return "Contract signed successfully";
-        },
-      },
-      error: "Failed to sign contract",
-    });
-  };
-
-  return (
-    <div className="h-full w-full flex flex-col gap-10 overflow-auto relative pb-10">
-      {Object.values(groupedObligations).map(
-        (
-          {
-            userObligations,
-            partnerObligations,
-            contract,
-            isSigned,
-            isPartnerSigned,
-          },
-          index,
-        ) => (
-          <div
-            className={cn("w-full h-fit relative", {
-              "p-2": !isSigned,
-            })}
-            key={`contract.contractId-${index}`}
-          >
-            <AnimatePresence>
-              {!isSigned && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className={
-                    "h-full w-full bg-foreground/60 absolute top-0 left-0 z-10 rounded-sm flex justify-center items-center flex-col gap-1"
-                  }
-                >
-                  <h1 className="w-full text-center text-xl text-background font-semibold">
-                    Sign the contract to start!
-                  </h1>
-                  <ContractViewComponent
-                    contract={contract}
-                    isSigned={isSigned}
-                    onSign={handleOnSign}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <ObligationsComponent
-              obligations={userObligations}
-              partnerData={partnerObligations}
-              contract={contract}
-              isPartnerSigned={isPartnerSigned}
-            />
-          </div>
-        ),
-      )}
-    </div>
-  );
-}
+export default ObligationsComponent;

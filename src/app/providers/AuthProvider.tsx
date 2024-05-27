@@ -10,7 +10,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
-import { setUserLogger } from "../../logger";
+import { Logger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
@@ -53,7 +53,7 @@ export default function AuthProvider({
       };
       dispatch(setUserAction(appUser));
     } catch (error: any) {
-      console.error(error);
+      Logger.error("Error setting user", { error });
       dispatch(setUserAction(null));
     }
   };

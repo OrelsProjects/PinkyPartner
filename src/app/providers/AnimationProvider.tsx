@@ -18,7 +18,6 @@ const AnimationProvider: React.FC<ProviderProps> = ({ children }) => {
     }
   }, []);
 
-  console.log(pathname);
   return (
     <motion.div
       key={pathname}

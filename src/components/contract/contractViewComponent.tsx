@@ -8,12 +8,12 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ContractWithExtras } from "../models/contract";
-import Obligation from "../models/obligation";
-import { Button } from "./ui/button";
+import { ContractWithExtras } from "../../models/contract";
+import Obligation from "../../models/obligation";
+import { Button } from "../ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { timesAWeekToText } from "../lib/utils/textUtils";
+import { timesAWeekToText } from "../../lib/utils/textUtils";
 import {
   SectionContainer,
   SectionTitle,
@@ -21,21 +21,23 @@ import {
   SectionTitleExplanation,
   SectionTitleSecondary,
 } from "@/components/ui/section";
-import Divider from "./ui/divider";
-import { cn } from "../lib/utils";
+import Divider from "../ui/divider";
+import { cn } from "../../lib/utils";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
-  onSign: (contract: ContractWithExtras) => void;
   hideButton?: boolean;
   open?: boolean | undefined;
+  onClose?: () => void;
+  onSign: (contract: ContractWithExtras) => void;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   hideButton,
   contract,
   isSigned,
+  onClose,
   onSign,
   open,
 }) => {
@@ -45,23 +47,26 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     setIsOpen(open);
   }, [open]);
 
+  const contracteesNames = useMemo(() => {
+    return contract.contractees.map(ce => ce.displayName);
+  }, [contract.contractees]);
+
   const SignedNames = useMemo(() => {
-    const names = contract.contractees.map(ce => ce.displayName);
-    if (names.length > 1) {
-      const last = names.pop(); // Remove the last name to handle separately
+    if (contracteesNames.length > 1) {
+      const last = contracteesNames[contracteesNames.length - 1];
       return (
         <>
-          {names.map((name, index) => (
+          {contracteesNames.map((name, index) => (
             <React.Fragment key={index}>
               <strong>{name}</strong>
-              {index < names.length - 1 ? ", " : " "}
+              {index < contracteesNames.length - 1 ? ", " : " "}
             </React.Fragment>
           ))}
           and <strong>{last}</strong>
         </>
       );
     }
-    return <strong>{names[0]}</strong>;
+    return <strong>{contracteesNames[0]}</strong>;
   }, [contract.contractees]);
 
   const areAllSigned = useMemo(
@@ -138,8 +143,9 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       <div className="mt-4">
         <SectionTitle text="Pinky agreement" />
         <p className="font-thin mt-2">
-          We, {SignedNames}, hereby commit to the terms outlined within this
-          contract with our pinkies.
+          {contracteesNames.length > 1 ? "We" : "I"}, {SignedNames}, hereby
+          commit to the terms outlined within this contract with{" "}
+          {contracteesNames.length > 1 ? "our pinkies" : "my pinky"}.
         </p>
       </div>
       {!isSigned && (
@@ -177,7 +183,15 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     </DialogContent>
   );
   return (
-    <Dialog onOpenChange={setIsOpen} open={isOpen}>
+    <Dialog
+      onOpenChange={value => {
+        setIsOpen(value);
+        if (!value) {
+          onClose?.();
+        }
+      }}
+      open={isOpen}
+    >
       <DialogTrigger asChild>
         {!isSigned ? (
           <Button className="relative">

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   EmailIcon,
   EmailShareButton,
@@ -14,12 +14,14 @@ import Contract from "../models/contract";
 import { FaCopy } from "react-icons/fa";
 
 interface InvitePartnerComponentProps {
-  buttonText: string;
-  referralCode?: string;
-  className?: string;
-  variant?: ButtonVariants;
-  contract?: Contract;
   id?: string;
+  open?: boolean;
+  buttonText: string;
+  className?: string;
+  onClose?: () => void;
+  contract?: Contract;
+  referralCode?: string;
+  variant?: ButtonVariants;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
@@ -28,8 +30,16 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   className,
   variant,
   contract,
+  onClose,
+  open,
   id,
 }) => {
+  const [isOpen, setIsOpen] = React.useState(open);
+
+  useEffect(() => {
+    setIsOpen(open);
+  }, [open]);
+
   const url = useMemo(() => {
     const baseUrl = window.location.origin;
     const registerUrl = `${baseUrl}/register`;
@@ -92,15 +102,24 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   );
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={value => {
+        setIsOpen(value);
+        if (!value) {
+          onClose?.();
+        }
+      }}
+      open={isOpen}
+    >
       <DialogTrigger asChild>
         <Button
           variant={variant || "link"}
           className={cn(className)}
           data-onboarding-id="invite-partner-button"
           onClick={e => {
-            EventTracker.track("Invite Partner", { id });
             e.stopPropagation();
+            EventTracker.track("Invite Partner", { id });
+            setIsOpen(true);
           }}
         >
           {buttonText}

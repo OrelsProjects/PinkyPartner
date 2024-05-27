@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import ContractComponent, {
   ContractComponentLoading,
-} from "../../../components/contractComponent";
+} from "../../../components/contract/contractComponent";
 import { FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -46,7 +46,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </Button>
       </div>
       <motion.div
-        className="h-fit w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 md:justify-between overflow-auto mt-10"
+        className="h-fit w-full flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-12 md:justify-between overflow-auto pb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

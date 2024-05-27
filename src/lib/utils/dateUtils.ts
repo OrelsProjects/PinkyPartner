@@ -19,7 +19,6 @@ export const daysOfWeek = [
  * @returns The name of the day.
  */
 export function dayNumberToName(dayNumber: number): string {
-  console.log(dayNumber, daysOfWeek[dayNumber]);
   return daysOfWeek[dayNumber];
 }
 
@@ -70,8 +69,9 @@ export function DaysToText(days?: number[]): string {
 }
 
 export const isDateSameDay = (day: string, date: Date) => {
+  const safeDate = new Date(date);
   const dayNumber = dayNameToNumber(day);
-  const dayUTC = date.getUTCDay();
+  const dayUTC = safeDate.getUTCDay();
   return dayUTC === dayNumber;
 };
 

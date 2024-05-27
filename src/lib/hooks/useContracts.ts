@@ -128,15 +128,50 @@ export function useContracts() {
     }
   };
 
+  const optOut = async (contractId: string) => {
+    dispatch(setLoading(true));
+    try {
+      const contract = contracts.find(
+        contract => contract.contractId === contractId,
+      );
+      const otherUser = contract?.signatures.find(
+        signedContractee => signedContractee.userId !== user?.userId,
+      );
+
+      await axios.post(`/api/contract/${contractId}/opt-out`);
+      dispatch(deleteContractAction(contractId));
+      dispatch(setError(null));
+      await fetchNextUpObligations();
+
+      if (otherUser) {
+        axios
+          .post(`/api/notifications`, {
+            title: `${user?.displayName?.split(" ")?.[0]} left. 😢`,
+            body: `${user?.displayName} has left ${contract?.title}.`,
+            userId: otherUser?.userId,
+          })
+          .catch(err => {
+            Logger.error("Error sending notification", err);
+          });
+      }
+    } catch (err: any) {
+      dispatch(setError(err.message || "Error signing contract"));
+      throw err;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
-    contracts,
-    loading,
-    loadingData,
     error,
+    optOut,
+    loading,
+    contracts,
+    loadingData,
     setContracts,
-    setLoadingData,
     signContract,
     fetchContracts,
+    setLoadingData,
     createContract,
     // updateContract,
     deleteContract,
