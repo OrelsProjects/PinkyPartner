@@ -16,11 +16,13 @@ export const UserAvatar = ({
   photoURL,
   className,
   displayName,
+  hideTooltip,
   imageClassName,
   badgeClassName,
   tooltipContent,
 }: {
   className?: string;
+  hideTooltip?: boolean;
   imageClassName?: string;
   badgeClassName?: string;
   badge?: React.ReactNode;
@@ -70,7 +72,7 @@ export const UserAvatar = ({
             )}
           </Avatar>
           <TooltipContent className="bg-background">
-            {tooltipContent || displayName || ""}
+            {tooltipContent || hideTooltip ? "" : displayName}
           </TooltipContent>
         </TooltipTrigger>
       </Tooltip>

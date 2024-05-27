@@ -7,11 +7,11 @@ import Link from "next/link";
 interface SettingsComponentProps {}
 
 const SettingsComponent: React.FC<SettingsComponentProps> = () => {
-  const router = useRouter();
   const { user } = useAppSelector(state => state.auth);
 
   return (
-    <Link href="/settings"
+    <Link
+      href="/settings"
       className="p-2 rounded-lg w-full flex flex-col items-end "
     >
       <div className="h-fit w-fit md:hover:shadow-lg md:hover:cursor-pointer rounded-full">
@@ -19,6 +19,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
           photoURL={user?.photoURL || "/images/default-profile.png"}
           displayName={user?.displayName}
           imageClassName="rounded-full hover:cursor-pointer w-10 h-10 shadow-md"
+          hideTooltip
         />
       </div>
     </Link>
