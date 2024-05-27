@@ -12,6 +12,7 @@ export default interface AppUser {
 
 export interface AppUserMetadata {
   referralCode: string;
+  onboardingCompleted: boolean;
 }
 
 export interface AppUserSettings {

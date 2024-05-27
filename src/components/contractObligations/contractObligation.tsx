@@ -93,7 +93,10 @@ const ObligationsComponent = ({
       await completeObligation(obligation, contract.contractId, completed);
       if (completed) {
         const hasPartner = partnerData && partnerData.length > 0;
-        const completedText = `Good job! ${hasPartner ? " Your partner will be notified" : ""}`;
+        const partnerName = hasPartner
+          ? partnerData[0].appUser.displayName
+          : "Your partner";
+        const completedText = `Good job! ${hasPartner ? `${partnerName} will be notified` : ""}`;
         toast(completedText, {
           autoClose: hasPartner ? 3000 : 1500,
           theme: "light",

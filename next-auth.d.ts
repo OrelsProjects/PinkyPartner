@@ -6,6 +6,7 @@ declare module "next-auth" {
       userId: string;
       meta: {
         referralCode?: string;
+        onboardingCompleted?: boolean;
         pushToken?: string;
       };
       settings: {

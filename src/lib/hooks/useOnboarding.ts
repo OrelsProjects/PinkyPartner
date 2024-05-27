@@ -10,12 +10,15 @@ import {
   hasMobileVersion,
   timeDelays,
 } from "../consts/onboarding";
+import axios from "axios";
+import { Logger } from "../../logger";
 
 export default function useOnboarding() {
   const router = useRouter();
   const pathname = usePathname();
-  const onboardingElement = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const onboardingElement = useRef<HTMLDivElement>(null);
+  const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const [currentStage, setCurrentStage] = useState<Stage>(stages[0]);
   const [elementPosition, setElementPosition] = useState<
@@ -27,6 +30,12 @@ export default function useOnboarding() {
       }
     | undefined
   >();
+
+  useEffect(() => {
+    if (user?.meta?.onboardingCompleted) {
+      setOnboardingViewed(false);
+    }
+  }, [user]);
 
   const [elementSize, setElementSize] = useState<
     | {
@@ -182,9 +191,16 @@ export default function useOnboarding() {
     }
   }, [pathname, isMobile]);
 
-  const setOnboardingViewed = async () => {
+  const setOnboardingViewed = async (updateUser = true) => {
     setCurrentStage("done");
     localStorage.setItem("onboardingViewed", "true");
+    try {
+      if (updateUser) {
+        await axios.post("/api/user/finish-onboarding");
+      }
+    } catch (e: any) {
+      Logger.error(e);
+    }
   };
 
   const setElement = () => {

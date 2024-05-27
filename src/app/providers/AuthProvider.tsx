@@ -33,6 +33,7 @@ export default function AuthProvider({
     userId?: string | null;
     meta: {
       referralCode?: string | null;
+      onboardingCompleted?: boolean;
     };
     settings: {
       showNotifications?: boolean;
@@ -46,6 +47,7 @@ export default function AuthProvider({
         userId: user?.userId || "",
         meta: {
           referralCode: user?.meta.referralCode || "",
+          onboardingCompleted: user?.meta.onboardingCompleted || false,
         },
         settings: {
           showNotifications: user?.settings.showNotifications || true,

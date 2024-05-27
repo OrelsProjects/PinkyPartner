@@ -186,17 +186,8 @@ export const authOptions: AuthOptions = {
           userId: token.sub,
         },
         include: {
-          meta: {
-            select: {
-              referralCode: true,
-              pushToken: true,
-            },
-          },
-          settings: {
-            select: {
-              showNotifications: true,
-            },
-          },
+          meta: true,
+          settings: true,
         },
       });
       if (session?.user) {
@@ -221,6 +212,7 @@ export const authOptions: AuthOptions = {
         session.user.meta = {
           referralCode: userInDB?.meta?.referralCode || "",
           pushToken: userInDB?.meta?.pushToken || "",
+          onboardingCompleted: userInDB?.meta?.onboardingCompleted || false,
         };
         session.user.settings = userInDB?.settings || {
           showNotifications: true,

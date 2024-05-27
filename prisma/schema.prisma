@@ -41,12 +41,15 @@ model AppUser {
   @@map("appUser")
 }
 
+// If you change anything here, change also in:
+// AuthProvider, authOptions, next-auth.d.ts
 model AppUserMetadata {
   appUserMetadataId String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @unique
   referralCode      String?
   referredBy        String?
   pushToken         String?
+  onboardingCompleted  Boolean @default(false)
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
