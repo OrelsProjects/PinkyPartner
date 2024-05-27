@@ -1,11 +1,25 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.orels.pinkypartner",
       "sha256_cert_fingerprints": [
         "DC:D1:38:49:D1:C8:F1:A3:69:D8:09:B4:21:FF:4D:86:EC:70:12:F5:84:C3:F8:43:51:FA:23:D0:D6:11:8E:C9"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pinkypartner.www.twa",
+      "sha256_cert_fingerprints": [
+        "DC:15:BD:C8:C9:C4:60:40:7F:58:2F:17:85:69:0F:D2:17:F6:59:A1:78:17:3B:81:C3:D3:D0:23:51:6B:B8:9D"
       ]
     }
   }
