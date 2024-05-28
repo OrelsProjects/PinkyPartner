@@ -17,7 +17,6 @@ type ParticlesProps = {
   speed?: number;
   particleColor?: string;
   particleDensity?: number;
-  theme?: "dark" | "light";
 };
 export const SparklesCore = (props: ParticlesProps) => {
   const {
@@ -29,7 +28,6 @@ export const SparklesCore = (props: ParticlesProps) => {
     speed,
     particleColor,
     particleDensity,
-    theme = "light",
   } = props;
 
   const [init, setInit] = useState(false);
