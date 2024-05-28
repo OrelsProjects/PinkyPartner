@@ -5,8 +5,7 @@ import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
 import { ContractWithExtras, CreateContract } from "../../../models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
-
-const ANONYMOUS_USER_ID = "115424106856837030343";
+import { ANONYMOUS_USER_ID } from "../../../lib/utils/consts";
 
 export async function POST(
   req: NextRequest,
@@ -18,7 +17,7 @@ export async function POST(
 
   try {
     const data = await req.json();
-    const { obligation, signatures, contractees, ...contractData } =
+    let { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
     let user = session?.user;
     if (!user) {
@@ -39,10 +38,18 @@ export async function POST(
         image: annonymousUser.photoURL,
         meta: {
           referralCode: annonymousUser.meta?.referralCode || "",
+          onboardingCompleted: false,
         },
         settings: {
           showNotifications: false,
         },
+      };
+      contractees = [user];
+      signatures = [user.userId];
+      // @ts-ignore
+      obligation = {
+        ...obligation,
+        userId: user.userId,
       };
     }
 

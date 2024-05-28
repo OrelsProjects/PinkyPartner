@@ -1,6 +1,4 @@
-
 export const specialSigns = ["~", "-"];
-
 
 export type Stage =
   | "welcome"
@@ -14,7 +12,7 @@ export type Stage =
   | "home-start-doing"
   | "done";
 
-  export const stages: Stage[] = [
+export const stages: Stage[] = [
   "welcome",
   "navigation-bar-item-Contracts",
   "contracts-plus-button",
@@ -66,7 +64,6 @@ export const hasMobileVersion: Record<Stage, boolean> = {
   done: false,
 };
 
-
 export const stageText: Record<
   Stage,
   {
@@ -80,8 +77,7 @@ export const stageText: Record<
   },
   "navigation-bar-item-Contracts": {
     title: "Let's begin!",
-    description:
-      "Go to your contracts section.",
+    description: "Go to your contracts section.",
   },
   "contracts-plus-button": {
     title: "",
@@ -102,8 +98,7 @@ export const stageText: Record<
   },
   "invite-partner-button": {
     title: "Invite your partner",
-    description:
-      "Here you can share a link via your selected platform.",
+    description: "Here you can share a link via your selected platform.",
   },
   "wait-for-partner": {
     title: "Wait for your partner's pinky!",
@@ -145,4 +140,17 @@ export const showBackground: Record<Stage, boolean> = {
   "wait-for-partner": true,
   "home-start-doing": true,
   done: false,
+};
+
+export const requiredPaths: Record<Stage, string | null> = {
+  welcome: null,
+  "navigation-bar-item-Contracts": "/home",
+  "contracts-plus-button": "/contracts",
+  "search-partner": "/contracts/new",
+  "no-partner": "/contracts/new",
+  "fill-contract": null,
+  "invite-partner-button": "/contracts/new",
+  "wait-for-partner": "/contracts",
+  "home-start-doing": "/home",
+  done: null,
 };

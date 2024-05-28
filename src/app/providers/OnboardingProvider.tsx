@@ -14,8 +14,20 @@ import {
 } from "../../lib/consts/onboarding";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 import { useMemo } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "../../components/ui/dialog";
+import { EventTracker } from "../../eventTracker";
+import { useAppSelector } from "../../lib/hooks/redux";
+import Link from "next/link";
 
 export default function OnboardingProvider() {
+  const { user, state } = useAppSelector(state => state.auth);
+
   const {
     isMobile,
     nextStage,
@@ -24,7 +36,8 @@ export default function OnboardingProvider() {
     elementsActions,
     elementPosition,
     onboardingElement,
-    isOnboardingCompleted: isOnboardingViewed,
+    onboardingState,
+    isOnboardingCompleted,
     setOnboardingViewed,
   } = useOnboarding();
 
@@ -133,67 +146,103 @@ export default function OnboardingProvider() {
     );
   };
 
-  return (
-    !isOnboardingViewed() &&
-    showBackground[currentStage] && (
+  const shouldSignUp = useMemo(() => {
+    return (
+      (state === "anonymous" || state === "unauthenticated") &&
+      isOnboardingCompleted()
+    );
+  }, [user, state]);
+
+  return !isOnboardingCompleted() && showBackground[currentStage] ? (
+    <div
+      className={cn(
+        "h-[100svh] w-[100vw] absolute inset-0 bg-black/80 z-50 flex justify-center items-center",
+        {
+          "hover:cursor-pointer": backgroundForNextStage[currentStage],
+        },
+        {
+          "items-end pb-20 md:items-center md:pb-0":
+            currentStage === "no-partner",
+        },
+      )}
+      onClick={() => {
+        if (currentStage === "welcome") {
+          if (window.location.pathname !== "/home") {
+            router.push("/home");
+          }
+        }
+        if (backgroundForNextStage[currentStage]) {
+          elementsActions[currentStage]?.();
+        }
+      }}
+    >
+      <div
+        id="_PRIVATE_ONBOARDING_ELEMENT"
+        ref={onboardingElement}
+        className={cn(
+          "absolute bg-background h-fit w-fit flex justify-center items-center md:hover:cursor-pointer",
+        )}
+        style={{
+          top: elementPosition?.top,
+          bottom: elementPosition?.bottom,
+          left: elementPosition?.left,
+          right: elementPosition?.right,
+          height: elementSize?.height,
+          width: elementSize?.width,
+        }}
+      />
+      <Button
+        className="absolute top-10 right-10 md:bottom-10 md:top-auto"
+        onClick={() => {
+          setOnboardingViewed().finally(() => {
+            // router.refresh();
+          });
+        }}
+        variant={"link"}
+      >
+        Skip
+      </Button>
+
+      <Arrow />
       <div
         className={cn(
-          "h-[100svh] w-[100vw] absolute inset-0 bg-black/80 z-50 flex justify-center items-center",
-          {
-            "hover:cursor-pointer": backgroundForNextStage[currentStage],
-          },
-          {
-            "items-end pb-20 md:items-center md:pb-0":
-              currentStage === "no-partner",
-          },
+          "w-full md:w-full h-fit flex justify-center items-center px-2",
         )}
-        onClick={() => {
-          if (currentStage === "welcome") {
-            if (window.location.pathname !== "/home") {
-              router.push("/home");
-            }
-          }
-          if (backgroundForNextStage[currentStage]) {
-            elementsActions[currentStage]?.();
-          }
-        }}
       >
-        <div
-          id="_PRIVATE_ONBOARDING_ELEMENT"
-          ref={onboardingElement}
-          className={cn(
-            "absolute bg-background h-fit w-fit flex justify-center items-center md:hover:cursor-pointer",
-          )}
-          style={{
-            top: elementPosition?.top,
-            bottom: elementPosition?.bottom,
-            left: elementPosition?.left,
-            right: elementPosition?.right,
-            height: elementSize?.height,
-            width: elementSize?.width,
-          }}
-        />
-        <Button
-          className="absolute top-10 right-10 md:bottom-10 md:top-auto"
-          onClick={() => {
-            setOnboardingViewed().finally(() => {
-              // router.refresh();
-            });
-          }}
-          variant={"link"}
-        >
-          Skip
-        </Button>
-
-        <Arrow />
-        <div
-          className={cn(
-            "w-full md:w-full h-fit flex justify-center items-center px-2",
-          )}
-        >
-          <Text />
-        </div>
+        <Text />
       </div>
-    )
+    </div>
+  ) : (
+    <Dialog
+      open={shouldSignUp}
+      onOpenChange={open => {
+        if (!open) {
+          router.push("/");
+        }
+      }}
+    >
+      <DialogContent closeOnOutsideClick={false}>
+        <DialogTitle>Great job!</DialogTitle>
+        <DialogDescription>
+          Now, in order to start building habits, you&apos;ll need to sign up :)
+        </DialogDescription>
+        <DialogFooter>
+          <div className="w-full flex flex-col gap-0 justify-center items-center">
+            <Button asChild>
+              <Link href="/register">Let&apos;s go!</Link>
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => {
+                EventTracker.track("Cancelled sign up");
+              }}
+              asChild
+            >
+              <Link href="/">Maybe next time</Link>
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -39,6 +39,7 @@ interface FindPartnerProps {
 const FindPartner = ({
   onPartnerSelect,
 }: FindPartnerProps): React.ReactNode => {
+  const { state } = useAppSelector(state => state.auth);
   const { searchResult, searchUsers, status, error } = useSearchUser();
 
   return (
@@ -46,7 +47,12 @@ const FindPartner = ({
       <Input
         label="Search for your partner"
         type="text"
-        placeholder="Your pinky partner's name"
+        placeholder={
+          state === "authenticated"
+            ? "Your pinky partner's name"
+            : "You need to sign up to find a partner"
+        }
+        disabled={state !== "authenticated"}
         onChange={e => searchUsers(e.target.value)}
         autoComplete="on"
         autoFocus
@@ -146,7 +152,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
         formik.errors.signatures = "You must sign the contract";
         return;
       }
-      if (!user || (!accountabilityPartner && !continueWithoutPartner)) return;
+      if (!accountabilityPartner && !continueWithoutPartner) return;
       const contractees = [user, accountabilityPartner].filter(
         partner => partner !== null,
       ) as AccountabilityPartner[];
@@ -213,10 +219,9 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
 
   const handleSignContract = (signed: boolean) => {
     if (signed && formik.values.signatures.length === 0) {
-      if (!user) return;
       formik.setValues({
         ...formik.values,
-        signatures: [user.userId],
+        signatures: [user?.userId || "anonymous"],
       });
     } else {
       formik.setValues({

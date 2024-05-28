@@ -12,7 +12,8 @@ import {
 } from "../consts/onboarding";
 import axios from "axios";
 import { Logger } from "../../logger";
-import { updateOnboardingCompleted } from "../features/auth/authSlice";
+import { setUser, updateOnboardingCompleted } from "../features/auth/authSlice";
+import { ANONYMOUS_USER_ID } from "../utils/consts";
 
 export default function useOnboarding() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function useOnboarding() {
   const dispatch = useAppDispatch();
   const [isMobile, setIsMobile] = useState(false);
   const onboardingElement = useRef<HTMLDivElement>(null);
-  const { user } = useAppSelector(state => state.auth);
+  const { user, state } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const [onboardingState, setOnboardingState] = useState<
     "ongoing" | "completed"
@@ -35,6 +36,31 @@ export default function useOnboarding() {
       }
     | undefined
   >();
+
+  // Set anonymous user
+  useEffect(() => {
+    if (isOnboardingCompleted()) {
+      return;
+    }
+    if (!user && state !== "authenticated") {
+      dispatch(
+        setUser({
+          state: "anonymous",
+          userId: ANONYMOUS_USER_ID,
+          displayName: "Anonymous",
+          email: "",
+          photoURL: "",
+          meta: {
+            referralCode: "",
+            onboardingCompleted: false,
+          },
+          settings: {
+            showNotifications: false,
+          },
+        }),
+      );
+    }
+  }, [user, state]);
 
   useEffect(() => {
     if (user?.meta?.onboardingCompleted) {
@@ -187,10 +213,14 @@ export default function useOnboarding() {
 
       el.className += " !cursor-pointer";
       let clone = el.cloneNode(true);
+      // @ts-ignore
+      if (clone.disabled) {
+        // @ts-ignore
+        clone.disabled = false;
+      }
       // clear all onClicks
       clone.removeEventListener("click", null);
 
-      // Avoid z
       if (clone.nodeName.toLowerCase() === "a") {
         const div = document.createElement("div");
         const a = clone as HTMLAnchorElement;

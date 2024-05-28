@@ -13,22 +13,55 @@ import {
 } from "../../obligation/_utils";
 import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
 import moment from "moment";
+import loggerServer from "@/loggerServer";
+import { ANONYMOUS_USER_ID } from "../../../../lib/utils/consts";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { contractIds: string[] } },
 ): Promise<NextResponse<GetNextUpObligationsResponse | { error: string }>> {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  let session = await getServerSession(authOptions);
   try {
-    // const allContractIds = params.contractIds?.[0].split(",");
-    // const uniqueContractIds = Array.from(new Set(allContractIds));
+    let isAnonymous = false;
+    if (!session) {
+      const anonymousUser = await prisma.appUser.findUnique({
+        where: { userId: ANONYMOUS_USER_ID },
+      });
+      if (!anonymousUser) {
+        loggerServer.error("Anonymous user not found", "", {
+          data: { error: "" },
+        });
+        return NextResponse.json(
+          { error: "Anonymous user not found" },
+          { status: 404 },
+        );
+      }
+      session = {
+        expires: "",
+        user: {
+          userId: anonymousUser.userId,
+          email: anonymousUser.email,
+          name: anonymousUser.displayName,
+          image: anonymousUser.photoURL,
+          settings: {
+            showNotifications: false,
+          },
+          meta: {
+            referralCode: "",
+            onboardingCompleted: false,
+          },
+        },
+      };
+      isAnonymous = true;
+    }
     const { user } = session;
     const now = moment().utc().toDate();
-    const startOfWeekDate = getStartOfTheWeekDate();
-    const endOfTheWeekDate = getEndOfTheWeekDate();
+    const oneMinuteAgo = moment().subtract(1, "minutes").toDate();
+    const startOfWeekDate = isAnonymous
+      ? oneMinuteAgo
+      : getStartOfTheWeekDate();
+    const endOfTheWeekDate = isAnonymous ? now : getEndOfTheWeekDate();
+    const createdAt = isAnonymous ? oneMinuteAgo : new Date(0);
 
     const userContractIds = (
       await prisma.userContract.findMany({
@@ -49,6 +82,9 @@ export async function GET(
         contract: {
           dueDate: {
             gte: now,
+          },
+          createdAt: {
+            gte: createdAt,
           },
           userContracts: {
             some: {
@@ -184,7 +220,11 @@ export async function GET(
       { status: 200 },
     );
   } catch (error: any) {
-    Logger.error("Error getting obligations", session.user.userId, error);
+    Logger.error(
+      "Error getting obligations",
+      session?.user?.userId || "unknown",
+      error,
+    );
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

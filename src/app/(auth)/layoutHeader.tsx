@@ -30,7 +30,7 @@ const AuthHeader = () => {
           maxSize={1}
           particleDensity={1200}
           className="w-full h-full"
-          theme={theme === "dark" ? "dark" : "light"}
+          theme={theme}
         />
 
         {/* Radial Gradient to prevent sharp edges */}

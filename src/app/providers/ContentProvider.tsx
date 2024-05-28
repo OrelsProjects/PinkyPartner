@@ -23,7 +23,7 @@ interface ContentProviderProps {
 const BOTTOM_BAR_HEIGHT = 65;
 
 const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
-  const { user } = useAppSelector(state => state.auth);
+  const { user, state } = useAppSelector(state => state.auth);
   const { theme } = useTheme();
   const sizeContent = React.useContext(SizeContext);
   const bottomBarRef = React.useRef<HTMLDivElement>(null);
@@ -65,7 +65,8 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           maxHeight: contentHeight,
         }}
       >
-        {user && <NavigationBar ref={bottomBarRef} />}
+        <NavigationBar ref={bottomBarRef} />
+
         <ThemeProvider>
           <div className="relative z-[51]">
             <toast.ToastContainer

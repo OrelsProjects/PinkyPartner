@@ -33,9 +33,6 @@ const EmptyContracts = () => {
 };
 
 const EmptyObligations = () => {
-  const { onboardingState } = useOnboarding();
-
-  const router = useRouter();
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-3">
       <h1 className="text-xl font-semibold">
@@ -62,7 +59,7 @@ export default function Home() {
     state => state.obligations,
   );
   const { obligations, loadingData } = useObligations();
-  const { contracts } = useContracts();
+  const { contracts } = useAppSelector(state => state.contracts);
 
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {

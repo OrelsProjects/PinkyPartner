@@ -36,6 +36,7 @@ export const UserAvatar = ({
     const firstLetter = displayName?.[0];
     const secondLetter =
       displayName?.split(" ")[1]?.[0] || displayName?.[1] || "";
+    if (!firstLetter && !secondLetter) return null;
     return `${firstLetter}${secondLetter}`;
   }, [displayName]);
 
@@ -63,7 +64,7 @@ export const UserAvatar = ({
               />
             ) : (
               <AvatarFallback id={`avatar-fallback-${displayName}`}>
-                <p className="p-4">{userInitials || "AN"}</p>
+                <p className="p-4">{userInitials || "An"}</p>
               </AvatarFallback>
             )}
             {badge && (

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/section";
 import Divider from "../ui/divider";
 import { cn } from "../../lib/utils";
+import { useAppSelector } from "../../lib/hooks/redux";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
@@ -41,6 +42,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   onSign,
   open,
 }) => {
+  const { user } = useAppSelector(state => state.auth);
   const [isOpen, setIsOpen] = React.useState(open);
 
   useEffect(() => {
@@ -193,7 +195,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       open={isOpen}
     >
       <DialogTrigger asChild>
-        {!isSigned ? (
+        {!isSigned && user ? (
           <Button className="relative">
             Seal your pinky
             <div className="shimmer-animation rounded-lg"></div>

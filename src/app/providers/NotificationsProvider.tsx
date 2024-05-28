@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { messaging } from "../../../firebase.config";
 import { Messaging, onMessage } from "firebase/messaging";
 import useNotifications from "../../lib/hooks/useNotifications";
@@ -26,6 +26,8 @@ import {
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
 import { toast } from "react-toastify";
+import { Link } from "lucide-react";
+import { EventTracker } from "../../eventTracker";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
@@ -38,7 +40,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
     partnerData: { contractObligations: partnerContractObligations },
   } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
-  const { user } = useAppSelector(state => state.auth);
+  const { user, state } = useAppSelector(state => state.auth);
 
   const { onboardingState } = useOnboarding();
   const {
@@ -64,7 +66,6 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
     await initUserToken();
 
     onMessage(messaging, payload => {
-      debugger;
       showNotification({
         title: payload.data?.title ?? "",
         body: payload.data?.body ?? "",
@@ -211,14 +212,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
         permission="notifications"
       />
 
-      <Dialog
-        open={showPermissionNotGrantedDialog}
-        onOpenChange={value => {
-          if (!value) {
-            setShowPermissionNotGrantedDialog(false);
-          }
-        }}
-      >
+      <Dialog>
         <DialogContent>
           <DialogTitle>We respect your choice.</DialogTitle>
           <DialogDescription>

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { NavigationBarItem, BottomBarItems } from "./_consts";
 import { cn } from "../../lib/utils";
@@ -20,7 +20,6 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   );
   const { newContracts, newObligations, markObligationsAsViewed } =
     useNotifications();
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {

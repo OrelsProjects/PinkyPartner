@@ -6,6 +6,9 @@ import { authOptions } from "../../../../authOptions";
 import { AppUser, Contract, Obligation } from "@prisma/client";
 import * as ClientContract from "../../../../models/contract";
 import { formatObligations } from "../../_utils";
+import { ANONYMOUS_USER_ID } from "../../../../lib/utils/consts";
+import loggerServer from "@/loggerServer";
+import moment from "moment";
 
 type UserData = {
   contracts: ClientContract.ContractWithExtras[];
@@ -22,17 +25,54 @@ const formatContract = (contract: Contract, userId: string) => {
 export async function GET(
   _: NextRequest,
 ): Promise<NextResponse<UserData | undefined>> {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json(undefined, { status: 401 });
-  }
+  let session = await getServerSession(authOptions);
 
   try {
+    let isAnonymous = false;
+    if (!session) {
+      const anonymousUser = await prisma.appUser.findUnique({
+        where: { userId: ANONYMOUS_USER_ID },
+      });
+      if (!anonymousUser) {
+        loggerServer.error("Anonymous user not found", "", {
+          data: { error: "" },
+        });
+        return NextResponse.json(undefined, { status: 404 });
+      }
+      session = {
+        expires: "",
+        user: {
+          userId: anonymousUser.userId,
+          email: anonymousUser.email,
+          name: anonymousUser.displayName,
+          image: anonymousUser.photoURL,
+          settings: {
+            showNotifications: false,
+          },
+          meta: {
+            referralCode: "",
+            onboardingCompleted: false,
+          },
+        },
+      };
+      isAnonymous = true;
+    }
+
+    if (!session) {
+      return NextResponse.json(undefined, { status: 401 });
+    }
+
     const userObligations: Obligation[] = await prisma.obligation.findMany({
       where: {
         userId: session.user.userId,
       },
     });
+
+    const now = moment().utc().toDate();
+    // If anonymous user, set the start of the week to 5 minutes ago. Otherwise, set to 1970
+    const createdAt = isAnonymous
+      ? moment().subtract(1, "minutes").toDate()
+      : new Date(0);
 
     let contractIds = await prisma.userContract.findMany({
       where: {
@@ -47,6 +87,12 @@ export async function GET(
       where: {
         contractId: {
           in: contractIds.map(contract => contract.contractId),
+        },
+        dueDate: {
+          gte: now,
+        },
+        createdAt: {
+          gte: createdAt,
         },
       },
       include: {
@@ -90,7 +136,7 @@ export async function GET(
 
         const formattedContract = formatContract(
           contractData,
-          session.user.userId,
+          session!.user.userId,
         );
         const formattedObligations = formatObligations(obligations);
         const clientContract: ClientContract.ContractWithExtras = {
@@ -108,7 +154,7 @@ export async function GET(
       { status: 200 },
     );
   } catch (error: any) {
-    Logger.error("Error getting user data", session.user.userId, error);
+    Logger.error("Error getting user data", session!.user.userId, error);
     return NextResponse.json(undefined, { status: 500 });
   }
 }

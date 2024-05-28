@@ -43,7 +43,10 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
           </DialogTitle>
           <DialogDescription>{messagesMap[permission]}</DialogDescription>
           <div className="w-full flex flex-col gap-0">
-            <Button onClick={() => onEnablePermission(permission)}>
+            <Button
+              onClick={() => onEnablePermission(permission)}
+              className="w-fit"
+            >
               Enable notifications
             </Button>
             <Button

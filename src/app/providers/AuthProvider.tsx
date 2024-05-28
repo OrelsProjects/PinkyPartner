@@ -14,6 +14,7 @@ import { Logger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
+import useOnboarding from "../../lib/hooks/useOnboarding";
 
 export default function AuthProvider({
   children,
@@ -23,8 +24,9 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { user: currentUser } = useSelector(selectAuth);
+  const { user: currentUser, state } = useSelector(selectAuth);
   const { data: session, status } = useSession();
+  const { isOnboardingCompleted } = useOnboarding();
 
   const setUser = async (user?: {
     name?: string | null;
@@ -40,6 +42,10 @@ export default function AuthProvider({
     };
   }) => {
     try {
+      if (!user) {
+        dispatch(setUserAction(null));
+        return;
+      }
       const appUser: AppUser = {
         displayName: user?.name || null,
         email: user?.email || "",
@@ -92,6 +98,7 @@ export default function AuthProvider({
         router.push("/home");
       }
     } else {
+      if (!isOnboardingCompleted()) return;
       if (!pathname.includes("login") && !pathname.includes("register")) {
         router.push("/");
       }

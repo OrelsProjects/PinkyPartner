@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useEffect, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import type { Container, SingleOrMultiple } from "@tsparticles/engine";
@@ -31,6 +31,7 @@ export const SparklesCore = (props: ParticlesProps) => {
     particleDensity,
     theme = "light",
   } = props;
+
   const [init, setInit] = useState(false);
   useEffect(() => {
     initParticlesEngine(async engine => {
@@ -40,6 +41,27 @@ export const SparklesCore = (props: ParticlesProps) => {
     });
   }, []);
   const controls = useAnimation();
+
+  const color = useMemo(() => {
+    // if the background color is dark, particles should be light
+    // get the background color from global.css
+    const root = document.documentElement;
+    const style = getComputedStyle(root);
+
+    const backgroundColorRGBA = style
+      .getPropertyValue("background-color")
+      .trim(); // rgba(...)
+    const backgroundColor = backgroundColorRGBA.replace(/rgba?\(|\s+|\)/g, ""); // remove rgba( and spaces
+
+    // if around 0,0,0,0 - 60,60,60,60, particles should be light, else dark
+    const isDark =
+      backgroundColor
+        .split(",")
+        .map(c => parseInt(c))
+        .reduce((acc, c) => acc + c, 0) < 240;
+
+    return isDark ? "#fff" : "#000";
+  }, []);
 
   const particlesLoaded = async (container?: Container) => {
     if (container) {
@@ -126,7 +148,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                 },
               },
               color: {
-                value: particleColor || theme === "light" ? "#000" : "#fff",
+                value: particleColor || color,
                 animation: {
                   h: {
                     count: 0,

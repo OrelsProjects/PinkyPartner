@@ -19,7 +19,7 @@ export const AccountabilityPartnerComponentLoading = ({
 );
 
 const AccountabilityPartnerComponent: React.FC<{
-  partner: AccountabilityPartner;
+  partner?: AccountabilityPartner;
   signed?: boolean;
   className?: string;
   onClick?: (partner: AccountabilityPartner) => void;
@@ -27,15 +27,19 @@ const AccountabilityPartnerComponent: React.FC<{
   return (
     <div
       className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale opacity-50"} ${className}`}
-      onClick={() => onClick?.(partner)}
+      onClick={() => {
+        if (partner) {
+          onClick?.(partner);
+        }
+      }}
     >
       <UserAvatar
-        displayName={partner.displayName}
-        photoURL={partner.photoURL}
+        displayName={partner?.displayName}
+        photoURL={partner?.photoURL}
         imageClassName="w-10 h-10"
       />
-      <div key={partner.userId} className="truncate">
-        {partner.displayName}
+      <div key={partner?.userId} className="truncate">
+        {partner?.displayName}
       </div>
     </div>
   );

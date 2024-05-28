@@ -48,8 +48,8 @@ export function useContracts() {
         "/api/contract",
         contractData,
       );
-      await fetchNextUpObligations();
       dispatch(addContractAction(response.data));
+      await fetchNextUpObligations();
       dispatch(setError(null));
       const otherUser = contractData.contractees.find(
         contractee => contractee.userId !== user?.userId,
