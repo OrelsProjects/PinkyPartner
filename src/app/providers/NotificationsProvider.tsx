@@ -2,11 +2,8 @@
 
 import React, { useEffect } from "react";
 import { messaging } from "../../../firebase.config";
-import { getToken } from "../../lib/services/notification";
 import { Messaging, onMessage } from "firebase/messaging";
-import axios from "axios";
 import useNotifications from "../../lib/hooks/useNotifications";
-import { Logger } from "../../logger";
 import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import { usePathname } from "next/navigation";
 import {
@@ -16,6 +13,19 @@ import {
   NotificationType,
 } from "../../lib/features/notifications/notificationsSlice";
 import { UserContractObligationData } from "../../models/userContractObligation";
+import RequestPermissionDialog, {
+  PermissionType,
+} from "../../components/requestPermissionDialog";
+import useOnboarding from "../../lib/hooks/useOnboarding";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "../../components/ui/dialog";
+import { Button } from "../../components/ui/button";
+import { toast } from "react-toastify";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
@@ -24,25 +34,34 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const { newContracts, newObligations, didShowContractNotification } =
     useAppSelector(state => state.notifications);
-
-  const { showNotification, markContractsAsViewed, markObligationsAsViewed } =
-    useNotifications();
   const {
     partnerData: { contractObligations: partnerContractObligations },
   } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
 
+  const { onboardingState } = useOnboarding();
+  const {
+    initNotifications: initUserToken,
+    showNotification,
+    isPermissionGranted,
+    didRequestPermission,
+    markContractsAsViewed,
+    setPermissionRequested,
+    markObligationsAsViewed,
+    requestNotificationsPermission,
+  } = useNotifications();
+
   const lastShownNewContractsNotification = React.useRef<number>(0);
   const lastShownNewObligationsNotification = React.useRef<number>(0);
 
+  const [showRequestPermissionDialog, setShowRequestPermissionDialog] =
+    React.useState(false);
+  const [showPermissionNotGrantedDialog, setShowPermissionNotGrantedDialog] =
+    React.useState(false);
+
   const init = async (messaging: Messaging) => {
-    try {
-      const token = await getToken();
-      await axios.patch("/api/user", { token });
-    } catch (error: any) {
-      Logger.error("Error setting user token", { error });
-    }
+    await initUserToken();
 
     onMessage(messaging, payload => {
       showNotification({
@@ -53,6 +72,14 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
   };
+
+  useEffect(() => {
+    const shouldShowRequestPermissionDialog =
+      !didRequestPermission() &&
+      onboardingState === "completed" &&
+      !isPermissionGranted();
+    setShowRequestPermissionDialog(shouldShowRequestPermissionDialog);
+  }, [onboardingState, user]);
 
   useEffect(() => {
     if (messaging) {
@@ -135,6 +162,30 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [contracts]);
 
+  const onCloseRequestPermissionDialog = async (
+    permission?: PermissionType,
+  ) => {
+    if (permission) {
+      const granted = await requestNotificationsPermission();
+      setPermissionRequested();
+      setShowRequestPermissionDialog(false);
+      if (granted) {
+        const toastId = toast.loading("Saving your pinky...");
+        await initUserToken();
+        toast.dismiss(toastId);
+        toast("You're all set! 🎉");
+      } else {
+        setShowPermissionNotGrantedDialog(true);
+      }
+    } else {
+      setPermissionRequested();
+      setShowRequestPermissionDialog(false);
+      setPermissionRequested();
+      setShowRequestPermissionDialog(false);
+      setShowPermissionNotGrantedDialog(true);
+    }
+  };
+
   const canShowContractsNotification = () => {
     if (didShowContractNotification) return false;
     const now = Date.now();
@@ -150,7 +201,38 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
     return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
   };
 
-  return children;
+  return (
+    <>
+      <RequestPermissionDialog
+        open={showRequestPermissionDialog}
+        onClose={onCloseRequestPermissionDialog}
+        onEnablePermission={onCloseRequestPermissionDialog}
+        permission="notifications"
+      />
+
+      <Dialog
+        open={showPermissionNotGrantedDialog}
+        onOpenChange={value => {
+          if (!value) {
+            setShowPermissionNotGrantedDialog(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogTitle>We respect your choice.</DialogTitle>
+          <DialogDescription>
+            You can enable notifications at any time in the settings :)
+          </DialogDescription>
+          <DialogFooter>
+            <Button onClick={() => setShowPermissionNotGrantedDialog(false)}>
+              Thanks
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {children}
+    </>
+  );
 };
 
 export default NotificationsProvider;

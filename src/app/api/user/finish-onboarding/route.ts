@@ -11,11 +11,15 @@ export async function POST(_: NextRequest): Promise<NextResponse<void>> {
   }
 
   try {
-    await prisma.appUserMetadata.update({
+    await prisma.appUserMetadata.upsert({
       where: {
         userId: session.user.userId,
       },
-      data: {
+      update: {
+        onboardingCompleted: true,
+      },
+      create: {
+        userId: session.user.userId,
         onboardingCompleted: true,
       },
     });

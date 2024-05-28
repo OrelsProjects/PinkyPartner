@@ -17,11 +17,15 @@ const firebaseConfig = {
 let app: FirebaseApp | null =
   firebase.apps.length > 0 ? firebase.apps?.[0] : null;
 let messaging: Messaging | null = null;
+
 if (typeof window !== "undefined") {
-  // Ensures this runs only in client-side
   app = !firebase.apps.length ? initializeApp(firebaseConfig) : firebase.app();
-  messaging = getMessaging(app);
 }
+
+const initMessaging = () => {
+  if (!app) return;
+  messaging = getMessaging(app);
+};
 
 const getUserToken = async () => {
   if (!messaging) return;
@@ -36,4 +40,4 @@ const getUserToken = async () => {
   }
 };
 
-export { app, messaging, getUserToken };
+export { app, messaging, initMessaging, getUserToken };

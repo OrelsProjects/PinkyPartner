@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "./redux";
+import { useAppDispatch, useAppSelector } from "./redux";
 import {
   Stage,
   stages,
@@ -12,14 +12,19 @@ import {
 } from "../consts/onboarding";
 import axios from "axios";
 import { Logger } from "../../logger";
+import { updateOnboardingCompleted } from "../features/auth/authSlice";
 
 export default function useOnboarding() {
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const [isMobile, setIsMobile] = useState(false);
   const onboardingElement = useRef<HTMLDivElement>(null);
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
+  const [onboardingState, setOnboardingState] = useState<
+    "ongoing" | "completed"
+  >("ongoing");
   const [currentStage, setCurrentStage] = useState<Stage>(stages[0]);
   const [elementPosition, setElementPosition] = useState<
     | {
@@ -91,60 +96,6 @@ export default function useOnboarding() {
     done: null,
   };
 
-  //   useEffect(() => {
-  //     if (isOnboardingViewed()) {
-  //       return;
-  //     }
-  //     const lastStage = getLastStage();
-  //     if (lastStage) {
-  //       if (lastStage !== currentStage) {
-  //         setCurrentStage(lastStage);
-  //         switch (lastStage) {
-  //           case "welcome":
-  //             if (window.location.pathname === "/home") {
-  //               router.push("/home");
-  //             }
-  //           case "home-start-doing":
-  //             if (window.location.pathname === "/home") {
-  //               router.push("/home");
-  //             }
-  //           case "navigation-bar-item-Contracts":
-  //             if (window.location.pathname === "/home") {
-  //               router.push("/home");
-  //             }
-  //           case "contracts-plus-button":
-  //             if (window.location.pathname === "/contracts") {
-  //               router.push("/contracts");
-  //             }
-  //           case "search-partner":
-  //             if (window.location.pathname === "/contracts/new") {
-  //               router.push("/contracts/new");
-  //             }
-  //           case "no-partner":
-  //             if (window.location.pathname === "/contracts/new") {
-  //               router.push("/contracts/new");
-  //             }
-  //           case "fill-contract":
-  //             if (window.location.pathname === "/contracts/new") {
-  //               router.push("/contracts/new");
-  //             }
-  //           case "invite-partner-button":
-  //             if (window.location.pathname === "/contracts") {
-  //               router.push("/contracts");
-  //             }
-  //           case "wait-for-partner":
-  //             if (window.location.pathname === "/contracts") {
-  //               router.push("/contracts");
-  //             }
-  //           case "done":
-  //             if (window.location.pathname === "/home") {
-  //               router.push("/home");
-  //             }
-  //         }
-  //       }
-  //     }
-  //   }, []);
-
   useEffect(() => {
     if (getLastStage() === "done") {
       setCurrentStage("done");
@@ -163,7 +114,7 @@ export default function useOnboarding() {
   }, []);
 
   useEffect(() => {
-    if (isOnboardingViewed()) {
+    if (isOnboardingCompleted()) {
       return;
     }
     if (currentStage === "done") {
@@ -174,7 +125,7 @@ export default function useOnboarding() {
   }, [currentStage, isMobile]);
 
   useEffect(() => {
-    if (isOnboardingViewed()) {
+    if (isOnboardingCompleted()) {
       return;
     }
     switch (pathname) {
@@ -191,9 +142,15 @@ export default function useOnboarding() {
     }
   }, [pathname, isMobile]);
 
+  useEffect(() => {
+    console.log("onboardingState", onboardingState);
+  }, [onboardingState]);
+
   const setOnboardingViewed = async (updateUser = true) => {
     setCurrentStage("done");
     localStorage.setItem("onboardingViewed", "true");
+    setOnboardingState("completed");
+    dispatch(updateOnboardingCompleted(true));
     try {
       if (updateUser) {
         await axios.post("/api/user/finish-onboarding");
@@ -291,8 +248,9 @@ export default function useOnboarding() {
     return localStorage.getItem("lastOnboardingStage") as Stage;
   };
 
-  const isOnboardingViewed = () => {
+  const isOnboardingCompleted = () => {
     return (
+      user?.meta?.onboardingCompleted ||
       localStorage.getItem("onboardingViewed") === "true" ||
       getLastStage() === "done"
     );
@@ -317,9 +275,10 @@ export default function useOnboarding() {
     elementSize,
     currentStage,
     elementsActions,
+    onboardingState,
     elementPosition,
     onboardingElement,
-    isOnboardingViewed,
     setOnboardingViewed,
+    isOnboardingCompleted,
   };
 }

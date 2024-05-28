@@ -39,8 +39,8 @@ export default function ContentLayout({ children }: RootLayoutProps) {
               </ContentProvider>
             </HeightProvider>
           </DataProvider>
-          <OnboardingProvider />
         </NotificationsProvider>
+        <OnboardingProvider />
       </AuthProvider>
     </main>
   );

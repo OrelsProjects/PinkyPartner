@@ -24,7 +24,7 @@ export default function OnboardingProvider() {
     elementsActions,
     elementPosition,
     onboardingElement,
-    isOnboardingViewed,
+    isOnboardingCompleted: isOnboardingViewed,
     setOnboardingViewed,
   } = useOnboarding();
 
@@ -176,7 +176,9 @@ export default function OnboardingProvider() {
         <Button
           className="absolute top-10 right-10 md:bottom-10 md:top-auto"
           onClick={() => {
-            setOnboardingViewed();
+            setOnboardingViewed().finally(() => {
+              // router.refresh();
+            });
           }}
           variant={"link"}
         >

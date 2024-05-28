@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { useAppSelector } from "../../../lib/hooks/redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../lib/hooks/redux";
 import Divider from "../../../components/ui/divider";
 import { Button } from "../../../components/ui/button";
 import useAuth from "../../../lib/hooks/useAuth";
@@ -11,33 +11,51 @@ import { ThemeToggle } from "../../../components/theme-toggle";
 import { EventTracker } from "../../../eventTracker";
 import { Switch } from "../../../components/ui/switch";
 import axios from "axios";
-import {
-  getToken,
-  requestNotificationsPermission,
-} from "../../../lib/services/notification";
+import useNotifications from "../../../lib/hooks/useNotifications";
+import { updateUserSettings } from "../../../lib/features/auth/authSlice";
 
 interface SettingsProps {}
 
-const SettingsButton: React.FC<SettingsProps> = () => {
+const SettingsScreen: React.FC<SettingsProps> = () => {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { deleteUser, signOut } = useAuth();
+  const { initNotifications: initUserToken, requestNotificationsPermission } = useNotifications();
+  const [settings, setSettings] = useState(
+    user?.settings ?? {
+      showNotifications: false,
+    },
+  );
 
   const changeNotificationTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const isNotificationsGranted = Notification.permission === "granted";
 
-  const updateNotificationSettings = (value: boolean) => {
+  useEffect(() => {
+    console.log(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    if (user) {
+      setSettings(user?.settings);
+    }
+  }, [user]);
+
+  const updateNotificationSettings = (showNotifications: boolean) => {
     if (changeNotificationTimeout.current) {
       clearTimeout(changeNotificationTimeout.current);
     }
+
+    setSettings({ ...settings, showNotifications });
+
     changeNotificationTimeout.current = setTimeout(async () => {
       changeNotificationTimeout.current = null;
       try {
-        await axios.patch("/api/user/settings", { showNotifications: value });
-        if (value) {
-          const token = await getToken();
-          await axios.patch("/api/user", { token });
+        await axios.patch("/api/user/settings", { showNotifications });
+        if (showNotifications) {
+          await initUserToken();
         }
+        dispatch(updateUserSettings({ showNotifications }));
       } catch (e) {
         toast.error("Failed to update notification settings");
       }
@@ -93,7 +111,7 @@ const SettingsButton: React.FC<SettingsProps> = () => {
               <Switch
                 className="w-10"
                 onCheckedChange={updateNotificationSettings}
-                defaultChecked={user?.settings.showNotifications}
+                checked={settings.showNotifications}
               />
             ) : (
               <Button
@@ -147,4 +165,4 @@ const SettingsButton: React.FC<SettingsProps> = () => {
   );
 };
 
-export default SettingsButton;
+export default SettingsScreen;

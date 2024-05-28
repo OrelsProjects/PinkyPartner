@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import _ from "lodash";
-import AppUser from "../../../models/appUser";
+import AppUser, { AppUserSettings } from "../../../models/appUser";
 
 export type AuthStateType =
   | "anonymous"
@@ -49,6 +49,34 @@ const authSlice = createSlice({
       }
       state.state = action.payload.state ?? "authenticated";
     },
+    updateUserSettings: (
+      state,
+      action: PayloadAction<Partial<AppUserSettings>>,
+    ) => {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          settings: {
+            ...state.user.settings,
+            ...action.payload,
+          },
+        };
+      }
+    },
+    updateOnboardingCompleted: (state, action: PayloadAction<boolean>) => {
+      if (state.user) {
+        if (state.user.meta?.onboardingCompleted === action.payload) return;
+        const newUser: AppUser = {
+          ...state.user,
+          meta: {
+            ...state.user.meta,
+            referralCode: state.user.meta?.referralCode || "",
+            onboardingCompleted: action.payload,
+          },
+        };
+        state.user = newUser;
+      }
+    },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
       state.loading = false;
@@ -64,8 +92,14 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setError, clearUser, setDataFetched } =
-  authSlice.actions;
+export const {
+  setUser,
+  setError,
+  clearUser,
+  setDataFetched,
+  updateUserSettings,
+  updateOnboardingCompleted,
+} = authSlice.actions;
 
 export const selectAuth = (state: RootState): AuthState => state.auth;
 

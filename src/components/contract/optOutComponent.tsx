@@ -12,6 +12,7 @@ import { useContracts } from "../../lib/hooks/useContracts";
 import { ContractWithExtras } from "../../models/contract";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../lib/hooks/redux";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface OptOutComponentProps {
   open?: boolean;
@@ -79,7 +80,9 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
     >
       <DialogContent className="space-y-4 h-[18rem]">
         <DialogTitle>Giving up on {contract?.title}?</DialogTitle>
-        {partner ? <TextWithPartner /> : <TextAlone />}
+        <DialogDescription>
+          {partner ? <TextWithPartner /> : <TextAlone />}
+        </DialogDescription>
         <div className="flex flex-col gap-0">
           <Button
             onClick={e => {

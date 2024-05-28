@@ -27,7 +27,9 @@ const Switch = React.forwardRef<
     ref,
   ) => {
     // Internal state to track checked status
-    const [isChecked, setIsChecked] = React.useState(props.defaultChecked);
+    const [isChecked, setIsChecked] = React.useState(
+      props.defaultChecked || props.checked,
+    );
 
     return (
       <div

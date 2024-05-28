@@ -12,6 +12,9 @@ import {
 } from "../features/notifications/notificationsSlice";
 import NotificationComponent from "../../components/ui/notificationComponent";
 import { toast } from "react-toastify";
+import { getUserToken, initMessaging } from "../../../firebase.config";
+import { Logger } from "../../logger";
+import { error } from "console";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -80,25 +83,66 @@ export default function useNotifications() {
     });
   };
 
-  const getPermission = async () => {
-    if (!("serviceWorker" in navigator)) {
-      alert("Service worker not supported");
-      return;
-    }
-    if (Notification.permission === "granted") {
-      alert("Permission already granted");
-      return;
-    }
-    const permission = await Notification.requestPermission();
-    alert(permission);
+  const didRequestPermission = () => {
+    return localStorage.getItem("notificationPermissionRequested") === "true";
   };
+
+  const setPermissionRequested = () => {
+    localStorage.setItem("notificationPermissionRequested", "true");
+  };
+
+  const isNotificationSupported = () => {
+    return "Notification" in window && "serviceWorker" in navigator;
+  };
+
+  const isPermissionGranted = () => {
+    return Notification.permission === "granted";
+  };
+
+  async function requestNotificationsPermission(): Promise<boolean> {
+    if (!isNotificationSupported()) {
+      return false;
+    }
+    if (isPermissionGranted()) {
+      return true;
+    } else {
+      initMessaging();
+      const permissionResponse = await Notification.requestPermission();
+      return permissionResponse === "granted";
+    }
+  }
+
+  /**
+   * @returns push token or error message
+   */
+  async function initNotifications(): Promise<void> {
+    if (!("serviceWorker" in navigator)) {
+      Logger.error("Service worker not supported");
+    }
+    let token = "";
+    try {
+      token = (await getUserToken()) || "no-token";
+      await axios.patch("/api/user", { token });
+    } catch (e: any) {
+      Logger.error("Failed to get token", {
+        data: {
+          error: e,
+          token,
+        },
+      });
+    }
+  }
 
   return {
     newContracts,
     newObligations,
-    getPermission,
-    markObligationsAsViewed,
-    markContractsAsViewed,
     showNotification,
+    initNotifications,
+    isPermissionGranted,
+    didRequestPermission,
+    markContractsAsViewed,
+    setPermissionRequested,
+    markObligationsAsViewed,
+    requestNotificationsPermission,
   };
 }
