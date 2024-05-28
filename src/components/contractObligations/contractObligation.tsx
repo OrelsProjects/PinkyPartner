@@ -169,63 +169,7 @@ const ObligationsComponent = ({
                     count={1}
                   />
                 )}
-                <div
-                  className={cn(
-                    "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
-                    {
-                      "opacity-50": isObligationCompleted(day),
-                    },
-                  )}
-                >
-                  <div className="flex flex-row gap-3 justify-center items-center">
-                    <span
-                      className={cn(
-                        "text-card-foreground line-clamp-1 font-medium",
-                      )}
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <span
-                          className={cn("transition-all  duration-200", {
-                            "line-through text-muted-foreground font-normal":
-                              isObligationCompleted(day),
-                          })}
-                        >
-                          {userContractObligation.obligation.title}
-                        </span>
-                        <span className="text-foreground text-sm font-thin">
-                          {day}
-                        </span>
-                      </div>
-                    </span>
-                  </div>
-                </div>
                 <div className="self-center flex flex-row gap-6">
-                  <div className="self-center flex flex-row gap-3">
-                    <UserAvatar
-                      displayName={user?.displayName}
-                      photoURL={user?.photoURL}
-                      className={cn("h-9 w-9", {
-                        "border-2 border-green-500 rounded-full":
-                          isObligationCompleted(day),
-                      })}
-                      imageClassName={cn()}
-                    />
-                    {partnerDetails && (
-                      <UserAvatar
-                        displayName={partnerDetails?.displayName}
-                        photoURL={partnerDetails?.photoURL}
-                        className={cn("h-9 w-9", {
-                          "border-2 border-green-500 rounded-full":
-                            isPartnerObligationCompleted(day),
-                        })}
-                        badgeClassName="w-full h-full flex justify-center items-center rounded-full"
-                        imageClassName={cn({ "opacity-50": !isPartnerSigned })}
-                        tooltipContent={
-                          isPartnerSigned ? "" : "Partner didn't sign yet"
-                        }
-                      />
-                    )}
-                  </div>
                   <Checkbox
                     className="w-7 md:w-8 h-7 md:h-8 self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary"
                     checked={isObligationCompleted(day)}
@@ -235,6 +179,62 @@ const ObligationsComponent = ({
                     variant="default"
                     loading={loadingObligationDays[day]}
                   />
+                  <div
+                    className={cn(
+                      "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
+                      {
+                        "opacity-50": isObligationCompleted(day),
+                      },
+                    )}
+                  >
+                    <div className="flex flex-row gap-3 justify-center items-center">
+                      <span
+                        className={cn(
+                          "text-card-foreground line-clamp-1 font-medium",
+                        )}
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <span
+                            className={cn("transition-all  duration-200", {
+                              "line-through text-muted-foreground font-normal":
+                                isObligationCompleted(day),
+                            })}
+                          >
+                            {userContractObligation.obligation.title}
+                          </span>
+                          <span className="text-foreground text-sm font-thin">
+                            {day}
+                          </span>
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="self-center flex flex-row gap-3">
+                  <UserAvatar
+                    displayName={user?.displayName}
+                    photoURL={user?.photoURL}
+                    className={cn("h-9 w-9", {
+                      "border-2 border-green-500 rounded-full":
+                        isObligationCompleted(day),
+                    })}
+                    imageClassName={cn()}
+                  />
+                  {partnerDetails && (
+                    <UserAvatar
+                      displayName={partnerDetails?.displayName}
+                      photoURL={partnerDetails?.photoURL}
+                      className={cn("h-9 w-9", {
+                        "border-2 border-green-500 rounded-full":
+                          isPartnerObligationCompleted(day),
+                      })}
+                      badgeClassName="w-full h-full flex justify-center items-center rounded-full"
+                      imageClassName={cn({ "opacity-50": !isPartnerSigned })}
+                      tooltipContent={
+                        isPartnerSigned ? "" : "Partner didn't sign yet"
+                      }
+                    />
+                  )}
                 </div>
               </div>
             );

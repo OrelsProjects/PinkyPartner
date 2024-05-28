@@ -100,6 +100,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         },
       },
     });
+    Logger.info("Notification sent", session.user.userId, {
+      data: { message },
+    });
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
