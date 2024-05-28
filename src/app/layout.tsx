@@ -7,6 +7,7 @@ import React from "react";
 import NextTopLoader from "nextjs-toploader";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
@@ -79,7 +80,9 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
                   speed={1500}
                   shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
                 />
+
                 {children}
+                <SpeedInsights />
               </AuthProvider>
             </ThemeProvider>
           </SessionWrapper>
