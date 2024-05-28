@@ -99,7 +99,11 @@ export default function AuthProvider({
       }
     } else {
       if (!isOnboardingCompleted()) return;
-      if (!pathname.includes("login") && !pathname.includes("register")) {
+      if (
+        !pathname.includes("login") &&
+        !pathname.includes("register") &&
+        !pathname.includes("privacy")
+      ) {
         router.push("/");
       }
     }
