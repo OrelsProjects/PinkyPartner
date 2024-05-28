@@ -16,6 +16,46 @@ import { Checkbox } from "../ui/checkbox";
 import Contract from "../../models/contract";
 import NotificationBadge from "../ui/notificationBadge";
 
+const UserIndicator = ({
+  isSigned,
+  photoURL,
+  displayName,
+  isObligationCompleted,
+}: {
+  isSigned?: boolean;
+  photoURL?: string | null;
+  displayName?: string | null;
+  isObligationCompleted?: boolean;
+}) => {
+  const text = isSigned
+    ? isObligationCompleted
+      ? "Done"
+      : "Waiting"
+    : "Not signed";
+  return (
+    <div className="w-16ו flex flex-col justify-center items-center gap-0.5">
+      <UserAvatar
+        displayName={displayName}
+        photoURL={photoURL}
+        className={cn(
+          "h-9 w-9",
+          {
+            "border-2 border-green-500 rounded-full": isObligationCompleted,
+          },
+          { "opacity-50": !isSigned },
+        )}
+      />
+      <span
+        className={cn("text-[10px] font-thin text-muted-foreground", {
+          "text-muted-foreground/60": !isSigned,
+        })}
+      >
+        {text}
+      </span>
+    </div>
+  );
+};
+
 const ObligationsComponent = ({
   isPartnerSigned,
   newObligations,
@@ -125,6 +165,9 @@ const ObligationsComponent = ({
   const isPartnerObligationCompleted = (day: string) =>
     daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
 
+  const isBothObligationsCompleted = (day: string) =>
+    isObligationCompleted(day) && isPartnerObligationCompleted(day);
+
   const isNewObligation = (day: string) =>
     newObligations.some(
       obligation =>
@@ -155,86 +198,88 @@ const ObligationsComponent = ({
             return (
               <div
                 className={cn(
-                  "rounded-lg h-16 w-full bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-sm duration-200 relative",
+                  "rounded-lg h-16 w-full bg-card p-px shadow-sm duration-500 relative",
                   {
                     "bg-card/50": isObligationCompleted(day),
                   },
+                  // {
+                  //   "bg-gradient-to-b from-primary  to-primary-lighter text-foreground":
+                  //     isBothObligationsCompleted(day),
+                  // },
                 )}
                 key={`obligation-in-contract-${day}`}
                 data-onboarding-id={`${index === 0 ? "home-start-doing" : ""}`}
               >
-                {isNewObligation(day) && (
-                  <NotificationBadge
-                    className="h-2.5 w-2.5  absolute -top-1 left-0.5 bg-primary bg-red-500 text-xs font-semibold rounded-full"
-                    count={1}
-                  />
-                )}
-                <div className="self-center flex flex-row gap-6">
-                  <Checkbox
-                    className="w-7 md:w-8 h-7 md:h-8 self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary"
-                    checked={isObligationCompleted(day)}
-                    onCheckedChange={(checked: boolean) => {
-                      handleCompleteObligation(day, checked);
-                    }}
-                    variant="default"
-                    loading={loadingObligationDays[day]}
-                  />
-                  <div
-                    className={cn(
-                      "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
-                      {
-                        "opacity-50": isObligationCompleted(day),
-                      },
-                    )}
-                  >
-                    <div className="flex flex-row gap-3 justify-center items-center">
-                      <span
-                        className={cn(
-                          "text-card-foreground line-clamp-1 font-medium",
-                        )}
-                      >
-                        <div className="flex flex-col gap-0.5">
-                          <span
-                            className={cn("transition-all  duration-200", {
-                              "line-through text-muted-foreground font-normal":
-                                isObligationCompleted(day),
-                            })}
-                          >
-                            {userContractObligation.obligation.title}
-                          </span>
-                          <span className="text-foreground text-sm font-thin">
-                            {day}
-                          </span>
-                        </div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="self-center flex flex-row gap-3">
-                  <UserAvatar
-                    displayName={user?.displayName}
-                    photoURL={user?.photoURL}
-                    className={cn("h-9 w-9", {
-                      "border-2 border-green-500 rounded-full":
-                        isObligationCompleted(day),
-                    })}
-                    imageClassName={cn()}
-                  />
-                  {partnerDetails && (
-                    <UserAvatar
-                      displayName={partnerDetails?.displayName}
-                      photoURL={partnerDetails?.photoURL}
-                      className={cn("h-9 w-9", {
-                        "border-2 border-green-500 rounded-full":
-                          isPartnerObligationCompleted(day),
-                      })}
-                      badgeClassName="w-full h-full flex justify-center items-center rounded-full"
-                      imageClassName={cn({ "opacity-50": !isPartnerSigned })}
-                      tooltipContent={
-                        isPartnerSigned ? "" : "Partner didn't sign yet"
-                      }
+                <div
+                  className={cn(
+                    "w-full h-full flex flex-row justify-between items-start gap-3  bg-card rounded-lg p-2",
+                  )}
+                >
+                  {isNewObligation(day) && (
+                    <NotificationBadge
+                      className="h-2.5 w-2.5  absolute -top-1 left-0.5 bg-primary bg-red-500 text-xs font-semibold rounded-full"
+                      count={1}
                     />
                   )}
+                  <div className="self-center flex flex-row gap-6">
+                    <Checkbox
+                      className="w-7 md:w-8 h-7 md:h-8 self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary"
+                      checked={isObligationCompleted(day)}
+                      onCheckedChange={(checked: boolean) => {
+                        handleCompleteObligation(day, checked);
+                      }}
+                      variant="default"
+                      loading={loadingObligationDays[day]}
+                    />
+                    <div
+                      className={cn(
+                        "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
+                        {
+                          "opacity-50": isObligationCompleted(day),
+                        },
+                      )}
+                    >
+                      <div className="flex flex-row gap-3 justify-center items-center">
+                        <div
+                          className={cn(
+                            "text-card-foreground line-clamp-1 font-medium",
+                          )}
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            <span
+                              className={cn("transition-all  duration-500", {
+                                "text-muted-foreground font-normal":
+                                  isObligationCompleted(day),
+                              })}
+                            >
+                              {userContractObligation.obligation.title}
+                            </span>
+                            <span className="text-foreground text-sm font-thin">
+                              {day}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="self-center flex flex-row gap-3">
+                    <UserIndicator
+                      isSigned={true}
+                      photoURL={user?.photoURL}
+                      displayName={user?.displayName}
+                      isObligationCompleted={isObligationCompleted(day)}
+                    />
+                    {partnerDetails && (
+                      <UserIndicator
+                        isSigned={isPartnerSigned}
+                        photoURL={partnerDetails?.photoURL}
+                        displayName={partnerDetails?.displayName}
+                        isObligationCompleted={isPartnerObligationCompleted(
+                          day,
+                        )}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             );

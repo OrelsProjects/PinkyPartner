@@ -42,7 +42,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   const { contracts } = useAppSelector(state => state.contracts);
   const { user, state } = useAppSelector(state => state.auth);
 
-  const { onboardingState } = useOnboarding();
+  const { onboardingState, isOnboardingCompleted } = useOnboarding();
   const {
     initNotifications: initUserToken,
     showNotification,
@@ -78,7 +78,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const shouldShowRequestPermissionDialog =
       !didRequestPermission() &&
-      onboardingState === "completed" &&
+      (onboardingState === "completed" || isOnboardingCompleted()) &&
       !isPermissionGranted();
     setShowRequestPermissionDialog(shouldShowRequestPermissionDialog);
   }, [onboardingState, user]);
@@ -202,11 +202,15 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
       now - lastShownNewObligationsNotification.current;
     return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
   };
-
+  console.log(
+    "showRequestPermissionDialog",
+    showRequestPermissionDialog,
+    state,
+  );
   return (
     <>
       <RequestPermissionDialog
-        open={showRequestPermissionDialog}
+        open={showRequestPermissionDialog && state === "authenticated"}
         onClose={onCloseRequestPermissionDialog}
         onEnablePermission={onCloseRequestPermissionDialog}
         permission="notifications"

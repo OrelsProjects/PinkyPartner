@@ -10,6 +10,7 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -95,13 +96,15 @@ const useAuth = () => {
   const signOut = useCallback(async () => {
     try {
       EventTracker.track("User signed out");
-      await signOutAuth();
+      await signOutAuth({ callbackUrl: "/" });
       dispatch(clearUser());
       localStorage.clear();
     } catch (error: any) {
       Logger.error("Error signing out", { error });
       dispatch(setError("Failed to sign out"));
       throw error;
+    } finally {
+      window.location.href = "/";
     }
   }, []);
 
@@ -116,6 +119,8 @@ const useAuth = () => {
       Logger.error("Error deleting user", { error });
       dispatch(setError("Failed to delete user"));
       throw error;
+    } finally {
+      window.location.href = "/";
     }
   }, []);
 

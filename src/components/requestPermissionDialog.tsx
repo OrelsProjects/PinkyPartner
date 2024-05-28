@@ -1,5 +1,10 @@
 import React from "react";
-import { Dialog, DialogContent, DialogDescription } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+} from "./ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "./ui/button";
 
@@ -42,22 +47,24 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
             <p className="font-bold">{titlesMap[permission]}</p>
           </DialogTitle>
           <DialogDescription>{messagesMap[permission]}</DialogDescription>
-          <div className="w-full flex flex-col gap-0">
-            <Button
-              onClick={() => onEnablePermission(permission)}
-              className="w-fit"
-            >
-              Enable notifications
-            </Button>
-            <Button
-              variant="link"
-              onClick={() => {
-                onClose();
-              }}
-            >
-              Not now
-            </Button>
-          </div>
+          <DialogFooter>
+            <div className="w-full flex flex-col justify-center items-center gap-0">
+              <Button
+                onClick={() => onEnablePermission(permission)}
+                className="w-fit"
+              >
+                Enable notifications
+              </Button>
+              <Button
+                variant="link"
+                onClick={() => {
+                  onClose();
+                }}
+              >
+                Not now
+              </Button>
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
