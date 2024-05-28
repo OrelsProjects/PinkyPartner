@@ -80,7 +80,6 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
       <DialogContent className="space-y-4 h-[18rem]">
         <DialogTitle>Giving up on {contract?.title}?</DialogTitle>
         {partner ? <TextWithPartner /> : <TextAlone />}
-        <p>Are you sure you want to opt out?</p>
         <div className="flex flex-col gap-0">
           <Button
             onClick={e => {
