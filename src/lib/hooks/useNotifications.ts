@@ -121,6 +121,7 @@ export default function useNotifications() {
     }
     let token = "";
     try {
+      initMessaging();
       token = (await getUserToken()) || "no-token";
       await axios.patch("/api/user", { token });
     } catch (e: any) {

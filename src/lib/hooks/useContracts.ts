@@ -110,19 +110,34 @@ export function useContracts() {
     }
   };
 
-  const signContract = async (
-    contractId: string,
-    accountabilityPartner?: AccountabilityPartner | null,
-  ) => {
+  const signContract = async (contractId: string) => {
     dispatch(setLoading(true));
     try {
-      if (!accountabilityPartner) {
+      if (!user) {
         throw new Error("Accountability partner is required");
       }
       await axios.post(`/api/contract/${contractId}/sign`);
+      const contract = contracts.find(
+        contract => contract.contractId === contractId,
+      );
 
-      dispatch(signContractAction({ contractId, user: accountabilityPartner }));
+      const otherUser = contract?.signatures.find(
+        signedContractee => signedContractee.userId !== user?.userId,
+      );
+
+      dispatch(signContractAction({ contractId, user }));
       dispatch(setError(null));
+      if (otherUser) {
+        axios
+          .post("/api/notifications", {
+            title: "A pinky was sealed!",
+            body: `${user.displayName} has signed ${contract?.title || "a contract"}.`,
+            userId: otherUser.userId,
+          })
+          .catch(err => {
+            Logger.error("Error sending notification", err);
+          });
+      }
       await fetchNextUpObligations();
     } catch (err: any) {
       dispatch(setError(err.message || "Error signing contract"));

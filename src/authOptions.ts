@@ -266,25 +266,27 @@ export const authOptions: AuthOptions = {
         });
 
         if (!userInDB) {
+          const referralOptions: ReferralOptions = getReferralOptions();
           const newUser = await prisma.appUser.create({
             data: {
               userId: session.user.id,
               email: session.user.email || "",
               photoURL: session.user.image || "",
               displayName: session.user.name || "",
+              meta: {
+                create: {
+                  referredBy: referralOptions.referralCode,
+                  referralCode: generateReferalCode(session.user.id),
+                },
+              },
+              settings: {
+                create: {
+                  showNotifications: true,
+                },
+              },
             },
           });
-          const referralOptions: ReferralOptions = getReferralOptions();
-          const appUserMetadata = await prisma.appUserMetadata.create({
-            data: {
-              userId: newUser.id,
-              referredBy: referralOptions.referralCode,
-              referralCode: generateReferalCode(newUser.id),
-            },
-          });
-          additionalUserData = {
-            meta: appUserMetadata,
-          };
+          additionalUserData = { ...newUser };
         }
 
         return {

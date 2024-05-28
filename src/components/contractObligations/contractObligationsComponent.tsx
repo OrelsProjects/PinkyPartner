@@ -143,7 +143,7 @@ export default function ContractObligationsComponent({
   }, [userData, partnerData]);
 
   const handleOnSign = (contract: ContractWithExtras) => {
-    toast.promise(signContract(contract.contractId, user), {
+    toast.promise(signContract(contract.contractId), {
       pending: "Signing contract...",
       success: {
         async render() {

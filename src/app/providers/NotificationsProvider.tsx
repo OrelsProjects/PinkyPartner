@@ -64,6 +64,7 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
     await initUserToken();
 
     onMessage(messaging, payload => {
+      debugger;
       showNotification({
         title: payload.data?.title ?? "",
         body: payload.data?.body ?? "",

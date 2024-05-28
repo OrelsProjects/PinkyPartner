@@ -70,7 +70,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   );
 
   const handleSignContract = () => {
-    toast.promise(signContract(contract.contractId, user), {
+    toast.promise(signContract(contract.contractId), {
       pending: "Signing contract...",
       success: {
         render() {

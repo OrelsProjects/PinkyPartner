@@ -46,11 +46,11 @@ const EmptyObligations = () => {
         <Button
           onClick={() => {
             EventTracker.track("create_promise_from_home");
-            router.push("/contracts/new");
           }}
           className="bg-primary text-white"
+          asChild
         >
-          Create a contract
+          <Link href="/contracts/new">Create a contract</Link>
         </Button>
       </div>
     </div>

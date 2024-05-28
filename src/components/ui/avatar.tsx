@@ -30,7 +30,7 @@ export const UserAvatar = ({
   displayName?: string | null;
   tooltipContent?: React.ReactNode;
 }) => {
-  console.log(photoURL);
+  const [error, setError] = React.useState(false);
 
   const userInitials = React.useMemo(() => {
     const firstLetter = displayName?.[0];
@@ -44,22 +44,26 @@ export const UserAvatar = ({
       <Tooltip>
         <TooltipTrigger>
           <Avatar
-            className={cn("relative rounded-none cursor-default", className)}
+            className={cn(
+              "relative rounded-none cursor-default h-11 w-11",
+              className,
+            )}
           >
-            {photoURL ? (
+            {photoURL && !error ? (
               <Image
                 id={`avatar-${displayName}`}
                 src={photoURL}
                 alt={displayName ?? "User photo"}
+                onError={() => setError(true)}
                 fill
-                className={cn("relative h-9 w-9 rounded-full", imageClassName)}
+                className={cn(
+                  "relative h-full w-full rounded-full",
+                  imageClassName,
+                )}
               />
             ) : (
-              <AvatarFallback
-                className="bg-card"
-                id={`avatar-fallback-${displayName}`}
-              >
-                {userInitials || "AN"}
+              <AvatarFallback id={`avatar-fallback-${displayName}`}>
+                <p className="p-4">{userInitials || "AN"}</p>
               </AvatarFallback>
             )}
             {badge && (

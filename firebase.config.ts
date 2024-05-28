@@ -21,9 +21,15 @@ let messaging: Messaging | null = null;
 if (typeof window !== "undefined") {
   app = !firebase.apps.length ? initializeApp(firebaseConfig) : firebase.app();
 }
+// If notifications are enabled, initialize messaging
+if (app) {
+  if (Notification.permission === "granted") {
+    messaging = getMessaging(app);
+  }
+}
 
 const initMessaging = () => {
-  if (!app) return;
+  if (!app || messaging) return;
   messaging = getMessaging(app);
 };
 
