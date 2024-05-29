@@ -23,14 +23,14 @@ datasource db {
 }
 
 model AppUser {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @unique
-  email       String   @unique
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @unique
+  email       String  @unique
   password    String?
   displayName String?
   photoURL    String?
 
-  createdAt   DateTime? @default(now())
+  createdAt DateTime? @default(now())
 
   userContracts      UserContract[]
   // on delete cascade
@@ -64,6 +64,7 @@ model AppUserSettings {
   userId            String @unique
 
   showNotifications Boolean @default(true)
+  soundEffects      Boolean @default(true)
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 

@@ -11,6 +11,7 @@ declare module "next-auth" {
       };
       settings: {
         showNotifications: boolean;
+        soundEffects: boolean;
       };
     } & DefaultSession["user"];
   }

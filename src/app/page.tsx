@@ -130,6 +130,7 @@ export default function Home() {
               email: "",
               settings: {
                 showNotifications: false,
+                soundEffects: true,
               },
             }),
           );

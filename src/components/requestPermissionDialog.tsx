@@ -14,7 +14,7 @@ const titlesMap: Record<PermissionType, string> = {
 
 const messagesMap: Record<PermissionType, string> = {
   notifications:
-    "To know if your partner is honoring your pinky promise, enable notifications so we can notify you when they do.",
+    "To know if your partner is honoring your pinky promise, enable notifications.",
 };
 
 export type PermissionType = "notifications";

@@ -42,6 +42,7 @@ export async function POST(
         },
         settings: {
           showNotifications: false,
+          soundEffects: true,
         },
       };
       contractees = [user];

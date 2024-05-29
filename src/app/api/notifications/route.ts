@@ -38,6 +38,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         settings: {
           select: {
             showNotifications: true,
+            soundEffects: true,
           },
         },
       },

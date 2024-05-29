@@ -63,7 +63,9 @@ export const UserAvatar = ({
                 )}
               />
             ) : (
-              <AvatarFallback id={`avatar-fallback-${displayName}`}>
+              <AvatarFallback
+                id={`avatar-fallback-${displayName}`}
+              >
                 <p className="p-4">{userInitials || "An"}</p>
               </AvatarFallback>
             )}
@@ -78,7 +80,7 @@ export const UserAvatar = ({
               </div>
             )}
           </Avatar>
-          <TooltipContent className="bg-background">
+          <TooltipContent className={"bg-background"}>
             {tooltipContent || hideTooltip ? "" : displayName}
           </TooltipContent>
         </TooltipTrigger>

@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face { 
+@font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
 }
 
 @layer base {
   :root {
-    --background: 36 42% 97%; 
+    --background: 36 42% 97%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -30,6 +30,9 @@
     --input: 240 4% 82%;
     --ring: 240 4% 64%;
     --radius: 0.75rem;
+
+    --contracts-in-row: 2;
+    --contracts-in-row-mobile: 1;
   }
 
   .dark {
@@ -59,6 +62,16 @@
   .indicator {
     @apply relative inline-flex max-w-max;
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-visible {
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
+  }
+
   .shimmer-wrapper-dark {
     position: absolute;
     top: 0;

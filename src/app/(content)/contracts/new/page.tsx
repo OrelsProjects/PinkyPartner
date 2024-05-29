@@ -29,6 +29,8 @@ import {
 import { FaPlus } from "react-icons/fa";
 import CreatePromise from "../../../../components/createPromise";
 import ObligationComponent from "../../../../components/obligationComponent";
+import { cn } from "../../../../lib/utils";
+import { getRandomTimeToFinishRequest } from "../../../../lib/utils/apiUtils";
 
 interface CreateContractPageProps {}
 
@@ -72,7 +74,7 @@ const FindPartner = ({
                 partner={partner}
                 key={partner.userId}
                 onClick={onPartnerSelect}
-                className="!items-start hover:cursor-pointer"
+                className="!items-start hover:cursor-pointer md:hover:bg-slate-400/40 rounded-lg p-2"
                 signed
               />
             ))}
@@ -87,7 +89,7 @@ const FindPartner = ({
               </span>
             ) : (
               <span className="text-sm text-muted-foreground mt-1.5">
-                You don&apos;t have your partner?
+                You don&apos;t have a partner?
               </span>
             )}
             <span className="text-sm text-muted-foreground mt-1.5">
@@ -134,7 +136,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       signatures: [],
       obligation: null,
     },
-    onSubmit: values => {
+    onSubmit: async values => {
       if (!values.obligation) {
         toast.error("You must add a promise");
         obligationsRef.current?.scrollIntoView({
@@ -156,22 +158,27 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       const contractees = [user, accountabilityPartner].filter(
         partner => partner !== null,
       ) as AccountabilityPartner[];
-      toast.promise(
-        createContract({
+      toast.promise(getRandomTimeToFinishRequest(), {
+        pending: "Creating contract...",
+        success: {
+          render() {
+            router.push("/contracts");
+            return "Contract created successfully";
+          },
+        },
+        error: "Error creating contract",
+      });
+      try {
+        await createContract({
           ...values,
           contractees,
-        }),
-        {
-          pending: "Creating contract...",
-          success: {
-            render() {
-              router.push("/contracts");
-              return "Contract created successfully";
-            },
-          },
-          error: "Error creating contract",
-        },
-      );
+        });
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          "Something went wrong with creating the contract. Please try again.",
+        );
+      }
     },
   });
 
@@ -252,7 +259,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     partner={previousAccountabilityPartner}
                     onClick={handlePartnerSelect}
                     signed
-                    className="hover:cursor-pointer"
+                    className="hover:cursor-pointer md:hover:bg-slate-400/40 rounded-lg p-2"
                   />
                 </div>
               )}
@@ -387,7 +394,12 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     <SectionTitleExplanation text="Put your pinky where your mouth is" />
                   </SectionTitleContainer>
                   <div
-                    className="flex flex-row gap-4 w-full justify-start items-center"
+                    className={cn(
+                      "flex flex-row gap-4 w-full justify-start items-center",
+                      {
+                        "justify-between": accountabilityPartner,
+                      },
+                    )}
                     data-onboarding-id="contract-signatures"
                   >
                     <div
@@ -395,7 +407,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                       ref={signatureRef}
                     >
                       <AccountabilityPartnerComponent
-                        className="flex-col !p-0"
+                        className="flex-col "
                         partner={user as AccountabilityPartner}
                         signed
                       />
@@ -412,7 +424,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
                     {accountabilityPartner && (
                       <div className="flex flex-col justify-center items-center gap-2 w-fit md:w-1/2 grayscale">
                         <AccountabilityPartnerComponent
-                          className="flex-col !p-0"
+                          className="flex-col "
                           partner={accountabilityPartner}
                         />
                         <Checkbox disabled className="h-8 w-8" />

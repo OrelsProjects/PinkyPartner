@@ -17,6 +17,7 @@ export interface AppUserMetadata {
 
 export interface AppUserSettings {
   showNotifications: boolean;
+  soundEffects: boolean;
 }
 
 export type UserData = {

@@ -47,6 +47,7 @@ export async function POST(
         const settings: Omit<AppUserSettings, "appUserSettingsId"> = {
           userId: user.userId,
           showNotifications: true,
+          soundEffects: true,
         };
         usersSettings.push(settings);
       }

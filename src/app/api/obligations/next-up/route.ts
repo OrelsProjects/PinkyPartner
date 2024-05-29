@@ -45,6 +45,7 @@ export async function GET(
           image: anonymousUser.photoURL,
           settings: {
             showNotifications: false,
+            soundEffects: true,
           },
           meta: {
             referralCode: "",

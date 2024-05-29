@@ -14,6 +14,7 @@ import axios from "axios";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import { updateUserSettings } from "../../../lib/features/auth/authSlice";
 import { canUseNotifications } from "../../../lib/utils/notificationUtils";
+import { Checkbox } from "../../../components/ui/checkbox";
 
 interface SettingsProps {}
 
@@ -26,6 +27,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
   const [settings, setSettings] = useState(
     user?.settings ?? {
       showNotifications: false,
+      soundEffects: true,
     },
   );
 
@@ -43,6 +45,16 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
       setSettings(user?.settings);
     }
   }, [user]);
+
+  const updateSoundSettings = (soundEffects: boolean) => {
+    setSettings({ ...settings, soundEffects });
+    try {
+      axios.patch("/api/user/settings", { soundEffects });
+      dispatch(updateUserSettings({ soundEffects }));
+    } catch (e) {
+      toast.error("Failed to update sound settings");
+    }
+  };
 
   const updateNotificationSettings = (showNotifications: boolean) => {
     if (changeNotificationTimeout.current) {
@@ -135,6 +147,16 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             </div>
           </div>
         )}
+        <div className="flex flex-col gap-2">
+          <span className="text-lg font-semibold">Sounds</span>
+          <div className="pl-2">
+            <Switch
+              className="w-10"
+              checked={settings.soundEffects}
+              onCheckedChange={updateSoundSettings}
+            />
+          </div>
+        </div>
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Partners</span>
           <div className="pl-2">

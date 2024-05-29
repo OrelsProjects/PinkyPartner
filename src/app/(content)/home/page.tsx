@@ -3,12 +3,9 @@
 import React from "react";
 import { useObligations } from "../../../lib/hooks/useObligations";
 import { useAppSelector } from "../../../lib/hooks/redux";
-import { useContracts } from "../../../lib/hooks/useContracts";
-import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
-import useOnboarding from "../../../lib/hooks/useOnboarding";
 import Link from "next/link";
 
 const EmptyContracts = () => {
@@ -60,6 +57,7 @@ export default function Home() {
   );
   const { obligations, loadingData } = useObligations();
   const { contracts } = useAppSelector(state => state.contracts);
+  const [isExploding, setIsExploding] = React.useState(false);
 
   if (!loadingData) {
     if (contracts.length === 0 && obligations.length === 0) {

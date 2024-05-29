@@ -127,7 +127,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           className={cn({ hidden: isContractHasPartner })}
           contract={contract}
           referralCode={user?.meta?.referralCode}
-          buttonText="Invite a partner"
+          buttonText="Invite"
           variant="default"
           onClose={() => setShowInvite(false)}
           open={showInvite}

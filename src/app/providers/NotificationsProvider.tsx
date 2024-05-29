@@ -136,7 +136,7 @@ const NotificationsProvider = () => {
             contract.contractees.find(
               contractee => contractee.userId !== user?.userId,
             ),
-          );;
+          );
         }
       }, 3000);
     }
@@ -158,8 +158,6 @@ const NotificationsProvider = () => {
         setShowPermissionNotGrantedDialog(true);
       }
     } else {
-      setPermissionRequested();
-      setShowRequestPermissionDialog(false);
       setPermissionRequested();
       setShowRequestPermissionDialog(false);
       setShowPermissionNotGrantedDialog(true);
@@ -194,7 +192,14 @@ const NotificationsProvider = () => {
         permission="notifications"
       />
 
-      <Dialog>
+      <Dialog
+        open={showPermissionNotGrantedDialog}
+        onOpenChange={value => {
+          if (!value) {
+            setShowPermissionNotGrantedDialog(false);
+          }
+        }}
+      >
         <DialogContent>
           <DialogTitle>We respect your choice.</DialogTitle>
           <DialogDescription>

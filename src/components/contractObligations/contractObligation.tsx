@@ -12,9 +12,10 @@ import {
 } from "../../lib/utils/dateUtils";
 import { UserContractObligationData } from "../../models/userContractObligation";
 import { UserAvatar } from "../ui/avatar";
-import { Checkbox } from "../ui/checkbox";
 import Contract from "../../models/contract";
 import NotificationBadge from "../ui/notificationBadge";
+import ObligationCheckbox from "./obligationCheckbox";
+import { getRandomTimeToFinishRequest } from "../../lib/utils/apiUtils";
 
 const UserIndicator = ({
   isSigned,
@@ -128,8 +129,7 @@ const ObligationsComponent = ({
         if (!shouldContinue) {
           return;
         }
-      }
-      if (completed) {
+      } else {
         const hasPartner = partnerData && partnerData.length > 0;
         const partnerName = hasPartner
           ? partnerData[0].appUser.displayName
@@ -140,7 +140,8 @@ const ObligationsComponent = ({
           theme: "light",
         });
       }
-      await completeObligation(obligation, contract.contractId, completed);
+
+      completeObligation(obligation, contract.contractId, completed);
     } catch (e: any) {
       Logger.error(e);
     } finally {
@@ -163,9 +164,6 @@ const ObligationsComponent = ({
 
   const isPartnerObligationCompleted = (day: string) =>
     daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
-
-  const isBothObligationsCompleted = (day: string) =>
-    isObligationCompleted(day) && isPartnerObligationCompleted(day);
 
   const isNewObligation = (day: string) =>
     newObligations.some(
@@ -201,13 +199,8 @@ const ObligationsComponent = ({
                   {
                     "bg-card/50": isObligationCompleted(day),
                   },
-                  // {
-                  //   "bg-gradient-to-b from-primary  to-primary-lighter text-foreground":
-                  //     isBothObligationsCompleted(day),
-                  // },
                 )}
                 key={`obligation-in-contract-${day}`}
-                data-onboarding-id={`${index === 0 ? "home-start-doing" : ""}`}
               >
                 <div
                   className={cn(
@@ -221,14 +214,14 @@ const ObligationsComponent = ({
                     />
                   )}
                   <div className="self-center flex flex-row gap-6">
-                    <Checkbox
-                      className="w-7 md:w-8 h-7 md:h-8 self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary"
-                      checked={isObligationCompleted(day)}
-                      onCheckedChange={(checked: boolean) => {
+                    <ObligationCheckbox
+                      day={day}
+                      index={index}
+                      loading={loadingObligationDays[day]}
+                      isCompleted={isObligationCompleted(day)}
+                      onCompletedChange={(day: string, checked: boolean) => {
                         handleCompleteObligation(day, checked);
                       }}
-                      variant="default"
-                      loading={loadingObligationDays[day]}
                     />
                     <div
                       className={cn(

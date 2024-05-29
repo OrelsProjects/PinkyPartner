@@ -21,11 +21,14 @@ import UserContractObligation, {
   GetNextUpObligationsResponse,
   UserContractObligationData,
 } from "../../models/userContractObligation";
+import { useOptimistic } from "react";
+import { toast } from "react-toastify";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
   const { obligations, error, partnerData, loading, loadingData } =
     useAppSelector(state => state.obligations);
+
   const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
 
@@ -174,7 +177,7 @@ export function useObligations() {
     }
   };
 
-  const completeObligation = async (
+  const completeObligation = (
     obligation: UserContractObligationData,
     contractId: string,
     completed: boolean = true,
@@ -190,28 +193,48 @@ export function useObligations() {
       throw new Error("Contract not found");
     }
 
+    // Optimistic update to show the obligation as completed
+    const optimisticUpdate = () => {
+      dispatch(
+        completeObligationAction({
+          ...obligation,
+          completedAt: completed ? new Date() : null,
+        }),
+      );
+    };
+
     try {
-      const obligationCompletedResponse =
-        await axios.post<UserContractObligationData>(
+      optimisticUpdate();
+
+      axios
+        .post<UserContractObligationData>(
           `/api/obligation/${contract.contractId}/${obligation.userContractObligationId}/complete`,
           {
             completed,
           },
-        );
-      dispatch(completeObligationAction(obligationCompletedResponse.data));
-      dispatch(setError(null));
-      if (!completed) return;
-      sendCompletedObligationNotification(contract, obligation)
-        .then(() => {
-          Logger.info("Notification sent");
+        )
+        .then(response => {
+          dispatch(completeObligationAction(response.data));
+          dispatch(setError(null));
+
+          if (completed) {
+            sendCompletedObligationNotification(contract, obligation)
+              .then(() => {
+                Logger.info("Notification sent");
+              })
+              .catch(err => {
+                Logger.error("Failed to send notification", err);
+              });
+          }
         })
         .catch(err => {
-          Logger.error("Failed to send notification", err);
+          Logger.error("Failed to complete obligation", err);
+          toast.error("Failed to complete obligation", { type: "error" });
         });
     } catch (err: any) {
+      Logger.error("Failed to complete obligation", err);
       dispatch(setError(err.message || "Error completing obligation"));
       throw err;
-    } finally {
     }
   };
 

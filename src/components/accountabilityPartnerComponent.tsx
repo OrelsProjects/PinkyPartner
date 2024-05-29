@@ -26,8 +26,9 @@ const AccountabilityPartnerComponent: React.FC<{
 }> = ({ partner, signed, onClick, className }) => {
   return (
     <div
-      className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale opacity-50"} ${className}`}
-      onClick={() => {
+      className={`w-fit h-fit flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale opacity-50"} ${className}`}
+      onClick={e => {
+        e.preventDefault();
         if (partner) {
           onClick?.(partner);
         }
@@ -36,7 +37,8 @@ const AccountabilityPartnerComponent: React.FC<{
       <UserAvatar
         displayName={partner?.displayName}
         photoURL={partner?.photoURL}
-        imageClassName="w-10 h-10"
+        className="hover:cursor-pointer"
+        imageClassName="w-10 h-10 hover:cursor-pointer"
       />
       <div key={partner?.userId} className="truncate">
         {partner?.displayName}

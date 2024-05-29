@@ -39,6 +39,7 @@ export default function AuthProvider({
     };
     settings: {
       showNotifications?: boolean;
+      soundEffects?: boolean;
     };
   }) => {
     try {
@@ -57,6 +58,7 @@ export default function AuthProvider({
         },
         settings: {
           showNotifications: user?.settings.showNotifications || true,
+          soundEffects: user?.settings.soundEffects || true,
         },
       };
       dispatch(setUserAction(appUser));

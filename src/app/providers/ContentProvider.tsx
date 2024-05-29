@@ -57,9 +57,12 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   return (
     <div className="w-screen h-screen md:h-[100vh] flex flex-col relative">
       <div
-        className={cn("w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative", {
-          "pb-[calc(max(env(safe-area-inset-bottom), 16px) - 16px)]": user,
-        })}
+        className={cn(
+          "w-full lg:max-w-[65rem] mx-auto lg:flex p-4 relative md:!h-screen md:!max-h-screen",
+          {
+            "pb-[calc(max(env(safe-area-inset-bottom), 16px) - 16px)]": user,
+          },
+        )}
         style={{
           height: contentHeight,
           maxHeight: contentHeight,
@@ -89,7 +92,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
           >
             Migrate
           </Button> */}
-          <div className="w-full h-full flex flex-col relative z-10 overflow-auto">
+          <div className="w-full h-full flex flex-col relative z-10 overflow-auto scrollbar-hide md:scrollbar-visible md:px-4">
             {user && <SettingsComponent />}
             {children}
           </div>

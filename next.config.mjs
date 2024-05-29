@@ -1,5 +1,6 @@
 // @ts-check
 import * as PWA from "@ducanh2912/next-pwa";
+import axios from "axios";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
