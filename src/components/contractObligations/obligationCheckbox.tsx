@@ -49,6 +49,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
       if (canPlaySound) {
         if (shouldPlaySound) {
           new Audio("/sounds/obligation-completed.wav").play();
+          setShouldAnimate(true);
         } else {
           return;
         }
@@ -68,7 +69,6 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
             onCompletedChange(day, checked);
           }
           setShouldPlaySound(true);
-          setShouldAnimate(true);
         }}
         data-onboarding-id={index === 0 ? "home-start-doing" : ""}
         variant="default"
