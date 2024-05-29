@@ -13,7 +13,7 @@
   "orientation": "portrait",
   "start_url": "https://www.pinkypartner.com/home",
   "dir": "auto",
-  "scope": "/",
+  "scope": "/home",
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",

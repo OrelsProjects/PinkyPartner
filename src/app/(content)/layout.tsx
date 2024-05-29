@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ContentLayout from "../layouts/contentLayout";
 
 interface RootLayoutProps {
@@ -6,9 +6,13 @@ interface RootLayoutProps {
 }
 
 export default function Layout({ children }: RootLayoutProps) {
-  return (
-    <ContentLayout>
-      {children}
-    </ContentLayout>
-  );
+  useEffect(() => {
+    // use window to set display mode standalone
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      console.log("display-mode is standalone");
+    }
+    
+  }, []);
+
+  return <ContentLayout>{children}</ContentLayout>;
 }
