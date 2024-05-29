@@ -75,23 +75,11 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         loading={loading}
       />
       {(checked || isCompleted) && shouldAnimate && (
-        <>
-          <DotLottiePlayer
-            src="/confetti.lottie"
-            autoplay
-            className="!w-96 !h-96 absolute -top-[11rem] -left-[11rem] z-10 rotate-90"
-          />
-          <DotLottiePlayer
-            src="/confetti.lottie"
-            autoplay
-            className="!w-72 !h-72 absolute -top-[8.5rem] -left-[8.5rem] z-10 rotate-90"
-          />
-          <DotLottiePlayer
-            src="/confetti.lottie"
-            autoplay
-            className="!w-80 !h-80 absolute -top-[9rem] -left-[9rem] z-10 rotate-90"
-          />
-        </>
+        <DotLottiePlayer
+          src="/confetti.lottie"
+          autoplay
+          className="!w-96 !h-96 absolute -top-[11rem] -left-[11rem] z-10 rotate-90"
+        />
       )}
     </div>
   );
