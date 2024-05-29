@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { messaging } from "../../../firebase.config";
 import { Messaging, onMessage } from "firebase/messaging";
 import useNotifications from "../../lib/hooks/useNotifications";
@@ -12,7 +12,6 @@ import {
   setShownContractNotification,
   NotificationType,
 } from "../../lib/features/notifications/notificationsSlice";
-import { UserContractObligationData } from "../../models/userContractObligation";
 import RequestPermissionDialog, {
   PermissionType,
 } from "../../components/requestPermissionDialog";
@@ -26,8 +25,7 @@ import {
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
 import { toast } from "react-toastify";
-import { Link } from "lucide-react";
-import { EventTracker } from "../../eventTracker";
+import { canUseNotifications } from "../../lib/utils/notificationUtils";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
@@ -77,6 +75,7 @@ const NotificationsProvider = () => {
 
   useEffect(() => {
     const shouldShowRequestPermissionDialog =
+      canUseNotifications() &&
       !didRequestPermission() &&
       (onboardingState === "completed" || isOnboardingCompleted()) &&
       !isPermissionGranted();
@@ -115,22 +114,6 @@ const NotificationsProvider = () => {
 
       if (newObligations.length > 0 && canShowObligationsNotification()) {
         lastShownNewObligationsNotification.current = Date.now();
-        const distinctPartnersObligations = newObligations.reduce(
-          (acc, obligation) => {
-            if (!acc.some(o => o.userId === obligation.appUser?.userId)) {
-              acc.push(obligation);
-            }
-            return acc;
-          },
-          [] as UserContractObligationData[],
-        );
-        // distinctPartnersObligations.forEach(obligation => {
-        //   showNotification({
-        //     title: `${obligation.appUser?.displayName || "Your partner"} is progressing!`,
-        //     body: `${newObligations.length > 1 ? newObligations.length + " promises" : newObligations[0]?.obligation.title} completed!`,
-        //     type: "obligation",
-        //   });
-        // });
       }
     }
   }, [partnerContractObligations]);

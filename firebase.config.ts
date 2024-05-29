@@ -3,6 +3,7 @@
 import firebase from "firebase/compat/app";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { Messaging, getMessaging, getToken } from "firebase/messaging";
+import { canUseNotifications } from "./src/lib/utils/notificationUtils";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,10 +24,11 @@ if (typeof window !== "undefined") {
 }
 // If notifications are enabled, initialize messaging
 if (app) {
-  if ("Notification" in window && "serviceWorker" in navigator)
+  if (canUseNotifications()) {
     if (Notification.permission === "granted") {
       messaging = getMessaging(app);
     }
+  }
 }
 
 const initMessaging = () => {

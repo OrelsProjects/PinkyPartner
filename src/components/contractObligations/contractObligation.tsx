@@ -114,7 +114,6 @@ const ObligationsComponent = ({
     const obligation = obligations[dayInObligationIndex];
 
     if (!obligation) return;
-    // const completed = !!obligation.completedAt;
 
     try {
       setLoadingObligationDays(prev => ({
@@ -130,7 +129,6 @@ const ObligationsComponent = ({
           return;
         }
       }
-      await completeObligation(obligation, contract.contractId, completed);
       if (completed) {
         const hasPartner = partnerData && partnerData.length > 0;
         const partnerName = hasPartner
@@ -142,6 +140,7 @@ const ObligationsComponent = ({
           theme: "light",
         });
       }
+      await completeObligation(obligation, contract.contractId, completed);
     } catch (e: any) {
       Logger.error(e);
     } finally {

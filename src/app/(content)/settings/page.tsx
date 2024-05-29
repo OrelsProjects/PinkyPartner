@@ -13,6 +13,7 @@ import { Switch } from "../../../components/ui/switch";
 import axios from "axios";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import { updateUserSettings } from "../../../lib/features/auth/authSlice";
+import { canUseNotifications } from "../../../lib/utils/notificationUtils";
 
 interface SettingsProps {}
 
@@ -20,7 +21,8 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { deleteUser, signOut } = useAuth();
-  const { initNotifications: initUserToken, requestNotificationsPermission } = useNotifications();
+  const { initNotifications: initUserToken, requestNotificationsPermission } =
+    useNotifications();
   const [settings, setSettings] = useState(
     user?.settings ?? {
       showNotifications: false,
@@ -29,7 +31,8 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
 
   const changeNotificationTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const isNotificationsGranted = Notification.permission === "granted";
+  const isNotificationsGranted =
+    canUseNotifications() && Notification.permission === "granted";
 
   useEffect(() => {
     console.log(settings);
@@ -104,32 +107,34 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             <ThemeToggle />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-lg font-semibold">Notifications</span>
-          <div className="pl-2">
-            {isNotificationsGranted ? (
-              <Switch
-                className="w-10"
-                onCheckedChange={updateNotificationSettings}
-                checked={settings.showNotifications}
-              />
-            ) : (
-              <Button
-                variant="default"
-                className="w-fit px-2"
-                onClick={() => {
-                  requestNotificationsPermission().then(granted => {
-                    if (granted) {
-                      updateNotificationSettings(true);
-                    }
-                  });
-                }}
-              >
-                Enable notifications
-              </Button>
-            )}
+        {canUseNotifications() && (
+          <div className="flex flex-col gap-2">
+            <span className="text-lg font-semibold">Notifications</span>
+            <div className="pl-2">
+              {isNotificationsGranted ? (
+                <Switch
+                  className="w-10"
+                  onCheckedChange={updateNotificationSettings}
+                  checked={settings.showNotifications}
+                />
+              ) : (
+                <Button
+                  variant="default"
+                  className="w-fit px-2"
+                  onClick={() => {
+                    requestNotificationsPermission().then(granted => {
+                      if (granted) {
+                        updateNotificationSettings(true);
+                      }
+                    });
+                  }}
+                >
+                  Enable notifications
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex flex-col gap-2">
           <span className="text-lg font-semibold">Partners</span>
           <div className="pl-2">

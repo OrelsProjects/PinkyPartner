@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "../../logger";
 import { error } from "console";
+import { canUseNotifications } from "../utils/notificationUtils";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -91,16 +92,12 @@ export default function useNotifications() {
     localStorage.setItem("notificationPermissionRequested", "true");
   };
 
-  const isNotificationSupported = () => {
-    return "Notification" in window && "serviceWorker" in navigator;
-  };
-
   const isPermissionGranted = () => {
-    return Notification.permission === "granted";
+    return Notification?.permission === "granted";
   };
 
   async function requestNotificationsPermission(): Promise<boolean> {
-    if (!isNotificationSupported()) {
+    if (!canUseNotifications()) {
       return false;
     }
     if (isPermissionGranted()) {
