@@ -21,7 +21,7 @@
   ],
 
   "orientation": "portrait",
-  "start_url": "/",
+  "start_url": "/home",
   "dir": "auto",
   "icons": [
     {
