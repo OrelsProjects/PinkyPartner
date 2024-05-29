@@ -56,9 +56,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LocaleLayout({ children, locale }: RootLayoutProps) {
+export default function Layout({ children }: RootLayoutProps) {
   return (
-    <html lang={locale} className="font-montserrat">
+    <html lang="en" className="font-montserrat">
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
