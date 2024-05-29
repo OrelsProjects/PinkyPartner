@@ -134,7 +134,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       description: null,
       contractees: [],
       signatures: [],
-      obligation: null,
+      obligation: undefined,
     },
     onSubmit: async values => {
       if (!values.obligation) {
@@ -203,7 +203,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     setObligation(null);
     formik.setValues({
       ...formik.values,
-      obligation: null,
+      obligation: undefined,
     });
     setShowDialog(false);
   };

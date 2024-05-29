@@ -22,6 +22,6 @@ export type CreateContract = Omit<
   "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
   signatures: AccountabilityPartner[];
-} & { obligation: CreateObligation };
+} & { obligation?: CreateObligation };
 
 export type UpdateContract = Pick<Contract, "title" | "description">;
