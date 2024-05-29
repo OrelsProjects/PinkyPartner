@@ -31,6 +31,12 @@ export async function POST(
           { status: 404 },
         );
       }
+      if (!obligation) {
+        return NextResponse.json(
+          { error: "Obligation is required" },
+          { status: 400 },
+        );
+      }
       user = {
         userId: annonymousUser.userId,
         email: annonymousUser.email,
@@ -53,12 +59,6 @@ export async function POST(
       };
     }
 
-    if (!obligation) {
-      return NextResponse.json(
-        { error: "Obligation is required" },
-        { status: 400 },
-      );
-    }
     const now = new Date();
 
     const contractResponse = await prisma.contract.create({
@@ -70,7 +70,7 @@ export async function POST(
 
     const obligationWithId = await prisma.obligation.create({
       data: {
-        ...obligation,
+        ...obligation!,
       },
     });
 
