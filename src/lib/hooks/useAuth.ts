@@ -10,7 +10,6 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
