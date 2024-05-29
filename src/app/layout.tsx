@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     template: APP_TITLE_TEMPLATE,
   },
   description: APP_DESCRIPTION,
-
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -60,12 +59,17 @@ export const metadata: Metadata = {
 export default function LocaleLayout({ children, locale }: RootLayoutProps) {
   return (
     <html lang={locale} className="font-montserrat">
-      <meta property="og:image" content="<generated>" />
-      <meta property="og:image:type" content="<generated>" />
-      <meta property="og:image:width" content="<generated>" />
-      <meta property="og:image:height" content="<generated>" />
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#ffffff" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta property="og:image" content="<generated>" />
+        <meta property="og:image:type" content="<generated>" />
+        <meta property="og:image:width" content="<generated>" />
+        <meta property="og:image:height" content="<generated>" />
+      </head>
       <body className="!overscroll-none">
         <LiveChatProvider />
         <StoreProvider>
@@ -83,7 +87,6 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
                   speed={1500}
                   shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
                 />
-
                 {children}
                 <SpeedInsights />
                 <Analytics />
