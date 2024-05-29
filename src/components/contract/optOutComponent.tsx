@@ -45,6 +45,10 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
     });
   };
 
+  const isSigned = useMemo(() => {
+    return contract?.signatures.some(s => s.userId === user?.userId);
+  }, [contract, user]);
+
   const TextWithPartner = () => {
     return (
       <p>
@@ -93,7 +97,8 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
               onClose?.();
             }}
           >
-            Nevermind, I&apos;ll keep my promise!
+            Nevermind, I&apos;ll{" "}
+            {isSigned ? "keep my promise!" : "give it a go."}
           </Button>
           <Button
             onClick={e => {
@@ -106,7 +111,7 @@ const OptOutComponent: React.FC<OptOutComponentProps> = ({
             variant="link"
             className="text-destructive"
           >
-            Yes, I give up
+            {isSigned ? "Yes, I give up" : "Opt out"}
           </Button>
         </div>
       </DialogContent>
