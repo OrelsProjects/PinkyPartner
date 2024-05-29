@@ -254,7 +254,7 @@ const CreatePromise = ({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="text-2xl flex justify-center items-center p-2"
+          className="text-2xl flex justify-center items-center !p-0"
         >
           {children ? (
             children

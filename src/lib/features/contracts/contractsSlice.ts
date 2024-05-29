@@ -28,6 +28,17 @@ const contractsSlice = createSlice({
     addContract(state, action: PayloadAction<ContractWithExtras>) {
       state.contracts = [action.payload, ...state.contracts];
     },
+    replaceTempContract(state, action: PayloadAction<ContractWithExtras>) {
+      const newContracts = [...state.contracts];
+      const index = state.contracts.findIndex(
+        contract => contract.contractId === "temp",
+      );
+      if (index !== -1) {
+        // clear the temp contract
+        newContracts[index] = action.payload;
+        state.contracts = newContracts;
+      }
+    },
     updateContract(state, action: PayloadAction<ContractWithExtras>) {
       const index = state.contracts.findIndex(
         contract => contract.contractId === action.payload.contractId,
@@ -82,6 +93,7 @@ export const {
   setContracts,
   addContract,
   updateContract,
+  replaceTempContract,
   updatedManyContracts,
   signContract,
   deleteContract,

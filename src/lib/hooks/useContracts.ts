@@ -14,6 +14,7 @@ import {
   signContract as signContractAction,
   setLoadingData as setLoadingDataAction,
   setLoading,
+  replaceTempContract,
 } from "../features/contracts/contractsSlice";
 import { AccountabilityPartner } from "../../models/appUser";
 import { Logger } from "../../logger";
@@ -42,13 +43,35 @@ export function useContracts() {
   };
 
   const createContract = async (contractData: CreateContract) => {
+    const optimisticUpdate = () => {
+      const newContract: ContractWithExtras = {
+        contractId: "temp",
+        title: contractData.title,
+        description: contractData.description,
+        dueDate: contractData.dueDate,
+        createdAt: new Date(),
+        contractees: contractData.contractees,
+        signatures: [user as AccountabilityPartner],
+        obligations:
+          [
+            {
+              obligationId: "temp",
+              ...contractData.obligation,
+            },
+          ] || [],
+      };
+      dispatch(addContractAction(newContract));
+    };
+
     dispatch(setLoading(true));
+    optimisticUpdate();
+
     try {
       const response = await axios.post<ContractWithExtras>(
         "/api/contract",
         contractData,
       );
-      dispatch(addContractAction(response.data));
+      dispatch(replaceTempContract(response.data));
       await fetchNextUpObligations();
       dispatch(setError(null));
       const otherUser = contractData.contractees.find(
@@ -68,6 +91,7 @@ export function useContracts() {
       dispatch(setError(err.message || "Error creating contract"));
       throw err;
     } finally {
+      dispatch(deleteContractAction("temp"));
       dispatch(setLoading(false));
     }
   };

@@ -122,37 +122,43 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           />
         ))}
       </div>
-      <div className="absolute right-4 bottom-4">
-        <InvitePartnerComponent
-          className={cn({ hidden: isContractHasPartner })}
-          contract={contract}
-          referralCode={user?.meta?.referralCode}
-          buttonText="Invite"
-          variant="default"
-          onClose={() => setShowInvite(false)}
-          open={showInvite}
-        />
-        <ContractViewComponent
-          contract={contract}
-          isSigned={isUserSigned}
-          onSign={handleSignContract}
-          onClose={() => setShowContract(false)}
-          open={showContract}
-          hideButton={true}
-        />
+      {isUserSigned && !isContractHasPartner && (
+        <div className="w-full flex justify-end items-center">
+          <InvitePartnerComponent
+            className={cn({ hidden: isContractHasPartner })}
+            contract={contract}
+            referralCode={user?.meta?.referralCode}
+            buttonText="Invite"
+            variant="default"
+            onClose={() => setShowInvite(false)}
+            open={showInvite}
+          />
+        </div>
+      )}
+      {!isUserSigned && (
+        <div className="w-full flex justify-end items-center">
+          <ContractViewComponent
+            contract={contract}
+            isSigned={isUserSigned}
+            onSign={handleSignContract}
+            onClose={() => setShowContract(false)}
+            open={showContract}
+            hideButton
+          />
+        </div>
+      )}
 
-        <OptOutComponent
-          onClose={() => setShowOptOut(false)}
-          open={showOptOut}
-          contract={contract}
-        />
+      <OptOutComponent
+        onClose={() => setShowOptOut(false)}
+        open={showOptOut}
+        contract={contract}
+      />
 
-        <EditContractComponent
-          onClose={() => setShowEdit(false)}
-          open={showEdit}
-          contract={contract}
-        />
-      </div>
+      <EditContractComponent
+        onClose={() => setShowEdit(false)}
+        open={showEdit}
+        contract={contract}
+      />
     </div>
   );
 };

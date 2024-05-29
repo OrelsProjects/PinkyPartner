@@ -46,8 +46,7 @@ export async function POST(
         },
       };
       contractees = [user];
-      signatures = [user.userId];
-      // @ts-ignore
+      signatures = [user];
       obligation = {
         ...obligation,
         userId: user.userId,
@@ -87,7 +86,11 @@ export async function POST(
         data: {
           contractId: contractResponse.contractId,
           userId: contractee.userId,
-          signedAt: signatures.includes(contractee.userId) ? now : null,
+          signedAt: signatures
+            .map(signature => signature.userId)
+            .includes(contractee.userId)
+            ? now
+            : null,
         },
       });
     }

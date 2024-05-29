@@ -192,7 +192,7 @@ export default function OnboardingProvider() {
         }}
       />
       <Button
-        className="absolute top-10 right-10 md:bottom-10 md:top-auto"
+        className="absolute top-3 right-3 md:bottom-10 md:top-auto"
         onClick={() => {
           setOnboardingViewed().finally(() => {
             // router.refresh();

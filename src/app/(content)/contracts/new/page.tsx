@@ -228,7 +228,12 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
     if (signed && formik.values.signatures.length === 0) {
       formik.setValues({
         ...formik.values,
-        signatures: [user?.userId || "anonymous"],
+        signatures: [
+          user || {
+            userId: "anonymous",
+            displayName: "Anonymous",
+          },
+        ],
       });
     } else {
       formik.setValues({

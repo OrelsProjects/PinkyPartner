@@ -1,4 +1,4 @@
-import { AccountabilityPartner } from "./appUser";
+import AppUser, { AccountabilityPartner } from "./appUser";
 import Obligation, { CreateObligation } from "./obligation";
 
 export default interface Contract {
@@ -21,7 +21,7 @@ export type CreateContract = Omit<
   ContractWithExtras,
   "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
-  signatures: string[];
-} & { obligation?: CreateObligation | null };
+  signatures: AccountabilityPartner[];
+} & { obligation: CreateObligation };
 
 export type UpdateContract = Pick<Contract, "title" | "description">;
