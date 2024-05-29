@@ -51,14 +51,12 @@ export function useContracts() {
       dispatch(addContractAction(response.data));
       await fetchNextUpObligations();
       dispatch(setError(null));
-      const otherUser = contractData.contractees.find(
-        contractee => contractee.userId !== user?.userId,
-      );
+
       axios
         .post("/api/notifications", {
           title: "Put your pinky in!",
-          body: `${otherUser?.displayName} sent you a new contract!`,
-          userId: otherUser?.userId,
+          body: `${user?.displayName || "A partner"} sent you a new contract!`,
+          userId: user?.userId,
         })
         .catch(err => {
           Logger.error("Error sending notification", err);

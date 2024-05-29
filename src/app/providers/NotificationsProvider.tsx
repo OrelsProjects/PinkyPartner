@@ -136,12 +136,7 @@ const NotificationsProvider = () => {
             contract.contractees.find(
               contractee => contractee.userId !== user?.userId,
             ),
-          );
-          // showNotification({
-          //   title: "New contract!",
-          //   body: `"${contractees.length > 1 ? "Serveral partners" : contractees[0]?.displayName}" sent you a new contract!`,
-          //   type: "contract",
-          // });
+          );;
         }
       }, 3000);
     }
