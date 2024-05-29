@@ -8,7 +8,7 @@
   "display_override": ["standalone", "window-controls-overlay"],
   "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
 
-  "scope": "/",
+  "scope": "/home",
   
 
   "prefer_related_applications": true,
