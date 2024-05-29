@@ -27,6 +27,10 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
+  const audio = useMemo(() => {
+    return new Audio("/sounds/obligation-completed.wav");
+  }, []);
+
   const canPlaySound = useMemo(() => {
     return user?.settings.soundEffects;
   }, [user]);
@@ -40,7 +44,10 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     if (shouldPlaySound) {
       setTimeout(() => {
         setShouldPlaySound(false);
-      }, 500);
+        // reset audio
+        audio.pause();
+        audio.currentTime = 0;
+      }, 2000);
     }
   }, [shouldAnimate, shouldPlaySound]);
 
@@ -48,7 +55,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     if (checked || isCompleted) {
       if (canPlaySound) {
         if (shouldPlaySound) {
-          new Audio("/sounds/obligation-completed.wav").play();
+          audio.play();
           setShouldAnimate(true);
         } else {
           return;
