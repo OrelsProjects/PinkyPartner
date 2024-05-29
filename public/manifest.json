@@ -5,15 +5,12 @@
   "theme_color": "#ffffff",
   "background_color": "#FFFFFF",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "window-controls-overlay"
-  ],
+  "display_override": ["standalone"],
   "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
   "orientation": "portrait",
-  "start_url": "https://www.pinkypartner.com/home",
+  "start_url": "/",
   "dir": "auto",
-  "scope": "/home",
+  "scope": "/",
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
@@ -465,8 +462,5 @@
     }
   ],
   "lang": "en",
-  "categories": [
-    "entertainment",
-    "productivity"
-  ]
+  "categories": ["entertainment", "productivity"]
 }
