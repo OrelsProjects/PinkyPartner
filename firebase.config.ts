@@ -23,9 +23,10 @@ if (typeof window !== "undefined") {
 }
 // If notifications are enabled, initialize messaging
 if (app) {
-  if (Notification.permission === "granted") {
-    messaging = getMessaging(app);
-  }
+  if ("Notification" in window && "serviceWorker" in navigator)
+    if (Notification.permission === "granted") {
+      messaging = getMessaging(app);
+    }
 }
 
 const initMessaging = () => {
