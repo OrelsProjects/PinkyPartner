@@ -20,7 +20,7 @@ export default function ContentLayout({ children }: RootLayoutProps) {
   return (
     <main>
       <AuthProvider>
-        <NotificationsProvider>
+        <NotificationsProvider/>
           <DataProvider>
             <HeightProvider>
               <ContentProvider>
@@ -39,7 +39,6 @@ export default function ContentLayout({ children }: RootLayoutProps) {
               </ContentProvider>
             </HeightProvider>
           </DataProvider>
-        </NotificationsProvider>
         <OnboardingProvider />
       </AuthProvider>
     </main>

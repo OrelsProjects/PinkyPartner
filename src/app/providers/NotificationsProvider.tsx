@@ -31,7 +31,7 @@ import { EventTracker } from "../../eventTracker";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
-const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
+const NotificationsProvider = () => {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { newContracts, newObligations, didShowContractNotification } =
@@ -229,7 +229,6 @@ const NotificationsProvider = ({ children }: { children: React.ReactNode }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {children}
     </>
   );
 };
