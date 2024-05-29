@@ -55,8 +55,9 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     if (checked || isCompleted) {
       if (canPlaySound) {
         if (shouldPlaySound) {
-          audio.play();
-          setShouldAnimate(true);
+          audio.play().then(() => {
+            setShouldAnimate(true);
+          });
         } else {
           return;
         }
