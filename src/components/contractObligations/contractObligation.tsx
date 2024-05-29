@@ -227,7 +227,7 @@ const ObligationsComponent = ({
                       className={cn(
                         "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
                         {
-                          "opacity-50": isObligationCompleted(day),
+                          "opacity-50 line-through": isObligationCompleted(day),
                         },
                       )}
                     >

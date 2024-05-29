@@ -214,7 +214,6 @@ export function useObligations() {
           },
         )
         .then(response => {
-          dispatch(completeObligationAction(response.data));
           dispatch(setError(null));
 
           if (completed) {
@@ -228,6 +227,13 @@ export function useObligations() {
           }
         })
         .catch(err => {
+          dispatch(
+            completeObligationAction({
+              // Revert the optimistic update
+              ...obligation,
+              completedAt: completed ? null : obligation.completedAt,
+            }),
+          );
           Logger.error("Failed to complete obligation", err);
           toast.error("Failed to complete obligation", { type: "error" });
         });
