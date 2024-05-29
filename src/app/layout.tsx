@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
+    startupImage: "/favicon-32x32.png",
   },
   formatDetection: {
     telephone: false,
@@ -64,6 +64,8 @@ export default function LocaleLayout({ children, locale }: RootLayoutProps) {
       <meta property="og:image:type" content="<generated>" />
       <meta property="og:image:width" content="<generated>" />
       <meta property="og:image:height" content="<generated>" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
       <body className="!overscroll-none">
         <LiveChatProvider />
         <StoreProvider>
