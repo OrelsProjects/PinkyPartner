@@ -4,3 +4,9 @@ export const canUseNotifications = () => {
     "serviceWorker" in navigator
   );
 };
+
+export const isMobilePhone = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent,
+  );
+};

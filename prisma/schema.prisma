@@ -50,7 +50,9 @@ model AppUserMetadata {
   userId            String  @unique
   referralCode      String?
   referredBy        String?
+  
   pushToken         String?
+  pushTokenMobile   String?
 
   onboardingCompleted Boolean @default(false)
 

@@ -33,6 +33,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         meta: {
           select: {
             pushToken: true,
+            pushTokenMobile: true,
           },
         },
         settings: {
@@ -65,7 +66,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     }
 
     const message = {
-      token,
       data: {
         title,
         body: body || "",
@@ -89,10 +89,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
           "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
         },
       },
-    };
-
-    await messaging.send({
-      ...message,
       android: {
         notification: {
           icon: process.env.LOGO_URL || "",
@@ -100,7 +96,25 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
           tag: type,
         },
       },
-    });
+    };
+
+    try {
+      // Send to mobile
+      await messaging.send({
+        ...message,
+        token: user.meta?.pushTokenMobile || "",
+      });
+    } catch (error: any) {
+      Logger.error("Error sending mobile notification", session.user.userId, {
+        data: { error, token },
+      });
+    } finally {
+      // Send to web
+      await messaging.send({
+        ...message,
+        token,
+      });
+    }
     Logger.info("Notification sent", session.user.userId, {
       data: { message },
     });

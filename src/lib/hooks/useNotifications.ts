@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "../../logger";
 import { error } from "console";
-import { canUseNotifications } from "../utils/notificationUtils";
+import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -116,16 +116,20 @@ export default function useNotifications() {
     if (!("serviceWorker" in navigator)) {
       Logger.error("Service worker not supported");
     }
-    let token = "";
+    let pushToken = "";
     try {
       initMessaging();
-      token = (await getUserToken()) || "no-token";
-      await axios.patch("/api/user", { token });
+      pushToken = (await getUserToken()) || "no-token";
+      if (isMobilePhone()) {
+        await axios.patch("/api/user", { pushTokenMobile: pushToken });
+      } else {
+        await axios.patch("/api/user", { pushToken });
+      }
     } catch (e: any) {
       Logger.error("Failed to get token", {
         data: {
           error: e,
-          token,
+          token: pushToken,
         },
       });
     }
