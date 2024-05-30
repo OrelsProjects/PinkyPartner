@@ -11,9 +11,10 @@ import {
   stageText,
   showBackground,
   backgroundForNextStage,
+  timeDelays,
 } from "../../lib/consts/onboarding";
 import useOnboarding from "../../lib/hooks/useOnboarding";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,9 @@ import {
 import { EventTracker } from "../../eventTracker";
 import { useAppSelector } from "../../lib/hooks/redux";
 import Link from "next/link";
+import ObligationCheckbox from "../../components/contractObligations/obligationCheckbox";
+import React from "react";
+import { toast } from "react-toastify";
 
 export default function OnboardingProvider() {
   const { user, state } = useAppSelector(state => state.auth);
@@ -33,6 +37,7 @@ export default function OnboardingProvider() {
     nextStage,
     elementSize,
     currentStage,
+    // elementOnClick,
     elementsActions,
     elementPosition,
     onboardingElement,
@@ -42,6 +47,24 @@ export default function OnboardingProvider() {
   } = useOnboarding();
 
   const router = useRouter();
+
+  // a lazy way to set a delay to show checkbox
+  const [showCheckbox, setShowCheckbox] = React.useState(false);
+
+  const shouldShowCheckbox = useMemo(
+    () =>
+      currentStage === "complete-promise-checkbox" ||
+      currentStage === "promise-completed",
+    [currentStage],
+  );
+
+  useEffect(() => {
+    if (shouldShowCheckbox) {
+      setTimeout(() => {
+        setShowCheckbox(true);
+      }, timeDelays[currentStage]);
+    }
+  }, [currentStage]);
 
   const mobile = useMemo(() => {
     const mobile = isMobile && hasMobileVersion[currentStage];
@@ -178,7 +201,7 @@ export default function OnboardingProvider() {
     >
       <div
         id="_PRIVATE_ONBOARDING_ELEMENT"
-        ref={onboardingElement}
+        ref={shouldShowCheckbox ? null : onboardingElement}
         className={cn(
           "absolute bg-background h-fit w-fit flex justify-center items-center md:hover:cursor-pointer",
         )}
@@ -190,7 +213,21 @@ export default function OnboardingProvider() {
           height: elementSize?.height,
           width: elementSize?.width,
         }}
-      />
+      >
+        {showCheckbox && (
+          <ObligationCheckbox
+            dummy
+            day=""
+            index={0}
+            loading={false}
+            data-onboarding-dont-delete
+            onCompletedChangeDummy={_ => {
+              elementsActions[currentStage]?.();
+              toast("Good job! Your partner will be notified");
+            }}
+          />
+        )}
+      </div>
       <Button
         className="absolute top-3 right-3 md:bottom-10 md:top-auto"
         onClick={() => {
