@@ -1,8 +1,6 @@
 import React from "react";
-import Image from "next/image";
 import { AccountabilityPartner } from "../models/appUser";
 import { Skeleton } from "./ui/skeleton";
-import { FaUserCircle } from "react-icons/fa";
 import { UserAvatar } from "./ui/avatar";
 
 export const AccountabilityPartnerComponentLoading = ({
@@ -11,7 +9,7 @@ export const AccountabilityPartnerComponentLoading = ({
   className?: string;
 }) => (
   <div
-    className={`flex flex-col gap-1 justify-start items-center pr-4 animate-all ${className}`}
+    className={`flex flex-col gap-1 justify-start items-center animate-all ${className}`}
   >
     <Skeleton className="w-10 h-10 rounded-full" />
     <Skeleton className="w-20 h-5 rounded-lg" />
@@ -26,7 +24,7 @@ const AccountabilityPartnerComponent: React.FC<{
 }> = ({ partner, signed, onClick, className }) => {
   return (
     <div
-      className={`w-fit h-fit flex flex-col gap-1 justify-start items-center pr-4 animate-all ${!signed && "grayscale opacity-50"} ${className}`}
+      className={`w-fit h-fit flex flex-col gap-1 justify-start items-center animate-all ${!signed && "grayscale opacity-50"} ${className}`}
       onClick={e => {
         e.preventDefault();
         if (partner) {
