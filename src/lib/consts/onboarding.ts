@@ -104,7 +104,7 @@ export const stageText: Record<
   },
   "fill-contract": {
     title: "You are doing great! 🚀",
-    description: "Now create a contract and we'll meet after that.",
+    description: "Now, create a contract and we'll meet after that.",
   },
   "wait-fill-contract": {
     title: "",

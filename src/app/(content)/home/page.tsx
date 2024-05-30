@@ -55,11 +55,11 @@ export default function Home() {
   const { contractObligations, partnerData } = useAppSelector(
     state => state.obligations,
   );
+  const { state } = useAppSelector(state => state.auth);
   const { obligations, loadingData } = useObligations();
   const { contracts } = useAppSelector(state => state.contracts);
-  const [isExploding, setIsExploding] = React.useState(false);
 
-  if (!loadingData) {
+  if (!loadingData && state !== "anonymous") {
     if (contracts.length === 0 && obligations.length === 0) {
       return <EmptyObligations />;
     }
@@ -74,7 +74,7 @@ export default function Home() {
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}
-        loading={loadingData}
+        loading={loadingData && state !== "anonymous"}
       />
     </div>
   );

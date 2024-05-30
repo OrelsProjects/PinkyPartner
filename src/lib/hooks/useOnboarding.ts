@@ -47,7 +47,7 @@ export default function useOnboarding() {
         setUser({
           state: "anonymous",
           userId: ANONYMOUS_USER_ID,
-          displayName: "Anonymous",
+          displayName: "Random Pinky",
           email: "",
           photoURL: "",
           meta: {

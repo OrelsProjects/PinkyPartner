@@ -231,7 +231,7 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
         signatures: [
           user || {
             userId: "anonymous",
-            displayName: "Anonymous",
+            displayName: "Random Pinky",
           },
         ],
       });

@@ -10,10 +10,12 @@ import ContractComponent, {
 import { FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useAppSelector } from "../../../lib/hooks/redux";
 
 interface ContractsProps {}
 
 const ContractsPage: React.FC<ContractsProps> = () => {
+  const { state } = useAppSelector(state => state.auth);
   const { contracts: contractsData, loadingData } = useContracts();
 
   const sortedContracts = useMemo(() => {
@@ -53,7 +55,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {loadingData
+        {loadingData && state !== "anonymous"
           ? Array.from({ length: contractsData.length || 6 }).map(
               (_, index) => (
                 <ContractComponentLoading
