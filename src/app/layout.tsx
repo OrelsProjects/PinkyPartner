@@ -63,13 +63,14 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#FBF8F400" />
         <link rel="manifest" href="/manifest.json" />
         <meta property="og:image" content="<generated>" />
         <meta property="og:image:type" content="<generated>" />
         <meta property="og:image:width" content="<generated>" />
         <meta property="og:image:height" content="<generated>" />
-        <meta name="theme-color" content="#FBF8F4" className="dark:hidden" />
-        <meta name="theme-color" content="#0C0A09" className="dark" />
+        <meta name="theme-color" content="#FBF8F400" className="dark:hidden" />
+        <meta name="theme-color" content="#FBF8F400" className="dark" />
       </head>
       <body className="!overscroll-none">
         <LiveChatProvider />
