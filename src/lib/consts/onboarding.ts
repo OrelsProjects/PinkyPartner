@@ -7,9 +7,11 @@ export type Stage =
   | "search-partner"
   | "no-partner"
   | "fill-contract"
+  | "wait-fill-contract"
   | "invite-partner-button"
   | "wait-for-partner"
-  | "home-start-doing"
+  | "complete-promise-checkbox"
+  | "promise-completed"
   | "done";
 
 export const stages: Stage[] = [
@@ -19,9 +21,11 @@ export const stages: Stage[] = [
   "search-partner",
   "no-partner",
   "fill-contract",
+  "wait-fill-contract",
   "invite-partner-button",
   "wait-for-partner",
-  "home-start-doing",
+  "complete-promise-checkbox",
+  "promise-completed",
   "done",
 ];
 
@@ -32,10 +36,12 @@ export const timeDelays: Record<Stage, number> = {
   "search-partner": 2500,
   "no-partner": 2300,
   "fill-contract": 0,
+  "wait-fill-contract": 0,
   "invite-partner-button": 0,
   "wait-for-partner": 200,
-  "home-start-doing": 3000,
-  done: 0,
+  "complete-promise-checkbox": 3000,
+  "promise-completed": 0,
+  done: 3000,
 };
 
 export const shouldFetchElement: Record<Stage, boolean> = {
@@ -45,9 +51,11 @@ export const shouldFetchElement: Record<Stage, boolean> = {
   "search-partner": true,
   "no-partner": true,
   "fill-contract": false,
+  "wait-fill-contract": false,
   "invite-partner-button": true,
   "wait-for-partner": false,
-  "home-start-doing": true,
+  "complete-promise-checkbox": true,
+  "promise-completed": false,
   done: false,
 };
 
@@ -58,9 +66,11 @@ export const hasMobileVersion: Record<Stage, boolean> = {
   "search-partner": false,
   "no-partner": false,
   "fill-contract": false,
+  "wait-fill-contract": false,
   "invite-partner-button": false,
   "wait-for-partner": false,
-  "home-start-doing": false,
+  "complete-promise-checkbox": false,
+  "promise-completed": false,
   done: false,
 };
 
@@ -93,6 +103,10 @@ export const stageText: Record<
     description: "You can start solo and invite your partner later on.",
   },
   "fill-contract": {
+    title: "You are doing great! 🚀",
+    description: "Now create a contract and we'll meet after that.",
+  },
+  "wait-fill-contract": {
     title: "",
     description: "",
   },
@@ -105,10 +119,15 @@ export const stageText: Record<
     description:
       "Now your pinky partner got a notification to come sign the contract. Make sure to remind them ;)\n~-You can start solo and your partner will join later.-~",
   },
-  "home-start-doing": {
+  "complete-promise-checkbox": {
     title: "Get to work!",
     description:
       "Now start building your habits while your partner is on the way.",
+  },
+  "promise-completed": {
+    title: "Good job!",
+    description:
+      "Your future partner will get a notification about your progress 😊",
   },
   done: {
     title: "Done",
@@ -116,16 +135,19 @@ export const stageText: Record<
   },
 };
 
+// Have a clickable background to continue
 export const backgroundForNextStage: Record<Stage, boolean> = {
   welcome: true,
   "navigation-bar-item-Contracts": false,
   "contracts-plus-button": false,
   "search-partner": false,
   "no-partner": false,
-  "fill-contract": false,
+  "fill-contract": true,
+  "wait-fill-contract": false,
   "invite-partner-button": false,
   "wait-for-partner": true,
-  "home-start-doing": false,
+  "complete-promise-checkbox": false,
+  "promise-completed": true,
   done: false,
 };
 
@@ -135,10 +157,12 @@ export const showBackground: Record<Stage, boolean> = {
   "contracts-plus-button": true,
   "search-partner": true,
   "no-partner": true,
-  "fill-contract": false,
+  "fill-contract": true,
+  "wait-fill-contract": false,
   "invite-partner-button": true,
   "wait-for-partner": true,
-  "home-start-doing": true,
+  "complete-promise-checkbox": true,
+  "promise-completed": true,
   done: false,
 };
 
@@ -148,9 +172,11 @@ export const requiredPaths: Record<Stage, string | null> = {
   "contracts-plus-button": "/contracts",
   "search-partner": "/contracts/new",
   "no-partner": "/contracts/new",
-  "fill-contract": null,
+  "fill-contract": "/contracts/new",
+  "wait-fill-contract": null,
   "invite-partner-button": "/contracts/new",
   "wait-for-partner": "/contracts",
-  "home-start-doing": "/home",
+  "complete-promise-checkbox": "/home",
+  "promise-completed": "/home",
   done: null,
 };

@@ -107,16 +107,22 @@ export default function useOnboarding() {
     "no-partner": () => {
       handleNextStage("fill-contract");
     },
-    "fill-contract": null,
+    "fill-contract": () => {
+      handleNextStage("wait-fill-contract");
+    },
+    "wait-fill-contract": null,
     "invite-partner-button": () => {
       router.push("/home");
-      handleNextStage("home-start-doing");
+      handleNextStage("complete-promise-checkbox");
     },
     "wait-for-partner": () => {
       router.push("/home");
-      handleNextStage("home-start-doing");
+      handleNextStage("complete-promise-checkbox");
     },
-    "home-start-doing": () => {
+    "complete-promise-checkbox": () => {
+      handleNextStage("promise-completed");
+    },
+    "promise-completed": () => {
       handleNextStage("done");
       setOnboardingViewed();
     },
@@ -157,13 +163,13 @@ export default function useOnboarding() {
     }
     switch (pathname) {
       case "/contracts":
-        if (currentStage === "fill-contract") {
+        if (currentStage === "wait-fill-contract") {
           setCurrentStage("invite-partner-button");
           break;
         }
       case "/home":
         if (currentStage === "invite-partner-button") {
-          setCurrentStage("home-start-doing");
+          setCurrentStage("complete-promise-checkbox");
         }
         break;
     }
@@ -235,6 +241,13 @@ export default function useOnboarding() {
       if (elementsActions[currentStage]) {
         clone.addEventListener("click", () => {
           while (onboardingElement.current?.firstChild) {
+            // if first child has data-onboarding-dont-delete, don't remove it
+            if (
+              (onboardingElement.current.firstChild as HTMLElement).dataset
+                .onboardingDontDelete
+            ) {
+              continue;
+            }
             onboardingElement.current?.removeChild(
               onboardingElement.current.firstChild,
             );

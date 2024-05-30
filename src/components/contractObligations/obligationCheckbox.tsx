@@ -9,9 +9,10 @@ interface ObligationCheckboxProps {
   day: string;
   index: number;
   dummy?: boolean; // For onboarding
-  loading: boolean;
+  onCompletedChangeDummy?: (isCompleted: boolean) => void;
+  loading?: boolean;
   isCompleted?: boolean;
-  onCompletedChange: (day: string, isCompleted: boolean) => void;
+  onCompletedChange?: (day: string, isCompleted: boolean) => void;
 }
 
 const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
@@ -21,6 +22,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   loading,
   isCompleted,
   onCompletedChange,
+  onCompletedChangeDummy,
 }) => {
   const { user } = useAppSelector(selectAuth);
   const [checked, setChecked] = React.useState(false);
@@ -34,6 +36,12 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   const canPlaySound = useMemo(() => {
     return user?.settings.soundEffects;
   }, [user]);
+
+  useEffect(() => {
+    if (!dummy && !onCompletedChange) {
+      throw new Error("onCompletedChange is required when dummy is false");
+    }
+  }, [dummy, onCompletedChange]);
 
   useEffect(() => {
     if (shouldAnimate) {
@@ -73,12 +81,13 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         onCheckedChange={(checked: boolean) => {
           if (dummy) {
             setChecked(checked);
+            onCompletedChangeDummy?.(checked);
           } else {
-            onCompletedChange(day, checked);
+            onCompletedChange?.(day, checked);
           }
           setShouldPlaySound(true);
         }}
-        data-onboarding-id={index === 0 ? "home-start-doing" : ""}
+        data-onboarding-id={index === 0 ? "complete-promise-checkbox" : ""}
         variant="default"
         loading={loading}
       />

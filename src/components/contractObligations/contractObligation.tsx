@@ -15,7 +15,6 @@ import { UserAvatar } from "../ui/avatar";
 import Contract from "../../models/contract";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
-import { getRandomTimeToFinishRequest } from "../../lib/utils/apiUtils";
 
 const UserIndicator = ({
   isSigned,
@@ -72,7 +71,7 @@ const ObligationsComponent = ({
 }) => {
   if (!obligations.length) return null;
 
-  const { user } = useAppSelector(state => state.auth);
+  const { user, state } = useAppSelector(state => state.auth);
   const { completeObligation } = useObligations();
   const [loadingObligationDays, setLoadingObligationDays] = React.useState<
     Record<string, boolean>
@@ -222,6 +221,7 @@ const ObligationsComponent = ({
                       onCompletedChange={(day: string, checked: boolean) => {
                         handleCompleteObligation(day, checked);
                       }}
+                      dummy={state !== "authenticated"}
                     />
                     <div
                       className={cn(
