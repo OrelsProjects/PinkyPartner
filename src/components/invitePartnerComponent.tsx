@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import {
   EmailIcon,
   EmailShareButton,
+  TelegramIcon,
+  TelegramShareButton,
   WhatsappIcon,
   WhatsappShareButton,
 } from "react-share";
@@ -57,17 +59,17 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
 
   const summary = useMemo(() => {
     if (contract) {
-      return `Join my contract to: ${contract.title} on Pinky Promise!`;
+      return `Join my contract to: ${contract.title} on PinkyPartner!`;
     } else {
-      return "Join me on Pinky Promise!";
+      return "Join me on PinkyPartner!";
     }
   }, [contract]);
 
   const body = useMemo(() => {
     if (contract) {
-      return `Join my contract to: ${contract.title} on Pinky Promise!`;
+      return `Join my contract to: ${contract.title} on PinkyPartner!`;
     } else {
-      return "Join me on Pinky Promise!";
+      return "Join me on PinkyPartner!";
     }
   }, [contract]);
 
@@ -81,22 +83,43 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   };
 
   const ShareButtons = () => (
-    <div className="flex flex-row gap-3 justify-center items-center">
-      <div className="w-16 h-16 flex justify-center items-center rounded-full bg-gray-300 dark:bg-gray-700">
-        <FaCopy
-          className="cursor-pointer"
-          size={32}
+    <div className="w-full flex flex-row gap-6 justify-start items-center overflow-auto">
+      <div className="flex justify-center items-center flex-col flex-shrink-0">
+        <div
+          className="w-16 h-16 flex justify-center items-center flex-col rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer"
           onClick={e => {
             handleCopyLink();
             e.stopPropagation();
           }}
-        />
+        >
+          <FaCopy size={32} />
+        </div>
+        <span>Copy Link</span>
       </div>
-      <WhatsappShareButton title="Join me on Pinky Promise!" url={url}>
+      <WhatsappShareButton
+        title={summary}
+        url={url}
+        className="flex items-center justify-center flex-col"
+      >
         <WhatsappIcon size={64} round={true} />
+        <span>Whatsapp</span>
       </WhatsappShareButton>
-      <EmailShareButton subject={summary} url={url} body={body}>
+      <TelegramShareButton
+        title={summary}
+        url={url}
+        className="flex items-center justify-center flex-col"
+      >
+        <TelegramIcon size={64} round={true} />
+        <span>Telegram</span>
+      </TelegramShareButton>
+      <EmailShareButton
+        subject={summary}
+        url={url}
+        body={body}
+        className="flex items-center justify-center flex-col"
+      >
         <EmailIcon size={64} round={true} />
+        <span>Email</span>
       </EmailShareButton>
     </div>
   );
@@ -125,7 +148,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
           {buttonText}
         </Button>
       </DialogTrigger>
-      <DialogContent className="space-y-4 h-[18rem]">
+      <DialogContent className="w-full h-[18rem]">
         <ShareButtons />
       </DialogContent>
     </Dialog>
