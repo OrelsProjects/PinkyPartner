@@ -107,7 +107,10 @@ export default function useOnboarding() {
     "no-partner": () => {
       handleNextStage("fill-contract");
     },
-    "fill-contract": null,
+    "fill-contract": () => {
+      handleNextStage("wait-fill-contract");
+    },
+    "wait-fill-contract": null,
     "invite-partner-button": () => {
       router.push("/home");
       handleNextStage("complete-promise-checkbox");
@@ -117,7 +120,7 @@ export default function useOnboarding() {
       handleNextStage("complete-promise-checkbox");
     },
     "complete-promise-checkbox": () => {
-        handleNextStage("promise-completed");
+      handleNextStage("promise-completed");
     },
     "promise-completed": () => {
       handleNextStage("done");
@@ -160,7 +163,7 @@ export default function useOnboarding() {
     }
     switch (pathname) {
       case "/contracts":
-        if (currentStage === "fill-contract") {
+        if (currentStage === "wait-fill-contract") {
           setCurrentStage("invite-partner-button");
           break;
         }

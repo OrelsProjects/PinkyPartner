@@ -7,6 +7,7 @@ export type Stage =
   | "search-partner"
   | "no-partner"
   | "fill-contract"
+  | "wait-fill-contract"
   | "invite-partner-button"
   | "wait-for-partner"
   | "complete-promise-checkbox"
@@ -20,6 +21,7 @@ export const stages: Stage[] = [
   "search-partner",
   "no-partner",
   "fill-contract",
+  "wait-fill-contract",
   "invite-partner-button",
   "wait-for-partner",
   "complete-promise-checkbox",
@@ -34,6 +36,7 @@ export const timeDelays: Record<Stage, number> = {
   "search-partner": 2500,
   "no-partner": 2300,
   "fill-contract": 0,
+  "wait-fill-contract": 0,
   "invite-partner-button": 0,
   "wait-for-partner": 200,
   "complete-promise-checkbox": 3000,
@@ -48,6 +51,7 @@ export const shouldFetchElement: Record<Stage, boolean> = {
   "search-partner": true,
   "no-partner": true,
   "fill-contract": false,
+  "wait-fill-contract": false,
   "invite-partner-button": true,
   "wait-for-partner": false,
   "complete-promise-checkbox": true,
@@ -62,6 +66,7 @@ export const hasMobileVersion: Record<Stage, boolean> = {
   "search-partner": false,
   "no-partner": false,
   "fill-contract": false,
+  "wait-fill-contract": false,
   "invite-partner-button": false,
   "wait-for-partner": false,
   "complete-promise-checkbox": false,
@@ -98,6 +103,10 @@ export const stageText: Record<
     description: "You can start solo and invite your partner later on.",
   },
   "fill-contract": {
+    title: "You are doing great! 🚀",
+    description: "Now create a contract and we'll meet after that.",
+  },
+  "wait-fill-contract": {
     title: "",
     description: "",
   },
@@ -133,26 +142,13 @@ export const backgroundForNextStage: Record<Stage, boolean> = {
   "contracts-plus-button": false,
   "search-partner": false,
   "no-partner": false,
-  "fill-contract": false,
+  "fill-contract": true,
+  "wait-fill-contract": false,
   "invite-partner-button": false,
   "wait-for-partner": true,
   "complete-promise-checkbox": false,
   "promise-completed": true,
   done: false,
-};
-
-export const useOriginalComponent: Record<Stage, boolean> = {
-  welcome: true,
-  "navigation-bar-item-Contracts": true,
-  "contracts-plus-button": true,
-  "search-partner": true,
-  "no-partner": false,
-  "fill-contract": true,
-  "invite-partner-button": true,
-  "wait-for-partner": true,
-  "complete-promise-checkbox": true,
-  "promise-completed": true,
-  done: true,
 };
 
 export const showBackground: Record<Stage, boolean> = {
@@ -161,7 +157,8 @@ export const showBackground: Record<Stage, boolean> = {
   "contracts-plus-button": true,
   "search-partner": true,
   "no-partner": true,
-  "fill-contract": false,
+  "fill-contract": true,
+  "wait-fill-contract": false,
   "invite-partner-button": true,
   "wait-for-partner": true,
   "complete-promise-checkbox": true,
@@ -175,7 +172,8 @@ export const requiredPaths: Record<Stage, string | null> = {
   "contracts-plus-button": "/contracts",
   "search-partner": "/contracts/new",
   "no-partner": "/contracts/new",
-  "fill-contract": null,
+  "fill-contract": "/contracts/new",
+  "wait-fill-contract": null,
   "invite-partner-button": "/contracts/new",
   "wait-for-partner": "/contracts",
   "complete-promise-checkbox": "/home",
