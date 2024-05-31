@@ -35,7 +35,11 @@ const contractsSlice = createSlice({
       );
       if (index !== -1) {
         // clear the temp contract
-        newContracts[index] = action.payload;
+        newContracts[index] = {
+          ...newContracts[index],
+          contractId: action.payload.contractId,
+          obligations: action.payload.obligations,
+        };
         state.contracts = newContracts;
       }
     },

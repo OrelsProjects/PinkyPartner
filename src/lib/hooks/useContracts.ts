@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Contract, {
+import {
   ContractWithExtras,
   CreateContract,
   UpdateContract,

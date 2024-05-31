@@ -386,7 +386,7 @@ const CreatePromise = ({
             <div className="absolute bottom-0 left-0 !w-full h-4/6 z-50">
               <EmojiPicker
                 theme={theme === "dark" ? Theme.DARK : Theme.LIGHT}
-                // searchDisabled
+                autoFocusSearch
                 skinTonesDisabled
                 lazyLoadEmojis={true}
                 previewConfig={{

@@ -4,11 +4,11 @@ import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
 import React from "react";
-import NextTopLoader from "nextjs-toploader";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import TopLoaderProvider from "./providers/TopLoaderProvider";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
@@ -76,17 +76,7 @@ export default function Layout({ children }: RootLayoutProps) {
           <SessionWrapper>
             <ThemeProvider>
               <AuthProvider>
-                <NextTopLoader
-                  color="hsl(var(--primary))"
-                  initialPosition={0.08}
-                  crawlSpeed={250}
-                  height={3}
-                  crawl={true}
-                  showSpinner={false}
-                  easing="ease"
-                  speed={1500}
-                  shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
-                />
+                <TopLoaderProvider />
                 {children}
                 <SpeedInsights />
                 <Analytics />

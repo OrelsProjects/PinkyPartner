@@ -11,6 +11,8 @@ import NextTopLoader from "nextjs-toploader";
 import NotificationsProvider from "../providers/NotificationsProvider";
 import OnboardingProvider from "../providers/OnboardingProvider";
 import AnimationProvider from "../providers/AnimationProvider";
+import { isMobilePhone } from "../../lib/utils/notificationUtils";
+import TopLoaderProvider from "../providers/TopLoaderProvider";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -20,25 +22,15 @@ export default function ContentLayout({ children }: RootLayoutProps) {
   return (
     <main>
       <AuthProvider>
-        <NotificationsProvider/>
-          <DataProvider>
-            <HeightProvider>
-              <ContentProvider>
-                <NextTopLoader
-                  color="hsl(var(--primary))"
-                  initialPosition={0.08}
-                  crawlSpeed={250}
-                  height={3}
-                  crawl={true}
-                  showSpinner={false}
-                  easing="ease"
-                  speed={1500}
-                  shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
-                />
-                <AnimationProvider>{children}</AnimationProvider>
-              </ContentProvider>
-            </HeightProvider>
-          </DataProvider>
+        <NotificationsProvider />
+        <DataProvider>
+          <HeightProvider>
+            <ContentProvider>
+              <TopLoaderProvider />
+              <AnimationProvider>{children}</AnimationProvider>
+            </ContentProvider>
+          </HeightProvider>
+        </DataProvider>
         <OnboardingProvider />
       </AuthProvider>
     </main>

@@ -24,7 +24,7 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { user: currentUser, state } = useSelector(selectAuth);
+  const { user: currentUser } = useSelector(selectAuth);
   const { data: session, status } = useSession();
   const { isOnboardingCompleted } = useOnboarding();
 

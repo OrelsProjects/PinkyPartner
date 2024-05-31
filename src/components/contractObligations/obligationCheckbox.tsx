@@ -55,6 +55,9 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         // reset audio
         audio.pause();
         audio.currentTime = 0;
+        // destroy audio, because it shows memory leak warning
+        audio.src = "";
+        audio.load();
       }, 2000);
     }
   }, [shouldAnimate, shouldPlaySound]);
@@ -63,6 +66,8 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     if (checked || isCompleted) {
       if (canPlaySound) {
         if (shouldPlaySound) {
+          audio.src = "/sounds/obligation-completed.wav";
+          audio.load();
           audio.play().then(() => {
             setShouldAnimate(true);
           });

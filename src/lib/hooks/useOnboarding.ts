@@ -108,6 +108,7 @@ export default function useOnboarding() {
       handleNextStage("fill-contract");
     },
     "fill-contract": () => {
+      router.push("/contracts/new/no-partner");
       handleNextStage("wait-fill-contract");
     },
     "wait-fill-contract": null,
@@ -164,7 +165,9 @@ export default function useOnboarding() {
     switch (pathname) {
       case "/contracts":
         if (currentStage === "wait-fill-contract") {
-          setCurrentStage("invite-partner-button");
+          if (contracts.length > 0) {
+            setCurrentStage("invite-partner-button");
+          }
           break;
         }
       case "/home":

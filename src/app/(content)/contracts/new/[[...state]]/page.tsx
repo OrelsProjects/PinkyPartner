@@ -1,38 +1,40 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { Input } from "../../../../components/ui/input";
+import React, { useEffect, useRef, useState } from "react";
+import { Input } from "../../../../../components/ui/input";
 import { useFormik } from "formik";
-import { CreateContract } from "../../../../models/contract";
-import { CreateObligation } from "../../../../models/obligation";
-import { AccountabilityPartner } from "../../../../models/appUser";
-import useSearchUser from "../../../../lib/hooks/useSearchUser";
+import { CreateContract } from "../../../../../models/contract";
+import { CreateObligation } from "../../../../../models/obligation";
+import { AccountabilityPartner } from "../../../../../models/appUser";
+import useSearchUser from "../../../../../lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "../../../../../components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
-import { useAppSelector } from "../../../../lib/hooks/redux";
-import { Checkbox } from "../../../../components/ui/checkbox";
-import { useContracts } from "../../../../lib/hooks/useContracts";
+import { useAppSelector } from "../../../../../lib/hooks/redux";
+import { Checkbox } from "../../../../../components/ui/checkbox";
+import { useContracts } from "../../../../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
-} from "../../../../components/accountabilityPartnerComponent";
-import { getNextWeekDate } from "../../../../lib/utils/dateUtils";
-import Divider from "../../../../components/ui/divider";
+} from "../../../../../components/accountabilityPartnerComponent";
+import { getNextWeekDate } from "../../../../../lib/utils/dateUtils";
+import Divider from "../../../../../components/ui/divider";
 import {
   SectionContainer,
   SectionTitle,
   SectionTitleContainer,
   SectionTitleExplanation,
-} from "../../../../components/ui/section";
+} from "../../../../../components/ui/section";
 import { FaPlus } from "react-icons/fa";
-import CreatePromise from "../../../../components/createPromise";
-import ObligationComponent from "../../../../components/obligationComponent";
-import { cn } from "../../../../lib/utils";
-import { getRandomTimeToFinishRequest } from "../../../../lib/utils/apiUtils";
+import CreatePromise from "../../../../../components/createPromise";
+import ObligationComponent from "../../../../../components/obligationComponent";
+import { cn } from "../../../../../lib/utils";
+import { getRandomTimeToFinishRequest } from "../../../../../lib/utils/apiUtils";
 
-interface CreateContractPageProps {}
+interface CreateContractPageProps {
+  params?: { params?: { state?: "no-partner" } };
+}
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;
@@ -110,7 +112,7 @@ const FindPartner = ({
   );
 };
 
-const CreateContractPage: React.FC<CreateContractPageProps> = () => {
+const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
   const router = useRouter();
   const { user } = useAppSelector(state => state.auth);
   const { createContract, loading } = useContracts();
@@ -181,6 +183,23 @@ const CreateContractPage: React.FC<CreateContractPageProps> = () => {
       }
     },
   });
+
+  useEffect(() => {
+    // if continue without partner is true, make sure the url contains the state. otherwise, remove it
+    if (continueWithoutPartner) {
+      router.push("/contracts/new/no-partner");
+    } else {
+      router.push("/contracts/new");
+    }
+  }, [continueWithoutPartner]);
+
+  useEffect(() => {
+    if (params?.state?.[0] === "no-partner") {
+      setContinueWithoutPartner(true);
+    } else {
+      setContinueWithoutPartner(false);
+    }
+  }, [params]);
 
   const handleAddObligationToContract = (obligation: CreateObligation) => {
     setObligation(obligation);

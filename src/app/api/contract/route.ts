@@ -1,11 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
-import { getServerSession } from "next-auth";
+import { DefaultSession, SessionUser, getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
 import { ContractWithExtras, CreateContract } from "../../../models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
 import { ANONYMOUS_USER_ID } from "../../../lib/utils/consts";
+
+const getAnonymousUser = async (): Promise<
+  SessionUser & DefaultSession["user"]
+> => {
+  const annonymousUser = await prisma.appUser.findUnique({
+    where: { userId: ANONYMOUS_USER_ID },
+    include: { meta: true },
+  });
+  if (!annonymousUser) {
+    throw Error("Anonymous user not found");
+  }
+  return {
+    userId: annonymousUser.userId,
+    email: annonymousUser.email,
+    name: annonymousUser.displayName,
+    image: annonymousUser.photoURL,
+    meta: {
+      referralCode: annonymousUser.meta?.referralCode || "",
+      onboardingCompleted: false,
+    },
+    settings: {
+      showNotifications: false,
+      soundEffects: true,
+    },
+  };
+};
 
 export async function POST(
   req: NextRequest,
@@ -19,38 +45,22 @@ export async function POST(
     const data = await req.json();
     let { obligation, signatures, contractees, ...contractData } =
       data as CreateContract;
+    if (!obligation) {
+      return NextResponse.json(
+        { error: "Obligation is required" },
+        { status: 400 },
+      );
+    }
     let user = session?.user;
     if (!user) {
-      const annonymousUser = await prisma.appUser.findUnique({
-        where: { userId: ANONYMOUS_USER_ID },
-        include: { meta: true },
-      });
-      if (!annonymousUser) {
+      try {
+        user = await getAnonymousUser();
+      } catch (error: any) {
         return NextResponse.json(
           { error: "Annonymous user not found" },
           { status: 404 },
         );
       }
-      if (!obligation) {
-        return NextResponse.json(
-          { error: "Obligation is required" },
-          { status: 400 },
-        );
-      }
-      user = {
-        userId: annonymousUser.userId,
-        email: annonymousUser.email,
-        name: annonymousUser.displayName,
-        image: annonymousUser.photoURL,
-        meta: {
-          referralCode: annonymousUser.meta?.referralCode || "",
-          onboardingCompleted: false,
-        },
-        settings: {
-          showNotifications: false,
-          soundEffects: true,
-        },
-      };
       contractees = [user];
       signatures = [user];
       obligation = {
