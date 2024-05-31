@@ -231,13 +231,13 @@ const ObligationsComponent = ({
                         },
                       )}
                     >
-                      <div className="flex flex-row gap-3 justify-center items-center">
+                      <div className="h-full flex flex-row gap-3 justify-center items-center">
                         <div
                           className={cn(
-                            "text-card-foreground line-clamp-1 font-medium",
+                            "h-full text-card-foreground line-clamp-1 font-medium",
                           )}
                         >
-                          <div className="flex flex-col gap-0.5">
+                          <div className="flex flex-col gap-0.5 h-fit">
                             <span
                               className={cn("transition-all  duration-500", {
                                 "text-muted-foreground font-normal":

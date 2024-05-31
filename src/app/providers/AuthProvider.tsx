@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import {
   selectAuth,
   setUser as setUserAction,
@@ -13,7 +12,7 @@ import { setUserEventTracker } from "../../eventTracker";
 import { Logger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
-import { useAppDispatch } from "../../lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 
 export default function AuthProvider({
@@ -24,7 +23,7 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { user: currentUser } = useSelector(selectAuth);
+  const { user } = useAppSelector(selectAuth);
   const { data: session, status } = useSession();
   const { isOnboardingCompleted } = useOnboarding();
 
@@ -84,9 +83,9 @@ export default function AuthProvider({
   }, [status]);
 
   useEffect(() => {
-    setUserEventTracker(currentUser);
-    setUserLogger(currentUser);
-  }, [currentUser]);
+    setUserEventTracker(user);
+    setUserLogger(user);
+  }, [user]);
 
   useEffect(() => {
     if (status === "loading") return;
