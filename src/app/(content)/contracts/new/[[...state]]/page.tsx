@@ -329,7 +329,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     name="title"
                     value={formik.values.title}
                     onChange={formik.handleChange}
-                    placeholder="Reading books everyday"
+                    placeholder="Read more books"
                     required
                     error={formik.errors.title}
                   />

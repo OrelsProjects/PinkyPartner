@@ -124,6 +124,10 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     </div>
   );
 
+  if (contract?.contractId === "temp") {
+    return;
+  }
+
   return (
     <Dialog
       onOpenChange={value => {

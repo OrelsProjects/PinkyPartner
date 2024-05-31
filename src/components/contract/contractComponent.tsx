@@ -92,7 +92,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
         <ContractViewDropdown
           onView={() => setShowContract(true)}
           onInvite={
-            contract.contractees.length <= 1
+            contract.contractees.length <= 1 && contract.contractId !== "temp"
               ? () => setShowInvite(true)
               : undefined
           }

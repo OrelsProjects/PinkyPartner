@@ -12,6 +12,7 @@ export const makeStore = () => {
       obligations: obligationReducer,
       notifications: notificationsReducer,
     },
+    
   });
 };
 
