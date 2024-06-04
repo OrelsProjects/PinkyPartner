@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    startupImage: "/favicon-32x32.png",
+    startupImage: "/favicon.png",
   },
   formatDetection: {
     telephone: false,
