@@ -7,12 +7,6 @@ import { Contract, Obligation } from "@prisma/client";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
 
-interface SendNotificationBody {
-  contract: Contract;
-  obligation: Obligation;
-  userId: string;
-}
-
 export async function POST(req: NextRequest): Promise<NextResponse<any>> {
   const session = await getServerSession(authOptions);
   if (!session) {

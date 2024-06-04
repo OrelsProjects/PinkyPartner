@@ -9,7 +9,6 @@
   "description": "PinkyPartner is a habits building app that let's you build them with a partner.",
 
   "scope": "/home",
-  
 
   "prefer_related_applications": true,
   "related_applications": [
@@ -23,6 +22,7 @@
   "orientation": "portrait",
   "start_url": "/home",
   "dir": "auto",
+
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
@@ -346,14 +346,11 @@
     },
     {
       "src": "android/android-launchericon-512-512.png",
-      "sizes": "512x512",
-      "purpose": "any"
+      "sizes": "512x512"
     },
     {
       "src": "android/android-launchericon-192-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
+      "sizes": "192x192"
     },
     {
       "src": "android/android-launchericon-144-144.png",
@@ -469,14 +466,14 @@
     },
     {
       "src": "ios/512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "512x512"
     },
     {
       "src": "ios/1024.png",
       "sizes": "1024x1024"
     }
   ],
+
   "lang": "en",
   "categories": ["entertainment", "productivity"]
 }

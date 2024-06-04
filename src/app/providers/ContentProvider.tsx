@@ -9,12 +9,8 @@ import * as toast from "react-toastify";
 import SettingsComponent from "../../components/settings/settings";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
-import { useEffect } from "react";
-import * as NProgress from "nprogress";
 import { useTheme } from "next-themes";
 import LiveChatProvider from "./LiveChatProvider";
-import axios from "axios";
-import { Button } from "../../components/ui/button";
 
 interface ContentProviderProps {
   children: React.ReactNode;
@@ -23,7 +19,7 @@ interface ContentProviderProps {
 const BOTTOM_BAR_HEIGHT = 65;
 
 const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
-  const { user, state } = useAppSelector(state => state.auth);
+  const { user } = useAppSelector(state => state.auth);
   const { theme } = useTheme();
   const sizeContent = React.useContext(SizeContext);
   const bottomBarRef = React.useRef<HTMLDivElement>(null);
@@ -31,20 +27,6 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
     sizeContent.height,
   );
   ("use client");
-
-  useEffect(() => {
-    NProgress.start();
-    NProgress.configure({ showSpinner: false });
-
-    NProgress.set(0.4);
-
-    const random = Math.floor(Math.random() * 1000) + 500;
-
-    setTimeout(() => {
-      NProgress.done();
-      NProgress.remove();
-    }, random);
-  }, []);
 
   React.useEffect(() => {
     if (bottomBarRef.current) {

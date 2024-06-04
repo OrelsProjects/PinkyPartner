@@ -14,7 +14,6 @@ import NotificationComponent from "../../components/ui/notificationComponent";
 import { toast } from "react-toastify";
 import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "../../logger";
-import { error } from "console";
 import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
 
 export default function useNotifications() {

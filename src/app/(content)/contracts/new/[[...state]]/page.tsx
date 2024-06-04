@@ -403,7 +403,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     className="w-fit"
                     type="date"
                     name="dueDate"
-                    value={formik.values.dueDate.toISOString().split("T")[0]}
+                    value={formik.values.dueDate?.toISOString()?.split("T")?.[0]}
                     onChange={e => {
                       formik.setValues({
                         ...formik.values,
