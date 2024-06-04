@@ -63,7 +63,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       data: {
         title,
         body: body || "",
-        icon: process.env.LOGO_URL || "/notification-icon.png",
+        icon: "/notification-icon.png",
         badge: "/notification-icon.png",
       },
       webpush: {
