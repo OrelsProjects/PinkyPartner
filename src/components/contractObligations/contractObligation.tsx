@@ -123,7 +123,7 @@ const ObligationsComponent = ({
       if (!completed) {
         // show yes no alert
         const shouldContinue = window.confirm(
-          "Are you sure you want to mark this obligation as incomplete?",
+          "Are you sure you want to mark this promise as incomplete?",
         );
         if (!shouldContinue) {
           return;

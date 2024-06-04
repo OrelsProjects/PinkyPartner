@@ -3,7 +3,6 @@ import Logger from "../../../loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";
-import { Contract, Obligation } from "@prisma/client";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
 
@@ -63,8 +62,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       data: {
         title,
         body: body || "",
-        icon: "/notification-icon.png",
-        badge: "/notification-icon.png",
+        icon: process.env.LOGO_URL,
+        badge: process.env.NOTIFICATION_URL, // icon on top of phnone
       },
       webpush: {
         fcmOptions: {
