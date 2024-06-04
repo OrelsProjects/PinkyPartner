@@ -62,8 +62,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       data: {
         title,
         body: body || "",
-        icon: process.env.LOGO_URL,
-        badge: process.env.NOTIFICATION_URL, // icon on top of phnone
+        icon: process.env.LOGO_URL || "",
+        badge: process.env.NOTIFICATION_URL || "", // icon on top of phnone
       },
       webpush: {
         fcmOptions: {
