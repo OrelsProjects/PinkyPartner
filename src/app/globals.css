@@ -30,6 +30,9 @@
     --input: 240 5.9% 90%;
     --ring: 346.8 77.2% 49.8%;
     --radius: 0.75rem;
+
+    --contracts-in-row: 2;
+    --contracts-in-row-mobile: 1;
   }
 
   .dark {
