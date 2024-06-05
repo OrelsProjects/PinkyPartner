@@ -144,7 +144,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       </SectionContainer>
       <div className="mt-4">
         <SectionTitle text="Pinky agreement" />
-        {missingSignatures.length > 0 ? (
+        {!areAllSigned && missingSignatures.length > 0 ? (
           <p className="font-thin mt-2">
             Missing pinkies:{" "}
             <p className="font-semibold">{missingSignatures.join(", ")}</p>
@@ -222,5 +222,3 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     </Dialog>
   );
 };
-
-export default ContractViewComponent;
