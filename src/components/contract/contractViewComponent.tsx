@@ -144,11 +144,18 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       </SectionContainer>
       <div className="mt-4">
         <SectionTitle text="Pinky agreement" />
-        <p className="font-thin mt-2">
-          {contracteesNames.length > 1 ? "We" : "I"}, {SignedNames}, hereby
-          commit to the terms outlined within this contract with{" "}
-          {contracteesNames.length > 1 ? "our pinkies" : "my pinky"}.
-        </p>
+        {missingSignatures.length > 0 ? (
+          <p className="font-thin mt-2">
+            Missing pinkies:{" "}
+            <p className="font-semibold">{missingSignatures.join(", ")}</p>
+          </p>
+        ) : (
+          <p className="font-thin mt-2">
+            {contracteesNames.length > 1 ? "We" : "I"}, {SignedNames}, hereby
+            commit to the terms outlined within this contract with{" "}
+            {contracteesNames.length > 1 ? "our pinkies" : "my pinky"}.
+          </p>
+        )}
       </div>
       {!isSigned && (
         <DialogFooter>
@@ -164,7 +171,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     </DialogContent>
   );
 
-  const UnSignedNotice = () => (
+  const UnsignedNotice = () => (
     <DialogContent closeOnOutsideClick>
       <DialogHeader>
         <DialogTitle>Not all the pinkies were sealed</DialogTitle>
@@ -211,7 +218,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      {areAllSigned || !isSigned ? <ContractDetails /> : <UnSignedNotice />}
+      <ContractDetails />
     </Dialog>
   );
 };

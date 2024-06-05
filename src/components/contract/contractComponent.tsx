@@ -90,13 +90,13 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
     >
       <div className="absolute top-1.5 right-0.5">
         <ContractViewDropdown
-          onView={() => setShowContract(true)}
           onInvite={
             contract.contractees.length <= 1 && contract.contractId !== "temp"
               ? () => setShowInvite(true)
               : undefined
           }
           onOptOut={() => setShowOptOut(true)}
+          onView={() => setShowContract(true)}
           onEdit={() => setShowEdit(true)}
         />
       </div>
@@ -135,18 +135,17 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           />
         </div>
       )}
-      {!isUserSigned && (
-        <div className="w-full flex justify-end items-center">
-          <ContractViewComponent
-            contract={contract}
-            isSigned={isUserSigned}
-            onSign={handleSignContract}
-            onClose={() => setShowContract(false)}
-            open={showContract}
-            hideButton
-          />
-        </div>
-      )}
+
+      <div className="w-full flex justify-end items-center">
+        <ContractViewComponent
+          contract={contract}
+          isSigned={isUserSigned}
+          onSign={handleSignContract}
+          onClose={() => setShowContract(false)}
+          open={showContract}
+          hideButton
+        />
+      </div>
 
       <OptOutComponent
         onClose={() => setShowOptOut(false)}

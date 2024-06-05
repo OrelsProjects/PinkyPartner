@@ -18,7 +18,7 @@ const Header = ({
   getStartedUrl: string;
 }) => (
   <header className="w-full fixed top-0 left-0 h-20 flex flex-row justify-center items-center py-2 bg-card z-50">
-    <div className="w-full px-4 lg:px-0 lg:w-[1040px] flex flex-row justify-between items-center">
+    <div className="w-full px-4 lg:px-0 lg:w-[863px] flex flex-row justify-between items-center">
       <div className="text-3xl md:text-4xl font-medium text-foreground">
         PinkyPartner
       </div>
@@ -65,7 +65,7 @@ const HeroSection = ({ onNext }: { onNext?: () => void }) => (
         duration: 0.5,
         ease: [0.4, 0.0, 0.2, 1],
       }}
-      className="w-full h-80 md:h-fit text-2xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed lg:leading-snug mx-auto lg:w-[1040px]"
+      className="w-full h-80 md:h-fit text-2xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed lg:leading-snug mx-auto lg:w-[863px]"
     >
       <div className="flex flex-col lg:flex-row justify-start gap-1 tracking-tighter">
         <TextGenerateEffect

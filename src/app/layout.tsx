@@ -9,6 +9,7 @@ import AuthProvider from "./providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
+import ProductHuntProvider from "./providers/ProductHuntProvider";
 
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
@@ -77,6 +78,7 @@ export default function Layout({ children }: RootLayoutProps) {
             <ThemeProvider>
               <AuthProvider>
                 <TopLoaderProvider />
+                <ProductHuntProvider />
                 {children}
                 <SpeedInsights />
                 <Analytics />
