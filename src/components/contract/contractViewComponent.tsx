@@ -222,3 +222,5 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     </Dialog>
   );
 };
+
+export default ContractViewComponent;
