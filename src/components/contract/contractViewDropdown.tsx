@@ -31,7 +31,7 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
 }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="!outline-none">
+      <DropdownMenuTrigger className="!outline-none p-2 md:p-0">
         <HiDotsVertical className="h-5 w-5 hover:cursor-pointer rounded-full" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn("w-fit bg-card", className)}>
