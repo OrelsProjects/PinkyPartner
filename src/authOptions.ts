@@ -284,6 +284,11 @@ export const authOptions: AuthOptions = {
     },
     async signIn(session: any) {
       try {
+        loggerServer.info("Sign in", session.user.id, {
+          data: {
+            session: JSON.stringify(session),
+          },
+        });
         let additionalUserData = {};
         let userInDB = await prisma.appUser.findFirst({
           where: {
