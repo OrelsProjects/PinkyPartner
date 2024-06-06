@@ -202,6 +202,9 @@ export const authOptions: AuthOptions = {
       token: JWT;
       user: AdapterUser;
     }) {
+      loggerServer.info("Session", session.user.userId, {
+        data: { session: JSON.stringify(session) },
+      });
       let userInDB = await prisma.appUser.findFirst({
         where: {
           userId: token.sub,
