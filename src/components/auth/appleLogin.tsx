@@ -45,19 +45,14 @@ export default function AppleLogin({
     >
       {loading ? (
         <Loading className="w-7 h-7" />
-      ) : showThanks ? (
-        <motion.div
-          animate={{ opacity: 1 }}
-          initial={{ opacity: 0 }}
-          exit={{ opacity: 0 }}
-        >
-          <h1>We got your request :)</h1>
-        </motion.div>
       ) : (
-        <>
+        <div
+          className={`w-full h-12 flex flex-row gap-2 bg-background dark:bg-card-foreground dark:text-card justify-center items-center rounded-lg hover:cursor-pointer ${className}`}
+          onClick={handleAppleLogin}
+        >
           <FaApple className="w-7 h-7" />
-          <h1>Request apple sign up</h1>
-        </>
+          <h1 className="uppercase">{signInTextPrefix} APPLE</h1>
+        </div>
       )}
     </div>
   );
