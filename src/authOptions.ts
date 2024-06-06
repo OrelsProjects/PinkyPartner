@@ -100,6 +100,11 @@ export const authOptions: AuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_ID as string,
       clientSecret: process.env.APPLE_SECRET as string,
+      authorization: {
+        params: {
+          redirect_uri: "https://pinkypartner.com/api/auth/callback/apple",
+        },
+      },
     }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
