@@ -72,6 +72,17 @@ const createNewUserContract = async (userId: string, contractId: string) => {
 };
 
 export const authOptions: AuthOptions = {
+  cookies: {
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string,
