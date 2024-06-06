@@ -98,7 +98,7 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET as string,
     }),
     AppleProvider({
-      clientId: process.env.APPLE_ID as string,
+      clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_SECRET as string,
       authorization: {
         params: {

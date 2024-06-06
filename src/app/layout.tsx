@@ -58,12 +58,6 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: RootLayoutProps) {
-  console.log(
-    "Apple details: ",
-    process.env.APPLE_ID,
-    process.env.APPLE_SECRET,
-  );
-
   return (
     <html lang="en" className="font-montserrat">
       <head>
