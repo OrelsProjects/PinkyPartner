@@ -100,6 +100,15 @@ export const authOptions: AuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+      async profile(profile, tokens) {
+        loggerServer.info("Apple profile", profile.sub, {
+          data: {
+            profile: JSON.stringify(profile),
+            tokens: JSON.stringify(tokens),
+          },
+        });
+        return profile;
+      },
       authorization: {
         params: {
           redirect_uri: "https://www.pinkypartner.com/api/auth/callback/apple",
