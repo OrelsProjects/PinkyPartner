@@ -101,13 +101,18 @@ export const authOptions: AuthOptions = {
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
       async profile(profile, tokens) {
-        loggerServer.info("Apple profile", profile.sub, {
+        await loggerServer.info("Apple profile", profile.sub, {
           data: {
             profile: JSON.stringify(profile),
             tokens: JSON.stringify(tokens),
           },
         });
-        return profile;
+        return {
+          id: profile.sub,
+          name: profile.name?.firstName || profile.name?.lastName,
+          email: profile.email,
+          image: profile.picture,
+        };
       },
       authorization: {
         params: {
