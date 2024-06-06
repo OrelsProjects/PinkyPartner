@@ -28,17 +28,17 @@ const {
   exp = Math.ceil(Date.now() / 1000) + expires_in,
 } = args;
 
-// console.log({
-//   team_id,
-//   iss,
-//   private_key,
-//   client_id,
-//   sub,
-//   key_id,
-//   kid,
-//   expires_in,
-//   exp,
-// });
+console.log({
+  team_id,
+  iss,
+  private_key,
+  client_id,
+  sub,
+  key_id,
+  kid,
+  expires_in,
+  exp,
+});
 
 /**
  * How long is the secret valid in seconds.
