@@ -1,13 +1,12 @@
-
-import { SignJWT } from 'jose';
-import { createPrivateKey } from 'crypto';
-import dotenv from 'dotenv';
+import { SignJWT } from "jose";
+import { createPrivateKey } from "crypto";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const args = process.argv.slice(2).reduce((acc, arg, i) => {
   if (arg.match(/^--\w/)) {
-    const key = arg.replace(/^--/, '').toLowerCase();
+    const key = arg.replace(/^--/, "").toLowerCase();
     acc[key] = process.argv[i + 3];
   }
   return acc;
@@ -26,8 +25,20 @@ const {
   kid = key_id,
 
   expires_in = 86400 * 180,
-  exp = Math.ceil(Date.now() / 1000) + expires_in
+  exp = Math.ceil(Date.now() / 1000) + expires_in,
 } = args;
+
+// console.log({
+//   team_id,
+//   iss,
+//   private_key,
+//   client_id,
+//   sub,
+//   key_id,
+//   kid,
+//   expires_in,
+//   exp,
+// });
 
 /**
  * How long is the secret valid in seconds.
@@ -37,13 +48,13 @@ const expiresAt = Math.ceil(Date.now() / 1000) + expires_in;
 const expirationTime = exp ?? expiresAt;
 
 const secret = await new SignJWT({})
-  .setAudience('https://appleid.apple.com')
+  .setAudience("https://appleid.apple.com")
   .setIssuer(iss)
   .setIssuedAt()
   .setExpirationTime(expirationTime)
   .setSubject(sub)
-  .setProtectedHeader({ alg: 'ES256', kid })
-  .sign(createPrivateKey(private_key.replace(/\\n/g, '\n')));
+  .setProtectedHeader({ alg: "ES256", kid })
+  .sign(createPrivateKey(private_key.replace(/\\n/g, "\n")));
 
 console.log(`
 Apple client secret generated. Valid until: ${new Date(expirationTime * 1000)}
