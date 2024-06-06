@@ -31,9 +31,7 @@ const useAuth = () => {
 
   const signInWithApple = useCallback(async () => {
     try {
-      await signIn("apple", {
-        callbackUrl: "https://pinkypartner.com",
-      });
+      await signIn("apple");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");
