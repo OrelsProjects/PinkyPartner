@@ -16,6 +16,8 @@ import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
 
+console.log("Apple details: ", process.env.APPLE_ID, process.env.APPLE_SECRET);
+
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
   const contractId = cookies().get("contractId")?.value;
