@@ -47,7 +47,7 @@ export default function AppleLogin({
         <Loading className="w-7 h-7" />
       ) : (
         <div
-          className={`w-full h-12 flex flex-row gap-2 bg-background dark:bg-card-foreground dark:text-card justify-center items-center rounded-lg hover:cursor-pointer ${className}`}
+          className={`w-full h-12 flex flex-row gap-2 justify-center items-center rounded-lg hover:cursor-pointer`}
           onClick={handleAppleLogin}
         >
           <FaApple className="w-7 h-7" />

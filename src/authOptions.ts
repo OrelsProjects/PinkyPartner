@@ -16,8 +16,6 @@ import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
 
-console.log("Apple details: ", process.env.APPLE_ID, process.env.APPLE_SECRET);
-
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
   const contractId = cookies().get("contractId")?.value;
@@ -74,13 +72,21 @@ const createNewUserContract = async (userId: string, contractId: string) => {
 };
 
 export const authOptions: AuthOptions = {
+  cookies: {
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET as string,
-      httpOptions: {
-        timeout: 40000,
-      },
     }),
     AppleProvider({
       clientId: process.env.APPLE_ID as string,

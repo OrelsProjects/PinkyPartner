@@ -6,6 +6,7 @@ import { initEventTracker } from "../../eventTracker";
 import { initLogger } from "../../logger";
 
 const SessionWrapper = ({ children }: { children: React.ReactNode }) => {
+  
   useEffect(() => {
     initLogger();
     initEventTracker();
