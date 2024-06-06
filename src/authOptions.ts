@@ -203,7 +203,11 @@ export const authOptions: AuthOptions = {
       user: AdapterUser;
     }) {
       loggerServer.info("Session", session.user.userId, {
-        data: { session: JSON.stringify(session) },
+        data: {
+          session: JSON.stringify(session),
+          token: JSON.stringify(token),
+          user: JSON.stringify(user),
+        },
       });
       let userInDB = await prisma.appUser.findFirst({
         where: {
