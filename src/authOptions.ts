@@ -102,7 +102,7 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.APPLE_SECRET as string,
       authorization: {
         params: {
-          redirect_uri: "https://pinkypartner.com/api/auth/callback/apple",
+          redirect_uri: "https://www.pinkypartner.com/api/auth/callback/apple",
         },
       },
     }),
