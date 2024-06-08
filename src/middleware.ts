@@ -1,5 +1,6 @@
 import { ReferralOptions } from "global";
 import { NextRequest, NextResponse } from "next/server";
+import loggerServer from "./loggerServer";
 
 const getReferralOptions = (req: NextRequest): ReferralOptions => {
   const { searchParams } = req.nextUrl;
@@ -14,6 +15,12 @@ const getReferralOptions = (req: NextRequest): ReferralOptions => {
 };
 
 export async function middleware(req: NextRequest) {
+  loggerServer.info("route: ", "system", {
+    data: {
+      href: req.nextUrl.href,
+      pathname: req.nextUrl.pathname,
+    },
+  });
   const { referralCode, contractId } = getReferralOptions(req);
 
   if (referralCode || contractId) {
