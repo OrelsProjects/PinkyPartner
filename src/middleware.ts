@@ -15,30 +15,12 @@ const getReferralOptions = (req: NextRequest): ReferralOptions => {
 };
 
 export async function middleware(req: NextRequest) {
-  await loggerMiddleware(req);
   await registerMiddleware(req);
 
   return NextResponse.next();
 }
 
-async function loggerMiddleware(req: NextRequest) {
-  loggerServer.info("route: ", "system", {
-    data: {
-      href: req.nextUrl.href,
-      pathname: req.nextUrl.pathname,
-      body: req.body,
-    },
-  });
-}
-
 async function registerMiddleware(req: NextRequest) {
-  // if the path is /register or /register/*, we want to run this middleware
-  const registerPathRegex = /^\/register(?:\/.*)?$/;
-  const match = registerPathRegex.exec(req.nextUrl.pathname);
-  if (!match) {
-    return;
-  }
-
   const { referralCode, contractId } = getReferralOptions(req);
 
   if (referralCode || contractId) {
@@ -65,9 +47,9 @@ async function registerMiddleware(req: NextRequest) {
   }
 }
 
-// // match /register path and if it has params, also match
-// export const config = {
-//   matcher: "/register/:path*", // Matches /register and any subpaths
-// };
+// match /register path and if it has params, also match
+export const config = {
+  matcher: "/register/:path*", // Matches /register and any subpaths
+};
 
 export { default } from "next-auth/middleware";

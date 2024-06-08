@@ -65,7 +65,7 @@ export default function DataProvider({
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [state, isDataFetched]);
 
   return children;
 }
