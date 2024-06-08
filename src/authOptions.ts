@@ -16,6 +16,13 @@ import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
 
+const getName = (name?: string, email?: string) => {
+  if (name) {
+    return name;
+  }
+  return email?.split("@")?.[0] || "";
+};
+
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
   const contractId = cookies().get("contractId")?.value;
@@ -100,20 +107,6 @@ export const authOptions: AuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
-      async profile(profile, tokens) {
-        await loggerServer.info("Apple profile", profile.sub, {
-          data: {
-            profile: JSON.stringify(profile),
-            tokens: JSON.stringify(tokens),
-          },
-        });
-        return {
-          id: profile.sub,
-          name: profile.name?.firstName || profile.name?.lastName,
-          email: profile.email,
-          image: profile.picture,
-        };
-      },
       authorization: {
         params: {
           redirect_uri: "https://www.pinkypartner.com/api/auth/callback/apple",
@@ -163,7 +156,10 @@ export const authOptions: AuthOptions = {
           try {
             const newUser = await prisma.appUser.create({
               data: {
-                displayName: credentials.displayName,
+                displayName: getName(
+                  credentials.displayName,
+                  credentials.email,
+                ),
                 email: credentials.email,
                 password: hashedPassword,
                 userId: uuidv4(),
@@ -320,7 +316,7 @@ export const authOptions: AuthOptions = {
               userId: session.user.id,
               email: session.user.email || "",
               photoURL: session.user.image || "",
-              displayName: session.user.name || "",
+              displayName: getName(session.user.name, session.user.email),
               meta: {
                 create: {
                   referredBy: referralOptions.referralCode,
