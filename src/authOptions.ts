@@ -20,6 +20,10 @@ const getName = (name?: string, email?: string) => {
   if (name) {
     return name;
   }
+  // if it's a private apple email, we can't get the name, then we set a default name: RandomPinky[0-9]{4}
+  if (email?.includes("privaterelay.appleid.com")) {
+    return "RandomPinky" + Math.floor(Math.random() * 10000);
+  }
   return email?.split("@")?.[0] || "";
 };
 
@@ -229,7 +233,7 @@ export const authOptions: AuthOptions = {
         },
       });
       if (session?.user) {
-        if (session?.user.image !== userInDB?.photoURL) {
+        if (session?.user.image && session.user.image !== userInDB?.photoURL) {
           await prisma.appUser.update({
             where: {
               userId: token.sub,
