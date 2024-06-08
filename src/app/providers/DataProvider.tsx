@@ -14,6 +14,7 @@ export default function DataProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { state } = useAppSelector(state => state.auth);
   const { isDataFetched } = useAppSelector(state => state.auth);
   const { setDataFetched } = useAuth();
   const {
@@ -27,17 +28,17 @@ export default function DataProvider({
 
   const fetchUserData = async () => {
     try {
+      if (state !== "authenticated") return;
       if (isDataFetched) return;
       if (isFetchingData.current) return;
       isFetchingData.current = true;
       setLoadingDataContracts(true);
 
       // Making both API requests in parallel
-      const [userDataResponse, _] =
-        await Promise.allSettled([
-          axios.get<UserData>("/api/user/data"),
-          fetchNextUpObligations(),
-        ]);
+      const [userDataResponse, _] = await Promise.allSettled([
+        axios.get<UserData>("/api/user/data"),
+        fetchNextUpObligations(),
+      ]);
 
       const userData =
         userDataResponse.status === "fulfilled"

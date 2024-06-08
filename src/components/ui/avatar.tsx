@@ -33,11 +33,17 @@ export const UserAvatar = ({
   const [error, setError] = React.useState(false);
 
   const userInitials = React.useMemo(() => {
-    const firstLetter = displayName?.[0];
-    const secondLetter =
-      displayName?.split(" ")[1]?.[0] || displayName?.[1] || "";
+    const firstWord = displayName?.split(" ")?.[0];
+    const secondWord = displayName?.split(" ")?.[1];
+
+    if (!firstWord) return null;
+
+    const firstLetter = firstWord[0];
+    const secondLetter = secondWord?.[0] || firstWord[1] || "";
+
     if (!firstLetter && !secondLetter) return null;
-    return `${firstLetter}${secondLetter}`;
+
+    return `${firstLetter}${secondLetter || ""}`;
   }, [displayName]);
 
   return (
@@ -63,9 +69,7 @@ export const UserAvatar = ({
                 )}
               />
             ) : (
-              <AvatarFallback
-                id={`avatar-fallback-${displayName}`}
-              >
+              <AvatarFallback id={`avatar-fallback-${displayName}`}>
                 <p className="p-4">{userInitials || "An"}</p>
               </AvatarFallback>
             )}
