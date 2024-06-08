@@ -111,8 +111,50 @@ export const authOptions: AuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+      async profile(profile, tokens) {
+        // Here's the data that we'll get from Apple, using the response_mode: "form_post".
+        const data = {
+          iss: profile.iss,
+          aud: profile.aud,
+          exp: profile.exp,
+          iat: profile.iat,
+          sub: profile.sub,
+          at_hash: profile.at_hash,
+          email: profile.email,
+          email_verified: profile.email_verified,
+          is_private_email: profile.is_private_email,
+          auth_time: profile.auth_time,
+          nonce_supported: profile.nonce_supported,
+          nonce: profile.nonce,
+          name: profile.name,
+          picture: profile.picture,
+          emailName: profile.emailName,
+          emailVerified: profile.emailVerified,
+          isPrivateEmail: profile.isPrivateEmail,
+          authTime: profile.authTime,
+          nonceSupported: profile.nonceSupported,
+        };
+
+        loggerServer.info("Apple profile", profile.sub, {
+          data: {
+            profile: JSON.stringify(profile),
+            tokens: JSON.stringify(tokens),
+            data: JSON.stringify(data),
+          },
+        });
+
+        return {
+          id: profile.sub,
+          name: profile.name?.firstName || profile.name?.lastName,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
       authorization: {
         params: {
+          response_mode: "form_post", // this means that the response will be sent as a form post instead of a JSON response, so in order to get the user data we need to parse the body. We'll do it in the profile function
+          // include in scope the email, first and last name
+          scope: "name email",
           redirect_uri: "https://www.pinkypartner.com/api/auth/callback/apple",
         },
       },
