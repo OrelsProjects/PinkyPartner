@@ -49,7 +49,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </Button>
       </div>
       <motion.div
-        className="h-fit w-full grid grid-cols-[repeat(var(--contracts-in-row-mobile),minmax(0,1fr))] md:grid-cols-[repeat(var(--contracts-in-row),minmax(0,1fr))] gap-8 auto-rows-auto overflow-auto pb-2"
+        className="h-fit w-full grid grid-cols-[repeat(var(--contracts-in-row-mobile),minmax(0,1fr))] md:grid-cols-[repeat(var(--contracts-in-row),minmax(0,1fr))] gap-8 auto-rows-auto overflow-y-auto overflow-x-clip pb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

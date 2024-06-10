@@ -30,7 +30,7 @@ export const ObligationComponentLoading: React.FC<{ className?: string }> = ({
   className,
 }) => (
   <div
-    className={`rounded-lg h-16 w-full  md:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+    className={`rounded-lg h-16 w-full  md:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 shadow-md ${className}
     shadow-md
   `}
   >
@@ -80,7 +80,7 @@ const ObligationComponent: React.FC<ObligationProps> = ({
 
   return (
     <div
-      className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2 ${className}
+      className={`rounded-lg h-16 w-full md:w-[20.5rem] lg:w-[23.5rem] bg-card flex flex-row justify-between items-start gap-3 p-2  shadow-md  ${className}
       shadow-sm hover:cursor-pointer hover:shadow-md
       `}
       onClick={() => onClick?.(obligation)}

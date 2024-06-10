@@ -129,7 +129,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
             contract={contract}
             referralCode={user?.meta?.referralCode}
             buttonText="Invite"
-            variant="default"
+            variant="secondary"
             onClose={() => setShowInvite(false)}
             open={showInvite}
           />

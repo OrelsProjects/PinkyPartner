@@ -178,10 +178,6 @@ export default function useOnboarding() {
     }
   }, [pathname, isMobile]);
 
-  useEffect(() => {
-    console.log("onboardingState", onboardingState);
-  }, [onboardingState]);
-
   const setOnboardingViewed = async (updateUser = true) => {
     setCurrentStage("done");
     localStorage.setItem("onboardingViewed", "true");

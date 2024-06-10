@@ -178,11 +178,7 @@ const NotificationsProvider = () => {
       now - lastShownNewObligationsNotification.current;
     return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
   };
-  console.log(
-    "showRequestPermissionDialog",
-    showRequestPermissionDialog,
-    state,
-  );
+  
   return (
     <>
       <RequestPermissionDialog

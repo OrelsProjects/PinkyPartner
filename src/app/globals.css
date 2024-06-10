@@ -9,17 +9,16 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 36 42% 97%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 346.8 77.2% 49.8%;
+    --primary: 142.1 63% 49%;
     --primary-foreground: 355.7 100% 97.3%;
-    --primary-lighter: 347 73% 60%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 329 75% 56%;
+    --secondary-foreground: 309 9% 90.37%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
     --accent: 240 4.8% 95.9%;
@@ -28,24 +27,23 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 346.8 77.2% 49.8%;
+    --ring: 142.1 76.2% 36.3%;
     --radius: 0.75rem;
 
+    --primary-lighter: 142 62% 59%;
     --contracts-in-row: 2;
     --contracts-in-row-mobile: 1;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
+    --background: 220 15% 13%;
     --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
+    --card: 220 17% 18%;
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
-    --primary: 346.8 77.2% 49.8%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    /* --primary: 329 75% 56%;
+    --primary-foreground: 144.9 80.4% 10%; */
     --muted: 0 0% 15%;
     --muted-foreground: 240 5% 64.9%;
     --accent: 12 6.5% 15.1%;
@@ -54,7 +52,7 @@
     --destructive-foreground: 0 85.7% 97.3%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 346.8 77.2% 49.8%;
+    --ring: 142.4 71.8% 29.2%;
   }
 }
 
@@ -89,6 +87,7 @@
     background-repeat: no-repeat;
     background-size: 200% 100%;
   }
+
   .shimmer-wrapper-dark-primary {
     position: absolute;
     top: 0;
@@ -160,6 +159,10 @@
   }
   .shimmer-animation-primary {
     @apply shimmer-wrapper-primary dark:shimmer-wrapper-dark-primary;
+  }
+
+  .notification-shadow {
+    box-shadow: 0 0 7px 0px #00000073;
   }
 }
 

@@ -9,6 +9,7 @@ interface ObligationCheckboxProps {
   day: string;
   index: number;
   dummy?: boolean; // For onboarding
+  disabled?: boolean;
   onCompletedChangeDummy?: (isCompleted: boolean) => void;
   loading?: boolean;
   isCompleted?: boolean;
@@ -20,11 +21,12 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   index,
   dummy,
   loading,
+  disabled,
   isCompleted,
   onCompletedChange,
   onCompletedChangeDummy,
 }) => {
-  const { user } = useAppSelector(selectAuth);
+  const { user, state } = useAppSelector(selectAuth);
   const [checked, setChecked] = React.useState(false);
   const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
@@ -34,7 +36,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   }, []);
 
   const canPlaySound = useMemo(() => {
-    return user?.settings.soundEffects;
+    return user?.settings.soundEffects || state !== "authenticated";
   }, [user]);
 
   useEffect(() => {
@@ -72,6 +74,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
             setShouldAnimate(true);
           });
         } else {
+          setShouldAnimate(true);
           return;
         }
       }
@@ -84,6 +87,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         className="w-full h-full self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary z-20"
         checked={dummy ? checked : isCompleted}
         onCheckedChange={(checked: boolean) => {
+          if (disabled) return;
           if (dummy) {
             setChecked(checked);
             onCompletedChangeDummy?.(checked);

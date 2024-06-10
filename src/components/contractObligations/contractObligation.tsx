@@ -33,7 +33,7 @@ const UserIndicator = ({
       : "Waiting"
     : "Not signed";
   return (
-    <div className="w-16ו flex flex-col justify-center items-center gap-0.5">
+    <div className="w-16ו flex flex-col justify-center items-center gap-0.5 transition-all">
       <UserAvatar
         displayName={displayName}
         photoURL={photoURL}
@@ -52,6 +52,124 @@ const UserIndicator = ({
       >
         {text}
       </span>
+    </div>
+  );
+};
+
+export const ObligationBox = ({
+  day,
+  dummy,
+  index,
+  title,
+  loading,
+  disabled,
+  className,
+  isCompleted,
+  partnerDetails,
+  isNewObligation,
+  handleCompleteObligation,
+}: {
+  day: string;
+  index: number;
+  title: string;
+  dummy?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+  isCompleted: boolean;
+  isNewObligation?: boolean;
+  partnerDetails?: {
+    isPartnerSigned?: boolean;
+    photoURL?: string | null;
+    displayName?: string | null;
+    isPartnerObligationCompleted?: boolean;
+  };
+  handleCompleteObligation: (day: string, completed: boolean) => void;
+}) => {
+  const { user } = useAppSelector(state => state.auth);
+  return (
+    <div
+      className={cn(
+        "rounded-lg h-16 w-full bg-card p-px shadow-sm duration-500 relative transition-all",
+        {
+          "bg-card/50": isCompleted,
+        },
+        className,
+      )}
+      key={`obligation-in-contract-${day}`}
+    >
+      <div
+        className={cn(
+          "w-full h-full flex flex-row justify-between items-start gap-3  bg-card shadow-md rounded-lg p-2",
+        )}
+      >
+        {isNewObligation && (
+          <NotificationBadge
+            className="h-2.5 w-2.5  absolute -top-1 left-0.5 bg-primary bg-red-500 text-xs font-semibold rounded-full"
+            count={1}
+          />
+        )}
+        <div className="self-center flex flex-row gap-2">
+          <ObligationCheckbox
+            day={day}
+            index={index}
+            disabled={disabled}
+            loading={loading}
+            isCompleted={isCompleted}
+            onCompletedChange={(day: string, checked: boolean) => {
+              handleCompleteObligation(day, checked);
+            }}
+            dummy={dummy}
+          />
+          <div
+            className={cn(
+              "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
+              {
+                "opacity-50 line-through": isCompleted,
+              },
+            )}
+          >
+            <div className="h-full flex flex-row gap-3 justify-center items-center">
+              <div
+                className={cn(
+                  "h-full text-card-foreground line-clamp-1 font-medium",
+                )}
+              >
+                <div className="flex flex-col gap-0.5 h-fit">
+                  <span
+                    className={cn("transition-all  duration-500", {
+                      "text-muted-foreground font-normal": isCompleted,
+                    })}
+                  >
+                    {title}
+                  </span>
+                  <span className="text-foreground text-sm font-thin">
+                    {day}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="self-center flex flex-row gap-3">
+          <UserIndicator
+            isSigned={true}
+            photoURL={user?.photoURL}
+            displayName={user?.displayName}
+            isObligationCompleted={isCompleted}
+          />
+          {partnerDetails && (
+            <UserIndicator
+              isSigned={partnerDetails.isPartnerSigned}
+              photoURL={partnerDetails.photoURL}
+              displayName={partnerDetails.displayName}
+              isObligationCompleted={
+                partnerDetails.isPartnerObligationCompleted
+              }
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -192,88 +310,24 @@ const ObligationsComponent = ({
           <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
           {obligationsDays.map((day, index) => {
             return (
-              <div
-                className={cn(
-                  "rounded-lg h-16 w-full bg-card p-px shadow-sm duration-500 relative",
-                  {
-                    "bg-card/50": isObligationCompleted(day),
-                  },
-                )}
+              <ObligationBox
                 key={`obligation-in-contract-${day}`}
-              >
-                <div
-                  className={cn(
-                    "w-full h-full flex flex-row justify-between items-start gap-3  bg-card rounded-lg p-2",
-                  )}
-                >
-                  {isNewObligation(day) && (
-                    <NotificationBadge
-                      className="h-2.5 w-2.5  absolute -top-1 left-0.5 bg-primary bg-red-500 text-xs font-semibold rounded-full"
-                      count={1}
-                    />
-                  )}
-                  <div className="self-center flex flex-row gap-6">
-                    <ObligationCheckbox
-                      day={day}
-                      index={index}
-                      loading={loadingObligationDays[day]}
-                      isCompleted={isObligationCompleted(day)}
-                      onCompletedChange={(day: string, checked: boolean) => {
-                        handleCompleteObligation(day, checked);
-                      }}
-                      dummy={state !== "authenticated"}
-                    />
-                    <div
-                      className={cn(
-                        "h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center",
-                        {
-                          "opacity-50 line-through": isObligationCompleted(day),
-                        },
-                      )}
-                    >
-                      <div className="h-full flex flex-row gap-3 justify-center items-center">
-                        <div
-                          className={cn(
-                            "h-full text-card-foreground line-clamp-1 font-medium",
-                          )}
-                        >
-                          <div className="flex flex-col gap-0.5 h-fit">
-                            <span
-                              className={cn("transition-all  duration-500", {
-                                "text-muted-foreground font-normal":
-                                  isObligationCompleted(day),
-                              })}
-                            >
-                              {userContractObligation.obligation.title}
-                            </span>
-                            <span className="text-foreground text-sm font-thin">
-                              {day}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="self-center flex flex-row gap-3">
-                    <UserIndicator
-                      isSigned={true}
-                      photoURL={user?.photoURL}
-                      displayName={user?.displayName}
-                      isObligationCompleted={isObligationCompleted(day)}
-                    />
-                    {partnerDetails && (
-                      <UserIndicator
-                        isSigned={isPartnerSigned}
-                        photoURL={partnerDetails?.photoURL}
-                        displayName={partnerDetails?.displayName}
-                        isObligationCompleted={isPartnerObligationCompleted(
-                          day,
-                        )}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
+                day={day}
+                index={index}
+                isCompleted={isObligationCompleted(day)}
+                loading={loadingObligationDays[day]}
+                title={userContractObligation.obligation.title}
+                isNewObligation={isNewObligation(day)}
+                partnerDetails={{
+                  isPartnerSigned,
+                  photoURL: partnerDetails?.photoURL,
+                  displayName: partnerDetails?.displayName,
+                  isPartnerObligationCompleted:
+                    isPartnerObligationCompleted(day),
+                }}
+                handleCompleteObligation={handleCompleteObligation}
+                dummy={state !== "authenticated"}
+              />
             );
           })}
         </div>

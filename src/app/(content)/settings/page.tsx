@@ -37,10 +37,6 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
     canUseNotifications() && Notification.permission === "granted";
 
   useEffect(() => {
-    console.log(settings);
-  }, [settings]);
-
-  useEffect(() => {
     if (user) {
       setSettings(user?.settings);
     }

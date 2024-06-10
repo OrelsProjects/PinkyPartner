@@ -4,6 +4,7 @@ import firebase from "firebase/compat/app";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { Messaging, getMessaging, getToken } from "firebase/messaging";
 import { canUseNotifications } from "./src/lib/utils/notificationUtils";
+import { Logger } from "./src/logger";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,14 +27,22 @@ if (typeof window !== "undefined") {
 if (app) {
   if (canUseNotifications()) {
     if (Notification.permission === "granted") {
-      messaging = getMessaging(app);
+      try {
+        messaging = getMessaging(app);
+      } catch (error: any) {
+        Logger.error("An error occurred while initializing messaging. ", error);
+      }
     }
   }
 }
 
 const initMessaging = () => {
   if (!app || messaging) return;
-  messaging = getMessaging(app);
+  try {
+    messaging = getMessaging(app);
+  } catch (error: any) {
+    Logger.error("An error occurred while initializing messaging. ", error);
+  }
 };
 
 const getUserToken = async () => {

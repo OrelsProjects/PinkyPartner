@@ -14,7 +14,10 @@ const AuthHeader = () => {
         className="md:text-7xl text-[2.5rem] lg:text-7xl font-bold text-center relative z-20 "
         href={"/"}
       >
-        PinkyPartner
+        <span className="">P</span>
+        <span>inky</span>
+        <span className="">P</span>
+        <span>artner</span>
       </Link>
       <div className="w-[15rem] lg:w-[40rem] h-24 lg:h-40 relative">
         {/* Gradients */}

@@ -61,7 +61,7 @@ export const TextGenerateEffect = ({
 
   return (
     <div className={cn("font-bold", className)}>
-      <motion.div className="w-full text-2xl md:text-4xl lg:text-5xl text-start leading-relaxed lg:leading-snug mx-auto">
+      <motion.div className="w-full text-start leading-relaxed lg:leading-snug mx-auto">
         {show && renderWords()}
       </motion.div>
     </div>

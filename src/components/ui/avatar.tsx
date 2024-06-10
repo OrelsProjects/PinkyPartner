@@ -56,23 +56,18 @@ export const UserAvatar = ({
               className,
             )}
           >
-            {photoURL && !error ? (
-              <Image
-                id={`avatar-${displayName}`}
-                src={photoURL}
-                alt={displayName ?? "User photo"}
-                onError={() => setError(true)}
-                fill
-                className={cn(
-                  "relative h-full w-full rounded-full",
-                  imageClassName,
-                )}
-              />
-            ) : (
-              <AvatarFallback id={`avatar-fallback-${displayName}`}>
-                <p className="p-4">{userInitials || "An"}</p>
-              </AvatarFallback>
-            )}
+            <Image
+              id={`avatar-${displayName}`}
+              src={photoURL || "/PP-round.png"}
+              alt={displayName ?? "User photo"}
+              onError={() => setError(true)}
+              fill
+              className={cn(
+                "relative h-full w-full rounded-full brightness-90",
+                imageClassName,
+              )}
+            />
+
             {badge && (
               <div
                 className={cn(
