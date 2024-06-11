@@ -3,6 +3,7 @@ import { ObligationBox } from "./contractObligation";
 import DeviceMockup from "../ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { FaArrowRightLong } from "react-icons/fa6";
 
 const OREL_IMAGE_URL =
   "https://lh3.googleusercontent.com/a/ACg8ocJuQcn9RGs6JLIUTa4TJzH4CQKVQatTZE4zIlMqxe9ec8wlXJttvA=s96-c";
@@ -137,10 +138,6 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   const [disabled, setDisabled] = useState<boolean>(false);
   const [completed, setCompleted] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log(notifications);
-  }, [notifications]);
-
   const handleCompleteObligation = (day: string, completed: boolean): void => {
     setCompleted(completed);
     setDisabled(true);
@@ -184,24 +181,47 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col lg:flex-col-reverse justify-start gap-8">
-      <ObligationBox
-        index={0}
-        title={title}
-        day={currentDay}
-        className="!max-w-96 lg:!max-w-[27rem] !w-11/12 lg:!w-full self-center"
-        disabled={disabled}
-        isCompleted={completed}
-        partnerDetails={{
-          photoURL: OREL_IMAGE_URL,
-          displayName: "Random Pinky",
-          isPartnerSigned: true,
-          isPartnerObligationCompleted: false,
-        }}
-        handleCompleteObligation={(day: string, completed: boolean): void => {
-          handleCompleteObligation(day, completed);
-        }}
-      />
+    <div className="h-full w-full flex flex-col-reverse justify-start gap-14">
+      <div className="flex flex-row gap-1 relative justify-center items-center">
+        <div className="w-full lg:w-fit absolute -top-[2rem] left-6 lg:top-5 lg:-left-[6.25rem] flex flex-row-reverse lg:flex-row justify-end lg:justify-start gap-2">
+          <motion.span
+            // shake animation (rotate left and right)
+            animate={{
+              rotate: [
+                0, 10, 0, -10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0,
+              ],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatDelay: 4, // Waits for 2 seconds before repeating
+              ease: "linear",
+            }}
+          >
+            Try me
+          </motion.span>
+          <div>
+            <FaArrowRightLong className="text-2xl text-primary rotate-90 lg:rotate-0" />
+          </div>
+        </div>
+        <ObligationBox
+          index={0}
+          title={title}
+          day={currentDay}
+          className="!max-w-96 lg:!max-w-[27rem] !w-11/12 lg:!w-full self-center"
+          disabled={disabled}
+          isCompleted={completed}
+          partnerDetails={{
+            photoURL: OREL_IMAGE_URL,
+            displayName: "Random Pinky",
+            isPartnerSigned: true,
+            isPartnerObligationCompleted: false,
+          }}
+          handleCompleteObligation={(day: string, completed: boolean): void => {
+            handleCompleteObligation(day, completed);
+          }}
+        />
+      </div>
       <Device notifications={notifications} />
     </div>
   );

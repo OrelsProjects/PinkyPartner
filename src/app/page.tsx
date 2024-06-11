@@ -1,33 +1,59 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { motion } from "framer-motion";
+import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import Link from "next/link";
 import { useAppDispatch } from "../lib/hooks/redux";
 import { setUser } from "../lib/features/auth/authSlice";
 import useOnboarding from "../lib/hooks/useOnboarding";
 import DummyObligationBox from "../components/contractObligations/dummyObligationBox";
-import { FaArrowRightLong, FaR } from "react-icons/fa6";
+import { FaArrowRightLong } from "react-icons/fa6";
 
-const Mission = () => {
+const MissionUpperText = () => (
+  <>
+    <p>Loneliness and burn out are an integral part of being a solopreneur.</p>
+    <p>But they don&apos;t have to be.</p>
+    <br />
+    <p>By changing your habits and having someone to share it with,</p>
+    <p>you can avoid both.</p>
+    <br />
+    <p>
+      I have experienced the effect of having someone to build new habits with
+      first hand. And it felt great.
+    </p>
+    <br />
+    <p> Now, I want to help you experience the same.</p>
+  </>
+);
+
+const MissionFull = ({ onBack }: { onBack: () => void }) => (
+  <motion.div
+    // Slide in from the right
+    // Slide out to the right
+    id="mission-full"
+    initial={{ x: "100%" }}
+    animate={{ x: 0 }}
+    exit={{ x: "100%" }}
+    transition={{ duration: 0.35, type: "spring" }}
+    className="w-screen h-screen absolute inset-0 bg-red-400 z-50"
+  >
+    <div
+      className="p-2 flex flex-row gap-1 justify-center items-center rounded-full lg:hover:bg-slate-400/40 absolute top-1 left-1"
+      onClick={onBack}
+    >
+      {/* reversed arrow */}
+      <FaArrowRightLong className="transform rotate-180 text-xl" />
+      Back
+    </div>
+  </motion.div>
+);
+
+const Mission = ({ onExpand }: { onExpand: () => void }) => {
   const [expandMission, setExpandMission] = React.useState(false);
-
-  useEffect(() => {
-    // if expandMission is true, the height will be 1.5 times the original height
-    // if expandMission is false, the height will be the original height
-    // the transition duration is 0.5 seconds
-    // the easing function is a cubic bezier curve
-    // the height is set to 12rem when the component is mounted
-    console.log("expandMission", expandMission);
-  }, []);
 
   return (
     <motion.div
-      // if expandMission is true, the height will be 1.5 times the original height
-      // if expandMission is false, the height will be the original height
-      // the transition duration is 0.5 seconds
-      // the easing function is a cubic bezier curve
       animate={{
         height: expandMission ? "100vh" : "11.5rem",
       }}
@@ -46,7 +72,10 @@ const Mission = () => {
           type: "spring",
         }}
         className="text-xl font-bold flex flex-row justify-start items-center mb-2 lg:hover:cursor-pointer lg:hover:underline"
-        onClick={() => setExpandMission(!expandMission)}
+        onClick={() => {
+          setExpandMission(!expandMission);
+          onExpand();
+        }}
       >
         My mission
         <motion.div
@@ -60,23 +89,10 @@ const Mission = () => {
             type: "spring",
           }}
         >
-          <FaArrowRightLong />
+          <FaArrowRightLong className="text-foreground" />
         </motion.div>
       </motion.span>
-      <p>
-        Loneliness and burn out are an integral part of being a solopreneur.
-      </p>
-      <p>But they don&apos;t have to be.</p>
-      <br />
-      <p>By changing your habits and having someone to share it with,</p>
-      <p>you can avoid both.</p>
-      <br />
-      <p>
-        I have experienced the effect of having someone to build new habits with
-        first hand. And it felt great.
-      </p>
-      <br />
-      <p> Now, I want to help you experience the same.</p>
+      <MissionUpperText />
     </motion.div>
   );
 };
@@ -121,7 +137,7 @@ const Header = ({
   </header>
 );
 
-const HeroSection = () => {
+const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
   return (
     <div className="h-fit w-full lg:w-fit flex justify-center items-center">
       <motion.div
@@ -164,41 +180,60 @@ const HeroSection = () => {
             </Link>
           </Button>
         </div>
-        <Mission />
+        <Mission onExpand={onExpandMission} />
       </motion.div>
     </div>
   );
 };
 
 export default function Home() {
+  const [expandMission, setExpandMission] = React.useState(false);
   const { isOnboardingCompleted } = useOnboarding();
   const dispatch = useAppDispatch();
   return (
     <div className="h-full w-full flex flex-col">
-      <div className="h-full w-full flex flex-col justify-center items-center gap-14 relative pb-10 overflow-auto">
-        <Header
-          onGetStarted={() => {
-            dispatch(
-              setUser({
-                state: "anonymous",
-                userId: "",
-                email: "",
-                settings: {
-                  showNotifications: false,
-                  soundEffects: true,
-                },
-              }),
-            );
-          }}
-          getStartedUrl={isOnboardingCompleted() ? "/register" : "/home"}
-        />
-        <div className="h-fit w-full flex flex-col lg:flex-row lg:justify-between max-w-6xl mx-auto px-4 gap-14">
-          <HeroSection />
-          <div className="h-fit w-full lg:w-fit justify-center items-center">
-            <DummyObligationBox />
+      {/* <AnimatePresence>
+        {expandMission && (
+          <MissionFull onBack={() => setExpandMission(false)} />
+        )}
+      </AnimatePresence> */}
+      <AnimatePresence>
+        (
+        <motion.div
+          id="home"
+          initial={{ x: 0 }}
+          animate={{ x: 0 }}
+          exit={{ x: "-100%" }}
+          transition={{ duration: 0.35, type: "spring" }}
+          className="h-full w-full flex flex-col justify-center items-center gap-14 relative pb-10 overflow-y-auto overflow-x-clip"
+        >
+          <Header
+            onGetStarted={() => {
+              dispatch(
+                setUser({
+                  state: "anonymous",
+                  userId: "",
+                  email: "",
+                  settings: {
+                    showNotifications: false,
+                    soundEffects: true,
+                  },
+                }),
+              );
+            }}
+            getStartedUrl={isOnboardingCompleted() ? "/register" : "/home"}
+          />
+          <div className="h-fit w-full flex flex-col lg:flex-row lg:justify-between max-w-6xl mx-auto px-4 gap-14">
+            <HeroSection
+              onExpandMission={() => setExpandMission(!expandMission)}
+            />
+            <div className="h-fit w-full flex lg:w-fit justify-center items-center">
+              <DummyObligationBox />
+            </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+        )
+      </AnimatePresence>
     </div>
   );
 }
