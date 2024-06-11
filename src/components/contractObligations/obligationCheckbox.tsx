@@ -37,7 +37,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
 
   const canPlaySound = useMemo(() => {
     return user?.settings.soundEffects || state !== "authenticated";
-  }, [user]);
+  }, [user, state]);
 
   useEffect(() => {
     if (!dummy && !onCompletedChange) {
@@ -73,9 +73,6 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
           audio.play().then(() => {
             setShouldAnimate(true);
           });
-        } else {
-          setShouldAnimate(true);
-          return;
         }
       }
     }
@@ -94,7 +91,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
           } else {
             onCompletedChange?.(day, checked);
           }
-          setShouldPlaySound(true);
+          setShouldPlaySound(checked);
         }}
         data-onboarding-id={index === 0 ? "complete-promise-checkbox" : ""}
         variant="default"
