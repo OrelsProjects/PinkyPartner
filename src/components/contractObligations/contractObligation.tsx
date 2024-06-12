@@ -65,6 +65,7 @@ export const ObligationBox = ({
   disabled,
   className,
   isCompleted,
+  userPhotoUrl,
   partnerDetails,
   isNewObligation,
   handleCompleteObligation,
@@ -84,6 +85,7 @@ export const ObligationBox = ({
     displayName?: string | null;
     isPartnerObligationCompleted?: boolean;
   };
+  userPhotoUrl?: string | null; // For landing page
   handleCompleteObligation: (day: string, completed: boolean) => void;
 }) => {
   const { user } = useAppSelector(state => state.auth);
@@ -154,7 +156,7 @@ export const ObligationBox = ({
         <div className="self-center flex flex-row gap-3">
           <UserIndicator
             isSigned={true}
-            photoURL={user?.photoURL}
+            photoURL={userPhotoUrl || user?.photoURL}
             displayName={user?.displayName}
             isObligationCompleted={isCompleted}
           />

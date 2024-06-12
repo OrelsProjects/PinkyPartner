@@ -7,12 +7,14 @@ import Link from "next/link";
 import { useAppDispatch } from "../lib/hooks/redux";
 import { setUser } from "../lib/features/auth/authSlice";
 import useOnboarding from "../lib/hooks/useOnboarding";
-import DummyObligationBox from "../components/landingPage/dummyObligationBox";
+import DummyObligationBoxMobile from "../components/landingPage/dummyObligationBoxMobile";
 import { FaArrowRightLong } from "react-icons/fa6";
 import Walkthrough from "../components/landingPage/walkthrough";
 import AvailableOn from "../components/landingPage/availableOn";
 import ShowContentContainer from "../components/landingPage/showContentContainer";
 import { cn } from "../lib/utils";
+import DummyObligationBox from "../components/landingPage/dummyObligationBox";
+import { isMobilePhone } from "../lib/utils/notificationUtils";
 
 const MissionUpperText = () => (
   <>
@@ -53,18 +55,27 @@ const MissionFull = ({ onBack }: { onBack: () => void }) => (
   </motion.div>
 );
 
-const Mission = ({ onExpand }: { onExpand: () => void }) => {
-  const [expandMission, setExpandMission] = React.useState(false);
+const Mission = ({
+  onExpand,
+  className,
+}: {
+  onExpand: () => void;
+  className?: string;
+}) => {
+  const [expandMission, setExpandMission] = React.useState(!isMobilePhone());
 
   return (
     <motion.div
       animate={{
-        height: expandMission ? "100vh" : "11.5rem",
+        height: expandMission ? "100vh" : "8.5rem",
       }}
       transition={{
         duration: 0.3,
       }}
-      className="max-w-xl min-h-[15rem] md:min-h-[11.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden"
+      className={cn(
+        "max-w-xl min-h-[8rem] md:min-h-[5.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden",
+        className,
+      )}
     >
       <motion.span
         // whileHover={{ translateX: 5 }}
@@ -152,21 +163,7 @@ const Header = ({
 const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
   return (
     <div className="h-fit w-full md:w-fit flex justify-center items-center">
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-        animate={{
-          opacity: 1,
-          y: [20, -5, 0],
-        }}
-        transition={{
-          duration: 0.5,
-          ease: [0.4, 0.0, 0.2, 1],
-        }}
-        className="w-full h-fit flex flex-col justify-center items-start gap-8 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug"
-      >
+      <ShowContentContainer className="w-full h-fit flex flex-col justify-center items-start gap-8 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug">
         <div className="w-full flex flex-col justify-center items-center md:justify-start md:items-start gap-1 tracking-tighter">
           <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-foreground/90">
             Build habits
@@ -192,8 +189,12 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
             </Link>
           </Button>
         </div>
-        <Mission onExpand={onExpandMission} />
-      </motion.div>
+        <Mission onExpand={onExpandMission} className="md:hidden" />
+      </ShowContentContainer>
+      <Mission
+        onExpand={onExpandMission}
+        className="hidden md:flex self-start"
+      />
     </div>
   );
 };
@@ -227,9 +228,10 @@ export default function Home() {
               <HeroSection
                 onExpandMission={() => setExpandMission(!expandMission)}
               />
-              <div className="h-fit w-full flex md:w-fit justify-center items-center">
-                <DummyObligationBox />
-              </div>
+            </div>
+            <div className="h-fit w-full flex justify-center items-center">
+              <DummyObligationBoxMobile />
+              <DummyObligationBox />
             </div>
             <Walkthrough />
             <Button

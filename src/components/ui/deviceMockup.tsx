@@ -1,14 +1,18 @@
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
+import { cn } from "../../lib/utils";
 
 export interface DeviceMockupProps {
+  ios15?: boolean;
+  className?: string;
   ownerPhotoUrl?: string;
   children?: React.ReactNode;
 }
 
 const DeviceMockup: React.FC<DeviceMockupProps> = ({
+  ios15,
   children,
+  className,
   ownerPhotoUrl,
 }) => {
   const [time, setTime] = React.useState<string>("");
@@ -30,7 +34,12 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
   }, []);
 
   return (
-    <div className="relative  rounded-[2.5rem] h-[250px] w-10/12 lg:px-0 lg:h-[600px] lg:w-[300px] shadow-xl overflow-hide">
+    <div
+      className={cn(
+        "relative rounded-[2.5rem] h-[250px] w-10/12 md:px-0 md:h-[700px] md:w-[350px] shadow-xl overflow-hide",
+        className,
+      )}
+    >
       {ownerPhotoUrl && (
         <Image
           src={ownerPhotoUrl}
@@ -58,7 +67,7 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
         id="lock"
         className="h-[64px] w-[3px] bg-gray-900 absolute -end-[4px] top-[78px] lg:top-[142px] rounded-e-lg"
       />
-      <div className="h-full w-full relative flex flex-col items-center justify-start gap-10 border-gray-800 dark:border-gray-800 bg-gray-900 border-[14px] rounded-[2.5rem] overflow-clip pt-10">
+      <div className="h-full w-full relative flex flex-col items-center justify-start gap-10 border-gray-800 dark:border-gray-800 bg-gray-900 border-[14px] rounded-[2.5rem] overflow-clip md:overflow-visible pt-10">
         <div className="w-full h-5 text-7xl font-medium text-white/70 text-center rounded-t-[1rem] z-10">
           {time}
         </div>
@@ -66,7 +75,7 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
           {children}
         </div>
         <Image
-          src="/iOS-17-wallpaper.webp"
+          src={ios15 ? "/iOS-15-wallpaper.jpeg" : "/iOS-17-wallpaper.webp"}
           alt="iOS wallpaper"
           fill
           layout="fill"
