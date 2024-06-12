@@ -9,10 +9,14 @@ import { setUser } from "../lib/features/auth/authSlice";
 import useOnboarding from "../lib/hooks/useOnboarding";
 import DummyObligationBox from "../components/contractObligations/dummyObligationBox";
 import { FaArrowRightLong } from "react-icons/fa6";
+import Walkthrough from "../components/landingPage/walkthrough";
+import AvailableOn from "../components/landingPage/availableOn";
+import ShowContentContainer from "../components/landingPage/showContentContainer";
+import { cn } from "../lib/utils";
 
 const MissionUpperText = () => (
   <>
-    <p>Loneliness and burn out are an integral part of being a solopreneur.</p>
+    <p>Loneliness and burnout are an integral part of being a solopreneur.</p>
     <p>But they don&apos;t have to be.</p>
     <br />
     <p>By changing your habits and having someone to share it with,</p>
@@ -39,7 +43,7 @@ const MissionFull = ({ onBack }: { onBack: () => void }) => (
     className="w-screen h-screen absolute inset-0 bg-red-400 z-50"
   >
     <div
-      className="p-2 flex flex-row gap-1 justify-center items-center rounded-full lg:hover:bg-slate-400/40 absolute top-1 left-1"
+      className="p-2 flex flex-row gap-1 justify-center items-center rounded-full md:hover:bg-slate-400/40 absolute top-1 left-1"
       onClick={onBack}
     >
       {/* reversed arrow */}
@@ -61,7 +65,7 @@ const Mission = ({ onExpand }: { onExpand: () => void }) => {
         duration: 0.8,
         type: "spring",
       }}
-      className="max-w-xl min-h-[15rem] lg:min-h-[11.5rem] max-h-[25rem] lg:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden"
+      className="max-w-xl min-h-[15rem] md:min-h-[11.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden"
     >
       <motion.span
         // whileHover={{ translateX: 5 }}
@@ -71,7 +75,12 @@ const Mission = ({ onExpand }: { onExpand: () => void }) => {
           bounce: 0.5,
           type: "spring",
         }}
-        className="text-xl font-bold flex flex-row justify-start items-center mb-2 lg:hover:cursor-pointer lg:hover:underline"
+        className={cn(
+          "text-xl font-bold flex flex-row justify-start items-center mb-2 text-foreground md:hover:cursor-pointer md:hover:underline transition-color",
+          {
+            "text-primary": expandMission,
+          },
+        )}
         onClick={() => {
           setExpandMission(!expandMission);
           onExpand();
@@ -89,7 +98,11 @@ const Mission = ({ onExpand }: { onExpand: () => void }) => {
             type: "spring",
           }}
         >
-          <FaArrowRightLong className="text-foreground" />
+          <FaArrowRightLong
+            className={cn("text-foreground transition-color", {
+              "text-primary": expandMission,
+            })}
+          />
         </motion.div>
       </motion.span>
       <MissionUpperText />
@@ -104,9 +117,9 @@ const Header = ({
   onGetStarted: () => void;
   getStartedUrl: string;
 }) => (
-  <header className="w-full h-20 flex flex-row justify-center items-center py-2 bg-card z-50">
-    <div className="w-full px-4 lg:px-0 lg:w-[863px] flex flex-row justify-between items-center">
-      <div className="text-3xl md:text-4xl font-medium text-foreground">
+  <header className="w-fit h-20 flex flex-row justify-center items-center p-2 md:p-6 rounded-full bg-card z-50 mt-4">
+    <div className="w-full px-2 md:px-0 flex flex-row gap-4 md:gap-28 items-center justify-center">
+      <div className="text-xl md:text-4xl font-medium text-foreground">
         <span className="">P</span>
         <span>inky</span>
         <span className="">P</span>
@@ -118,7 +131,7 @@ const Header = ({
           variant="outline"
           className="rounded-full h-12 bg-transparent"
         >
-          <Link href="/login" className="hidden lg:flex text-base md:text-lg ">
+          <Link href="/login" className="hidden md:flex text-base md:text-lg ">
             Login
           </Link>
         </Button>
@@ -128,7 +141,7 @@ const Header = ({
           className="bg-card"
           onClick={onGetStarted}
         >
-          <Link href={getStartedUrl} className="text-lg md:text-xl">
+          <Link href={getStartedUrl} className="text-base md:text-xl">
             Get Started
           </Link>
         </Button>
@@ -139,7 +152,7 @@ const Header = ({
 
 const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
   return (
-    <div className="h-fit w-full lg:w-fit flex justify-center items-center">
+    <div className="h-fit w-full md:w-fit flex justify-center items-center">
       <motion.div
         initial={{
           opacity: 0,
@@ -153,21 +166,21 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
           duration: 0.5,
           ease: [0.4, 0.0, 0.2, 1],
         }}
-        className="w-full h-fit flex flex-col justify-center items-start gap-14 lg:gap-10 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed lg:leading-snug"
+        className="w-full h-fit flex flex-col justify-center items-start gap-14 md:gap-10 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug"
       >
-        <div className="w-full flex flex-col justify-center items-center lg:justify-start lg:items-start gap-1 tracking-tighter">
-          <div className="text-[44px] leading-none lg:text-6xl font-extrabold tracking-tight text-foreground/90">
+        <div className="w-full flex flex-col justify-center items-center md:justify-start md:items-start gap-1 tracking-tighter">
+          <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-foreground/90">
             Build habits
           </div>
-          <div className="text-[44px] leading-none lg:text-6xl font-extrabold tracking-tight text-primary">
+          <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-primary">
             with a partner
           </div>
         </div>
-        <div className="w-full lg:w-fit text-center lg:text-start text-lg opacity-90 font-light lg:items-start">
+        <div className="w-full md:w-fit text-center md:text-start text-lg opacity-90 font-light md:items-start">
           Stop fighting procrastination alone. <br />
           Start building habits together.
         </div>
-        <div className="w-full lg:w-fit flex flex-col justify-center items-center lg:items-start text-foreground/80 text-lg text-center">
+        <div className="w-full md:w-fit flex flex-col justify-center items-center md:items-start text-foreground/80 text-lg text-center">
           <Button asChild className="text-lg py-6 px-12 text-white">
             <Link href="/register">Take my pinky!</Link>
           </Button>
@@ -192,21 +205,8 @@ export default function Home() {
   const dispatch = useAppDispatch();
   return (
     <div className="h-full w-full flex flex-col">
-      {/* <AnimatePresence>
-        {expandMission && (
-          <MissionFull onBack={() => setExpandMission(false)} />
-        )}
-      </AnimatePresence> */}
       <AnimatePresence>
-        (
-        <motion.div
-          id="home"
-          initial={{ x: 0 }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
-          transition={{ duration: 0.35, type: "spring" }}
-          className="h-full w-full flex flex-col justify-center items-center gap-14 relative pb-10 overflow-y-auto overflow-x-clip"
-        >
+        <ShowContentContainer className="h-full w-full flex flex-col justify-center items-center gap-14 relative pb-10 overflow-y-auto overflow-x-clip px-2 md:px-4">
           <Header
             onGetStarted={() => {
               dispatch(
@@ -223,16 +223,17 @@ export default function Home() {
             }}
             getStartedUrl={isOnboardingCompleted() ? "/register" : "/home"}
           />
-          <div className="h-fit w-full flex flex-col lg:flex-row lg:justify-between max-w-6xl mx-auto px-4 gap-14">
+          <div className="h-fit w-full flex flex-col md:flex-row md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-14">
             <HeroSection
               onExpandMission={() => setExpandMission(!expandMission)}
             />
-            <div className="h-fit w-full flex lg:w-fit justify-center items-center">
+            <div className="h-fit w-full flex md:w-fit justify-center items-center">
               <DummyObligationBox />
             </div>
           </div>
-        </motion.div>
-        )
+          <Walkthrough />
+          <AvailableOn />
+        </ShowContentContainer>
       </AnimatePresence>
     </div>
   );

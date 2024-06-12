@@ -45,19 +45,19 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
       <div
         id="top-bar"
         className="w-[148px] h-[18px] bg-gray-900 top-3 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-40"
-      ></div>
+      />
       <div
         id="top-volume"
         className="h-[46px] w-[3px] bg-gray-900 absolute -start-[4px] top-[60px] lg:top-[124px] rounded-s-lg"
-      ></div>
+      />
       <div
         id="bottom-volume"
         className="h-[46px] w-[3px] bg-gray-900 absolute -start-[4px] top-[114px] lg:top-[178px] rounded-s-lg"
-      ></div>
+      />
       <div
         id="lock"
         className="h-[64px] w-[3px] bg-gray-900 absolute -end-[4px] top-[78px] lg:top-[142px] rounded-e-lg"
-      ></div>
+      />
       <div className="h-full w-full relative flex flex-col items-center justify-start gap-10 border-gray-800 dark:border-gray-800 bg-gray-900 border-[14px] rounded-[2.5rem] overflow-clip pt-10">
         <div className="w-full h-5 text-7xl font-medium text-white/70 text-center rounded-t-[1rem] z-10">
           {time}

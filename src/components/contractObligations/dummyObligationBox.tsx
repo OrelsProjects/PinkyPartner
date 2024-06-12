@@ -183,7 +183,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   return (
     <div className="h-full w-full flex flex-col-reverse justify-start gap-14">
       <div className="flex flex-row gap-1 relative justify-center items-center">
-        <div className="w-full lg:w-fit absolute -top-[2rem] left-6 lg:top-5 lg:-left-[6.25rem] flex flex-row-reverse lg:flex-row justify-end lg:justify-start gap-2">
+        <div className="w-fit absolute -top-[2rem] md:top-5 md:-left-[6.25rem] flex flex-row-reverse md:flex-row justify-end md:justify-start gap-2">
           <motion.span
             // shake animation (rotate left and right)
             animate={{
@@ -201,14 +201,14 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             Try me
           </motion.span>
           <div>
-            <FaArrowRightLong className="text-2xl text-primary rotate-90 lg:rotate-0" />
+            <FaArrowRightLong className="text-2xl text-primary rotate-90 md:rotate-0" />
           </div>
         </div>
         <ObligationBox
           index={0}
           title={title}
           day={currentDay}
-          className="!max-w-96 lg:!max-w-[27rem] !w-11/12 lg:!w-full self-center"
+          className="!max-w-96 md:!max-w-[27rem] !w-11/12 md:!w-full self-center"
           disabled={disabled}
           isCompleted={completed}
           partnerDetails={{
