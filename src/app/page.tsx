@@ -62,18 +62,18 @@ const Mission = ({
   onExpand: () => void;
   className?: string;
 }) => {
-  const [expandMission, setExpandMission] = React.useState(!isMobilePhone());
+  const [expandMission, setExpandMission] = React.useState(false);
 
   return (
     <motion.div
       animate={{
-        height: expandMission ? "100vh" : "8.5rem",
+        height: expandMission ? "100vh" : "11.5rem",
       }}
       transition={{
         duration: 0.3,
       }}
       className={cn(
-        "max-w-xl min-h-[8rem] md:min-h-[5.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden",
+        "max-w-xl min-h-[8rem] md:min-h-[11.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden",
         className,
       )}
     >
@@ -163,12 +163,12 @@ const Header = ({
 const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
   return (
     <div className="h-fit w-full md:w-fit flex justify-center items-center">
-      <ShowContentContainer className="w-full h-fit flex flex-col justify-center items-start gap-8 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug">
-        <div className="w-full flex flex-col justify-center items-center md:justify-start md:items-start gap-1 tracking-tighter">
-          <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-foreground/90">
+      <ShowContentContainer className="w-full h-fit flex flex-col justify-center items-center gap-8 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug">
+        <div className="w-full flex flex-col justify-center text-center items-center md:justify-center md:items-center gap-1 tracking-tighter">
+          <div className="text-[44px] text-center leading-none md:text-6xl font-extrabold tracking-tight text-foreground/90">
             Build habits
           </div>
-          <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-primary">
+          <div className="text-[44px] text-center leading-none md:text-6xl font-extrabold tracking-tight text-primary">
             with a partner
           </div>
         </div>
@@ -189,12 +189,12 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
             </Link>
           </Button>
         </div>
-        <Mission onExpand={onExpandMission} className="md:hidden" />
+        <Mission onExpand={onExpandMission} />
       </ShowContentContainer>
-      <Mission
+      {/* <Mission
         onExpand={onExpandMission}
         className="hidden md:flex self-start"
-      />
+      /> */}
     </div>
   );
 };
@@ -223,13 +223,13 @@ export default function Home() {
             }}
             getStartedUrl={"/home"}
           />
-          <div className="h-fit w-full flex flex-col md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-20 md:gap-32">
-            <div className="h-fit w-full flex flex-col md:flex-row md:justify-between gap-8 pb-12">
+          <div className="h-fit w-full flex flex-col md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-20 md:gap-12">
+            <div className="h-fit w-full flex flex-col md:flex-row md:justify-center gap-8 pb-8 ">
               <HeroSection
                 onExpandMission={() => setExpandMission(!expandMission)}
               />
             </div>
-            <ShowContentContainer className="h-fit w-full flex justify-center items-center">
+            <ShowContentContainer className="h-fit w-full flex justify-center items-center pb-32">
               <DummyObligationBoxMobile />
               <DummyObligationBox />
             </ShowContentContainer>
