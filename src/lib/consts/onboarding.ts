@@ -83,7 +83,7 @@ export const stageText: Record<
 > = {
   welcome: {
     title: "Welcome to Pinky Partner!",
-    description: `With Pinky Partner you can easily build new habits with your partner.`,
+    description: `With Pinky Partner you can easily build new habits with your partner.\n-(Click anywhere to continue)-`,
   },
   "navigation-bar-item-Contracts": {
     title: "Let's begin!",
