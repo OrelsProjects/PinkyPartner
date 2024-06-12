@@ -79,7 +79,7 @@ const Mission = ({
     >
       <motion.span
         // whileHover={{ translateX: 5 }}
-        animate={{ translateX: expandMission ? 5 : 0 }}
+        animate={{ translateX: expandMission ? 0 : 0 }}
         transition={{
           duration: 0.6,
           bounce: 0.5,
