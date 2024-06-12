@@ -278,9 +278,9 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
         ownerPhotoUrl="/PP-round.png"
         notificationPhotoUrl={OREL_IMAGE_URL}
       >
-        <div className="w-fit absolute -right-28 mt-5  flex flex-row justify-start gap-2">
+        <div className="w-fit absolute -right-36 mt-5  flex flex-row justify-start gap-3">
           <div>
-            <FaArrowRightLong className="text-2xl text-primary rotate-180" />
+            <FaArrowRightLong className="text-3xl text-primary rotate-180" />
           </div>
           <motion.span
             // shake animation (rotate left and right)
@@ -290,11 +290,12 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
                 : [0, 10, 0, -10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0],
             }}
             transition={{
-              duration: 1.5,
+              duration: 1.2,
               repeat: Infinity,
-              repeatDelay: 4, // Waits for 2 seconds before repeating
+              repeatDelay: 2.5, // Waits for 2 seconds before repeating
               ease: "linear",
             }}
+            className="text-xl"
           >
             Try me
           </motion.span>
@@ -322,9 +323,9 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
         ownerPhotoUrl={OREL_IMAGE_URL}
         notificationPhotoUrl="/PP-round.png"
       >
-        <div className="w-fit absolute -left-28 mt-5  flex flex-row-reverse justify-start gap-2">
+        <div className="w-fit absolute -left-36 mt-5  flex flex-row-reverse justify-start gap-3">
           <div>
-            <FaArrowRightLong className="text-2xl text-primary" />
+            <FaArrowRightLong className="text-3xl text-primary" />
           </div>
           <motion.span
             // shake animation (rotate left and right)
@@ -336,9 +337,10 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             transition={{
               duration: 1.5,
               repeat: Infinity,
-              repeatDelay: 4, // Waits for 2 seconds before repeating
+              repeatDelay: 2.5, // Waits for 2 seconds before repeating
               ease: "linear",
             }}
+            className="text-xl"
           >
             Try me
           </motion.span>

@@ -81,7 +81,7 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
           layout="fill"
           objectFit="cover"
           objectPosition="center"
-          className="rounded-[1.75rem] z-0"
+          className="rounded-[1.75rem] z-0  brightness-75"
         />
       </div>
     </div>
