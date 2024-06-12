@@ -229,23 +229,25 @@ export default function Home() {
                 onExpandMission={() => setExpandMission(!expandMission)}
               />
             </div>
-            <div className="h-fit w-full flex justify-center items-center">
+            <ShowContentContainer className="h-fit w-full flex justify-center items-center">
               <DummyObligationBoxMobile />
               <DummyObligationBox />
-            </div>
+            </ShowContentContainer>
             <Walkthrough />
-            <Button
-              asChild
-              className="w-fit text-lg py-6 px-12 text-white self-center"
-              onClick={() => {
-                clearOnboardingViewed();
-              }}
-            >
-              <Link href="/home" className="relative">
-                Give the demo a try.
-                <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
-              </Link>
-            </Button>
+            <ShowContentContainer className="self-center">
+              <Button
+                asChild
+                className="w-fit text-lg py-6 px-12 text-white"
+                onClick={() => {
+                  clearOnboardingViewed();
+                }}
+              >
+                <Link href="/home" className="relative">
+                  Give the demo a try.
+                  <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
+                </Link>
+              </Button>
+            </ShowContentContainer>
             <AvailableOn />
           </div>
         </ShowContentContainer>

@@ -185,7 +185,7 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
   return (
     <div className="h-full w-full flex flex-col-reverse justify-start gap-14 md:hidden">
       <div className="flex flex-row gap-1 relative justify-center items-center">
-        <div className="w-fit absolute -top-[2rem] md:top-5 md:-left-[6.25rem] flex flex-row-reverse md:flex-row justify-end md:justify-start gap-2">
+        <div className="w-fit absolute -top-[2.25rem] md:top-5 md:-left-[6.25rem] flex flex-row-reverse md:flex-row justify-end md:justify-start gap-2">
           <motion.span
             // shake animation (rotate left and right)
             animate={{
@@ -199,11 +199,12 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
               repeatDelay: 4, // Waits for 2 seconds before repeating
               ease: "linear",
             }}
+            className="text-xl"
           >
             Try me
           </motion.span>
           <div>
-            <FaArrowRightLong className="text-2xl text-primary rotate-90 md:rotate-0" />
+            <FaArrowRightLong className="text-3xl text-primary rotate-90 md:rotate-0" />
           </div>
         </div>
         <ObligationBox

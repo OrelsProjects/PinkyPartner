@@ -34,7 +34,7 @@ const Card = ({ icon, title, body }: CardItem) => (
     <div className="card-content">
       <span className="text-4xl md:text-6xl">{icon}</span>
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2 text-lg md:text-xl font-semibold pb-2">
+        <div className="flex items-center gap-2 text-lg md:text-xl font-semibold md:pb-2">
           {title}
         </div>
         <div className="hidden md:flex font-thin">{body}</div>
