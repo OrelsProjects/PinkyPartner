@@ -205,7 +205,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
         {!isSigned && user ? (
           <Button className="relative">
             Seal your pinky
-            <div className="shimmer-animation rounded-lg"></div>
+            <div className="shimmer-animation rounded-xl"></div>
           </Button>
         ) : (
           <Button

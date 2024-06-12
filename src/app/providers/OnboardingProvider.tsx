@@ -230,9 +230,10 @@ export default function OnboardingProvider() {
       </div>
       <Button
         className="absolute top-3 right-3 md:bottom-10 md:top-auto"
-        onClick={() => {
+        onClick={e => {
+          e.stopPropagation();
           setOnboardingViewed().finally(() => {
-            // router.refresh();
+            router.refresh();
           });
         }}
         variant={"link"}

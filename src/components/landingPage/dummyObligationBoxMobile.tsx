@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ObligationBox } from "./contractObligation";
+import { ObligationBox } from "../contractObligations/contractObligation";
 import DeviceMockup from "../ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -62,8 +62,10 @@ const NotificationMockup: React.FC<NotificationMockupProps> = ({
 
 const Device = ({
   notifications,
+  children,
 }: {
   notifications: NotificationMockupProps[];
+  children?: React.ReactNode;
 }) => (
   <div className="flex flex-col gap-2 items-center">
     <DeviceMockup ownerPhotoUrl={OREL_IMAGE_URL}>
@@ -80,7 +82,7 @@ const Device = ({
   </div>
 );
 
-const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
+const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
   const titles = [
     "Read",
     "Run 2KM",
@@ -181,7 +183,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col-reverse justify-start gap-14">
+    <div className="h-full w-full flex flex-col-reverse justify-start gap-14 md:hidden">
       <div className="flex flex-row gap-1 relative justify-center items-center">
         <div className="w-fit absolute -top-[2rem] md:top-5 md:-left-[6.25rem] flex flex-row-reverse md:flex-row justify-end md:justify-start gap-2">
           <motion.span
@@ -213,7 +215,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           isCompleted={completed}
           partnerDetails={{
             photoURL: OREL_IMAGE_URL,
-            displayName: "Random Pinky",
+            displayName: "Orel Zilberman",
             isPartnerSigned: true,
             isPartnerObligationCompleted: false,
           }}
@@ -227,4 +229,4 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   );
 };
 
-export default DummyObligationBox;
+export default DummyObligationBoxMobile;

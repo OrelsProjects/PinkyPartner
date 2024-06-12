@@ -179,17 +179,24 @@ export default function useOnboarding() {
   }, [pathname, isMobile]);
 
   const setOnboardingViewed = async (updateUser = true) => {
-    setCurrentStage("done");
     localStorage.setItem("onboardingViewed", "true");
+    localStorage.setItem("lastOnboardingStage", "done");
+    setCurrentStage("done");
     setOnboardingState("completed");
     dispatch(updateOnboardingCompleted(true));
     try {
-      if (updateUser) {
+      if (updateUser && state === "authenticated") {
         await axios.post("/api/user/finish-onboarding");
       }
     } catch (e: any) {
       Logger.error(e);
     }
+  };
+
+  const clearOnboardingViewed = () => {
+    localStorage.removeItem("onboardingViewed");
+    localStorage.removeItem("lastOnboardingStage");
+    dispatch(updateOnboardingCompleted(false));
   };
 
   const setElement = () => {
@@ -323,5 +330,6 @@ export default function useOnboarding() {
     onboardingElement,
     setOnboardingViewed,
     isOnboardingCompleted,
+    clearOnboardingViewed,
   };
 }

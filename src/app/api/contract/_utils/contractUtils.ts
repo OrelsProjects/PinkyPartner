@@ -2,7 +2,6 @@ import { Contract, Obligation, UserContractObligation } from "@prisma/client";
 import {
   CreateUserContractObligation,
   ObligationsToContractObligation,
-  populateObligationsToComplete,
 } from "../../obligation/_utils";
 import prisma from "../../_db/db";
 

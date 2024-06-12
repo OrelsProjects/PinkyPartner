@@ -15,7 +15,7 @@ const items: CardItem[] = [
   {
     icon: "🤝",
     title: "Create a contract",
-    body: "Set your promise and a due date.",
+    body: "Make your promise ",
   },
   {
     icon: "💌",
@@ -45,12 +45,12 @@ const Card = ({ icon, title, body }: CardItem) => (
 
 const Walkthrough: React.FC<WalkthroughProps> = () => {
   return (
-    <div className="flex flex-col items-center gap-8 text-foreground/70">
+    <div className="flex flex-col items-center gap-4 text-foreground/70">
       <ShowContentContainer className="font-semibold text-4xl md:text-5xl tracking-tight mb-4 md:mb-6 text-center">
         <span>Building habits alone</span>
         <span className="text-secondary/50"> is hard.</span>
         <br />
-        <br />
+        <div className="mt-4" />
         <span>It&apos;s much easier</span>
         <span className="text-primary"> with a partner.</span>
       </ShowContentContainer>

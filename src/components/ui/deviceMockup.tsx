@@ -36,8 +36,8 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
           src={ownerPhotoUrl}
           alt="Orel"
           layout="fixed"
-          width={40}
-          height={40}
+          width={52}
+          height={52}
           className="rounded-full absolute -top-2 -left-2 z-10 shadow-lg"
         />
       )}

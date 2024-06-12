@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useAppDispatch } from "../lib/hooks/redux";
 import { setUser } from "../lib/features/auth/authSlice";
 import useOnboarding from "../lib/hooks/useOnboarding";
-import DummyObligationBox from "../components/contractObligations/dummyObligationBox";
+import DummyObligationBox from "../components/landingPage/dummyObligationBox";
 import { FaArrowRightLong } from "react-icons/fa6";
 import Walkthrough from "../components/landingPage/walkthrough";
 import AvailableOn from "../components/landingPage/availableOn";
@@ -62,8 +62,7 @@ const Mission = ({ onExpand }: { onExpand: () => void }) => {
         height: expandMission ? "100vh" : "11.5rem",
       }}
       transition={{
-        duration: 0.8,
-        type: "spring",
+        duration: 0.3,
       }}
       className="max-w-xl min-h-[15rem] md:min-h-[11.5rem] max-h-[25.5rem] md:max-h-[19.5rem] flex flex-col justify-start items-start bg-card p-4 rounded-xl text-base font-light overflow-hidden"
     >
@@ -166,7 +165,7 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
           duration: 0.5,
           ease: [0.4, 0.0, 0.2, 1],
         }}
-        className="w-full h-fit flex flex-col justify-center items-start gap-14 md:gap-10 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug"
+        className="w-full h-fit flex flex-col justify-center items-start gap-8 md:h-fit text-5xl md:text-4xl lg:text-5xl font-medium text-start leading-relaxed md:leading-snug"
       >
         <div className="w-full flex flex-col justify-center items-center md:justify-start md:items-start gap-1 tracking-tighter">
           <div className="text-[44px] leading-none md:text-6xl font-extrabold tracking-tight text-foreground/90">
@@ -201,7 +200,7 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
 
 export default function Home() {
   const [expandMission, setExpandMission] = React.useState(false);
-  const { isOnboardingCompleted } = useOnboarding();
+  const { clearOnboardingViewed } = useOnboarding();
   const dispatch = useAppDispatch();
   return (
     <div className="h-full w-full flex flex-col">
@@ -221,18 +220,32 @@ export default function Home() {
                 }),
               );
             }}
-            getStartedUrl={isOnboardingCompleted() ? "/register" : "/home"}
+            getStartedUrl={"/home"}
           />
-          <div className="h-fit w-full flex flex-col md:flex-row md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-14">
-            <HeroSection
-              onExpandMission={() => setExpandMission(!expandMission)}
-            />
-            <div className="h-fit w-full flex md:w-fit justify-center items-center">
-              <DummyObligationBox />
+          <div className="h-fit w-full flex flex-col md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-20 md:gap-32">
+            <div className="h-fit w-full flex flex-col md:flex-row md:justify-between gap-8 pb-12">
+              <HeroSection
+                onExpandMission={() => setExpandMission(!expandMission)}
+              />
+              <div className="h-fit w-full flex md:w-fit justify-center items-center">
+                <DummyObligationBox />
+              </div>
             </div>
+            <Walkthrough />
+            <Button
+              asChild
+              className="w-fit text-lg py-6 px-12 text-white self-center"
+              onClick={() => {
+                clearOnboardingViewed();
+              }}
+            >
+              <Link href="/home" className="relative">
+                Give the demo a try.
+                <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
+              </Link>
+            </Button>
+            <AvailableOn />
           </div>
-          <Walkthrough />
-          <AvailableOn />
         </ShowContentContainer>
       </AnimatePresence>
     </div>

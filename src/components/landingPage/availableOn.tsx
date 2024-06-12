@@ -7,8 +7,8 @@ interface AvailableOnProps {}
 
 const AvailableOn: React.FC<AvailableOnProps> = () => {
   return (
-    <ShowContentContainer>
-      <div className="card md:w-full">
+    <ShowContentContainer className="w-full flex justify-center items-center">
+      <div className="card max-w-3xl">
         <div className="card-content md:p-4 lg:p-8 flex flex-col justify-start items-center">
           <span className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-8">
             Available On
@@ -23,7 +23,7 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                 src="/get-on-google-play.png"
                 alt="Get on Google Play"
                 fill
-                className="!relative !h-16 !w-48"
+                className="!relative !h-16 !w-48 flex-shrink-0"
               />
             </Link>
             <Link href="https://www.pinkypartner.com/home">
@@ -31,7 +31,7 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                 src="/get-on-web-app.png"
                 alt="Get on Google Play"
                 fill
-                className="!relative !h-16 !w-48"
+                className="!relative !h-16 !w-48 flex-shrink-0"
               />
             </Link>
           </div>
