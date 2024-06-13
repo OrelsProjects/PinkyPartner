@@ -68,7 +68,7 @@ const Mission = ({
   return (
     <motion.div
       animate={{
-        height: expandMission ? "100vh" : "11.5rem",
+        height: expandMission ? "100vh" : "8.5rem",
       }}
       transition={{
         duration: 0.3,
@@ -231,12 +231,12 @@ export default function Home() {
             getStartedUrl={"/home"}
           />
           <div className="h-fit w-full flex flex-col md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-20 md:gap-12">
-            <div className="h-fit w-full flex flex-col md:flex-row md:justify-center gap-8 pb-8 ">
+            <div className="h-fit w-full flex flex-col md:flex-row md:justify-center gap-8">
               <HeroSection
                 onExpandMission={() => setExpandMission(!expandMission)}
               />
             </div>
-            <ShowContentContainer className="h-fit w-full flex justify-center items-center pb-32">
+            <ShowContentContainer className="h-fit w-full flex justify-center items-center">
               <DummyObligationBoxMobile />
               <DummyObligationBox />
             </ShowContentContainer>
@@ -250,7 +250,7 @@ export default function Home() {
                 }}
               >
                 <Link href="/home" className="relative">
-                  Give the demo a try.
+                  Give the demo a try
                   <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
                 </Link>
               </Button>

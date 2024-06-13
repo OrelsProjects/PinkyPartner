@@ -36,7 +36,7 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
   return (
     <div
       className={cn(
-        "relative rounded-[2.5rem] h-[250px] w-10/12 md:px-0 md:h-[700px] md:w-[350px] shadow-xl overflow-hide",
+        "relative rounded-[2.5rem] h-[475px] w-10/12 md:px-0 md:h-[700px] md:w-[350px] shadow-xl overflow-hide",
         className,
       )}
     >

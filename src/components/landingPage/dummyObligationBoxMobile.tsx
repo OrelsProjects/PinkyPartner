@@ -211,7 +211,7 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
           index={0}
           title={title}
           day={currentDay}
-          className="!max-w-96 md:!max-w-[27rem] !w-11/12 md:!w-full self-center"
+          className="!max-w-96 md:!max-w-[27rem] !w-10/12 md:!w-full self-center"
           disabled={disabled}
           isCompleted={completed}
           partnerDetails={{
