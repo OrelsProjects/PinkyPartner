@@ -196,7 +196,7 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
             </Link>
           </Button>
         </div>
-        <Mission onExpand={onExpandMission} />
+        <Mission onExpand={onExpandMission} className="hidden md:flex" />
       </ShowContentContainer>
       {/* <Mission
         onExpand={onExpandMission}
@@ -239,6 +239,14 @@ export default function Home() {
             <ShowContentContainer className="h-fit w-full flex justify-center items-center">
               <DummyObligationBoxMobile />
               <DummyObligationBox />
+            </ShowContentContainer>
+            <ShowContentContainer>
+              <Mission
+                onExpand={() => {
+                  setExpandMission(!expandMission);
+                }}
+                className="flex md:hidden"
+              />
             </ShowContentContainer>
             <Walkthrough />
             <ShowContentContainer className="self-center">
