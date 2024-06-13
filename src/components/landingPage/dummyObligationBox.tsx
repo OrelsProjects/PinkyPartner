@@ -163,12 +163,12 @@ const Device = ({
 
 const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   const titles = [
-    "Read",
+    // "Read",
     "Run 2KM",
-    "Meditate",
-    "Drink water",
-    "Eat fruits",
-    "Sleep 8 hours",
+    // "Meditate",
+    // "Drink water",
+    // "Eat fruits",
+    // "Sleep 8 hours",
   ];
   const days = [
     "Sunday",
@@ -233,7 +233,10 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     }
 
     const newDays = days.filter(d => d !== day);
-    const newTitles = titles.filter(t => t !== title);
+    // const newTitles = titles.filter(t => t !== title);
+
+    // const newDays = days;
+    const newTitles = titles;
 
     setTimeout(() => {
       if (isOrelSource) {
@@ -271,7 +274,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   };
 
   return (
-    <div className="h-full w-fit hidden md:flex flex-row-reverse justify-start gap-32">
+    <div className="h-full w-fit hidden md:flex flex-row-reverse justify-between gap-48">
       <Device
         ios15
         notifications={notificationsOrel}
@@ -311,7 +314,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
             isPartnerSigned: true,
-            isPartnerObligationCompleted: false,
+            isPartnerObligationCompleted: completed,
           }}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             handleCompleteObligation(day, titleOrel, completed, false);
@@ -356,7 +359,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           partnerDetails={{
             displayName: "Random Pinky",
             isPartnerSigned: true,
-            isPartnerObligationCompleted: false,
+            isPartnerObligationCompleted: completedOrel,
           }}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             handleCompleteObligation(day, title, completed, true);

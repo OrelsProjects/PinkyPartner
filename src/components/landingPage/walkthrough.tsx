@@ -20,7 +20,7 @@ const items: CardItem[] = [
   {
     icon: "💌",
     title: "Invite a partner",
-    body: "Invite via most popular messaging apps.",
+    body: "Share a link via popular apps.",
   },
   {
     icon: "🌱",

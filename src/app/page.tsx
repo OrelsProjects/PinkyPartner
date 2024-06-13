@@ -63,6 +63,7 @@ const Mission = ({
   className?: string;
 }) => {
   const [expandMission, setExpandMission] = React.useState(false);
+  const [missionExpanded, setMissionExpanded] = React.useState(false);
 
   return (
     <motion.div
@@ -93,17 +94,23 @@ const Mission = ({
         )}
         onClick={() => {
           setExpandMission(!expandMission);
+          setMissionExpanded(true);
           onExpand();
         }}
       >
         My mission
         <motion.div
-          className="h-full inline-flex justify-center items-center text-primary text-xl ml-1.5"
+          className={cn(
+            "h-full inline-flex justify-center items-center text-primary text-xl ml-2.5",
+            {
+              "animate-bounce-horizontal": !missionExpanded,
+            },
+          )}
           animate={{
             translateX: expandMission ? [0, 5] : 0,
           }}
           transition={{
-            duration: 0.6,
+            duration: 1.5,
             bounce: 0.5,
             type: "spring",
           }}
