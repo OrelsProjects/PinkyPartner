@@ -208,7 +208,7 @@ const HeroSection = ({ onExpandMission }: { onExpandMission: () => void }) => {
 
 export default function Home() {
   const [expandMission, setExpandMission] = React.useState(false);
-  const { clearOnboardingViewed } = useOnboarding();
+  const { clearOnboardingViewed, isOnboardingCompleted } = useOnboarding();
   const dispatch = useAppDispatch();
   return (
     <div className="h-full w-full flex flex-col">
@@ -228,7 +228,7 @@ export default function Home() {
                 }),
               );
             }}
-            getStartedUrl={"/home"}
+            getStartedUrl={isOnboardingCompleted() ? "/register" : "/home"}
           />
           <div className="h-fit w-full flex flex-col md:justify-between max-w-6xl mx-auto px-2 md:px-4 gap-20 md:gap-12">
             <div className="h-fit w-full flex flex-col md:flex-row md:justify-center gap-8">
