@@ -31,7 +31,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
 }) => {
   const { user, state } = useAppSelector(selectAuth);
   const [checked, setChecked] = React.useState(false);
-  const [shouldPlaySound, setShouldPlaySound] = React.useState(forceSound);
+  const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
   const audio = useMemo(() => {
@@ -60,29 +60,35 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         // reset audio
         audio.pause();
         audio.currentTime = 0;
-        // destroy audio, because it shows memory leak warning
+        // destroy audio, because it will show as playable in the browser or phone
         audio.src = "";
         audio.load();
       }, 2000);
     }
   }, [shouldAnimate, shouldPlaySound]);
 
+  const playSound = () => {
+    audio.src = "/sounds/obligation-completed.wav";
+    audio.load();
+    audio.play().finally(() => {
+      setShouldAnimate(true);
+    });
+  };
+
   useEffect(() => {
-    if (checked || isCompleted) {
-      if (canPlaySound) {
-        if (shouldPlaySound) {
-          audio.src = "/sounds/obligation-completed.wav";
-          audio.load();
-          audio.play().then(() => {
-            setShouldAnimate(true);
-          });
-        }
+    if (isCompleted) {
+      if (canPlaySound && shouldPlaySound) {
+        playSound();
       }
     }
   }, [checked, isCompleted, canPlaySound]);
 
   return (
-    <div className={cn("h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative")}>
+    <div
+      className={cn(
+        "h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative",
+      )}
+    >
       <Checkbox
         className={cn(
           "w-full h-full self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary z-20",
@@ -90,7 +96,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
             "hover:cursor-default": disabled,
           },
         )}
-        checked={dummy ? checked : isCompleted}
+        checked={isCompleted}
         onCheckedChange={(checked: boolean) => {
           if (disabled) return;
           if (dummy) {

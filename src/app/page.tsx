@@ -10,11 +10,9 @@ import DummyObligationBoxMobile from "../components/landingPage/dummyObligationB
 import Walkthrough from "../components/landingPage/walkthrough";
 import AvailableOn from "../components/landingPage/availableOn";
 import ShowContentContainer from "../components/landingPage/showContentContainer";
-import { cn } from "../lib/utils";
 import DummyObligationBox from "../components/landingPage/dummyObligationBox";
 import { isMobilePhone } from "../lib/utils/notificationUtils";
 import Hero from "../components/landingPage/hero";
-import StepFlow from "../components/landingPage/stepFlow";
 
 const Header = ({
   onGetStarted,

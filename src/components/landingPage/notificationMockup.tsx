@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "../../lib/utils";
@@ -9,6 +9,7 @@ export interface NotificationMockupProps {
   image?: string;
   state?: "show" | "hide" | "idle";
   className?: string;
+  playNotificationSound?: boolean;
 }
 
 const NotificationMockup: React.FC<NotificationMockupProps> = ({
@@ -17,18 +18,36 @@ const NotificationMockup: React.FC<NotificationMockupProps> = ({
   image,
   state,
   className,
+  playNotificationSound,
 }) => {
+  const [showNotifcation, setShowNotification] = React.useState(!playNotificationSound);
+
+  useEffect(() => {
+    if (playNotificationSound && state === "show") {
+      const audio = new Audio("/sounds/notification.mp3");
+      audio.load();
+      audio.play().finally(() => {
+        setShowNotification(true);
+      });
+      setTimeout(() => {
+        audio.pause();
+        audio.src = "";
+        audio.currentTime = 0;
+        setShowNotification(false);
+      }, 4000);
+    }
+  }, [playNotificationSound, state]);
   return (
     // Make it appear like a notification, with animation from top to bottom and shadow
     <AnimatePresence>
-      {state === "show" && (
+      {showNotifcation && state === "show" && (
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 50, opacity: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            "relative w-11/12 h-48 flex flex-col gap-0 justify-center items-center rounded-xl bg-background notification-shadow px-2 pt-2 select-none",
+            "relative w-11/12 h-16 flex flex-col gap-0 justify-center items-center rounded-xl bg-background notification-shadow px-2 pt-2 select-none",
             className,
           )}
         >

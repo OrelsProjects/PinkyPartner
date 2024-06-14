@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ObligationBox } from "../contractObligations/contractObligation";
 import DeviceMockup from "../ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
@@ -86,11 +86,13 @@ const Device = ({
   notifications,
   ownerPhotoUrl,
   notificationPhotoUrl,
+  playNotificationSound,
 }: {
   ios15?: boolean;
   ownerPhotoUrl: string;
   children?: React.ReactNode;
   notificationPhotoUrl: string;
+  playNotificationSound?: boolean;
   notifications: NotificationMockupProps[];
 }) => (
   <div className="flex flex-col gap-2 items-center relative">
@@ -104,6 +106,7 @@ const Device = ({
       </div>
       {notifications?.map((notification, index) => (
         <NotificationMockup
+          playNotificationSound={playNotificationSound}
           image={notificationPhotoUrl}
           key={`mockup-notification-${index}`}
           title={notification.title}
@@ -118,9 +121,9 @@ const Device = ({
 const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   const titles = [
     // "Read",
-    "Run 2KM",
+    // "Run 2KM",
     // "Meditate",
-    // "Drink water",
+    "Drink water",
     // "Eat fruits",
     // "Sleep 8 hours",
   ];
@@ -147,12 +150,13 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   const [currentDayOrel, setCurrentDayOrel] = useState<string>(days[0]);
   const [title, setTitle] = useState<string>(titles[0]);
   const [titleOrel, setTitleOrel] = useState<string>(titles[0]);
-  const [disabled, setDisabled] = useState<boolean>(true);
   const [disabledOrel, setDisabledOrel] = useState<boolean>(false);
 
   const [completedRandomPinky, setCompletedRandomPinky] =
     useState<boolean>(false);
   const [completedOrel, setCompletedOrel] = useState<boolean>(false);
+
+  const completeOrelSourceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const handleCompleteObligation = (
     day: string,
@@ -164,12 +168,12 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     if (isOrelSource) {
       if (completedRandomPinky) return;
       setCompletedRandomPinky(completed);
-      setDisabled(true);
     } else {
       if (completedOrel) return;
-      if (!completedRandomPinky) {
-        setTimeout(() => {
+      if (!completedRandomPinky && !completeOrelSourceTimeout.current) {
+        completeOrelSourceTimeout.current = setTimeout(() => {
           handleCompleteObligation(day, title, true, true);
+          completeOrelSourceTimeout.current = null;
         }, 3500);
       }
       setCompletedOrel(completed);
@@ -205,7 +209,6 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           setCurrentDay(newDays[Math.floor(Math.random() * newDays.length)]);
           setTitle(newTitles[Math.floor(Math.random() * newTitles.length)]);
           setCompletedRandomPinky(false);
-          setDisabled(false);
         } else {
           setCurrentDayOrel(
             newDays[Math.floor(Math.random() * newDays.length)],
@@ -246,6 +249,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     <div className="h-full w-full hidden md:flex flex-row-reverse justify-between">
       <Device
         ios15
+        playNotificationSound
         notifications={notificationsOrel}
         ownerPhotoUrl="/PP-round.png"
         notificationPhotoUrl={OREL_IMAGE_URL}
@@ -292,9 +296,9 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             "brightness-75": !completedRandomPinky,
           })}
           title={title}
-          day={currentDay}
+          day={currentDayOrel}
           disabled
-          forceSound
+          forceSound={completedRandomPinky}
           isCompleted={completedRandomPinky}
           partnerDetails={{
             displayName: "Random Pinky",
