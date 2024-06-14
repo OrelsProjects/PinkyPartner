@@ -20,7 +20,9 @@ const NotificationMockup: React.FC<NotificationMockupProps> = ({
   className,
   playNotificationSound,
 }) => {
-  const [showNotifcation, setShowNotification] = React.useState(!playNotificationSound);
+  const [showNotifcation, setShowNotification] = React.useState(
+    !playNotificationSound,
+  );
 
   useEffect(() => {
     if (playNotificationSound && state === "show") {
@@ -31,8 +33,11 @@ const NotificationMockup: React.FC<NotificationMockupProps> = ({
       });
       setTimeout(() => {
         audio.pause();
-        audio.src = "";
+        audio.pause();
         audio.currentTime = 0;
+        // destroy audio, because it will show as playable in the browser or phone
+        audio.src = "";
+        audio.load();
         setShowNotification(false);
       }, 4000);
     }
