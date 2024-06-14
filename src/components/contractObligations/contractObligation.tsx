@@ -64,6 +64,7 @@ export const ObligationBox = ({
   loading,
   disabled,
   className,
+  forceSound,
   isCompleted,
   userPhotoUrl,
   partnerDetails,
@@ -74,9 +75,10 @@ export const ObligationBox = ({
   index: number;
   title: string;
   dummy?: boolean;
-  disabled?: boolean;
   loading?: boolean;
+  disabled?: boolean;
   className?: string;
+  forceSound?: boolean;
   isCompleted: boolean;
   isNewObligation?: boolean;
   partnerDetails?: {
@@ -96,6 +98,7 @@ export const ObligationBox = ({
         {
           "bg-card/50": isCompleted,
         },
+        { "pointer-events-none": disabled },
         className,
       )}
       key={`obligation-in-contract-${day}`}
@@ -122,6 +125,7 @@ export const ObligationBox = ({
               handleCompleteObligation(day, checked);
             }}
             dummy={dummy}
+            forceSound={forceSound}
           />
           <div
             className={cn(

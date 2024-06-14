@@ -4,6 +4,10 @@ import DeviceMockup from "../ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { cn } from "../../lib/utils";
+import NotificationMockup, {
+  NotificationMockupProps,
+} from "./notificationMockup";
 
 const OREL_IMAGE_URL =
   "https://lh3.googleusercontent.com/a/ACg8ocJuQcn9RGs6JLIUTa4TJzH4CQKVQatTZE4zIlMqxe9ec8wlXJttvA=s96-c";
@@ -76,56 +80,6 @@ const notificationsRandomDefault: NotificationMockupProps[] = [
 
 interface DummyObligationBoxProps {}
 
-export interface NotificationMockupProps {
-  title: string;
-  body: string;
-  image?: string;
-  state?: "show" | "hide" | "idle";
-}
-
-const NotificationMockup: React.FC<NotificationMockupProps> = ({
-  title,
-  body,
-  image,
-  state,
-}) => {
-  return (
-    // Make it appear like a notification, with animation from top to bottom and shadow
-    <AnimatePresence>
-      {state === "show" && (
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 50, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-11/12 h-16 flex flex-col gap-0 justify-center items-center rounded-xl bg-black/35 notification-shadow px-2 pt-2 select-none"
-        >
-          <div className="w-full text-white/40 text-[10px] font-medium text-end mt-1.5">
-            now
-          </div>
-          <div className="w-full h-full flex flex-row items-start ">
-            {image && (
-              <Image
-                src={image}
-                alt="notification"
-                fill
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-                className="rounded-[1.75rem] z-0 !relative !h-8 !w-8"
-              />
-            )}
-            <div className="w-fit flex-shrink h-16 flex flex-col gap-0 px-2 pt-0.5">
-              <span className="text-xs font-semibold truncate">{title}</span>
-              <span className="text-xs">{body}</span>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
-
 const Device = ({
   ios15,
   children,
@@ -145,7 +99,7 @@ const Device = ({
       ios15={ios15}
       className="!overflow-visible"
     >
-      <div className="w-full h-full flex flex-col gap-1 justify-start items-center z-30 overflow-visible mt-10">
+      <div className="w-full h-full lg:h-fit flex flex-col gap-1 justify-start items-center z-30 overflow-visible mt-10">
         {children}
       </div>
       {notifications?.map((notification, index) => (
@@ -180,8 +134,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     "Saturday",
   ];
 
-  const [triedOrel, setTriedOrel] = useState<boolean>(false);
-  const [triedRandom, setTriedRandom] = useState<boolean>(false);
+  const [tried, setTried] = useState(false);
 
   const [notificationsRandom, setNotificationsRandom] = useState<
     NotificationMockupProps[]
@@ -194,9 +147,11 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
   const [currentDayOrel, setCurrentDayOrel] = useState<string>(days[0]);
   const [title, setTitle] = useState<string>(titles[0]);
   const [titleOrel, setTitleOrel] = useState<string>(titles[0]);
-  const [disabled, setDisabled] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const [disabledOrel, setDisabledOrel] = useState<boolean>(false);
-  const [completed, setCompleted] = useState<boolean>(false);
+
+  const [completedRandomPinky, setCompletedRandomPinky] =
+    useState<boolean>(false);
   const [completedOrel, setCompletedOrel] = useState<boolean>(false);
 
   const handleCompleteObligation = (
@@ -205,12 +160,18 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     completed: boolean,
     isOrelSource?: boolean,
   ): void => {
+    setTried(true);
     if (isOrelSource) {
-      setTriedOrel(true);
-      setCompleted(completed);
+      if (completedRandomPinky) return;
+      setCompletedRandomPinky(completed);
       setDisabled(true);
     } else {
-      setTriedRandom(true);
+      if (completedOrel) return;
+      if (!completedRandomPinky) {
+        setTimeout(() => {
+          handleCompleteObligation(day, title, true, true);
+        }, 3500);
+      }
       setCompletedOrel(completed);
       setDisabledOrel(true);
     }
@@ -238,72 +199,69 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
     // const newDays = days;
     const newTitles = titles;
 
-    setTimeout(() => {
-      if (isOrelSource) {
-        setCurrentDay(newDays[Math.floor(Math.random() * newDays.length)]);
-        setTitle(newTitles[Math.floor(Math.random() * newTitles.length)]);
-        setCompleted(false);
-        setDisabled(false);
-      } else {
-        setCurrentDayOrel(newDays[Math.floor(Math.random() * newDays.length)]);
-        setTitleOrel(newTitles[Math.floor(Math.random() * newTitles.length)]);
-        setCompletedOrel(false);
-        setDisabledOrel(false);
-      }
-    }, 3300);
+    setTimeout(
+      () => {
+        if (isOrelSource) {
+          setCurrentDay(newDays[Math.floor(Math.random() * newDays.length)]);
+          setTitle(newTitles[Math.floor(Math.random() * newTitles.length)]);
+          setCompletedRandomPinky(false);
+          setDisabled(false);
+        } else {
+          setCurrentDayOrel(
+            newDays[Math.floor(Math.random() * newDays.length)],
+          );
+          setTitleOrel(newTitles[Math.floor(Math.random() * newTitles.length)]);
+          setCompletedOrel(false);
+          setDisabledOrel(false);
+        }
+      },
+      isOrelSource ? 3500 : 7000,
+    );
 
-    setTimeout(() => {
-      newNotifications = isOrelSource
-        ? [...notificationsRandomDefault]
-        : [...notificationsOrelDefault];
-      const notificationIndex = newNotifications.findIndex(n =>
-        n.body.includes(title),
-      );
-      if (notificationIndex !== -1) {
-        newNotifications[notificationIndex] = {
-          ...newNotifications[notificationIndex],
-          state: "hide",
-        };
-      }
-      if (isOrelSource) {
-        setNotificationsOrel(newNotifications);
-      } else {
-        setNotificationsRandom(newNotifications);
-      }
-    }, 3000);
+    setTimeout(
+      () => {
+        newNotifications = isOrelSource
+          ? [...notificationsRandomDefault]
+          : [...notificationsOrelDefault];
+        const notificationIndex = newNotifications.findIndex(n =>
+          n.body.includes(title),
+        );
+        if (notificationIndex !== -1) {
+          newNotifications[notificationIndex] = {
+            ...newNotifications[notificationIndex],
+            state: "hide",
+          };
+        }
+        if (isOrelSource) {
+          setNotificationsOrel(newNotifications);
+        } else {
+          setNotificationsRandom(newNotifications);
+        }
+      },
+      isOrelSource ? 3500 : 7000,
+    );
   };
 
   return (
-    <div className="h-full w-fit hidden md:flex flex-row-reverse justify-between gap-48">
+    <div className="h-full w-full hidden md:flex flex-row-reverse justify-between">
       <Device
         ios15
         notifications={notificationsOrel}
         ownerPhotoUrl="/PP-round.png"
         notificationPhotoUrl={OREL_IMAGE_URL}
       >
-        <div className="w-fit absolute -right-36 mt-5  flex flex-row justify-start gap-3">
-          <div>
-            <FaArrowRightLong className="text-3xl text-primary rotate-180" />
+        <div className="w-fit absolute -left-16 mt-4 flex flex-row justify-start gap-3">
+          <div className="">
+            <FaArrowRightLong
+              className={cn("text-4xl text-primary animate-bounce-horizontal", {
+                hidden: tried,
+              })}
+            />
           </div>
-          <motion.span
-            // shake animation (rotate left and right)
-            animate={{
-              rotate: triedRandom
-                ? []
-                : [0, 10, 0, -10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0],
-            }}
-            transition={{
-              duration: 1.2,
-              repeat: Infinity,
-              repeatDelay: 2.5, // Waits for 2 seconds before repeating
-              ease: "linear",
-            }}
-            className="text-xl"
-          >
-            Try me
-          </motion.span>
+          <span className="text-xl"></span>
         </div>
         <ObligationBox
+          key="obligation-box-random-pinky"
           index={0}
           className="!max-w-96 md:!max-w-[25rem] !w-[95%] self-center"
           title={titleOrel}
@@ -314,7 +272,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
             isPartnerSigned: true,
-            isPartnerObligationCompleted: completed,
+            isPartnerObligationCompleted: completedRandomPinky,
           }}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             handleCompleteObligation(day, titleOrel, completed, false);
@@ -326,36 +284,18 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
         ownerPhotoUrl={OREL_IMAGE_URL}
         notificationPhotoUrl="/PP-round.png"
       >
-        <div className="w-fit absolute -left-36 mt-5  flex flex-row-reverse justify-start gap-3">
-          <div>
-            <FaArrowRightLong className="text-3xl text-primary" />
-          </div>
-          <motion.span
-            // shake animation (rotate left and right)
-            animate={{
-              rotate: triedOrel
-                ? []
-                : [0, 10, 0, -10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatDelay: 2.5, // Waits for 2 seconds before repeating
-              ease: "linear",
-            }}
-            className="text-xl"
-          >
-            Try me
-          </motion.span>
-        </div>
         <ObligationBox
+          key="obligation-box-orel"
           index={0}
           userPhotoUrl={OREL_IMAGE_URL}
-          className="!max-w-96 md:!max-w-[25rem] !w-[95%] self-center"
+          className={cn("!max-w-96 md:!max-w-[25rem] !w-[95%] self-center", {
+            "brightness-75": !completedRandomPinky,
+          })}
           title={title}
           day={currentDay}
-          disabled={disabled}
-          isCompleted={completed}
+          disabled
+          forceSound
+          isCompleted={completedRandomPinky}
           partnerDetails={{
             displayName: "Random Pinky",
             isPartnerSigned: true,

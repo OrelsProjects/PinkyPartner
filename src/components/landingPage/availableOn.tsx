@@ -2,16 +2,22 @@ import React from "react";
 import ShowContentContainer from "./showContentContainer";
 import Image from "next/image";
 import Link from "next/link";
+import useOnboarding from "../../lib/hooks/useOnboarding";
 
 interface AvailableOnProps {}
 
 const AvailableOn: React.FC<AvailableOnProps> = () => {
+  const { isOnboardingCompleted } = useOnboarding();
+
   return (
-    <ShowContentContainer className="w-full flex justify-center items-center">
-      <div className="card max-w-3xl">
+    <ShowContentContainer
+      className="flex justify-center items-center"
+      variant="secondary"
+    >
+      <div className="card w-full">
         <div className="card-content md:p-4 lg:p-8 flex flex-col justify-start items-center">
           <span className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-8">
-            Available On
+            Download PinkyPartner on
           </span>
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
             <Link
@@ -23,15 +29,21 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                 src="/get-on-google-play.png"
                 alt="Get on Google Play"
                 fill
-                className="!relative !h-16 !w-48 flex-shrink-0"
+                className="!relative !h-14 !w-48 flex-shrink-0 px-1"
               />
             </Link>
-            <Link href="https://www.pinkypartner.com/home">
+            <Link
+              href={
+                "https://www.pinkypartner.com/" + isOnboardingCompleted()
+                  ? "register"
+                  : "home"
+              }
+            >
               <Image
                 src="/get-on-web-app.png"
                 alt="Get on Google Play"
                 fill
-                className="!relative !h-16 !w-48 flex-shrink-0"
+                className="!relative !h-14 !w-48 flex-shrink-0 px-1"
               />
             </Link>
           </div>

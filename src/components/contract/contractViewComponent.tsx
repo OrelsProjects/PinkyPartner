@@ -203,7 +203,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     >
       <DialogTrigger asChild>
         {!isSigned && user ? (
-          <Button className="relative">
+          <Button className="relative" variant="default">
             Seal your pinky
             <div className="shimmer-animation rounded-xl"></div>
           </Button>

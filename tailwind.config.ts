@@ -19,7 +19,7 @@ const config = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        phone: "325px",
       },
     },
     extend: {
@@ -85,7 +85,7 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "bounce-horizontal": "bounce-horizontal 1.5s infinite",
+        "bounce-horizontal": "bounce-horizontal 1s infinite",
       },
     },
   },

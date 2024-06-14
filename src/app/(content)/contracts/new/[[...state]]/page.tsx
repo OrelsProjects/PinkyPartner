@@ -352,7 +352,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                         onObligationCreated={handleAddObligationToContract}
                         onObligationUpdated={handleUpdateObligationInContract}
                       >
-                        <Button variant="secondary" type="button">
+                        <Button variant="outline" type="button">
                           <div className="flex flex-row gap-1 justify-center items-center">
                             <span>Create a promise</span>
                             <FaPlus className="w-4 h-4" />

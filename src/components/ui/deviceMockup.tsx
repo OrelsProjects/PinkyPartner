@@ -71,7 +71,7 @@ const DeviceMockup: React.FC<DeviceMockupProps> = ({
         <div className="w-full h-5 text-7xl font-medium text-white/70 text-center rounded-t-[1rem] z-10">
           {time}
         </div>
-        <div className="w-full h-full flex flex-col gap-1 justify-end items-center z-30 overflow-visible mb-5">
+        <div className="w-full h-full flex flex-col gap-1 justify-end lg:justify-start items-center z-30 overflow-visible mb-5">
           {children}
         </div>
         <Image

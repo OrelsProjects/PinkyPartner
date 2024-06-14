@@ -4,15 +4,17 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { selectAuth } from "../../lib/features/auth/authSlice";
+import { cn } from "../../lib/utils";
 
 interface ObligationCheckboxProps {
   day: string;
   index: number;
   dummy?: boolean; // For onboarding
   disabled?: boolean;
-  onCompletedChangeDummy?: (isCompleted: boolean) => void;
   loading?: boolean;
   isCompleted?: boolean;
+  forceSound?: boolean;
+  onCompletedChangeDummy?: (isCompleted: boolean) => void;
   onCompletedChange?: (day: string, isCompleted: boolean) => void;
 }
 
@@ -22,13 +24,14 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   dummy,
   loading,
   disabled,
+  forceSound, // Force sound to play when isCompleted is true, even if the checkbox was not checked by the user
   isCompleted,
   onCompletedChange,
   onCompletedChangeDummy,
 }) => {
   const { user, state } = useAppSelector(selectAuth);
   const [checked, setChecked] = React.useState(false);
-  const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
+  const [shouldPlaySound, setShouldPlaySound] = React.useState(forceSound);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
   const audio = useMemo(() => {
@@ -79,9 +82,14 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   }, [checked, isCompleted, canPlaySound]);
 
   return (
-    <div className="h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative">
+    <div className={cn("h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative")}>
       <Checkbox
-        className="w-full h-full self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary z-20"
+        className={cn(
+          "w-full h-full self-center rounded-lg border-foreground/70 data-[state=checked]:bg-gradient-to-t data-[state=checked]:from-primary data-[state=checked]:to-primary-lighter data-[state=checked]:text-foreground data-[state=checked]:border-primary z-20",
+          {
+            "hover:cursor-default": disabled,
+          },
+        )}
         checked={dummy ? checked : isCompleted}
         onCheckedChange={(checked: boolean) => {
           if (disabled) return;

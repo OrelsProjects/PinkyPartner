@@ -6,6 +6,7 @@ import type { Container, SingleOrMultiple } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
 import { cn } from "@/lib/utils";
 import { motion, useAnimation } from "framer-motion";
+import { useTheme } from "next-themes";
 
 type ParticlesProps = {
   id?: string;
@@ -30,6 +31,8 @@ export const SparklesCore = (props: ParticlesProps) => {
     particleDensity,
   } = props;
 
+  const { theme, systemTheme } = useTheme();
+
   const [init, setInit] = useState(false);
   useEffect(() => {
     initParticlesEngine(async engine => {
@@ -41,25 +44,11 @@ export const SparklesCore = (props: ParticlesProps) => {
   const controls = useAnimation();
 
   const color = useMemo(() => {
-    // if the background color is dark, particles should be light
-    // get the background color from global.css
-    const root = document.documentElement;
-    const style = getComputedStyle(root);
-
-    const backgroundColorRGBA = style
-      .getPropertyValue("background-color")
-      .trim(); // rgba(...)
-    const backgroundColor = backgroundColorRGBA.replace(/rgba?\(|\s+|\)/g, ""); // remove rgba( and spaces
-
-    // if around 0,0,0,0 - 60,60,60,60, particles should be light, else dark
     const isDark =
-      backgroundColor
-        .split(",")
-        .map(c => parseInt(c))
-        .reduce((acc, c) => acc + c, 0) < 240;
+      theme === "system" ? systemTheme === "dark" : theme === "dark";
 
     return isDark ? "#fff" : "#000";
-  }, []);
+  }, [document]);
 
   const particlesLoaded = async (container?: Container) => {
     if (container) {

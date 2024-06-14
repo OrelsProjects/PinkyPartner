@@ -1,74 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ObligationBox } from "../contractObligations/contractObligation";
 import DeviceMockup from "../ui/deviceMockup";
-import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { cn } from "../../lib/utils";
+import NotificationMockup, {
+  NotificationMockupProps,
+} from "./notificationMockup";
 
 const OREL_IMAGE_URL =
   "https://lh3.googleusercontent.com/a/ACg8ocJuQcn9RGs6JLIUTa4TJzH4CQKVQatTZE4zIlMqxe9ec8wlXJttvA=s96-c";
 
 interface DummyObligationBoxProps {}
 
-export interface NotificationMockupProps {
-  title: string;
-  body: string;
-  image?: string;
-  state?: "show" | "hide" | "idle";
-}
-
-const NotificationMockup: React.FC<NotificationMockupProps> = ({
-  title,
-  body,
-  image,
-  state,
-}) => {
-  return (
-    // Make it appear like a notification, with animation from top to bottom and shadow
-    <AnimatePresence>
-      {state === "show" && (
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 50, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-11/12 h-16 flex flex-col gap-0 justify-center items-center rounded-xl bg-black/35 notification-shadow px-2 pt-2 select-none"
-        >
-          <div className="w-full text-white/40 text-[10px] font-medium text-end mt-1.5">
-            now
-          </div>
-          <div className="w-full h-full flex flex-row items-start ">
-            {image && (
-              <Image
-                src={image}
-                alt="notification"
-                fill
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-                className="rounded-[1.75rem] z-0 !relative !h-8 !w-8"
-              />
-            )}
-            <div className="w-fit flex-shrink h-16 flex flex-col gap-0 px-2 pt-0.5">
-              <span className="text-xs font-semibold truncate">{title}</span>
-              <span className="text-xs">{body}</span>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
-
 const Device = ({
   notifications,
   children,
+  ios15,
 }: {
   notifications: NotificationMockupProps[];
   children?: React.ReactNode;
+  ios15?: boolean;
 }) => (
   <div className="flex flex-col gap-2 items-center">
-    <DeviceMockup ownerPhotoUrl={OREL_IMAGE_URL}>
+    <DeviceMockup ownerPhotoUrl={OREL_IMAGE_URL} ios15>
       {notifications?.map((notification, index) => (
         <NotificationMockup
           image="/PP-round.png"
@@ -139,10 +93,12 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
   const [title, setTitle] = useState<string>(titles[0]);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [completed, setCompleted] = useState<boolean>(false);
+  const [tried, setTried] = useState<boolean>(false);
 
   const handleCompleteObligation = (day: string, completed: boolean): void => {
     setCompleted(completed);
     setDisabled(true);
+    setTried(true);
 
     let newNotifications = [...notifications];
     const notificationIndex = newNotifications.findIndex(n =>
@@ -186,25 +142,13 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
     <div className="h-full w-full flex flex-col-reverse justify-start gap-14 md:hidden">
       <div className="flex flex-row gap-1 relative justify-center items-center">
         <div className="w-fit absolute -top-[2.25rem] md:top-5 md:-left-[6.25rem] flex flex-row-reverse md:flex-row justify-end md:justify-start gap-2">
-          <motion.span
-            // shake animation (rotate left and right)
-            animate={{
-              rotate: [
-                0, 10, 0, -10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0,
-              ],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatDelay: 4, // Waits for 2 seconds before repeating
-              ease: "linear",
-            }}
-            className="text-xl"
-          >
-            Try me
-          </motion.span>
-          <div>
-            <FaArrowRightLong className="text-3xl text-primary rotate-90 md:rotate-0" />
+          <span className="text-xl">Try me</span>
+          <div className="rotate-90">
+            <FaArrowRightLong
+              className={cn("text-3xl text-primary", {
+                "animate-bounce-horizontal": !tried,
+              })}
+            />
           </div>
         </div>
         <ObligationBox
@@ -225,7 +169,7 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
           }}
         />
       </div>
-      <Device notifications={notifications} />
+      <Device notifications={notifications} ios15 />
     </div>
   );
 };
