@@ -29,7 +29,16 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
-  themeColor: "#00000000",
+  themeColor: [
+    {
+      color: "#FBF8F4",
+      media: "prefers-color-scheme: light",
+    },
+    {
+      color: "#1C1F26",
+      media: "prefers-color-scheme: dark",
+    },
+  ],
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -65,7 +74,7 @@ export const metadata: Metadata = {
 export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
-       <head>
+      <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
