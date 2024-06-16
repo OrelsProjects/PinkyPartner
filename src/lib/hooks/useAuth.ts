@@ -5,6 +5,7 @@ import {
   clearUser,
   setError,
   setDataFetched as setDataFetchedAction,
+  updateUserDisplayName as updateUserDisplayNameAction,
 } from "../features/auth/authSlice";
 import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
@@ -129,14 +130,29 @@ const useAuth = () => {
     dispatch(setDataFetchedAction());
   }, []);
 
+  const updateUserDisplayName = useCallback(
+    async (displayName: string) => {
+      try {
+        await axios.patch("/api/user", { displayName });
+        dispatch(updateUserDisplayNameAction(displayName));
+      } catch (error: any) {
+        Logger.error("Error updating user display name", { error });
+        dispatch(setError("Failed to update display name"));
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   return {
-    signInWithGoogle,
-    signInWithApple,
-    signInWithEmail,
-    signUpWithEmail,
     signOut,
     deleteUser,
     setDataFetched,
+    signInWithApple,
+    signInWithEmail,
+    signUpWithEmail,
+    signInWithGoogle,
+    updateUserDisplayName,
   };
 };
 

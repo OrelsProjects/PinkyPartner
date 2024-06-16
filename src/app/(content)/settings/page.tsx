@@ -14,21 +14,81 @@ import axios from "axios";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import { updateUserSettings } from "../../../lib/features/auth/authSlice";
 import { canUseNotifications } from "../../../lib/utils/notificationUtils";
+import { Input } from "../../../components/ui/input";
+import { HiPencil } from "react-icons/hi2";
+import { FaCheck } from "react-icons/fa6";
+import { MdOutlineCancel } from "react-icons/md";
+import Loading from "../../../components/ui/loading";
 
 interface SettingsProps {}
+
+const UpdateUserPreferredName = ({
+  value,
+  onBlur,
+  onSave,
+  loading,
+  onChange,
+}: {
+  value?: string;
+  loading?: boolean;
+  onBlur?: () => void;
+  onSave: (value?: string) => void;
+  onChange: (value: string) => void;
+}) => {
+  return (
+    <form
+      className="flex flex-row gap-4 items-center"
+      onSubmit={e => {
+        e.preventDefault();
+        onSave(value);
+      }}
+    >
+      <Input
+        className="w-48"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+      />
+      <div className="flex flex-row gap-2">
+        <Button
+          variant="ghost"
+          type="submit"
+          onClick={e => {
+            e.stopPropagation();
+            onSave(value);
+          }}
+        >
+          {loading ? (
+            <Loading spinnerClassName="h-5 w-5 fill-foreground" />
+          ) : (
+            <FaCheck className="text-foreground text-xl" />
+          )}
+        </Button>
+        <Button variant="ghost" onClick={onBlur}>
+          <MdOutlineCancel className="text-foreground text-xl" />
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 const SettingsScreen: React.FC<SettingsProps> = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
-  const { deleteUser, signOut } = useAuth();
+  const { deleteUser, signOut, updateUserDisplayName } = useAuth();
+
   const { initNotifications: initUserToken, requestNotificationsPermission } =
     useNotifications();
+
   const [settings, setSettings] = useState(
     user?.settings ?? {
       showNotifications: false,
       soundEffects: true,
     },
   );
+
+  const [editName, setEditName] = useState(false);
+  const [newPreferredName, setNewPreferredName] = useState(user?.displayName);
+  const [loadingName, setLoadingName] = useState(false);
 
   const changeNotificationTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -103,8 +163,46 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
 
   return (
     <div className="flex flex-col gap-4 mt-3">
-      <div className="flex flex-row justify-between items-center">
-        <span className="text-xl font-semibold">{user?.email}</span>
+      <div className="flex flex-row gap-4 items-center">
+        {editName ? (
+          <UpdateUserPreferredName
+            value={newPreferredName || ""}
+            onChange={value => {
+              setNewPreferredName(value);
+            }}
+            onBlur={() => {
+              setEditName(false);
+              setNewPreferredName(user?.displayName);
+            }}
+            loading={loadingName}
+            onSave={value => {
+              setLoadingName(true);
+              if (value) {
+                updateUserDisplayName(value)
+                  .catch(() => {
+                    toast.error("Failed to update name.. try again?");
+                    setNewPreferredName(user?.displayName);
+                  })
+                  .finally(() => {
+                    setEditName(false);
+                    setLoadingName(false);
+                  });
+              }
+            }}
+          />
+        ) : (
+          <>
+            <span className="text-xl font-semibold">{user?.displayName}</span>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setEditName(true);
+              }}
+            >
+              <HiPencil className="text-foreground cursor-pointer text-xl" />
+            </Button>
+          </>
+        )}
       </div>
       <Divider />
       <div className="flex flex-col gap-4">

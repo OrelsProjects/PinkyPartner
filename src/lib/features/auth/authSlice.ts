@@ -77,6 +77,17 @@ const authSlice = createSlice({
         state.user = newUser;
       }
     },
+    updateUserDisplayName: (
+      state,
+      action: PayloadAction<string | undefined>,
+    ) => {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          displayName: action.payload,
+        };
+      }
+    },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
       state.loading = false;
@@ -98,6 +109,7 @@ export const {
   clearUser,
   setDataFetched,
   updateUserSettings,
+  updateUserDisplayName,
   updateOnboardingCompleted,
 } = authSlice.actions;
 

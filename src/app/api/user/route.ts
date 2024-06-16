@@ -61,7 +61,7 @@ export async function PATCH(req: NextRequest): Promise<any> {
     if (!session.user?.userId) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    const { pushToken, pushTokenMobile } = await req.json();
+    const { pushToken, pushTokenMobile, displayName } = await req.json();
 
     if (pushToken) {
       await prisma.appUserMetadata.upsert({
@@ -74,6 +74,13 @@ export async function PATCH(req: NextRequest): Promise<any> {
         where: { userId: session.user?.userId },
         update: { pushTokenMobile },
         create: { userId: session.user?.userId, pushTokenMobile },
+      });
+    }
+
+    if (displayName) {
+      await prisma.appUser.update({
+        where: { userId: session.user?.userId },
+        data: { displayName },
       });
     }
 
