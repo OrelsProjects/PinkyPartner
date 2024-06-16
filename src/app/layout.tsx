@@ -59,13 +59,11 @@ export const metadata: Metadata = {
 export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
-           <Head>
+      <Head>
         <title>{APP_DEFAULT_TITLE}</title>
         <meta name="description" content={APP_DESCRIPTION} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" href="/favicon.png" sizes="any" />
         <link rel="manifest" href="/manifest.json" />
 
         {/* Open Graph */}
@@ -73,7 +71,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:title" content={APP_DEFAULT_TITLE} />
         <meta property="og:description" content={APP_DESCRIPTION} />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="/favicon.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
@@ -81,7 +79,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={APP_DEFAULT_TITLE} />
         <meta name="twitter:description" content={APP_DESCRIPTION} />
-        <meta name="twitter:image" content="/twitter-og-image.png" />
+        <meta name="twitter:image" content="/favicon.png" />
 
         {/* Additional tags for mobile web app capabilities */}
         <meta name="mobile-web-app-capable" content="yes" />
