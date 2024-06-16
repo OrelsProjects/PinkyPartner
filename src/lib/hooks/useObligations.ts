@@ -15,13 +15,12 @@ import {
   setLoading,
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "../../models/errors/LoadingError";
-import Contract, { ContractWithExtras } from "../../models/contract";
+import { ContractWithExtras } from "../../models/contract";
 import { Logger } from "../../logger";
-import UserContractObligation, {
+import {
   GetNextUpObligationsResponse,
   UserContractObligationData,
 } from "../../models/userContractObligation";
-import { useOptimistic } from "react";
 import { toast } from "react-toastify";
 
 export function useObligations() {

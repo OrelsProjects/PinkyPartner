@@ -12,12 +12,12 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme, systemTheme } = useTheme();
 
   return (
     <Switch
       className={cn("w-10", className)}
-      defaultChecked={theme === "dark"}
+      defaultChecked={theme === "system" ? systemTheme === "dark" : theme === "dark"}
       checkedIcon={<Moon className="h-4 w-4" />}
       uncheckedIcon={<Sun className="h-4 w-4" />}
       onCheckedChange={checked => {

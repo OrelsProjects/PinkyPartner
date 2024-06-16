@@ -3,6 +3,7 @@ import { cn } from "../../lib/utils";
 import ShowContentContainer from "./showContentContainer";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { EventTracker } from "../../eventTracker";
 
 interface HeroProps {}
 
@@ -60,7 +61,14 @@ const Hero: React.FC<HeroProps> = () => {
         </div>
         <div className="w-full md:w-fit flex flex-col justify-center items-center md:items-start text-foreground/80 text-lg text-center">
           <Button asChild className="text-lg py-6 px-12 text-white">
-            <Link href="/register">Take my pinky!</Link>
+            <Link
+              href="/register"
+              onClick={() => {
+                EventTracker.track("take_my_pinky_clicked");
+              }}
+            >
+              Take my pinky!
+            </Link>
           </Button>
           <Button
             variant="link"

@@ -13,6 +13,7 @@ import ShowContentContainer from "../components/landingPage/showContentContainer
 import DummyObligationBox from "../components/landingPage/dummyObligationBox";
 import { isMobilePhone } from "../lib/utils/notificationUtils";
 import Hero from "../components/landingPage/hero";
+import { EventTracker } from "../eventTracker";
 
 const Header = ({
   onGetStarted,
@@ -36,7 +37,13 @@ const Header = ({
           className="bg-card"
           onClick={onGetStarted}
         >
-          <Link href={getStartedUrl} className="text-base md:text-xl">
+          <Link
+            href={getStartedUrl}
+            className="text-base md:text-xl"
+            onClick={() => {
+              EventTracker.track("get_started_clicked");
+            }}
+          >
             Get Started
           </Link>
         </Button>
@@ -63,6 +70,9 @@ const NotificationExplanation = () => (
           }
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            EventTracker.track("Clicked on link");
+          }}
         >
           chances to succeed are 95%
         </Link>
@@ -121,8 +131,14 @@ export default function Home() {
               clearOnboardingViewed();
             }}
           >
-            <Link href="/home" className="relative">
-              Give the demo a try
+            <Link
+              href="/home"
+              className="relative"
+              onClick={() => {
+                EventTracker.track("tour_button_clicked");
+              }}
+            >
+              Give me a tour!
               <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
             </Link>
           </Button>

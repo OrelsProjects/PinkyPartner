@@ -14,6 +14,7 @@ import axios from "axios";
 import { Logger } from "../../logger";
 import { setUser, updateOnboardingCompleted } from "../features/auth/authSlice";
 import { ANONYMOUS_USER_ID } from "../utils/consts";
+import { EventTracker } from "../../eventTracker";
 
 export default function useOnboarding() {
   const router = useRouter();
@@ -36,6 +37,20 @@ export default function useOnboarding() {
       }
     | undefined
   >();
+
+  const [elementSize, setElementSize] = useState<
+    | {
+        height: number;
+        width: number;
+      }
+    | undefined
+  >();
+
+  useEffect(() => {
+    if (!isOnboardingCompleted()) {
+      EventTracker.track("onboarding_stage" + currentStage);
+    }
+  }, [currentStage]);
 
   // Set anonymous user
   useEffect(() => {
@@ -68,14 +83,6 @@ export default function useOnboarding() {
       setOnboardingViewed(false);
     }
   }, [user]);
-
-  const [elementSize, setElementSize] = useState<
-    | {
-        height: number;
-        width: number;
-      }
-    | undefined
-  >();
 
   useEffect(() => {
     const lastStage = getLastStage();

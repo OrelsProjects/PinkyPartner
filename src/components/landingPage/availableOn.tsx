@@ -3,6 +3,7 @@ import ShowContentContainer from "./showContentContainer";
 import Image from "next/image";
 import Link from "next/link";
 import useOnboarding from "../../lib/hooks/useOnboarding";
+import { EventTracker } from "../../eventTracker";
 
 interface AvailableOnProps {}
 
@@ -24,6 +25,9 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
               href="https://play.google.com/store/apps/details?id=com.pinkypartner.www.twa"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                EventTracker.track("downloaded_on_google_play");
+              }}
             >
               <Image
                 src="/get-on-google-play.png"
@@ -38,6 +42,9 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                   ? "register"
                   : "home"
               }
+              onClick={() => {
+                EventTracker.track("downloaded_on_web_app");
+              }}
             >
               <Image
                 src="/get-on-web-app.png"

@@ -16,6 +16,7 @@ const useAuth = () => {
 
   const signInWithGoogle = useCallback(async () => {
     try {
+      EventTracker.track("user_signed_in_with_google");
       await signIn("google");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
@@ -31,6 +32,7 @@ const useAuth = () => {
 
   const signInWithApple = useCallback(async () => {
     try {
+      EventTracker.track("user_signed_in_with_apple");
       await signIn("apple");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {

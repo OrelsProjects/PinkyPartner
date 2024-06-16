@@ -14,7 +14,6 @@ import axios from "axios";
 import useNotifications from "../../../lib/hooks/useNotifications";
 import { updateUserSettings } from "../../../lib/features/auth/authSlice";
 import { canUseNotifications } from "../../../lib/utils/notificationUtils";
-import { Checkbox } from "../../../components/ui/checkbox";
 
 interface SettingsProps {}
 

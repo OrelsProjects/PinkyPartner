@@ -232,6 +232,7 @@ export default function OnboardingProvider() {
         className="absolute top-3 right-3 md:bottom-10 md:top-auto"
         onClick={e => {
           e.stopPropagation();
+          EventTracker.track("onboarding_skipped");
           setOnboardingViewed().finally(() => {
             router.refresh();
           });
@@ -262,21 +263,29 @@ export default function OnboardingProvider() {
       <DialogContent closeOnOutsideClick={false}>
         <DialogTitle>Great job!</DialogTitle>
         <DialogDescription>
-          Now, in order to start building habits, you&apos;ll need to sign up :)
+          Now let&apos;s sign up to start building habits for real :)
         </DialogDescription>
         <DialogFooter>
           <div className="w-full flex flex-col gap-0 justify-center items-center">
             <Button asChild>
-              <Link href="/register">Let&apos;s go!</Link>
+              <Link
+                href="/register"
+                onClick={() => {
+                  EventTracker.track("sign_up_after_onboarding");
+                }}
+              >
+                Let&apos;s go!
+              </Link>
             </Button>
-            <Button
-              variant="link"
-              onClick={() => {
-                EventTracker.track("Cancelled sign up");
-              }}
-              asChild
-            >
-              <Link href="/">Maybe next time</Link>
+            <Button variant="link" asChild>
+              <Link
+                href="/"
+                onClick={() => {
+                  EventTracker.track("sign_up_cancel_after_onboarding");
+                }}
+              >
+                Maybe next time
+              </Link>
             </Button>
           </div>
         </DialogFooter>

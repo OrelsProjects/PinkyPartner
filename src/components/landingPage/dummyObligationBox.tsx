@@ -8,6 +8,7 @@ import { cn } from "../../lib/utils";
 import NotificationMockup, {
   NotificationMockupProps,
 } from "./notificationMockup";
+import { EventTracker } from "../../eventTracker";
 
 const OREL_IMAGE_URL =
   "https://lh3.googleusercontent.com/a/ACg8ocJuQcn9RGs6JLIUTa4TJzH4CQKVQatTZE4zIlMqxe9ec8wlXJttvA=s96-c";
@@ -279,6 +280,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             isPartnerObligationCompleted: completedRandomPinky,
           }}
           handleCompleteObligation={(day: string, completed: boolean): void => {
+            EventTracker.track("user_completed_obligation_in_landing_page");
             handleCompleteObligation(day, titleOrel, completed, false);
           }}
         />

@@ -31,10 +31,7 @@ import CreatePromise from "../../../../../components/createPromise";
 import ObligationComponent from "../../../../../components/obligationComponent";
 import { cn } from "../../../../../lib/utils";
 import { getRandomTimeToFinishRequest } from "../../../../../lib/utils/apiUtils";
-
-interface CreateContractPageProps {
-  params?: { params?: { state?: "no-partner" } };
-}
+import { EventTracker } from "../../../../../eventTracker";
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;
@@ -139,7 +136,9 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
       obligation: undefined,
     },
     onSubmit: async values => {
+      EventTracker.track("contract_created");
       if (!values.obligation) {
+        EventTracker.track("contract_created_no_promise");
         toast.error("You must add a promise");
         obligationsRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -148,6 +147,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
         return;
       }
       if (formik.values.signatures.length === 0) {
+        EventTracker.track("contract_created_no_signature");
         toast.error("You must sign the contract");
         signatureRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -157,6 +157,11 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
         return;
       }
       if (!accountabilityPartner && !continueWithoutPartner) return;
+      EventTracker.track(
+        "contract_created_" + continueWithoutPartner
+          ? "without"
+          : "with" + "_partner",
+      );
       const contractees = [user, accountabilityPartner].filter(
         partner => partner !== null,
       ) as AccountabilityPartner[];
@@ -187,8 +192,10 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
   useEffect(() => {
     // if continue without partner is true, make sure the url contains the state. otherwise, remove it
     if (continueWithoutPartner) {
+      EventTracker.track("continue_without_partner");
       router.push("/contracts/new/no-partner");
     } else {
+      EventTracker.track("create_contract");
       router.push("/contracts/new");
     }
   }, [continueWithoutPartner]);
@@ -228,6 +235,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
   };
 
   const handleBack = () => {
+    EventTracker.track("back_to_find_partner");
     setPreviousAccountabilityPartner(accountabilityPartner);
     setAccountabilityPartner(null);
     setContinueWithoutPartner(false);
@@ -311,7 +319,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                   onClick={handleBack}
                   className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent"
                 >
-                  <div className="flex flex-row gap-1 items-start md:hover:bg-slate-400/40 p-2 md:rounded-full">
+                  <div className="flex flex-row gap-1 items-start md:rounded-full">
                     <IoArrowBack className="w-6 h-6" />
                     Back
                   </div>
@@ -403,7 +411,9 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     className="w-fit"
                     type="date"
                     name="dueDate"
-                    value={formik.values.dueDate?.toISOString()?.split("T")?.[0]}
+                    value={
+                      formik.values.dueDate?.toISOString()?.split("T")?.[0]
+                    }
                     onChange={e => {
                       formik.setValues({
                         ...formik.values,

@@ -7,6 +7,7 @@ import {
 } from "./ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "./ui/button";
+import { EventTracker } from "../eventTracker";
 
 const titlesMap: Record<PermissionType, string> = {
   notifications: "Make the most out of PinkyPartner",
@@ -56,7 +57,10 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
           <DialogFooter>
             <div className="w-full flex flex-col justify-center items-center gap-0">
               <Button
-                onClick={() => onEnablePermission(permission)}
+                onClick={() => {
+                  EventTracker.track("Clicked on enable notifications");
+                  onEnablePermission(permission);
+                }}
                 className="w-fit"
               >
                 Enable notifications
@@ -65,6 +69,7 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
                 variant="link"
                 onClick={() => {
                   onClose();
+                  EventTracker.track("Clicked on not now");
                 }}
               >
                 Not now

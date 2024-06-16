@@ -88,6 +88,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         <div
           className="w-16 h-16 flex justify-center items-center flex-col rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer"
           onClick={e => {
+            EventTracker.track("share_copy_link");
             handleCopyLink();
             e.stopPropagation();
           }}
@@ -100,6 +101,9 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         title={summary}
         url={url}
         className="flex items-center justify-center flex-col"
+        onClick={() => {
+          EventTracker.track("share_whatsapp");
+        }}
       >
         <WhatsappIcon size={64} round={true} />
         <span>Whatsapp</span>
@@ -108,6 +112,9 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         title={summary}
         url={url}
         className="flex items-center justify-center flex-col"
+        onClick={() => {
+          EventTracker.track("share_telegram");
+        }}
       >
         <TelegramIcon size={64} round={true} />
         <span>Telegram</span>
@@ -117,6 +124,9 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
         url={url}
         body={body}
         className="flex items-center justify-center flex-col"
+        onClick={() => {
+          EventTracker.track("share_email");
+        }}
       >
         <EmailIcon size={64} round={true} />
         <span>Email</span>
@@ -131,6 +141,7 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   return (
     <Dialog
       onOpenChange={value => {
+        EventTracker.track("invite_partner_dialog", { open: value });
         setIsOpen(value);
         if (!value) {
           onClose?.();
