@@ -8,10 +8,9 @@ import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ProductHuntProvider from "./providers/ProductHuntProvider";
-import Head from "next/head";
 
-const OG_IMAGE_URL = "/favicon.ico";
-// "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
+const OG_IMAGE_URL =
+  "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
 const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
@@ -49,13 +48,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-    images: [
-      {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-      },
-    ],
+    images: { url: OG_IMAGE_URL, width: 1200, height: 630 },
   },
   twitter: {
     card: "summary",
@@ -64,13 +57,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-    images: [
-      {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-      },
-    ],
+    images: { url: OG_IMAGE_URL, width: 1200, height: 630 },
   },
 };
 
