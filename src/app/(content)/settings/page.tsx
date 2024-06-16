@@ -80,7 +80,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
     useNotifications();
 
   const [settings, setSettings] = useState(
-    user?.settings ?? {
+    user?.settings || {
       showNotifications: false,
       soundEffects: true,
     },
@@ -97,7 +97,8 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
 
   useEffect(() => {
     if (user) {
-      setSettings(user?.settings);
+      setSettings({ ...user?.settings });
+      setNewPreferredName(user?.displayName);
     }
   }, [user]);
 

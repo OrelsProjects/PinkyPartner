@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
 import Logger from "@/loggerServer";
 import { authOptions } from "../../../../authOptions";
-import { AppUser, Contract, Obligation } from "@prisma/client";
+import { Contract, Obligation } from "@prisma/client";
 import * as ClientContract from "../../../../models/contract";
 import { formatObligations } from "../../_utils";
 import { ANONYMOUS_USER_ID } from "../../../../lib/utils/consts";
