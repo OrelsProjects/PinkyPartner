@@ -1,4 +1,5 @@
 // @ts-check
+import * as PWA from "@ducanh2912/next-pwa";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -28,4 +29,10 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withPWA = PWA.default({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+});
+
+export default withPWA(nextConfig);
