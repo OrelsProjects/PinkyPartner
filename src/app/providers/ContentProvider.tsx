@@ -26,7 +26,6 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const [contentHeight, setContentHeight] = React.useState<number>(
     sizeContent.height,
   );
-  ("use client");
 
   React.useEffect(() => {
     if (bottomBarRef.current) {

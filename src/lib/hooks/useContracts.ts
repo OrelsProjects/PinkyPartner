@@ -31,6 +31,9 @@ export function useContracts() {
   const fetchContracts = async () => {
     dispatch(setLoading(true));
     try {
+      if (!user) {
+        throw new Error("Accountability partner is required");
+      }
       const response = await axios.get("/api/contract");
       dispatch(setContractsAction(response.data.result));
       dispatch(setError(null));
