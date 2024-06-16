@@ -42,11 +42,19 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: APP_NAME,
+    url: "https://www.pinkypartner.com",
     title: {
       default: APP_DEFAULT_TITLE,
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary",
@@ -55,42 +63,19 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 };
 
 export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
-      <Head>
-        <title>{APP_DEFAULT_TITLE}</title>
-        <meta name="description" content={APP_DESCRIPTION} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href={OG_IMAGE_URL} sizes="any" />
-        <link rel="manifest" href="/manifest.json" />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content={APP_NAME} />
-        <meta property="og:title" content={APP_DEFAULT_TITLE} />
-        <meta property="og:url" content="https://www.pinkypartner.com" />
-        <meta property="og:logo" content={OG_IMAGE_URL} />
-        <meta property="og:description" content={APP_DESCRIPTION} />
-        <meta property="og:image" content={OG_IMAGE_URL} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={APP_DEFAULT_TITLE} />
-        <meta name="twitter:description" content={APP_DESCRIPTION} />
-        <meta name="twitter:image" content={OG_IMAGE_URL} />
-
-        {/* Additional tags for mobile web app capabilities */}
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="theme-color" content="#1C1F26" />
-      </Head>
       <body className="!overscroll-none">
         <LiveChatProvider />
         <StoreProvider>
