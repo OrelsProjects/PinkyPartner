@@ -9,6 +9,7 @@
 
 @layer base {
   :root {
+    /* FBF8F4 */
     --background: 36 42% 97%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -36,6 +37,7 @@
   }
 
   .dark {
+    /* 1C1F26 */
     --background: 220 15% 13%;
     --foreground: 0 0% 95%;
     --card: 220 17% 18%;
