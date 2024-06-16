@@ -109,6 +109,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
       dispatch(updateUserSettings({ soundEffects }));
     } catch (e) {
       toast.error("Failed to update sound settings");
+      setSettings({ ...settings, soundEffects: !soundEffects });
     }
   };
 
@@ -116,7 +117,6 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
     if (changeNotificationTimeout.current) {
       clearTimeout(changeNotificationTimeout.current);
     }
-
     setSettings({ ...settings, showNotifications });
 
     changeNotificationTimeout.current = setTimeout(async () => {
@@ -129,6 +129,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
         dispatch(updateUserSettings({ showNotifications }));
       } catch (e) {
         toast.error("Failed to update notification settings");
+        setSettings({ ...settings, showNotifications: !showNotifications });
       }
     }, 1000);
   };

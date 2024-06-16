@@ -284,7 +284,8 @@ export const authOptions: AuthOptions = {
               photoURL: session.user.image,
             },
           });
-          session.user.name = userInDB?.displayName || session.user.name || "Random Pinky"
+          session.user.name =
+            userInDB?.displayName || session.user.name || "Random Pinky";
         }
 
         if (!session.user.meta) {
