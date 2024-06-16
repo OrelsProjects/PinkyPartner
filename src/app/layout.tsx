@@ -10,6 +10,8 @@ import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ProductHuntProvider from "./providers/ProductHuntProvider";
 import Head from "next/head";
 
+const OG_IMAGE_URL =
+  "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
 const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
@@ -63,7 +65,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <title>{APP_DEFAULT_TITLE}</title>
         <meta name="description" content={APP_DESCRIPTION} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.png" sizes="any" />
+        <link rel="icon" href={OG_IMAGE_URL} sizes="any" />
         <link rel="manifest" href="/manifest.json" />
 
         {/* Open Graph */}
@@ -71,7 +73,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:title" content={APP_DEFAULT_TITLE} />
         <meta property="og:description" content={APP_DESCRIPTION} />
-        <meta property="og:image" content="/favicon.png" />
+        <meta property="og:image" content={OG_IMAGE_URL} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
@@ -79,7 +81,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={APP_DEFAULT_TITLE} />
         <meta name="twitter:description" content={APP_DESCRIPTION} />
-        <meta name="twitter:image" content="/favicon.png" />
+        <meta name="twitter:image" content={OG_IMAGE_URL} />
 
         {/* Additional tags for mobile web app capabilities */}
         <meta name="mobile-web-app-capable" content="yes" />
