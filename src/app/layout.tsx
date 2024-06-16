@@ -72,6 +72,8 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:title" content={APP_DEFAULT_TITLE} />
+        <meta property="og:url" content="https://www.pinkypartner.com" />
+        <meta property="og:logo" content={OG_IMAGE_URL} />
         <meta property="og:description" content={APP_DESCRIPTION} />
         <meta property="og:image" content={OG_IMAGE_URL} />
         <meta property="og:image:width" content="1200" />
