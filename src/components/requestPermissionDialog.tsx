@@ -12,9 +12,15 @@ const titlesMap: Record<PermissionType, string> = {
   notifications: "Make the most out of PinkyPartner",
 };
 
-const messagesMap: Record<PermissionType, string> = {
-  notifications:
-    "To know if your partner is honoring your pinky promise, enable notifications.",
+const messagesMap: Record<PermissionType, React.ReactNode> = {
+  notifications: (
+    <>
+      <p>
+        Studies show that having an accountability partner increases your
+        chances to build your habits up to 95%.
+      </p>
+    </>
+  ),
 };
 
 export type PermissionType = "notifications";

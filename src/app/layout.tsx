@@ -80,8 +80,8 @@ export default function Layout({ children }: RootLayoutProps) {
                 <TopLoaderProvider />
                 <ProductHuntProvider />
                 {children}
-                <SpeedInsights />
-                <Analytics />
+                {/* <SpeedInsights />
+                <Analytics /> */}
               </AuthProvider>
             </ThemeProvider>
           </SessionWrapper>
