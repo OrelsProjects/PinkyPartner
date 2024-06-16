@@ -10,8 +10,8 @@ import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ProductHuntProvider from "./providers/ProductHuntProvider";
 import Head from "next/head";
 
-const OG_IMAGE_URL =
-  "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
+const OG_IMAGE_URL = "/favicon.ico";
+// "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
 const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
 const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
@@ -41,6 +41,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
+    locale: "en_US",
     siteName: APP_NAME,
     url: "https://www.pinkypartner.com",
     title: {
