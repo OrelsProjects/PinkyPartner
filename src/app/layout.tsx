@@ -64,6 +64,17 @@ export const metadata: Metadata = {
 export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
+       <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="hsl(var(--background))" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta property="og:image" content="<generated>" />
+        <meta property="og:image:type" content="<generated>" />
+        <meta property="og:image:width" content="<generated>" />
+        <meta property="og:image:height" content="<generated>" />
+      </head>
       <body className="!overscroll-none">
         <LiveChatProvider />
         <StoreProvider>
