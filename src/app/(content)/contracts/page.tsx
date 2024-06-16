@@ -39,7 +39,7 @@ const ContractsPage: React.FC<ContractsProps> = () => {
         </span>
         <Button
           variant="link"
-          className="text-2xl flex justify-center items-center p-2 hover:bg-muted/50"
+          className="text-2xl flex justify-center items-center p-2 sm:hover:bg-muted-foreground/50"
           data-onboarding-id="contracts-plus-button"
           asChild
         >
