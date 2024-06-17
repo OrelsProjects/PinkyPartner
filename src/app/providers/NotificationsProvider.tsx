@@ -123,7 +123,7 @@ const NotificationsProvider = () => {
       const newContracts = contracts.filter(
         contract =>
           !contract.signatures.some(
-            signature => signature.userId === user?.userId,
+            signature => signature?.userId === user?.userId,
           ) && contract.viewedAt,
       );
 
@@ -134,7 +134,7 @@ const NotificationsProvider = () => {
           lastShownNewContractsNotification.current = Date.now();
           const contractees = newContracts.map(contract =>
             contract.contractees.find(
-              contractee => contractee.userId !== user?.userId,
+              contractee => contractee?.userId !== user?.userId,
             ),
           );
         }

@@ -31,7 +31,7 @@ export const stages: Stage[] = [
 
 export const timeDelays: Record<Stage, number> = {
   welcome: 0,
-  "navigation-bar-item-Contracts": 2000,
+  "navigation-bar-item-Contracts": 1500,
   "contracts-plus-button": 200,
   "search-partner": 2500,
   "no-partner": 2300,
@@ -104,7 +104,8 @@ export const stageText: Record<
   },
   "fill-contract": {
     title: "You are doing great! 🚀",
-    description: "Now, create a contract and we'll meet after that.",
+    description:
+      "Now, create a contract and we'll meet after that.\n-(Click anywhere to continue)-",
   },
   "wait-fill-contract": {
     title: "",
@@ -127,7 +128,7 @@ export const stageText: Record<
   "promise-completed": {
     title: "Good job!",
     description:
-      "Your future partner will get a notification about your progress 😊",
+      "Your partner will get a notification about your progress 😊\n-(Click anywhere to continue)-",
   },
   done: {
     title: "Done",
@@ -179,4 +180,34 @@ export const requiredPaths: Record<Stage, string | null> = {
   "complete-promise-checkbox": "/home",
   "promise-completed": "/home",
   done: null,
+};
+
+export const showInStepper: Record<Stage, boolean> = {
+  welcome: false,
+  "navigation-bar-item-Contracts": true,
+  "contracts-plus-button": false,
+  "search-partner": true,
+  "no-partner": false,
+  "fill-contract": false,
+  "wait-fill-contract": false,
+  "invite-partner-button": true,
+  "wait-for-partner": true,
+  "complete-promise-checkbox": true,
+  "promise-completed": false,
+  done: false,
+};
+
+export const stepperTitles: Record<Stage, string> = {
+  welcome: "Welcome",
+  "navigation-bar-item-Contracts": "Create contract",
+  "contracts-plus-button": "Create contract",
+  "search-partner": "Search partner",
+  "no-partner": "No partner",
+  "fill-contract": "Fill contract",
+  "wait-fill-contract": "Wait fill contract",
+  "invite-partner-button": "Invite partner",
+  "wait-for-partner": "Wait for partner",
+  "complete-promise-checkbox": "Complete promise",
+  "promise-completed": "Promise completed",
+  done: "Done",
 };

@@ -125,7 +125,7 @@ export const ObligationBox = ({
               handleCompleteObligation(day, checked);
             }}
             dummy={dummy}
-            forceSound={forceSound}
+            forceSound={forceSound || dummy}
           />
           <div
             className={cn(

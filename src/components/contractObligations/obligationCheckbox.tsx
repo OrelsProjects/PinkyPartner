@@ -54,6 +54,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
         setShouldAnimate(false);
       }, 3000);
     }
+
     if (shouldPlaySound) {
       setTimeout(() => {
         setShouldPlaySound(false);
@@ -76,7 +77,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   };
 
   useEffect(() => {
-    if (isCompleted) {
+    if (isCompleted || (dummy && checked)) {
       if (canPlaySound && shouldPlaySound) {
         playSound();
       }

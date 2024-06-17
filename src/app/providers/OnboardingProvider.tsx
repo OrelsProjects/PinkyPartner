@@ -12,6 +12,8 @@ import {
   showBackground,
   backgroundForNextStage,
   timeDelays,
+  stages,
+  stepperTitles,
 } from "../../lib/consts/onboarding";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 import { useEffect, useMemo } from "react";
@@ -28,6 +30,7 @@ import Link from "next/link";
 import ObligationCheckbox from "../../components/contractObligations/obligationCheckbox";
 import React from "react";
 import { toast } from "react-toastify";
+import Stepper from "../../components/ui/stepper";
 
 export default function OnboardingProvider() {
   const { user, state } = useAppSelector(state => state.auth);
@@ -37,7 +40,7 @@ export default function OnboardingProvider() {
     nextStage,
     elementSize,
     currentStage,
-    // elementOnClick,
+    getStageIndex,
     elementsActions,
     elementPosition,
     onboardingElement,
@@ -199,6 +202,18 @@ export default function OnboardingProvider() {
         }
       }}
     >
+      {/* <Stepper
+        className={cn("absolute top-0 left-0", {
+          currentStage,
+        })}
+        steps={Object.values(stepperTitles)}
+        currentStep={getStageIndex(currentStage)}
+        nextStep={
+          currentStage === "done"
+            ? stages.length - 1
+            : getStageIndex(currentStage) + 1
+        }
+      /> */}
       <div
         id="_PRIVATE_ONBOARDING_ELEMENT"
         ref={shouldShowCheckbox ? null : onboardingElement}

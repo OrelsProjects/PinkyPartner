@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./redux";
 import {
   Stage,
@@ -89,6 +89,10 @@ export default function useOnboarding() {
     if (lastStage) {
       setCurrentStage(lastStage);
     }
+  }, []);
+
+  const getStageIndex = useCallback((stage: Stage) => {
+    return stages.indexOf(stage);
   }, []);
 
   const handleNextStage = (stage: Stage) => {
@@ -331,6 +335,7 @@ export default function useOnboarding() {
     setElement,
     elementSize,
     currentStage,
+    getStageIndex,
     elementsActions,
     onboardingState,
     elementPosition,

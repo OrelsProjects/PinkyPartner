@@ -60,7 +60,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
 
   const isUserSigned = useMemo(
     () =>
-      contract.signatures.some(signature => signature.userId === user?.userId),
+      contract.signatures.some(signature => signature?.userId === user?.userId),
     [contract.signatures, user],
   );
 
@@ -114,10 +114,10 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       <div className="w-full flex flex-row justify-between md:justify-start gap-1 md:gap-3">
         {contract.contractees.map(contractee => (
           <AccountabilityPartnerComponent
-            key={contractee.userId}
+            key={contractee?.userId}
             partner={contractee}
             signed={contract.signatures.some(
-              signature => signature.userId === contractee.userId,
+              signature => signature?.userId === contractee?.userId,
             )}
           />
         ))}

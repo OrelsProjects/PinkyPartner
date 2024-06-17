@@ -317,7 +317,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                 <Button
                   variant="ghost"
                   onClick={handleBack}
-                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent"
+                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent px-1 md:px-2 "
                 >
                   <div className="flex flex-row gap-1 items-start md:rounded-full">
                     <IoArrowBack className="w-6 h-6" />
@@ -325,7 +325,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                   </div>
                 </Button>
               </div>
-              <div className="w-full h-full overflow-auto flex flex-col gap-8 md:gap-10">
+              <div className="w-full h-full overflow-auto flex flex-col gap-8 md:gap-10 px-1 md:px-2 ">
                 <SectionContainer>
                   <SectionTitleContainer>
                     <SectionTitle text="Title" />
