@@ -133,6 +133,7 @@ const useAuth = () => {
   const updateUserDisplayName = useCallback(
     async (displayName: string) => {
       try {
+        if (!displayName) throw new Error("Display name is required");
         await axios.patch("/api/user", { displayName });
         dispatch(updateUserDisplayNameAction(displayName));
       } catch (error: any) {

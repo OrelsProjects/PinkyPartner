@@ -27,6 +27,7 @@ const UserIndicator = ({
   displayName?: string | null;
   isObligationCompleted?: boolean;
 }) => {
+  if (!displayName && !photoURL) return null;
   const text = isSigned
     ? isObligationCompleted
       ? "Done"
@@ -195,7 +196,7 @@ const ObligationsComponent = ({
 }) => {
   if (!obligations.length) return null;
 
-  const { user, state } = useAppSelector(state => state.auth);
+  const { state } = useAppSelector(state => state.auth);
   const { completeObligation } = useObligations();
   const [loadingObligationDays, setLoadingObligationDays] = React.useState<
     Record<string, boolean>

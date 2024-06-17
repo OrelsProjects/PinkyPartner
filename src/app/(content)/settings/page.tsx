@@ -189,6 +189,8 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
                     setEditName(false);
                     setLoadingName(false);
                   });
+              } else {
+                toast.error("Name cannot be empty");
               }
             }}
           />
