@@ -54,6 +54,9 @@ const UpdateUserPreferredName = ({
           type="submit"
           onClick={e => {
             e.stopPropagation();
+            if (loading) {
+              return;
+            }
             onSave(value);
           }}
         >
@@ -178,8 +181,8 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             }}
             loading={loadingName}
             onSave={value => {
-              setLoadingName(true);
               if (value) {
+                setLoadingName(true);
                 updateUserDisplayName(value)
                   .catch(() => {
                     toast.error("Failed to update name.. try again?");
