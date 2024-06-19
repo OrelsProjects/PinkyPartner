@@ -50,8 +50,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     }
 
     token = user.meta?.pushToken || "";
-
-    if (!token) {
+    const mobileToken = user.meta?.pushTokenMobile || "";
+    if (!token && !mobileToken) {
       return NextResponse.json(
         { error: "User not subscribed to notifications" },
         { status: 400 },
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       // Send to mobile
       await messaging.send({
         ...message,
-        token: user.meta?.pushTokenMobile || "",
+        token: mobileToken || "",
       });
     } catch (error: any) {
       Logger.error("Error sending mobile notification", session.user.userId, {
@@ -103,10 +103,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       });
     } finally {
       // Send to web
-      await messaging.send({
-        ...message,
-        token,
-      });
+      if (token) {
+        await messaging.send({
+          ...message,
+          token,
+        });
+      }
     }
     Logger.info("Notification sent", session.user.userId, {
       data: { message },
