@@ -49,7 +49,7 @@ async function registerMiddleware(req: NextRequest) {
 
 // match /register path and if it has params, also match
 export const config = {
-  matcher: "/register/:path*", // Matches /register and any subpaths
+  matcher: ["/register/:path*", "/login/:path*"], // Matches /register and any subpaths
 };
 
 export { default } from "next-auth/middleware";

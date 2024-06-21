@@ -214,7 +214,7 @@ export function useObligations() {
         )
         .then(response => {
           dispatch(setError(null));
-
+          debugger;
           if (completed) {
             sendCompletedObligationNotification(contract, obligation)
               .then(() => {

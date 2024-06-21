@@ -17,10 +17,32 @@ export async function PATCH(req: NextRequest): Promise<any> {
     if (!session.user?.userId) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    const { showNotifications } = await req.json();
+    const { showNotifications, soundEffects } = await req.json();
+    const now = new Date();
+    const userSettings = await prisma.appUserSettings.findUnique({
+      where: { userId: session.user?.userId },
+    });
+
+    if (userSettings?.updatedAt && userSettings.updatedAt > now) {
+      return NextResponse.json(
+        { error: "User settings are outdated" },
+        { status: 400 },
+      );
+    }
+
     await prisma.appUserSettings.upsert({
       where: { userId: session.user?.userId },
-      update: { showNotifications },
+      update: {
+        showNotifications:
+          showNotifications !== undefined
+            ? showNotifications
+            : userSettings?.showNotifications,
+        soundEffects:
+          soundEffects !== undefined
+            ? soundEffects
+            : userSettings?.soundEffects,
+        updatedAt: now,
+      },
       create: { userId: session.user?.userId, showNotifications },
     });
     return NextResponse.json({}, { status: 200 });

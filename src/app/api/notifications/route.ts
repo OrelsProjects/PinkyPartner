@@ -103,7 +103,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       });
     } finally {
       // Send to web
-      if (token) {
+      if (token && token !== "no-token") {
         await messaging.send({
           ...message,
           token,
