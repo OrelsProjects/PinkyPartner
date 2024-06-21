@@ -36,7 +36,10 @@ export async function POST(
     }
 
     const allUsers = await prisma.appUser.findMany();
-    const usersSettings: Omit<AppUserSettings, "appUserSettingsId">[] = [];
+    const usersSettings: Omit<
+      AppUserSettings,
+      "appUserSettingsId" | "updatedAt"
+    >[] = [];
     for (const user of allUsers) {
       const userCurrentSettings = await prisma.appUserSettings.findFirst({
         where: {
@@ -44,7 +47,10 @@ export async function POST(
         },
       });
       if (!userCurrentSettings) {
-        const settings: Omit<AppUserSettings, "appUserSettingsId"> = {
+        const settings: Omit<
+          AppUserSettings,
+          "appUserSettingsId" | "updatedAt"
+        > = {
           userId: user.userId,
           showNotifications: true,
           soundEffects: true,
