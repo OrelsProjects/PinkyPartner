@@ -344,10 +344,12 @@ const ObligationsComponent = ({
           {loadingNudge ? (
             <Loading spinnerClassName="h-4 w-4 text-primary" />
           ) : (
-            <FaBell
-              className="text-primary cursor-pointer"
-              onClick={handleNudgePartner}
-            />
+            isPartnerSigned && (
+              <FaBell
+                className="text-primary cursor-pointer"
+                onClick={handleNudgePartner}
+              />
+            )
           )}
         </div>
         <div className="flex flex-col justify-between items-start h-fit w-full gap-1">
