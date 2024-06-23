@@ -1,6 +1,9 @@
 import { ContractWithExtras } from "./contract";
 import Obligation from "./obligation";
 
+export type UserId = string;
+export type DisplayName = string;
+
 export default interface AppUser {
   email: string;
   userId: string;

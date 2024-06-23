@@ -40,6 +40,9 @@ model AppUser {
   ContractObligation UserContractObligation[]
   settings           AppUserSettings?
 
+  nudgesReceived Nudges[] @relation(name: "nudgesReceived")
+  nudgesSent     Nudges[] @relation(name: "nudgesSent")
+
   @@map("appUser")
 }
 
@@ -151,6 +154,14 @@ model UserContractObligation {
   @@map("userContractObligations")
 }
 
-// model UserOnboarding {
+model Nudges {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userNudgerId String
+  userNudgedId String
+  nudgedAt     DateTime @default(now())
 
-// }
+  nudgerUser AppUser @relation(fields: [userNudgerId], references: [userId], onDelete: Cascade, name: "nudgesSent")
+  nudgedUser AppUser @relation(fields: [userNudgedId], references: [userId], onDelete: Cascade, name: "nudgesReceived")
+
+  @@map("nudges")
+}

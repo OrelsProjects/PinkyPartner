@@ -6,6 +6,29 @@ import prisma from "../_db/db";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
 
+const MIN_NUDGE_TIME = 4 * 60 * 60 * 1000; // 4 hours
+
+const canNudge = async (userId: string) => {
+  const lastNudgedAt = await prisma.nudges.findFirst({
+    where: { userNudgedId: userId },
+    orderBy: { nudgedAt: "desc" },
+  });
+  if (!lastNudgedAt) return 0;
+  const now = new Date();
+  const last = new Date(lastNudgedAt.nudgedAt);
+  const diff = Math.abs(now.getTime() - last.getTime());
+  return MIN_NUDGE_TIME - diff;
+};
+
+const updateNewNudge = async (userNudgedId: string, userNudgerId: string) => {
+  await prisma.nudges.create({
+    data: {
+      userNudgedId,
+      userNudgerId,
+    },
+  });
+};
+
 export async function POST(req: NextRequest): Promise<NextResponse<any>> {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -56,6 +79,23 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         { error: "User not subscribed to notifications" },
         { status: 400 },
       );
+    }
+
+    if (type === "nudge") {
+      const nextNudgeTimeSeconds = await canNudge(userId);
+      if (nextNudgeTimeSeconds > 0) {
+        // time in hours
+        const nextNudgeTimeHours = Math.floor(
+          nextNudgeTimeSeconds / 1000 / 60 / 60,
+        );
+        const nextNudgeTimeMinutes = Math.floor(
+          (nextNudgeTimeSeconds / 1000 / 60) % 60,
+        );
+        return NextResponse.json(
+          { nextNudgeTimeSeconds, nextNudgeTimeHours, nextNudgeTimeMinutes },
+          { status: 429 },
+        );
+      }
     }
 
     const message = {
@@ -110,9 +150,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         });
       }
     }
+
     Logger.info("Notification sent", session.user.userId, {
-      data: { message },
+      data: { message, type },
     });
+
+    if (type === "nudge") {
+      await updateNewNudge(userId, session.user.userId);
+    }
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {

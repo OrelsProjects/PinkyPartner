@@ -15,6 +15,10 @@ import { toast } from "react-toastify";
 import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "../../logger";
 import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
+import { UserId } from "../../models/appUser";
+import Obligation from "../../models/obligation";
+import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import { useState } from "react";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -24,6 +28,9 @@ export default function useNotifications() {
   const {
     partnerData: { contractObligations: partnerContractObligations },
   } = useAppSelector(state => state.obligations);
+
+  const [loadingNudge, setLoadingNudge] = useState(false);
+  const { user } = useAppSelector(state => state.auth);
 
   const markObligationsAsViewed = async () => {
     try {
@@ -95,6 +102,36 @@ export default function useNotifications() {
     return Notification?.permission === "granted";
   };
 
+  async function nudgePartner(to: UserId, obligation: Obligation) {
+    if (loadingNudge) return;
+    try {
+      setLoadingNudge(true);
+      const from = user?.displayName?.split(" ")?.[0] || "Partner";
+      await axios.post(`/api/notifications`, {
+        title: "Get back on track! 🚀",
+        body: `${from} reminds you to complete ${obligation.title}.`,
+        userId: to,
+        type: "nudge",
+      });
+    } catch (error: any) {
+      if (error.response?.status === 429) {
+        const {
+          nextNudgeTimeHours,
+          nextNudgeTimeMinutes,
+          nextNudgeTimeSeconds,
+        } = error.response.data;
+        throw new CantBeNudgedError(
+          nextNudgeTimeHours,
+          nextNudgeTimeMinutes,
+          nextNudgeTimeSeconds,
+        );
+      }
+      Logger.error("Failed to nudge partner", { error });
+    } finally {
+      setLoadingNudge(false);
+    }
+  }
+
   async function requestNotificationsPermission(): Promise<boolean> {
     if (!canUseNotifications()) {
       return false;
@@ -136,6 +173,8 @@ export default function useNotifications() {
 
   return {
     newContracts,
+    loadingNudge,
+    nudgePartner,
     newObligations,
     showNotification,
     initNotifications,

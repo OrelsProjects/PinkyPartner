@@ -159,6 +159,28 @@ export function useObligations() {
     }
   };
 
+  const sendNudge = async (
+    contract: ContractWithExtras,
+    obligation: UserContractObligationData,
+  ) => {
+    try {
+      const otherUser = contract.signatures.find(
+        contractee => contractee.userId !== user?.userId,
+      );
+      if (!otherUser) return;
+
+      await axios.post("/api/notifications", {
+        title: `${user?.displayName || "Your partner"} is progressing!`,
+        body: `${obligation.obligation.title} completed!`,
+        userId: otherUser.userId,
+        type: "nudge",
+      });
+    } catch (error: any) {
+      Logger.error("Error sending notification", error);
+      throw error;
+    }
+  };
+
   const fetchNextUpObligations = async () => {
     try {
       setLoadingData(true);
@@ -250,6 +272,7 @@ export function useObligations() {
     loadingData,
     loadingPartner: partnerData.loading,
     error,
+    sendNudge,
     setObligations,
     setLoadingData,
     setLoadingPartnerData,

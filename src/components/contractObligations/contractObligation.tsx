@@ -15,6 +15,10 @@ import { UserAvatar } from "../ui/avatar";
 import Contract from "../../models/contract";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
+import { FaBell } from "react-icons/fa";
+import useNotifications from "../../lib/hooks/useNotifications";
+import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import Loading from "../ui/loading";
 
 const UserIndicator = ({
   isSigned,
@@ -33,6 +37,7 @@ const UserIndicator = ({
       ? "Done"
       : "Waiting"
     : "Not signed";
+
   return (
     <div className="w-16ו flex flex-col justify-center items-center gap-0.5 transition-all">
       <UserAvatar
@@ -201,6 +206,7 @@ const ObligationsComponent = ({
   const [loadingObligationDays, setLoadingObligationDays] = React.useState<
     Record<string, boolean>
   >({});
+  const { nudgePartner, loadingNudge } = useNotifications();
 
   const userContractObligation = useMemo(() => {
     if (obligations.length > 0) {
@@ -302,6 +308,29 @@ const ObligationsComponent = ({
     return null;
   }, [partnerData]);
 
+  const handleNudgePartner = async () => {
+    const to =
+      partnerData && partnerData.length > 0 ? partnerData[0].appUser : null;
+    if (to) {
+      try {
+        await nudgePartner(to.userId, obligations[0].obligation);
+        toast(`A nudge was sent to ${to.displayName}`);
+      } catch (e: any) {
+        Logger.error("Failed to nudge partner", { error: e });
+        if (e instanceof CantBeNudgedError) {
+          toast.error(
+            `You can't nudge your partner for another ${e.nextNudgeTimeHours}:${e.nextNudgeTimeMinutes} hours.`,
+          );
+          return;
+        } else {
+          toast.error("Failed to nudge partner");
+        }
+      }
+    } else {
+      toast.warn("No partner to nudge");
+    }
+  };
+
   return (
     userContractObligation && (
       <div className="w-full h-fit flex flex-col gap-3">
@@ -312,6 +341,14 @@ const ObligationsComponent = ({
           <h1 className="font-semibold text-lg lg:text-2xl tracking-wide">
             {contract.title}
           </h1>
+          {loadingNudge ? (
+            <Loading spinnerClassName="h-4 w-4 text-primary" />
+          ) : (
+            <FaBell
+              className="text-primary cursor-pointer"
+              onClick={handleNudgePartner}
+            />
+          )}
         </div>
         <div className="flex flex-col justify-between items-start h-fit w-full gap-1">
           <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
