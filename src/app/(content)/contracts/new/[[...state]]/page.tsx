@@ -32,6 +32,14 @@ import ObligationComponent from "../../../../../components/obligationComponent";
 import { cn } from "../../../../../lib/utils";
 import { getRandomTimeToFinishRequest } from "../../../../../lib/utils/apiUtils";
 import { EventTracker } from "../../../../../eventTracker";
+import { Calendar } from "../../../../../components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../../../components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;
@@ -100,7 +108,7 @@ const FindPartner = ({
             className="self-end"
             data-onboarding-id="no-partner"
           >
-            Sounds good!
+            Continue without a partner
           </Button>
         </div>
         <Divider className="mt-3" />
@@ -407,7 +415,40 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     <SectionTitle text="Due date" />
                     <SectionTitleExplanation text="This is when the contract will expire" />
                   </SectionTitleContainer>
-                  <Input
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !formik.values.dueDate && "text-muted-foreground",
+                        )}
+                      >
+                        {formik.values.dueDate ? (
+                          format(formik.values.dueDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={formik.values.dueDate}
+                        onSelect={date => {
+                          if (!date) return;
+                          formik.setValues({
+                            ...formik.values,
+                            dueDate: date,
+                          });
+                        }}
+                        disabled={date => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {/* <Input
                     className="w-fit"
                     type="date"
                     name="dueDate"
@@ -420,7 +461,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                         dueDate: new Date(e.target.value),
                       });
                     }}
-                  />
+                  /> */}
                 </SectionContainer>
                 <SectionContainer>
                   <SectionTitleContainer>

@@ -10,13 +10,13 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
 
   return (
     state === "authenticated" && (
-      <div className="p-2 rounded-lg w-full flex flex-col items-end">
+      <div className="sm:p-2 rounded-lg w-full flex flex-col items-end">
         <Link href="/settings" className="w-fit h-fit">
           <UserAvatar
             photoURL={user?.photoURL || "/images/default-profile.png"}
             displayName={user?.displayName}
-            imageClassName="rounded-full hover:cursor-pointer !w-12 !h-12 shadow-md"
-            className="w-12 h-12 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
+            imageClassName="rounded-full hover:cursor-pointer !w-10 !h-10 shadow-md"
+            className="w-10 h-10 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
             hideTooltip
           />
         </Link>

@@ -144,14 +144,17 @@ export const ObligationBox = ({
             <div className="h-full flex flex-row gap-3 justify-center items-center">
               <div
                 className={cn(
-                  "h-full text-card-foreground line-clamp-1 font-medium",
+                  "w-fit h-full text-card-foreground line-clamp-1 font-medium",
                 )}
               >
-                <div className="flex flex-col gap-0.5 h-fit">
+                <div className="h-fit w-fit flex flex-col gap-0.5 flex-shrink">
                   <span
-                    className={cn("transition-all  duration-500", {
-                      "text-muted-foreground font-normal": isCompleted,
-                    })}
+                    className={cn(
+                      "transition-all  duration-500 line-clamp-1 w-fit",
+                      {
+                        "text-muted-foreground font-normal": isCompleted,
+                      },
+                    )}
                   >
                     {title}
                   </span>
@@ -163,7 +166,7 @@ export const ObligationBox = ({
             </div>
           </div>
         </div>
-        <div className="self-center flex flex-row gap-3">
+        <div className="self-center flex flex-row gap-3 flex-shrink-0">
           <UserIndicator
             isSigned={true}
             photoURL={userPhotoUrl || user?.photoURL}
