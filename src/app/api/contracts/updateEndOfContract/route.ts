@@ -1,13 +1,15 @@
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../../../authOptions";
-import { NotificationData } from "../../../../lib/features/notifications/notificationsSlice";
 import prisma from "../../_db/db";
 import loggerServer from "../../../../loggerServer";
+import { messaging } from "../../../../../firebase.config.admin";
 import Contract from "../../../../models/contract";
 
-const buildTitle = (contractName: string) =>
-  `Your contract ${contractName} is ending today!`;
+const buildTitle = (contractName: string) => {
+  const firstTwelve = contractName.slice(0, 12);
+  let contractNameShortened =
+    contractName.length > 12 ? `${firstTwelve}...` : contractName;
+  return `Your contract ${contractNameShortened} is ending today!`;
+};
 
 const body = "Click to see your stats";
 
@@ -76,18 +78,18 @@ const sendNotification = async (
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse<any>> {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   try {
     loggerServer.info("Checking contracts end today", "system cron");
+    const startOfDay = new Date();
     const endOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
     endOfDay.setHours(23, 59, 59, 999);
+
     // Get all contracts that have their due date today.
     const contracts = await prisma.contract.findMany({
       where: {
         dueDate: {
+          gte: startOfDay,
           lte: endOfDay,
         },
       },
@@ -106,6 +108,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     for (const contract of contracts) {
       for (const userContract of contract.userContracts) {
+        if (!userContract.signedAt) continue;
+
+        if (userContract.appUser.userId !== "102926335316336979769") continue; // For testing purposes
+
         const user = userContract.appUser;
         const token = user.meta?.pushTokenMobile || "";
         const webToken = user.meta?.pushToken || "";
@@ -115,7 +121,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    loggerServer.error("Error running cron job", session.user.userId, {
+    loggerServer.error("Error running cron job", "system-cron", {
       data: { error },
     });
     return NextResponse.json({ error: error.message }, { status: 500 });

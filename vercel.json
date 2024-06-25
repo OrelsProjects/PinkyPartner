@@ -4,10 +4,5 @@
       "maxDuration": 30
     }
   },
-  "crons": [
-    {
-      "path": "/api/contracts/updateEndOfContract",
-      "schedule": "17 16 * * *"
-    }
-  ]
+  "crons": []
 }
