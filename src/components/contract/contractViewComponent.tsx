@@ -21,14 +21,11 @@ import {
   SectionTitleExplanation,
   SectionTitleSecondary,
 } from "@/components/ui/section";
-import Divider from "../ui/divider";
-import { cn } from "../../lib/utils";
 import { useAppSelector } from "../../lib/hooks/redux";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
-  hideButton?: boolean;
   open?: boolean | undefined;
   children?: React.ReactNode;
   onClose?: () => void;
@@ -36,7 +33,6 @@ interface ContractViewComponentProps {
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
-  hideButton,
   contract,
   isSigned,
   children,

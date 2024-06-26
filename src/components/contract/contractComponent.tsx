@@ -137,6 +137,14 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
         </div>
       )}
 
+      <ContractViewComponent
+        contract={contract}
+        isSigned={isUserSigned}
+        onSign={handleSignContract}
+        onClose={() => setShowContract(false)}
+        open={showContract}
+      />
+
       <OptOutComponent
         onClose={() => setShowOptOut(false)}
         open={showOptOut}
