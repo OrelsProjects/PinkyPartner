@@ -30,6 +30,7 @@ interface ContractViewComponentProps {
   isSigned?: boolean;
   hideButton?: boolean;
   open?: boolean | undefined;
+  children?: React.ReactNode;
   onClose?: () => void;
   onSign: (contract: ContractWithExtras) => void;
 }
@@ -38,6 +39,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   hideButton,
   contract,
   isSigned,
+  children,
   onClose,
   onSign,
   open,
@@ -90,10 +92,11 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   }, [contract]);
 
   const ContractDetails = () => (
-    <DialogContent className="md:h-[575px] md:w-[575px]" closeOnOutsideClick>
-      <DialogHeader>
-        <DialogTitle className="text-3xl">{contract.title}</DialogTitle>
-      </DialogHeader>
+    <DialogContent
+      className="md:h-[575px] md:w-[575px] flex flex-col gap-4"
+      closeOnOutsideClick
+    >
+      <DialogTitle className="text-3xl">{contract.title}</DialogTitle>
       <SectionContainer>
         <SectionTitleContainer className="gap-2">
           <SectionTitle text="Promises" />
@@ -171,26 +174,6 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
     </DialogContent>
   );
 
-  const UnsignedNotice = () => (
-    <DialogContent closeOnOutsideClick>
-      <DialogHeader>
-        <DialogTitle>Not all the pinkies were sealed</DialogTitle>
-        <DialogDescription className="pt-1">
-          <p>All the parties must commit a pinky for the contract to begin.</p>
-        </DialogDescription>
-      </DialogHeader>
-      <div>
-        <p className="text-sm flex flex-col">
-          Missing pinkies:{" "}
-          <p className="font-semibold">
-            {missingSignatures.length > 0
-              ? missingSignatures.join(", ")
-              : "None"}
-          </p>
-        </p>
-      </div>
-    </DialogContent>
-  );
   return (
     <Dialog
       onOpenChange={value => {
@@ -201,23 +184,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
       }}
       open={isOpen}
     >
-      <DialogTrigger asChild>
-        {!isSigned && user ? (
-          <Button className="relative" variant="default">
-            Seal your pinky
-            <div className="shimmer-animation rounded-xl"></div>
-          </Button>
-        ) : (
-          <Button
-            variant="outline"
-            className={cn("bg-transparent dark:bg-card", {
-              hidden: hideButton,
-            })}
-          >
-            View Contract
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <ContractDetails />
     </Dialog>
   );

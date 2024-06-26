@@ -29,10 +29,14 @@ const nextConfig = {
   },
 };
 
+const env = process.env.NODE_ENV;
+
 const withPWA = PWA.default({
   dest: "public",
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
 });
 
-export default withPWA(nextConfig);
+const config = env === "development" ? nextConfig : withPWA(nextConfig);
+
+export default config;

@@ -29,6 +29,13 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (process.env.ALLOW_CLEAR !== "true") {
+      return NextResponse.json(
+        { error: "Clearing is disabled" },
+        { status: 400 },
+      );
+    }
+
     // Only if route comes from localhost
     if (req.headers.get("host") !== "localhost:3000") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -22,7 +22,7 @@ export type CreateContract = Omit<
   "contractId" | "creatorId" | "obligations" | "signatures" | "createdAt"
 > & {
   signatures: AccountabilityPartner[];
-} & { obligations?: Obligation[] };
+} & { obligations?: Omit<Obligation, "obligationId">[] };
 
 export type CreateContractForm = Omit<
   ContractWithExtras,

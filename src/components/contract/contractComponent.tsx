@@ -15,6 +15,7 @@ import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
 import EditContractComponent from "./editContractComponent";
+import { Button } from "../ui/button";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;
@@ -143,8 +144,14 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           onSign={handleSignContract}
           onClose={() => setShowContract(false)}
           open={showContract}
-          hideButton
-        />
+        >
+          <Button
+            variant="outline"
+            className={cn("bg-transparent dark:bg-card")}
+          >
+            View Contract
+          </Button>
+        </ContractViewComponent>
       </div>
 
       <OptOutComponent
