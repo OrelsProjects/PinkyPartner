@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { UserContractObligationData } from "../../models/userContractObligation";
-import { ContractWithExtras } from "../../models/contract";
+import Contract, { ContractWithExtras } from "../../models/contract";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { toast } from "react-toastify";
 import { cn } from "../../lib/utils";
@@ -10,11 +10,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Skeleton } from "../ui/skeleton";
 import useNotifications from "../../lib/hooks/useNotifications";
 import ObligationsComponent from "./contractObligation";
+import Loading from "../ui/loading";
+import { FaBell } from "react-icons/fa6";
+import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
 
 export type GroupedObligations = {
   [key: string]: {
-    userObligations: UserContractObligationData[];
-    partnerObligations: UserContractObligationData[];
+    userObligations: { [key: string]: UserContractObligationData[] };
+    partnerObligations: { [key: string]: UserContractObligationData[] };
     newObligations: UserContractObligationData[];
     contract: ContractWithExtras;
     isSigned: boolean;
@@ -76,7 +80,7 @@ export default function ContractObligationsComponent({
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const { signContract } = useContracts();
-  const { newObligations } = useNotifications();
+  const { newObligations, nudgePartner, loadingNudge } = useNotifications();
 
   const [groupedObligations, setGroupedObligations] =
     React.useState<GroupedObligations>({});
@@ -106,8 +110,8 @@ export default function ContractObligationsComponent({
               ) || false;
 
             acc[contractId] = {
-              userObligations: [],
-              partnerObligations: [],
+              userObligations: {},
+              partnerObligations: {},
               contract: userContract,
               newObligations: [],
               isSigned,
@@ -116,9 +120,19 @@ export default function ContractObligationsComponent({
           }
 
           if (isPartner) {
-            acc[contractId].partnerObligations.push(obligation);
+            if (!acc[contractId].partnerObligations[obligation.obligationId]) {
+              acc[contractId].partnerObligations[obligation.obligationId] = [];
+            }
+            acc[contractId].partnerObligations[obligation.obligationId].push(
+              obligation,
+            );
           } else {
-            acc[contractId].userObligations.push(obligation);
+            if (!acc[contractId].userObligations[obligation.obligationId]) {
+              acc[contractId].userObligations[obligation.obligationId] = [];
+            }
+            acc[contractId].userObligations[obligation.obligationId].push(
+              obligation,
+            );
           }
           acc[contractId].newObligations = newObligations.filter(
             newObligation =>
@@ -141,6 +155,28 @@ export default function ContractObligationsComponent({
       },
       error: "Failed to sign contract",
     });
+  };
+
+  const handleNudgePartner = async (contract: Contract) => {
+    const to =
+      partnerData && partnerData.length > 0 ? partnerData[0].appUser : null;
+    if (to) {
+      try {
+        await nudgePartner(to.userId, contract);
+        toast(`A nudge was sent to ${to.displayName}`);
+      } catch (e: any) {
+        if (e instanceof CantBeNudgedError) {
+          toast.error(
+            `You can't nudge your partner for another ${e.nextNudgeTimeHours}:${e.nextNudgeTimeMinutes} hours.`,
+          );
+          return;
+        } else {
+          toast.error("Failed to nudge partner");
+        }
+      }
+    } else {
+      toast.warn("No partner to nudge");
+    }
   };
 
   if (loading) {
@@ -189,13 +225,34 @@ export default function ContractObligationsComponent({
                 </motion.div>
               )}
             </AnimatePresence>
-            <ObligationsComponent
-              contract={contract}
-              obligations={userObligations}
-              newObligations={newObligations}
-              partnerData={partnerObligations}
-              isPartnerSigned={isPartnerSigned}
-            />
+            <div className="w-full h-full flex flex-row gap-1 justify-start items-center">
+              <h1 className="font-semibold text-lg lg:text-2xl tracking-wide">
+                {contract.title}
+              </h1>
+              {loadingNudge ? (
+                <Loading spinnerClassName="h-4 w-4 text-primary" />
+              ) : (
+                isPartnerSigned && (
+                  <FaBell
+                    className="text-primary cursor-pointer"
+                    onClick={() => handleNudgePartner(contract)}
+                  />
+                )
+              )}
+            </div>
+            <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
+            <div className="flex flex-col gap-3">
+              {Object.keys(userObligations)?.map(obligationId => (
+                <ObligationsComponent
+                  key={`obligations-list-${obligationId}`}
+                  contract={contract}
+                  obligations={userObligations[obligationId]}
+                  newObligations={newObligations}
+                  partnerData={partnerObligations[obligationId]}
+                  isPartnerSigned={isPartnerSigned}
+                />
+              ))}
+            </div>
           </div>
         ),
       )}

@@ -265,80 +265,88 @@ export const authOptions: AuthOptions = {
           user: JSON.stringify(user),
         },
       });
-      let userInDB = await prisma.appUser.findFirst({
-        where: {
-          userId: token.sub,
-        },
-        include: {
-          meta: true,
-          settings: true,
-        },
-      });
-      if (session?.user) {
-        if (session?.user.image && session.user.image !== userInDB?.photoURL) {
-          await prisma.appUser.update({
-            where: {
-              userId: token.sub,
-            },
-            data: {
-              photoURL: session.user.image,
-            },
-          });
-          session.user.name =
-            userInDB?.displayName || session.user.name || "Random Pinky";
-        }
+      try {
+        let userInDB = await prisma.appUser.findFirst({
+          where: {
+            userId: token.sub,
+          },
+          include: {
+            meta: true,
+            settings: true,
+          },
+        });
+        if (session?.user) {
+          if (
+            session?.user.image &&
+            session.user.image !== userInDB?.photoURL
+          ) {
+            await prisma.appUser.update({
+              where: {
+                userId: token.sub,
+              },
+              data: {
+                photoURL: session.user.image,
+              },
+            });
+            session.user.name =
+              userInDB?.displayName || session.user.name || "Random Pinky";
+          }
 
-        if (!session.user.meta) {
+          if (!session.user.meta) {
+            session.user.meta = {
+              referralCode: "",
+              pushToken: "",
+            };
+          }
+          session.user.userId = token.sub!;
           session.user.meta = {
-            referralCode: "",
-            pushToken: "",
+            referralCode: userInDB?.meta?.referralCode || "",
+            pushToken: userInDB?.meta?.pushToken || "",
+            onboardingCompleted: userInDB?.meta?.onboardingCompleted || false,
+          };
+          session.user.settings = userInDB?.settings || {
+            showNotifications: true,
+            soundEffects: true,
           };
         }
-        session.user.userId = token.sub!;
-        session.user.meta = {
-          referralCode: userInDB?.meta?.referralCode || "",
-          pushToken: userInDB?.meta?.pushToken || "",
-          onboardingCompleted: userInDB?.meta?.onboardingCompleted || false,
-        };
-        session.user.settings = userInDB?.settings || {
-          showNotifications: true,
-          soundEffects: true,
-        };
-      }
 
-      if (!session.user.meta.referralCode) {
-        try {
-          const referralCode = generateReferalCode(session.user.userId);
-          await prisma.appUserMetadata.update({
-            where: {
-              userId: token.sub,
-            },
-            data: {
-              referralCode,
-            },
-          });
-          session.user.meta.referralCode = referralCode;
-        } catch (e: any) {
-          loggerServer.error(
-            "Error updating referral code",
+        if (!session.user.meta.referralCode) {
+          try {
+            const referralCode = generateReferalCode(session.user.userId);
+            await prisma.appUserMetadata.update({
+              where: {
+                userId: token.sub,
+              },
+              data: {
+                referralCode,
+              },
+            });
+            session.user.meta.referralCode = referralCode;
+          } catch (e: any) {
+            loggerServer.error(
+              "Error updating referral code",
+              session.user.userId,
+              {
+                error: e,
+              },
+            );
+          }
+        }
+
+        const referralOptions: ReferralOptions = getReferralOptions();
+
+        if (referralOptions.contractId) {
+          await createNewUserContract(
             session.user.userId,
-            {
-              error: e,
-            },
+            referralOptions.contractId,
           );
         }
+        clearContractId();
+        return session;
+      } catch (e: any) {
+        loggerServer.error("Error creating user", "new_user", { error: e });
+        return session;
       }
-
-      const referralOptions: ReferralOptions = getReferralOptions();
-
-      if (referralOptions.contractId) {
-        await createNewUserContract(
-          session.user.userId,
-          referralOptions.contractId,
-        );
-      }
-      clearContractId();
-      return session;
     },
     async signIn(session: any) {
       try {
