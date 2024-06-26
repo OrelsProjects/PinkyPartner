@@ -46,7 +46,7 @@ export function useContracts() {
   };
 
   const createContract = async (contractData: CreateContract) => {
-    if (!contractData.obligation) {
+    if (!contractData.obligations) {
       throw new Error("Obligation is required");
     }
     const optimisticUpdate = () => {
@@ -58,13 +58,7 @@ export function useContracts() {
         createdAt: new Date(),
         contractees: contractData.contractees,
         signatures: [user as AccountabilityPartner],
-        obligations:
-          [
-            {
-              obligationId: "temp",
-              ...contractData.obligation!,
-            },
-          ] || [],
+        obligations: contractData.obligations || [],
       };
       dispatch(addContractAction(newContract));
     };

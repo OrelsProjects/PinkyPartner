@@ -19,6 +19,7 @@ import { UserId } from "../../models/appUser";
 import Obligation from "../../models/obligation";
 import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 import { useState } from "react";
+import Contract from "../../models/contract";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
@@ -102,14 +103,14 @@ export default function useNotifications() {
     return Notification?.permission === "granted";
   };
 
-  async function nudgePartner(to: UserId, obligation: Obligation) {
+  async function nudgePartner(to: UserId, contract: Contract) {
     if (loadingNudge) return;
     try {
       setLoadingNudge(true);
       const from = user?.displayName?.split(" ")?.[0] || "Partner";
       await axios.post(`/api/notifications`, {
         title: "Get back on track! 🚀",
-        body: `${from} reminds you to complete ${obligation.title}.`,
+        body: `${from} reminds you to complete ${contract.title}.`,
         userId: to,
         type: "nudge",
       });

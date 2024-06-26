@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
 import Link from "next/link";
+import axios from "axios";
 
 const EmptyContracts = () => {
   return (

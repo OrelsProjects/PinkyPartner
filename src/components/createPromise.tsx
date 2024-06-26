@@ -5,7 +5,6 @@ import React, { useCallback, useRef } from "react";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogTrigger,
@@ -17,11 +16,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { cn } from "../lib/utils";
-import Obligation, {
-  CreateObligation,
-  Days,
-  TimesAWeek,
-} from "../models/obligation";
+import Obligation, { Days, TimesAWeek } from "../models/obligation";
 import { Button } from "./ui/button";
 import IntervalDropdown from "./ui/dropdowns/intervalDropdown";
 import {
@@ -35,7 +30,6 @@ import { DaysToText } from "../lib/utils/dateUtils";
 import { timesAWeekToText } from "../lib/utils/textUtils";
 import TimesAWeekDropdown from "./ui/dropdowns/timesAWeekDropdown";
 import { Checkbox } from "./ui/checkbox";
-import { useRouter } from "next/navigation";
 import { useAppSelector } from "../lib/hooks/redux";
 
 const Weekly = ({
@@ -44,7 +38,7 @@ const Weekly = ({
   disabled,
 }: {
   onChange: (timesAWeek: TimesAWeek) => void;
-  obligation?: Obligation | CreateObligation;
+  obligation?: Obligation;
   disabled?: boolean;
 }) => {
   const [selected, setSelected] = useState<TimesAWeek>(
@@ -74,7 +68,7 @@ const Daily = ({
   onChange,
   disabled,
 }: {
-  obligation?: Obligation | CreateObligation | null;
+  obligation?: Obligation | null;
   disabled?: boolean;
   onChange: (days: number[]) => void;
   showRepeatText?: boolean;
@@ -178,24 +172,27 @@ const CreatePromise = ({
   children,
   obligation,
   onOpen,
+  showPlus = true,
   onClose,
   onObligationCreated,
   onObligationUpdated,
 }: {
   open: boolean;
   children?: React.ReactNode;
-  obligation?: CreateObligation | null;
+  obligation?: Obligation | null;
+  showPlus?: boolean;
   onOpen: () => void;
   onClose: () => void;
-  onObligationCreated?: (obligation: CreateObligation) => void;
-  onObligationUpdated?: (obligation: CreateObligation) => void;
+  onObligationCreated?: (obligation: Obligation) => void;
+  onObligationUpdated?: (obligation: Obligation) => void;
 }) => {
   const { user } = useAppSelector(state => state.auth);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { theme } = useTheme();
 
-  const formik = useFormik<CreateObligation>({
+  const formik = useFormik<Obligation>({
     initialValues: {
+      obligationId: obligation?.obligationId as string,
       userId: user?.userId as string,
       title: obligation ? obligation.title : "",
       description: obligation ? obligation.description : "",
@@ -221,6 +218,7 @@ const CreatePromise = ({
   useEffect(() => {
     if (obligation) {
       formik.setValues({
+        obligationId: obligation.obligationId,
         userId: user?.userId as string,
         title: obligation.title,
         description: obligation.description,
@@ -233,7 +231,7 @@ const CreatePromise = ({
       formik.resetForm();
       formik.values.emoji = "🤝";
     }
-  }, [obligation]);
+  }, [obligation, open]);
 
   // Disable edit for now because it requires massive changes in the db
   const disabled = useMemo(() => {
@@ -252,16 +250,16 @@ const CreatePromise = ({
       }}
     >
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="text-2xl flex justify-center items-center !p-0"
-        >
-          {children ? (
-            children
-          ) : (
-            <FaPlus className="w-5 h-5 fill-muted-foreground" />
-          )}
-        </Button>
+        {children
+          ? children
+          : showPlus && (
+              <Button
+                variant="ghost"
+                className="text-2xl flex justify-center items-center !p-0"
+              >
+                <FaPlus className="w-5 h-5 fill-muted-foreground" />
+              </Button>
+            )}
       </DialogTrigger>
       <DialogContent
         className="w-11/12 sm:max-w-[525px] sm:h-[525px] bg-card p-6"
