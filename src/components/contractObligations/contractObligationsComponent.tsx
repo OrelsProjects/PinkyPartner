@@ -231,28 +231,30 @@ export default function ContractObligationsComponent({
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="w-full h-full flex flex-row gap-4 justify-start items-center">
-              <ContractViewComponent
-                contract={contract}
-                isSigned={isSigned}
-                onSign={handleOnSign}
-              >
-                <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
-                  {contract.title}
-                </h1>
-              </ContractViewComponent>
-              {loadingNudge ? (
-                <Loading spinnerClassName="h-4 w-4 text-primary" />
-              ) : (
-                isPartnerSigned && (
-                  <FaBell
-                    className="text-primary cursor-pointer"
-                    onClick={() => handleNudgePartner(contract)}
-                  />
-                )
-              )}
+            <div className="sticky top-0 w-full h-full flex flex-col gap-0 justify-start items-start mb-3">
+              <div className="flex flex-row gap-4 items-center">
+                <ContractViewComponent
+                  contract={contract}
+                  isSigned={isSigned}
+                  onSign={handleOnSign}
+                >
+                  <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
+                    {contract.title}
+                  </h1>
+                </ContractViewComponent>
+                {loadingNudge ? (
+                  <Loading spinnerClassName="h-4 w-4 text-primary" />
+                ) : (
+                  isPartnerSigned && (
+                    <FaBell
+                      className="text-primary cursor-pointer h-[18px] w-[18px]"
+                      onClick={() => handleNudgePartner(contract)}
+                    />
+                  )
+                )}
+              </div>
+              <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
             </div>
-            <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
             <div className="flex flex-col gap-3">
               {Object.keys(userObligations)?.map(obligationId => (
                 <ObligationsComponent
