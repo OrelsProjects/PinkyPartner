@@ -187,9 +187,13 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
         error: "Error creating contract",
       });
       try {
+        const obligationsNoId = values.obligations.map(obligation => {
+          const { obligationId, ...rest } = obligation;
+          return rest;
+        });
         await createContract({
           ...values,
-          obligations: values.obligations,
+          obligations: obligationsNoId,
           contractees,
         });
       } catch (error) {

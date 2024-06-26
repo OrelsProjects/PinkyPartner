@@ -60,12 +60,10 @@ export async function POST(
           { status: 404 },
         );
       }
-      const annonymousObligations = obligations.map(
-        (obligation: Obligation) => ({
-          ...obligation,
-          userId: user!.userId,
-        }),
-      );
+      const annonymousObligations = obligations.map(obligation => ({
+        ...obligation,
+        userId: user!.userId,
+      }));
       contractees = [user];
       signatures = [user];
       obligations = annonymousObligations;

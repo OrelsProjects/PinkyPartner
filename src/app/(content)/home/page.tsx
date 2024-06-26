@@ -77,6 +77,7 @@ export default function Home() {
         partnerData={partnerData.contractObligations}
         loading={loadingData && state !== "anonymous"}
       />
+      {/* <Button onClick={() => axios.post("api/clear")}>Clear</Button> */}
     </div>
   );
 }

@@ -50,6 +50,12 @@ export function useContracts() {
       throw new Error("Obligation is required");
     }
     const optimisticUpdate = () => {
+      const obligationsWithTempId = contractData.obligations?.map(
+        obligation => ({
+          ...obligation,
+          obligationId: "temp",
+        }),
+      );
       const newContract: ContractWithExtras = {
         contractId: "temp",
         title: contractData.title,
@@ -58,7 +64,7 @@ export function useContracts() {
         createdAt: new Date(),
         contractees: contractData.contractees,
         signatures: [user as AccountabilityPartner],
-        obligations: contractData.obligations || [],
+        obligations: obligationsWithTempId || [],
       };
       dispatch(addContractAction(newContract));
     };

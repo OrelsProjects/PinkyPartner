@@ -14,6 +14,7 @@ import Loading from "../ui/loading";
 import { FaBell } from "react-icons/fa6";
 import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
+import { Button } from "../ui/button";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -166,7 +167,7 @@ export default function ContractObligationsComponent({
         toast(`A nudge was sent to ${to.displayName}`);
       } catch (e: any) {
         if (e instanceof CantBeNudgedError) {
-          toast.error(
+          toast.warn(
             `You can't nudge your partner for another ${e.nextNudgeTimeHours}:${e.nextNudgeTimeMinutes} hours.`,
           );
           return;
@@ -175,7 +176,7 @@ export default function ContractObligationsComponent({
         }
       }
     } else {
-      toast.warn("No partner to nudge");
+      toast.warning("No partner to nudge");
     }
   };
 
@@ -221,14 +222,25 @@ export default function ContractObligationsComponent({
                     contract={contract}
                     isSigned={isSigned}
                     onSign={handleOnSign}
-                  />
+                  >
+                    <Button className="relative" variant="default">
+                      Seal your pinky
+                      <div className="shimmer-animation rounded-xl"></div>
+                    </Button>
+                  </ContractViewComponent>
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="w-full h-full flex flex-row gap-1 justify-start items-center">
-              <h1 className="font-semibold text-lg lg:text-2xl tracking-wide">
-                {contract.title}
-              </h1>
+            <div className="w-full h-full flex flex-row gap-4 justify-start items-center">
+              <ContractViewComponent
+                contract={contract}
+                isSigned={isSigned}
+                onSign={handleOnSign}
+              >
+                <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
+                  {contract.title}
+                </h1>
+              </ContractViewComponent>
               {loadingNudge ? (
                 <Loading spinnerClassName="h-4 w-4 text-primary" />
               ) : (
