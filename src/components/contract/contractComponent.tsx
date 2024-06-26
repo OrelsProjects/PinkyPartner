@@ -137,23 +137,6 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
         </div>
       )}
 
-      <div className="w-full flex justify-end items-center">
-        <ContractViewComponent
-          contract={contract}
-          isSigned={isUserSigned}
-          onSign={handleSignContract}
-          onClose={() => setShowContract(false)}
-          open={showContract}
-        >
-          <Button
-            variant="outline"
-            className={cn("bg-transparent dark:bg-card")}
-          >
-            View Contract
-          </Button>
-        </ContractViewComponent>
-      </div>
-
       <OptOutComponent
         onClose={() => setShowOptOut(false)}
         open={showOptOut}

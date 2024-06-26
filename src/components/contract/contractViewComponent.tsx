@@ -93,14 +93,14 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
 
   const ContractDetails = () => (
     <DialogContent
-      className="md:h-[575px] md:w-[575px] flex flex-col gap-4"
+      className="md:h-[575px] md:w-[575px] flex flex-col gap-4 overflow-auto"
       closeOnOutsideClick
     >
       <DialogTitle className="text-3xl">{contract.title}</DialogTitle>
       <SectionContainer>
         <SectionTitleContainer className="gap-2">
           <SectionTitle text="Promises" />
-          <div className="flex flex-col gap-4 max-h-56 overflow-auto">
+          <div className="flex flex-col gap-4">
             {contract.obligations.map(
               (obligation: Obligation, index: number) => (
                 <div key={index}>
