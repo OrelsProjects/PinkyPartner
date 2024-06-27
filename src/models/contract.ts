@@ -1,5 +1,5 @@
-import AppUser, { AccountabilityPartner } from "./appUser";
-import Obligation, { CreateObligation } from "./obligation";
+import { AccountabilityPartner } from "./appUser";
+import Obligation from "./obligation";
 
 export default interface Contract {
   contractId: string;

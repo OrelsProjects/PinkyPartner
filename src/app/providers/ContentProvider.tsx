@@ -20,7 +20,7 @@ const BOTTOM_BAR_HEIGHT = 65;
 
 const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const { user } = useAppSelector(state => state.auth);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const sizeContent = React.useContext(SizeContext);
   const bottomBarRef = React.useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = React.useState<number>(
@@ -56,7 +56,7 @@ const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
             <toast.ToastContainer
               stacked
               newestOnTop
-              theme={theme === "system" ? "light" : theme}
+              theme={resolvedTheme}
               autoClose={2500}
               draggablePercent={60}
               className="!mb-16 z-[51]"

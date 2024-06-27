@@ -158,9 +158,10 @@ export default function ContractObligationsComponent({
     });
   };
 
-  const handleNudgePartner = async (contract: Contract) => {
-    const to =
-      partnerData && partnerData.length > 0 ? partnerData[0].appUser : null;
+  const handleNudgePartner = async (contract: ContractWithExtras) => {
+    const to = contract.signatures.find(
+      signature => signature.userId !== user?.userId,
+    );
     if (to) {
       try {
         await nudgePartner(to.userId, contract);
@@ -242,7 +243,7 @@ export default function ContractObligationsComponent({
                     {contract.title}
                   </h1>
                 </ContractViewComponent>
-                {loadingNudge ? (
+                {loadingNudge[contract.contractId] ? (
                   <Loading spinnerClassName="h-4 w-4 text-primary" />
                 ) : (
                   isPartnerSigned && (

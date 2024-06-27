@@ -85,12 +85,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       const nextNudgeTimeSeconds = await canNudge(userId);
       if (nextNudgeTimeSeconds > 0) {
         // time in hours
-        const nextNudgeTimeHours = Math.floor(
-          nextNudgeTimeSeconds / 1000 / 60 / 60,
-        );
-        const nextNudgeTimeMinutes = Math.floor(
-          (nextNudgeTimeSeconds / 1000 / 60) % 60,
-        );
+        const hours = Math.floor(nextNudgeTimeSeconds / 1000 / 60 / 60);
+        const minutes = Math.floor((nextNudgeTimeSeconds / 1000 / 60) % 60);
+
+        const nextNudgeTimeHours = hours > 10 ? hours : `0${hours}`;
+        const nextNudgeTimeMinutes = minutes > 10 ? minutes : `0${minutes}`;
+
         return NextResponse.json(
           { nextNudgeTimeSeconds, nextNudgeTimeHours, nextNudgeTimeMinutes },
           { status: 429 },

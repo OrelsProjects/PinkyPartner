@@ -3,14 +3,14 @@
 
 export default class CantBeNudgedError extends Error {
   public status = 429;
-  public nextNudgeTimeHours: number;
-  public nextNudgeTimeMinutes: number;
-  public nextNudgeTimeSeconds: number;
+  public nextNudgeTimeHours: string;
+  public nextNudgeTimeMinutes: string;
+  public nextNudgeTimeSeconds: string;
 
   constructor(
-    nextNudgeTimeHours: number,
-    nextNudgeTimeMinutes: number,
-    nextNudgeTimeSeconds: number,
+    nextNudgeTimeHours: string,
+    nextNudgeTimeMinutes: string,
+    nextNudgeTimeSeconds: string,
   ) {
     super("User can't be nudged yet");
     this.nextNudgeTimeHours = nextNudgeTimeHours;

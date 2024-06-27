@@ -30,7 +30,9 @@ export default function useNotifications() {
     partnerData: { contractObligations: partnerContractObligations },
   } = useAppSelector(state => state.obligations);
 
-  const [loadingNudge, setLoadingNudge] = useState(false);
+  const [loadingNudge, setLoadingNudge] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   const { user } = useAppSelector(state => state.auth);
 
   const markObligationsAsViewed = async () => {
@@ -104,9 +106,11 @@ export default function useNotifications() {
   };
 
   async function nudgePartner(to: UserId, contract: Contract) {
-    if (loadingNudge) return;
+    if (loadingNudge[contract.contractId]) return;
     try {
-      setLoadingNudge(true);
+      setLoadingNudge({
+        [contract.contractId]: true,
+      });
       const from = user?.displayName?.split(" ")?.[0] || "Partner";
       await axios.post(`/api/notifications`, {
         title: "Get back on track! 🚀",
@@ -129,7 +133,9 @@ export default function useNotifications() {
       }
       Logger.error("Failed to nudge partner", { error });
     } finally {
-      setLoadingNudge(false);
+      setLoadingNudge({
+        [contract.contractId]: false,
+      });
     }
   }
 

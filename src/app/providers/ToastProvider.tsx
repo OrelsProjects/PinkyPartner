@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import React from "react";
 import * as toast from "react-toastify";
 
@@ -8,6 +9,7 @@ interface ToastProviderProps {
 }
 
 export default function ToastProvider({ className }: ToastProviderProps) {
+
   return (
     <div className="relative z-[51]">
       <toast.ToastContainer
