@@ -16,7 +16,6 @@ import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "../../logger";
 import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
 import { UserId } from "../../models/appUser";
-import Obligation from "../../models/obligation";
 import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 import { useState } from "react";
 import Contract from "../../models/contract";
@@ -105,7 +104,7 @@ export default function useNotifications() {
     return Notification?.permission === "granted";
   };
 
-  async function nudgePartner(to: UserId, contract: Contract) {
+  async function nudgePartner(to: UserId, contract: Contract, title: string) {
     if (loadingNudge[contract.contractId]) return;
     try {
       setLoadingNudge({
@@ -113,7 +112,7 @@ export default function useNotifications() {
       });
       const from = user?.displayName?.split(" ")?.[0] || "Partner";
       await axios.post(`/api/notifications`, {
-        title: "Get back on track! 🚀",
+        title,
         body: `${from} reminds you to complete ${contract.title}.`,
         userId: to,
         type: "nudge",

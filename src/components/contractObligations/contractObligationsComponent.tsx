@@ -15,6 +15,7 @@ import { FaBell } from "react-icons/fa6";
 import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
 import { Button } from "../ui/button";
+import SendNudgeDialog from "../sendNudgeDialog";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -82,6 +83,8 @@ export default function ContractObligationsComponent({
   const { contracts } = useAppSelector(state => state.contracts);
   const { signContract } = useContracts();
   const { newObligations, nudgePartner, loadingNudge } = useNotifications();
+  const [nudgeSentContractId, setNudgeSentContractId] =
+    React.useState<string>(""); // Last contract id a nudge was successfully sent to
 
   const [groupedObligations, setGroupedObligations] =
     React.useState<GroupedObligations>({});
@@ -158,14 +161,19 @@ export default function ContractObligationsComponent({
     });
   };
 
-  const handleNudgePartner = async (contract: ContractWithExtras) => {
+  const handleNudgePartner = async (
+    contract: ContractWithExtras,
+    title: string,
+  ) => {
     const to = contract.signatures.find(
       signature => signature.userId !== user?.userId,
     );
     if (to) {
       try {
-        await nudgePartner(to.userId, contract);
+        setNudgeSentContractId("");
+        await nudgePartner(to.userId, contract, title);
         toast(`A nudge was sent to ${to.displayName}`);
+        setNudgeSentContractId(contract.contractId);
       } catch (e: any) {
         if (e instanceof CantBeNudgedError) {
           toast.warn(
@@ -247,10 +255,28 @@ export default function ContractObligationsComponent({
                   <Loading spinnerClassName="h-4 w-4 text-primary" />
                 ) : (
                   isPartnerSigned && (
-                    <FaBell
-                      className="text-primary cursor-pointer h-[18px] w-[18px]"
-                      onClick={() => handleNudgePartner(contract)}
-                    />
+                    <SendNudgeDialog
+                      contract={contract}
+                      onNudgeSelected={handleNudgePartner}
+                    >
+                      <motion.div
+                        // Ring bell if nudge was sent to this contract
+                        initial={{ scale: 1 }}
+                        whileTap={{ scale: 0.8 }}
+                        animate={{
+                          rotate:
+                            nudgeSentContractId === contract.contractId
+                              ? [0, -5, 5, -5, 5, -5, 5, -5, 5, 0]
+                              : 0,
+                          transition: {
+                            duration: 0.5,
+                          },
+                        }}
+                        className="cursor-pointer"
+                      >
+                        <FaBell className="text-primary cursor-pointer h-[19px] w-[19px]" />
+                      </motion.div>
+                    </SendNudgeDialog>
                   )
                 )}
               </div>
