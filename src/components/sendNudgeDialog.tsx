@@ -43,17 +43,18 @@ const SendNudgeDialog: React.FC<SendNudgeDialogProps> = ({
         </DialogHeader>
         <div className="space-y-2">
           {nudges.map(nudge => (
-            <button
+            <Button
               key={nudge}
               onClick={() => setSelectedNudge(nudge)}
+              variant="secondary"
               className={`p-2 w-full rounded-lg focus:outline-none transition-colors ${
                 selectedNudge === nudge
-                  ? "bg-secondary text-secondary-foreground"
+                  ? "bg-secondary text-secondary-foreground border-[1px] border-black/70"
                   : "bg-card"
               }`}
             >
               {nudge}
-            </button>
+            </Button>
           ))}
         </div>
         <DialogFooter>
