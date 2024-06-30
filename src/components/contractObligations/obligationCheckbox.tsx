@@ -87,7 +87,7 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   return (
     <div
       className={cn(
-        "h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative",
+        "h-7 md:h-8 w-7 md:w-8 flex justify-center items-center self-center relative flex-shrink-0",
       )}
     >
       <Checkbox
