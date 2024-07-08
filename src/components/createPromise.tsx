@@ -229,7 +229,6 @@ const CreatePromise = ({
       });
     } else {
       formik.resetForm();
-      formik.values.emoji = "🤝";
     }
   }, [obligation, open]);
 
@@ -353,7 +352,7 @@ const CreatePromise = ({
             <SectionTitle text="Now choose the perfect icon!"></SectionTitle>
             <Button
               className="w-20 h-12 bg-card"
-              variant={"outline"}
+              variant="outline"
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -369,7 +368,11 @@ const CreatePromise = ({
           </SectionContainer>
           <DialogFooter className="w-full">
             <div className="w-full flex flex-col justify-end items-end">
-              <Button type="submit" className="px-12 !py-5 rounded-[5px]">
+              <Button
+                type="submit"
+                variant="secondary"
+                className="px-12 !py-5 rounded-[5px]"
+              >
                 {obligation ? "I repromise" : "I promise"}
               </Button>
             </div>
