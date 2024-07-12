@@ -12,6 +12,7 @@ import {
 } from "./ui/dialog";
 import { ContractWithExtras } from "../models/contract";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const nudges = [
   "Hey, stop binging Netflix!",
@@ -25,12 +26,33 @@ interface SendNudgeDialogProps {
   children: React.ReactNode;
 }
 
+const NudgeInput = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <Input
+      value={value}
+      onChange={onChange}
+      max={32}
+      maxLength={32}
+      placeholder="Enter custom nudge"
+      className="p-2 w-full rounded-lg focus:outline-none transition-colors bg-card"
+    />
+  );
+};
+
 const SendNudgeDialog: React.FC<SendNudgeDialogProps> = ({
   contract,
   onNudgeSelected,
   children,
 }) => {
   const [selectedNudge, setSelectedNudge] = React.useState<string>(nudges[0]);
+  const [customNudge, setCustomNudge] = React.useState<string>("");
+
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
@@ -56,12 +78,20 @@ const SendNudgeDialog: React.FC<SendNudgeDialogProps> = ({
               {nudge}
             </Button>
           ))}
+          <NudgeInput
+            value={customNudge}
+            onChange={e => {
+              setSelectedNudge(e.target.value);
+              setCustomNudge(e.target.value);
+            }}
+          />
         </div>
         <DialogFooter>
           <Button
             onClick={() => onNudgeSelected(contract, selectedNudge)}
             disabled={!selectedNudge}
-            variant="secondary"
+            variant="outline"
+            className="bg-transparent hover:bg-transparent"
           >
             Send Nudge
           </Button>
