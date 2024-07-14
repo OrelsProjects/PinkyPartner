@@ -8,9 +8,9 @@ import { NotificationData } from "../../../lib/features/notifications/notificati
 
 const MIN_NUDGE_TIME = 4 * 60 * 60 * 1000; // 4 hours
 
-const canNudge = async (userId: string) => {
+const canNudge = async (userIdToNotify: string, userNotifying: string) => {
   const lastNudgedAt = await prisma.nudges.findFirst({
-    where: { userNudgedId: userId },
+    where: { userNudgedId: userIdToNotify, userNudgerId: userNotifying },
     orderBy: { nudgedAt: "desc" },
   });
   if (!lastNudgedAt) return 0;
@@ -40,11 +40,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       title,
       body,
       image,
-      userId,
+      userId: userIdToNotify,
       type,
     }: NotificationData & { userId: string } = await req.json();
     const user = await prisma.appUser.findUnique({
-      where: { userId },
+      where: { userId: userIdToNotify },
       include: {
         meta: {
           select: {
@@ -82,7 +82,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     }
 
     if (type === "nudge") {
-      const nextNudgeTimeSeconds = await canNudge(userId);
+      const nextNudgeTimeSeconds = await canNudge(
+        userIdToNotify,
+        session.user.userId,
+      );
       if (nextNudgeTimeSeconds > 0) {
         // time in hours
         const hours = Math.floor(nextNudgeTimeSeconds / 1000 / 60 / 60);
@@ -104,6 +107,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         body: body || "",
         icon: process.env.LOGO_URL || "",
         badge: process.env.NOTIFICATION_URL || "", // icon on top of phnone
+        image: image || "",
       },
       webpush: {
         fcmOptions: {
@@ -156,7 +160,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     });
 
     if (type === "nudge") {
-      await updateNewNudge(userId, session.user.userId);
+      await updateNewNudge(userIdToNotify, session.user.userId);
     }
 
     return NextResponse.json({}, { status: 201 });
