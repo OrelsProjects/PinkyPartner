@@ -1,10 +1,8 @@
 import { ReferralOptions } from "global";
 import { NextRequest, NextResponse } from "next/server";
-import loggerServer from "./loggerServer";
 
 const getReferralOptions = (req: NextRequest): ReferralOptions => {
   const { searchParams } = req.nextUrl;
-
   const referralCode = searchParams.get("referralCode");
   const contractId = searchParams.get("contractId");
 
@@ -15,18 +13,15 @@ const getReferralOptions = (req: NextRequest): ReferralOptions => {
 };
 
 export async function middleware(req: NextRequest) {
-  await registerMiddleware(req);
-
-  return NextResponse.next();
+  const response = await registerMiddleware(req);
+  return response;
 }
 
 async function registerMiddleware(req: NextRequest) {
   const { referralCode, contractId } = getReferralOptions(req);
 
+  const response = NextResponse.next();
   if (referralCode || contractId) {
-    const response = NextResponse.next();
-
-    // expire in 1 week
     const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     if (referralCode) {
       response.cookies.set("referralCode", referralCode, {
@@ -45,11 +40,11 @@ async function registerMiddleware(req: NextRequest) {
       });
     }
   }
+  return response;
 }
 
-// match /register path and if it has params, also match
 export const config = {
-  matcher: ["/register/:path*", "/login/:path*"], // Matches /register and any subpaths
+  matcher: ["/register/:path*", "/login/:path*"],
 };
 
 export { default } from "next-auth/middleware";
