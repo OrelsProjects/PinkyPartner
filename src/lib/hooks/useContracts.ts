@@ -215,11 +215,15 @@ export function useContracts() {
 
       const { newOwner } = result.data;
       if (newOwner) {
-        await axios.post("/api/notifications", {
-          title: "A pinky was broken!",
-          body: `${user?.displayName} has left ${contract?.title}.`,
-          userId: newOwner,
-        });
+        try {
+          await axios.post("/api/notifications", {
+            title: "A pinky was broken!",
+            body: `${user?.displayName} has left ${contract?.title}.`,
+            userId: newOwner,
+          });
+        } catch (err: any) {
+          Logger.error("Error sending notification on opt out", err);
+        }
       }
 
       dispatch(deleteContractAction(contractId));
