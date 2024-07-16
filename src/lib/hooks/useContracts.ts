@@ -209,7 +209,19 @@ export function useContracts() {
         signedContractee => signedContractee.userId !== user?.userId,
       );
 
-      await axios.post(`/api/contract/${contractId}/opt-out`);
+      const result = await axios.post<{ newOwner: string | undefined }>(
+        `/api/contract/${contractId}/opt-out`,
+      );
+
+      const { newOwner } = result.data;
+      if (newOwner) {
+        await axios.post("/api/notifications", {
+          title: "A pinky was broken!",
+          body: `${user?.displayName} has left ${contract?.title}.`,
+          userId: newOwner,
+        });
+      }
+
       dispatch(deleteContractAction(contractId));
       dispatch(setError(null));
       await fetchNextUpObligations();

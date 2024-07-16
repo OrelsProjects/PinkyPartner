@@ -49,20 +49,20 @@ export async function POST(
       },
     });
 
-    // Make the other user the creator of the contract and send them a notification
+    let newOwner: string | undefined;
     if (otherUserContract && otherUserContract.signedAt) {
-      const userId = otherUserContract.userId;
+      newOwner = otherUserContract.userId;
       await prisma.contract.update({
         where: {
           contractId,
         },
         data: {
-          creatorId: userId,
+          creatorId: newOwner,
         },
       });
     }
 
-    return NextResponse.json({ message: "Contract signed" }, { status: 200 });
+    return NextResponse.json({ newOwner }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
