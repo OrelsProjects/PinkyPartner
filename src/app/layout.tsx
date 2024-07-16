@@ -7,7 +7,7 @@ import React from "react";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
-import ProductHuntProvider from "./providers/ProductHuntProvider";
+// import ProductHuntProvider from "./providers/ProductHuntProvider";
 
 const OG_IMAGE_URL =
   "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/og-image.png?alt=media&token=7402d6a6-b8fa-4881-98ad-02e4656578a4";
@@ -82,7 +82,7 @@ export default function Layout({ children }: RootLayoutProps) {
             <ThemeProvider>
               <AuthProvider>
                 <TopLoaderProvider />
-                <ProductHuntProvider />
+                {/* <ProductHuntProvider /> */}
                 {children}
                 {/* <SpeedInsights />
                 <Analytics /> */}

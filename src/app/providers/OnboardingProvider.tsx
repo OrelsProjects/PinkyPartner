@@ -182,7 +182,7 @@ export default function OnboardingProvider() {
   return !isOnboardingCompleted() && showBackground[currentStage] ? (
     <div
       className={cn(
-        "h-[100svh] w-[100vw] absolute inset-0 bg-black/80 z-50 flex justify-center items-center",
+        "h-[100svh] w-[100vw] absolute inset-0 bg-black/60 z-50 flex justify-center items-center",
         {
           "hover:cursor-pointer": backgroundForNextStage[currentStage],
         },

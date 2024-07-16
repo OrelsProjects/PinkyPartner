@@ -224,10 +224,10 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
     }
   }, [params]);
 
-  const obligations = useMemo(
-    () => formik.values.obligations ?? [],
-    [formik.values],
-  );
+  const obligations = useMemo(() => {
+    const { obligations } = formik.values;
+    return obligations || [];
+  }, [formik.values]);
 
   const generateNewId = () => {
     return Math.random().toString(36).substring(7);
@@ -240,7 +240,6 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
     }
     obligation.obligationId = generateNewId();
     const newObligations = obligations.concat(obligation);
-
     formik.setValues({
       ...formik.values,
       obligations: newObligations,
@@ -258,7 +257,6 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
     if (obligationIndex === -1) return;
 
     obligations[obligationIndex] = obligation;
-
     formik.setValues({
       ...formik.values,
       obligations: obligations,

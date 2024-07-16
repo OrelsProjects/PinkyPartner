@@ -6,6 +6,6 @@ export async function getRandomTimeToFinishRequest(): Promise<void> {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve();
-    }, Math.random() * 1000);
+    }, Math.random() * 300);
   });
 }

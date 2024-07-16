@@ -258,13 +258,6 @@ export const authOptions: AuthOptions = {
       token: JWT;
       user: AdapterUser;
     }) {
-      loggerServer.info("Session", session.user.userId, {
-        data: {
-          session: JSON.stringify(session),
-          token: JSON.stringify(token),
-          user: JSON.stringify(user),
-        },
-      });
       try {
         let userInDB = await prisma.appUser.findFirst({
           where: {
@@ -334,14 +327,13 @@ export const authOptions: AuthOptions = {
         }
 
         const referralOptions: ReferralOptions = getReferralOptions();
-
         if (referralOptions.contractId) {
           await createNewUserContract(
             session.user.userId,
             referralOptions.contractId,
           );
+          clearContractId();
         }
-        clearContractId();
         return session;
       } catch (e: any) {
         loggerServer.error("Error creating user", "new_user", { error: e });
@@ -388,6 +380,7 @@ export const authOptions: AuthOptions = {
             },
           });
           additionalUserData = { ...newUser };
+          clearReferralCode();
         }
 
         return {
