@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../../../authOptions";
 import prisma from "../../../_db/db";
-import axios from "axios";
 
 export async function POST(
   req: NextRequest,
@@ -31,10 +30,13 @@ export async function POST(
       return NextResponse.json(undefined, { status: 401 });
     }
 
-    await prisma.userContract.delete({
+    await prisma.userContract.update({
       where: {
         userContractId: userContract.userContractId,
         userId: session.user.userId,
+      },
+      data: {
+        optOutOn: new Date(),
       },
     });
 

@@ -118,6 +118,8 @@ model UserContract {
   signedAt       DateTime?
   viewedAt       DateTime? // If the user has seen his new contract
 
+  optOutOn DateTime?
+
   appUser  AppUser  @relation(fields: [userId], references: [userId], onDelete: Cascade)
   contract Contract @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
 

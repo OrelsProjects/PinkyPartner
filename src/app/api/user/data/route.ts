@@ -15,7 +15,7 @@ type UserData = {
   obligations: Obligation[];
 };
 
-const formatContract = (contract: Contract, userId: string) => {
+const removeCreatorIdFromContract = (contract: Contract, userId: string) => {
   return {
     ...contract,
     creatorId: contract.creatorId === userId ? userId : undefined,
@@ -86,8 +86,16 @@ export async function GET(
 
     const contracts = await prisma.contract.findMany({
       where: {
-        contractId: {
-          in: contractIds.map(contract => contract.contractId),
+        AND: {
+          contractId: {
+            in: contractIds.map(contract => contract.contractId),
+          },
+          userContracts: {
+            some: {
+              userId: session!.user.userId,
+              optOutOn: null,
+            },
+          },
         },
         dueDate: {
           gte: now,
@@ -135,7 +143,7 @@ export async function GET(
           .map(co => co.obligation)
           .filter(obligation => obligation !== null) as Obligation[];
 
-        const formattedContract = formatContract(
+        const formattedContract = removeCreatorIdFromContract(
           contractData,
           session!.user.userId,
         );

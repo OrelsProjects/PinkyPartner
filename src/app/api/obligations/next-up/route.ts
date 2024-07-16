@@ -77,8 +77,11 @@ export async function GET(
 
     let signedContracts = await prisma.userContract.findMany({
       where: {
-        contractId: {
-          in: userContractIds,
+        AND: {
+          contractId: {
+            in: userContractIds,
+          },
+          optOutOn: null,
         },
         contract: {
           dueDate: {
