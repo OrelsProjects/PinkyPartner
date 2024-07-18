@@ -57,16 +57,12 @@ export default function Home() {
     state => state.obligations,
   );
   const { state } = useAppSelector(state => state.auth);
-  const { obligations, loadingData } = useObligations();
+  const { loading, loadingData } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
 
-  if (!loadingData && state !== "anonymous") {
-    if (contracts.length === 0 && obligations.length === 0) {
-      return <EmptyObligations />;
-    }
-
+  if (!loadingData && !loading && state !== "anonymous") {
     if (contracts.length === 0) {
-      return <EmptyContracts />;
+      return <EmptyObligations />;
     }
   }
 
