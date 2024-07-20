@@ -19,6 +19,8 @@ messaging.onBackgroundMessage(payload => {
         title: "Send Good Job",
       },
     ];
+  } else {
+    notificationOptions.click_action = restPayload.click_action || [];
   }
 
   // Display the notification
