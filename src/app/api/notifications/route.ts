@@ -112,8 +112,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         badge: process.env.NOTIFICATION_URL || "", // icon on top of phnone
         image: image || "",
         type: type || "", // Include notification type in the data payload
-        toUserId: userIdToNotify || "",
-        fromName: session?.user.name || "",
+        toUserId: session?.user.userId || "",
+        fromName: user.displayName || "",
       },
       webpush: {
         fcmOptions: {
@@ -148,9 +148,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         token: mobileToken || "",
       });
     } catch (error: any) {
-      Logger.error("Error sending mobile notification", session?.user.userId || "system", {
-        data: { error, token },
-      });
+      Logger.error(
+        "Error sending mobile notification",
+        session?.user.userId || "system",
+        {
+          data: { error, token },
+        },
+      );
     } finally {
       // Send to web
       if (token && token !== "no-token") {
@@ -171,9 +175,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error sending notification", session?.user.userId || "system", {
-      data: { error, token },
-    });
+    Logger.error(
+      "Error sending notification",
+      session?.user.userId || "system",
+      {
+        data: { error, token },
+      },
+    );
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
