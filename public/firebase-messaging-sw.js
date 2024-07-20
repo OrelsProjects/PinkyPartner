@@ -65,8 +65,13 @@ messaging.onBackgroundMessage(payload => {
         title: "Send Good Job",
       },
     ];
-  } else {
-    notificationOptions.click_action = restPayload.click_action || [];
+  } else if (type === "nudge") {
+    notificationOptions.actions = [
+      {
+        action: "responseNudge",
+        title: "I'm on it!",
+      },
+    ];
   }
 
   // Display the notification
@@ -79,6 +84,13 @@ self.addEventListener("notificationclick", event => {
     sendResponseToServer(
       event.notification.data.toUserId,
       event.notification.data.fromName,
+      "goodJob",
+    );
+  } else if (event.action === "responseNudge") {
+    sendResponseToServer(
+      event.notification.data.toUserId,
+      event.notification.data.fromName,
+      "nudge",
     );
   } else if (event.notification.data && event.notification.data.click_action) {
     // Handle other notification click actions
@@ -90,7 +102,7 @@ self.addEventListener("notificationclick", event => {
   event.notification.close();
 });
 
-function sendResponseToServer(toUserId, fromName) {
+function sendResponseToServer(toUserId, fromName, type) {
   const postUrl = "api/notifications";
   const postData = {
     title: "Good job!",
@@ -98,6 +110,11 @@ function sendResponseToServer(toUserId, fromName) {
     userId: toUserId,
     type: "response",
   };
+
+  if (type === "nudge") {
+    postData.title = "I'm on it!";
+    postData.body = fromName + " is on it!";
+  }
 
   fetch(postUrl, {
     method: "POST",
