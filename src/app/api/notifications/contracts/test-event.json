@@ -1,0 +1,9 @@
+{
+    "Entries": [
+      {
+        "Source": "aws.ec2",
+        "DetailType": "EC2 Instance State-change Notification",
+        "Detail": "{ \"state\": \"running\" }"
+      }
+    ]
+  }
