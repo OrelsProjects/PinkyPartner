@@ -1,3 +1,49 @@
+importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+importScripts(
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js",
+);
+
+const firebaseConfig = {
+  apiKey: "AIzaSyALZvbmwKVBUXia4-u2Wv__C6ST6GFbBUQ",
+  authDomain: "myworkout-ca350.firebaseapp.com",
+  projectId: "myworkout-ca350",
+  storageBucket: "myworkout-ca350.appspot.com",
+  messagingSenderId: "334976118267",
+  appId: "1:334976118267:web:2547d2f91a0235d1aa2f5e",
+  measurementId: "G-BTFG0DLT3J",
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+class CustomPushEvent extends Event {
+  constructor(data) {
+    super("push");
+    Object.assign(this, data);
+    this.custom = true;
+  }
+}
+
+self.addEventListener("push", e => {
+  if (e.custom) return;
+  const oldData = e.data;
+  const newEvent = new CustomPushEvent({
+    data: {
+      json() {
+        const newData = oldData.json();
+        newData.data = { ...newData.data, ...newData.notification };
+        delete newData.notification;
+        return newData;
+      },
+    },
+    waitUntil: e.waitUntil.bind(e),
+  });
+  e.stopImmediatePropagation();
+  dispatchEvent(newEvent);
+});
+
+const messaging = firebase.messaging();
+
 messaging.onBackgroundMessage(payload => {
   const { title, body, icon, badge, userId, type, ...restPayload } =
     payload.data;
