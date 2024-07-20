@@ -62,7 +62,7 @@ messaging.onBackgroundMessage(payload => {
     notificationOptions.actions = [
       {
         action: "sendGoodJob",
-        title: "Send Good Job1",
+        title: "Send Good Job",
       },
     ];
   } else {
