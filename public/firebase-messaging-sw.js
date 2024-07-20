@@ -112,8 +112,8 @@ function sendResponseToServer(toUserId, fromName, type) {
   };
 
   if (type === "nudge") {
-    postData.title = "I'm on it!";
-    postData.body = fromName + " is on it!";
+    postData.title = fromName + "'s on it!";
+    postData.body = "They're working on their goal.";
   }
 
   fetch(postUrl, {
