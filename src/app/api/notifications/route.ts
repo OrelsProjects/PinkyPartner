@@ -31,9 +31,7 @@ const updateNewNudge = async (userNudgedId: string, userNudgerId: string) => {
 
 export async function POST(req: NextRequest): Promise<NextResponse<any>> {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+
   let token = "";
   try {
     const {
@@ -43,6 +41,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       userId: userIdToNotify,
       type,
     }: NotificationData & { userId: string } = await req.json();
+
+    if (!session && type !== "response") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const user = await prisma.appUser.findUnique({
       where: { userId: userIdToNotify },
       include: {
@@ -84,7 +87,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
     if (type === "nudge") {
       const nextNudgeTimeSeconds = await canNudge(
         userIdToNotify,
-        session.user.userId,
+        session?.user.userId || "",
       );
       if (nextNudgeTimeSeconds > 0) {
         // time in hours
@@ -108,6 +111,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         icon: process.env.LOGO_URL || "",
         badge: process.env.NOTIFICATION_URL || "", // icon on top of phnone
         image: image || "",
+        type: type || "", // Include notification type in the data payload
+        toUserId: userIdToNotify || "",
+        fromName: session?.user.name || "",
       },
       webpush: {
         fcmOptions: {
@@ -142,7 +148,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         token: mobileToken || "",
       });
     } catch (error: any) {
-      Logger.error("Error sending mobile notification", session.user.userId, {
+      Logger.error("Error sending mobile notification", session?.user.userId || "system", {
         data: { error, token },
       });
     } finally {
@@ -155,17 +161,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       }
     }
 
-    Logger.info("Notification sent", session.user.userId, {
+    Logger.info("Notification sent", session?.user.userId || "system", {
       data: { message, type },
     });
 
     if (type === "nudge") {
-      await updateNewNudge(userIdToNotify, session.user.userId);
+      await updateNewNudge(userIdToNotify, session!.user.userId);
     }
 
     return NextResponse.json({}, { status: 201 });
   } catch (error: any) {
-    Logger.error("Error sending notification", session.user.userId, {
+    Logger.error("Error sending notification", session?.user.userId || "system", {
       data: { error, token },
     });
     return NextResponse.json({ error: error.message }, { status: 500 });

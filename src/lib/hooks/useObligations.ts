@@ -152,6 +152,7 @@ export function useObligations() {
         title: `${user?.displayName || "Your partner"} is progressing!`,
         body: `${obligation.obligation.title} completed!`,
         userId: otherUser.userId,
+        type: "obligation",
       });
     } catch (error: any) {
       Logger.error("Error sending notification", error);
