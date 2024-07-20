@@ -106,6 +106,9 @@ export async function GET(
       },
       include: {
         userContracts: {
+          where: {
+            optOutOn: null,
+          },  
           select: {
             appUser: {
               select: {

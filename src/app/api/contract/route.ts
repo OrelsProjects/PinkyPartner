@@ -85,6 +85,7 @@ export async function POST(
         data: {
           contractId: contractResponse.contractId,
           userId: contractee.userId,
+          optOutOn: null,
           signedAt: signatures
             .map(signature => signature.userId)
             .includes(contractee.userId)

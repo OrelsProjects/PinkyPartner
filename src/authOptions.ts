@@ -49,7 +49,7 @@ const clearContractId = () => {
 };
 
 const createNewUserContract = async (userId: string, contractId: string) => {
-  const currentUserContracts = await prisma.contract.findMany({
+  const currentUserContracts = await prisma.userContract.findMany({
     where: {
       contractId,
     },
@@ -61,6 +61,7 @@ const createNewUserContract = async (userId: string, contractId: string) => {
     data: {
       userId,
       contractId,
+      optOutOn: null,
     },
     include: {
       contract: true,
