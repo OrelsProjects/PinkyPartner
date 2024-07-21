@@ -190,7 +190,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border overscroll-contain;
   }
   body {
     @apply bg-background text-foreground;

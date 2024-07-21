@@ -8,6 +8,7 @@ import { useContracts } from "../../lib/hooks/useContracts";
 import useAuth from "../../lib/hooks/useAuth";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { Logger } from "../../logger";
+import PullToRefresh from "../../components/ui/pullToRefresh";
 
 export default function DataProvider({
   children,
@@ -26,10 +27,10 @@ export default function DataProvider({
     useContracts();
   const isFetchingData = useRef(false);
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (forced?: boolean) => {
     try {
       if (state !== "authenticated") return;
-      if (isDataFetched) return;
+      if (isDataFetched && !forced) return;
       if (isFetchingData.current) return;
       isFetchingData.current = true;
       setLoadingDataContracts(true);
@@ -67,5 +68,13 @@ export default function DataProvider({
     fetchUserData();
   }, [state, isDataFetched]);
 
-  return children;
+  return (
+    <PullToRefresh
+      onRefresh={async () => {
+        fetchUserData(true);
+      }}
+    >
+      {children}
+    </PullToRefresh>
+  );
 }

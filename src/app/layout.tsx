@@ -75,7 +75,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:image:width" content="<generated>" />
         <meta property="og:image:height" content="<generated>" />
       </head>
-      <body className="!overscroll-none">
+      <body className="!overscroll-contain">
         <LiveChatProvider />
         <StoreProvider>
           <SessionWrapper>
