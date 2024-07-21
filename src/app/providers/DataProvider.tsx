@@ -6,17 +6,18 @@ import { UserData } from "../../models/appUser";
 import { useObligations } from "../../lib/hooks/useObligations";
 import { useContracts } from "../../lib/hooks/useContracts";
 import useAuth from "../../lib/hooks/useAuth";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import { Logger } from "../../logger";
-import PullToRefresh from "../../components/ui/pullToRefresh";
+import { setForceFetch } from "../../lib/features/auth/authSlice";
 
 export default function DataProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const dispatch = useAppDispatch();
   const { state } = useAppSelector(state => state.auth);
-  const { isDataFetched } = useAppSelector(state => state.auth);
+  const { isDataFetched, forceFetch } = useAppSelector(state => state.auth);
   const { setDataFetched } = useAuth();
   const {
     setObligations,
@@ -27,14 +28,18 @@ export default function DataProvider({
     useContracts();
   const isFetchingData = useRef(false);
 
-  const fetchUserData = async (forced?: boolean) => {
-    try {
-      if (state !== "authenticated") return;
-      if (isDataFetched && !forced) return;
-      if (isFetchingData.current) return;
-      isFetchingData.current = true;
-      setLoadingDataContracts(true);
+  useEffect(() => {
+    fetchUserData();
+  }, [forceFetch]);
 
+  const fetchUserData = async () => {
+    if (state !== "authenticated") return;
+    if (isDataFetched && !forceFetch) return;
+    if (isFetchingData.current) return;
+    dispatch(setForceFetch(false));
+    isFetchingData.current = true;
+    setLoadingDataContracts(true);
+    try {
       // Making both API requests in parallel
       const [userDataResponse, _] = await Promise.allSettled([
         axios.get<UserData>("/api/user/data"),
@@ -68,13 +73,5 @@ export default function DataProvider({
     fetchUserData();
   }, [state, isDataFetched]);
 
-  return (
-    <PullToRefresh
-      onRefresh={async () => {
-        fetchUserData(true);
-      }}
-    >
-      {children}
-    </PullToRefresh>
-  );
+  return children;
 }

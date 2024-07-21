@@ -14,6 +14,7 @@ export interface AuthState {
   isAdmin: boolean;
   state: AuthStateType;
   isDataFetched?: boolean;
+  forceFetch?: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -100,12 +101,16 @@ const authSlice = createSlice({
     setDataFetched: state => {
       state.isDataFetched = true;
     },
+    setForceFetch: (state, action: PayloadAction<boolean>) => {
+      state.forceFetch = action.payload;
+    },
   },
 });
 
 export const {
   setUser,
   setError,
+  setForceFetch,
   clearUser,
   setDataFetched,
   updateUserSettings,

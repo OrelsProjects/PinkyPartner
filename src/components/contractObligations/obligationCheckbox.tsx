@@ -34,9 +34,9 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
-  const audio = useMemo(() => {
+  const getAudio = async () => {
     return new Audio("/sounds/obligation-completed.wav");
-  }, []);
+  };
 
   const canPlaySound = useMemo(() => {
     return user?.settings.soundEffects || state !== "authenticated";
@@ -56,7 +56,8 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     }
 
     if (shouldPlaySound) {
-      setTimeout(() => {
+      setTimeout(async () => {
+        const audio = await getAudio();
         setShouldPlaySound(false);
         // reset audio
         audio.pause();
@@ -68,7 +69,8 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
     }
   }, [shouldAnimate, shouldPlaySound]);
 
-  const playSound = () => {
+  const playSound = async () => {
+    const audio = await getAudio();
     audio.src = "/sounds/obligation-completed.wav";
     audio.load();
     audio.play().finally(() => {

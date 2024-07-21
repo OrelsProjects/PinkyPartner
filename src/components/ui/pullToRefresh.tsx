@@ -39,7 +39,7 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({
     const diffY = currentY - startY;
     const topScreenY = refContainer.current.scrollTop;
 
-    console.log("topScreenY", topScreenY);
+    console.log("Top screen Y", topScreenY);
 
     if (topScreenY !== 0 && !pulling) {
       setThresholdReached(false);

@@ -11,12 +11,17 @@ import NotificationsProvider from "../providers/NotificationsProvider";
 import OnboardingProvider from "../providers/OnboardingProvider";
 import AnimationProvider from "../providers/AnimationProvider";
 import TopLoaderProvider from "../providers/TopLoaderProvider";
+import { useAppDispatch } from "../../lib/hooks/redux";
+import PullToRefresh from "../../components/ui/pullToRefresh";
+import { setForceFetch } from "../../lib/features/auth/authSlice";
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default function ContentLayout({ children }: RootLayoutProps) {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       console.log("Registering service worker");
@@ -36,7 +41,13 @@ export default function ContentLayout({ children }: RootLayoutProps) {
           <HeightProvider>
             <ContentProvider>
               <TopLoaderProvider />
-              <AnimationProvider>{children}</AnimationProvider>
+              <PullToRefresh
+                onRefresh={async () => {
+                  dispatch(setForceFetch(true));
+                }}
+              >
+                <AnimationProvider>{children}</AnimationProvider>
+              </PullToRefresh>
             </ContentProvider>
           </HeightProvider>
         </DataProvider>
