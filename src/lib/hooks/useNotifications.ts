@@ -138,7 +138,9 @@ export default function useNotifications() {
     }
   }
 
-  async function requestNotificationsPermission(): Promise<boolean> {
+  async function requestNotificationsPermission(
+    initToken?: boolean,
+  ): Promise<boolean> {
     if (!canUseNotifications()) {
       return false;
     }
@@ -147,6 +149,9 @@ export default function useNotifications() {
     } else {
       initMessaging();
       const permissionResponse = await Notification.requestPermission();
+      if (permissionResponse === "granted" && initToken) {
+        await initNotifications();
+      }
       return permissionResponse === "granted";
     }
   }
@@ -155,8 +160,20 @@ export default function useNotifications() {
    * @returns push token or error message
    */
   async function initNotifications(): Promise<void> {
-    if (!("serviceWorker" in navigator)) {
-      Logger.error("Service worker not supported");
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/firebase-messaging-sw.js")
+          .then(registration => {
+            console.log(
+              "ServiceWorker registration successful with scope: ",
+              registration.scope,
+            );
+          })
+          .catch(error => {
+            console.log("ServiceWorker registration failed: ", error);
+          });
+      });
     }
     let pushToken = "";
     try {
