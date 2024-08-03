@@ -15,6 +15,8 @@ const APP_NAME = "PinkyPartner";
 const APP_DEFAULT_TITLE = "PinkyPartner";
 const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
 const APP_DESCRIPTION = "Create habits with a partner!";
+const APP_URL = "https://www.pinkypartner.com";
+const APP_STARTUP_IMAGE = "/favicon.ico";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -33,7 +35,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    startupImage: "/favicon.ico",
+    startupImage: APP_STARTUP_IMAGE,
   },
   formatDetection: {
     telephone: false,
@@ -42,7 +44,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: APP_NAME,
-    url: "https://www.pinkypartner.com",
+    url: APP_URL,
     title: {
       default: APP_DEFAULT_TITLE,
       template: APP_TITLE_TEMPLATE,
