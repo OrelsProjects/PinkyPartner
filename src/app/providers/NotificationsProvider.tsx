@@ -26,6 +26,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { toast } from "react-toastify";
 import { canUseNotifications } from "../../lib/utils/notificationUtils";
+import { setForceFetch } from "../../lib/features/auth/authSlice";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 
@@ -64,11 +65,15 @@ const NotificationsProvider = () => {
     await initUserToken();
 
     onMessage(messaging, payload => {
+      const type = (payload.data?.type || "response") as NotificationType;
+      if (type === "obligation" || type === "contract") {
+        dispatch(setForceFetch(true));
+      }
       showNotification({
         title: payload.data?.title ?? "",
         body: payload.data?.body ?? "",
         image: payload.data?.image ?? "",
-        type: (payload.data?.type as NotificationType) || "contract",
+        type,
       });
     });
   };
@@ -178,7 +183,7 @@ const NotificationsProvider = () => {
       now - lastShownNewObligationsNotification.current;
     return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
   };
-  
+
   return (
     <>
       <RequestPermissionDialog
