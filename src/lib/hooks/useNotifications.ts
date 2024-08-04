@@ -86,9 +86,26 @@ export default function useNotifications() {
   };
 
   const showNotification = async (notification: NotificationData) => {
-    const notificationComponent = () => NotificationComponent({ notification });
-    toast(notificationComponent, {
-      autoClose: 3000,
+    // const notificationComponent = () => NotificationComponent({ notification });
+    // toast(notificationComponent, {
+    //   autoClose: 3000,
+    // });
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        if ("serviceWorker" in navigator && "PushManager" in window) {
+          navigator.serviceWorker
+            .register("/firebase-messaging-sw.js")
+            .then(registration => {
+              registration.showNotification(notification.title, {
+                body: notification.body,
+              });
+
+              new Notification(notification.title, {
+                body: notification.body,
+              });
+            });
+        }
+      }
     });
   };
 
