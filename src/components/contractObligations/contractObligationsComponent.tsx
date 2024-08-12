@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { UserContractObligationData } from "../../models/userContractObligation";
 import Contract, { ContractWithExtras } from "../../models/contract";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import { toast } from "react-toastify";
 import { cn } from "../../lib/utils";
 import ContractViewComponent from "../contract/contractViewComponent";
@@ -16,6 +16,8 @@ import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
 import { Button } from "../ui/button";
 import SendNudgeDialog from "../sendNudgeDialog";
+import ContractViewDropdown from "../contract/contractViewDropdown";
+import { setShowStatusOfContractId } from "../../lib/features/status/statusSlice";
 
 export type GroupedObligations = {
   [key: string]: {
@@ -32,6 +34,7 @@ interface ContractAcccordionProps {
   userData: UserContractObligationData[];
   partnerData: UserContractObligationData[];
   loading?: boolean;
+  showReport?: boolean;
 }
 
 const LoadingComponent = () => {
@@ -78,7 +81,9 @@ export default function ContractObligationsComponent({
   userData,
   partnerData,
   loading,
+  showReport,
 }: ContractAcccordionProps) {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { contracts } = useAppSelector(state => state.contracts);
   const { signContract } = useContracts();
@@ -208,11 +213,18 @@ export default function ContractObligationsComponent({
           index,
         ) => (
           <div
-            className={cn("w-full h-fit relative", {
+            className={cn("w-full h-fit relative bg-card/40 p-4 rounded-lg", {
               "p-2": !isSigned,
             })}
             key={`contract.contractId-${index}`}
           >
+            <div className="absolute top-3 right-3 z-40">
+              <ContractViewDropdown
+                onShowStats={() => {
+                  dispatch(setShowStatusOfContractId(contract.contractId));
+                }}
+              />
+            </div>
             <AnimatePresence>
               {!isSigned && (
                 <motion.div
@@ -221,7 +233,7 @@ export default function ContractObligationsComponent({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   className={
-                    "h-full w-full bg-foreground/60 absolute top-0 left-0 z-10 rounded-sm flex justify-center items-center flex-col gap-1"
+                    "h-full w-full bg-foreground/60 absolute top-0 left-0 z-50 rounded-sm flex justify-center items-center flex-col gap-1"
                   }
                 >
                   <h1 className="w-full text-center text-xl text-background font-semibold">
@@ -246,6 +258,7 @@ export default function ContractObligationsComponent({
                   contract={contract}
                   isSigned={isSigned}
                   onSign={handleOnSign}
+                  // showReport={showReport}
                 >
                   <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
                     {contract.title}

@@ -25,7 +25,7 @@ export async function POST(
     }
 
     const { completed } = await req.json();
-    const now: Date | null = completed ? new Date() : null;
+    const now: Date | null = completed ? new Date(new Date().toUTCString()) : null;
     
     const completedObligation = await prisma.userContractObligation.update({
       where: {

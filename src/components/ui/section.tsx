@@ -42,7 +42,7 @@ export const SectionTitle = ({
 }) => (
   <Label
     className={cn(
-      "text-right text-base md:text-xl font-normal md:font-semibold tracking-wide",
+      "text-right text-lg md:text-xl font-normal md:font-semibold tracking-wide",
       className,
     )}
   >

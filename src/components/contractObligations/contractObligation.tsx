@@ -97,7 +97,7 @@ export const ObligationBox = ({
   return (
     <div
       className={cn(
-        "rounded-lg h-16 w-full bg-card p-px shadow-sm duration-500 relative transition-all",
+        "rounded-lg h-16 w-full bg-card p-px duration-500 transition-all relative",
         {
           "bg-card/50": isCompleted,
         },
@@ -108,7 +108,7 @@ export const ObligationBox = ({
     >
       <div
         className={cn(
-          "w-full h-full flex flex-row justify-between items-start gap-3  bg-card shadow-md rounded-lg p-2",
+          "w-full h-full flex flex-row justify-between items-start gap-3  bg-card rounded-lg p-2",
         )}
       >
         {isNewObligation && (

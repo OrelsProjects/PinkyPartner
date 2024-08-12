@@ -40,8 +40,8 @@ model AppUser {
   ContractObligation UserContractObligation[]
   settings           AppUserSettings?
 
-  nudgesReceived Nudges[] @relation(name: "nudgesReceived")
-  nudgesSent     Nudges[] @relation(name: "nudgesSent")
+  nudgesReceived Nudges[]      @relation(name: "nudgesReceived")
+  nudgesSent     Nudges[]      @relation(name: "nudgesSent")
 
   @@map("appUser")
 }

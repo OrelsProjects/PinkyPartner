@@ -18,9 +18,31 @@ export type ObligationsInContract = {
   };
 };
 
-// /**
-//  * @returns Date object representing the start of the week (Sunday) at 00:00:00.000
-//  */
+/**
+ * @returns Date object representing the start of x weeks ago at 00:00:00.000
+ */
+export function getStartOfXWeeksAgoDate(weeks: number): Date {
+  const now = moment();
+  const nowDay = now.clone().weekday(0);
+  nowDay.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  nowDay.subtract(weeks, "weeks");
+  return nowDay.toDate();
+}
+
+/**
+ * @returns Date object representing the end of x weeks ago at 23:59:59.999
+ */
+export function getEndOfXWeeksAgoDate(weeks: number): Date {
+  const startOfXWeeksAgo = getStartOfXWeeksAgoDate(weeks);
+  const endOfXWeeksAgo = new Date(startOfXWeeksAgo);
+  endOfXWeeksAgo.setDate(startOfXWeeksAgo.getDate() + 6);
+  endOfXWeeksAgo.setHours(23, 59, 59, 999);
+  return endOfXWeeksAgo;
+}
+
+/**
+ * @returns Date object representing the start of the week (Sunday) at 00:00:00.000
+ */
 export function getStartOfTheWeekDate(sunday: boolean = true): Date {
   const now = moment();
   const nowDay = now.clone().weekday(0);
@@ -29,9 +51,9 @@ export function getStartOfTheWeekDate(sunday: boolean = true): Date {
   nowDay.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
   return nowDay.toDate();
 }
-// /**
-//  * @returns Date object representing the end of the week (Saturday) at 23:59:59.999
-//  */
+/**
+ * @returns Date object representing the end of the week (Saturday) at 23:59:59.999
+ */
 export function getEndOfTheWeekDate(): Date {
   const startOfTheWeek = getStartOfTheWeekDate();
   // Set hours to 23, minutes to 59, seconds to 59, milliseconds to 999
@@ -111,9 +133,19 @@ export function ObligationsToContractObligation(
   obligations.map(obligation => {
     if (obligation.repeat.toLowerCase() === "daily") {
       obligation.days.forEach(day => {
-        const dueDate = new Date();
+        let dueDate = new Date();
         dueDate.setHours(23, 59, 59, 999);
         dueDate.setDate(dueDate.getUTCDate() + (day - dueDate.getUTCDay()));
+        dueDate = new Date(
+          Date.UTC(
+            dueDate.getUTCFullYear(),
+            dueDate.getUTCMonth(),
+            dueDate.getUTCDate(),
+            dueDate.getUTCHours(),
+            dueDate.getUTCMinutes(),
+            dueDate.getUTCSeconds(),
+          ),
+        );
         populatedObligations.push({
           ...obligation,
           userId: userId,
@@ -123,7 +155,7 @@ export function ObligationsToContractObligation(
           userId: userId,
           obligationId: obligation.obligationId,
           contractId: contractId,
-          dueDate: dueDate,
+          dueDate,
         });
       });
     } else {

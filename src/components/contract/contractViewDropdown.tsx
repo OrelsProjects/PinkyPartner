@@ -4,6 +4,7 @@ import { FiEdit2 as Edit } from "react-icons/fi";
 import { FaRegEye as View } from "react-icons/fa";
 import { IoExitOutline as OptOut } from "react-icons/io5";
 import { FaUserPlus as Invite } from "react-icons/fa6";
+import { IoStatsChartOutline as Stats } from "react-icons/io5";
 
 import { cn } from "../../lib/utils";
 import {
@@ -20,6 +21,7 @@ interface ContractViewDropdownProps {
   onEdit?: () => void;
   onInvite?: () => void;
   onOptOut?: () => void;
+  onShowStats?: () => void;
 }
 
 const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
@@ -27,6 +29,7 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
   onEdit,
   onOptOut,
   onInvite,
+  onShowStats,
   className,
 }) => {
   return (
@@ -36,6 +39,17 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn("w-fit bg-card", className)}>
         <DropdownMenuGroup>
+          {onShowStats && (
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                onShowStats();
+              }}
+            >
+              <Stats className="mr-2 h-4 w-4" />
+              <span>Stats</span>
+            </DropdownMenuItem>
+          )}
           {onInvite && (
             <DropdownMenuItem
               onClick={e => {

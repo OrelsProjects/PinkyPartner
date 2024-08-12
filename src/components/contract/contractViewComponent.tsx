@@ -2,18 +2,16 @@ import React, { useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
   DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { ContractWithExtras } from "../../models/contract";
-import Obligation from "../../models/obligation";
+import { ContractWithExtras } from "@/models/contract";
+import Obligation from "@/models/obligation";
 import { Button } from "../ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { timesAWeekToText } from "../../lib/utils/textUtils";
+import { timesAWeekToText } from "@/lib/utils/textUtils";
 import {
   SectionContainer,
   SectionTitle,
@@ -21,18 +19,21 @@ import {
   SectionTitleExplanation,
   SectionTitleSecondary,
 } from "@/components/ui/section";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
   open?: boolean | undefined;
+  showReport?: boolean;
   children?: React.ReactNode;
   onClose?: () => void;
   onSign: (contract: ContractWithExtras) => void;
 }
 
 const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
+  showReport,
   contract,
   isSigned,
   children,
@@ -40,7 +41,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   onSign,
   open,
 }) => {
-  const { user } = useAppSelector(state => state.auth);
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = React.useState(open);
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
 
   const ContractDetails = () => (
     <DialogContent
-      className="md:h-[575px] md:w-[575px] flex flex-col gap-4 overflow-auto"
+      className="h-fit flex flex-col gap-4 overflow-auto"
       closeOnOutsideClick
     >
       <DialogTitle className="text-3xl">{contract.title}</DialogTitle>
@@ -109,11 +110,13 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
                   </div>
                   {obligation.days && obligation.days?.length > 0 ? (
                     <div className="flex flex-row gap-2">
-                      <p className="flex-shrink-0">Repeated every:</p>
+                      <p className="flex-shrink-0">Repeated:</p>
                       <span className="font-thin">
-                        {dayNumbersToNames(obligation.days)
-                          .map(day => day.slice(0, 2))
-                          .join(", ")}
+                        {obligation.days.length === 7
+                          ? "Every day"
+                          : dayNumbersToNames(obligation.days)
+                              .map(day => day.slice(0, 2))
+                              .join(", ")}
                       </span>
                     </div>
                   ) : (
@@ -165,6 +168,18 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
               </Button>
             </DialogClose>
           </div>
+        </DialogFooter>
+      )}
+      {showReport && (
+        <DialogFooter>
+          <Button
+            className="bg-primary text-white mt-6"
+            onClick={() => {
+              dispatch(setShowStatusOfContractId(contract.contractId));
+            }}
+          >
+            Show report
+          </Button>
         </DialogFooter>
       )}
     </DialogContent>
