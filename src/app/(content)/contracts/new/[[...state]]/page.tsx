@@ -528,6 +528,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                         onCheckedChange={handleSignContract}
                         error={formik.errors.signatures}
                         className="h-7 w-7"
+                        defaultChecked
                       />
                     </div>
                     {accountabilityPartner && (
