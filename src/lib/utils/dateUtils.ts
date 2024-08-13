@@ -44,6 +44,13 @@ export function getNextWeekDate(): Date {
   return nextWeek;
 }
 
+export function getDateInThreeMonths(): Date {
+  const now = new Date();
+  const nextWeek = new Date(now);
+  nextWeek.setMonth(now.getUTCMonth() + 3);
+  return nextWeek;
+}
+
 export function dateToHourMinute(date: Date): string {
   return new Date(date).toLocaleTimeString([], {
     hour: "2-digit",

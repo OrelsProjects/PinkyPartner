@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
 } from "../../../../../components/accountabilityPartnerComponent";
-import { getNextWeekDate } from "../../../../../lib/utils/dateUtils";
+import { getDateInThreeMonths } from "../../../../../lib/utils/dateUtils";
 import Divider from "../../../../../components/ui/divider";
 import {
   SectionContainer,
@@ -140,7 +140,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
   const formik = useFormik<CreateContractForm>({
     initialValues: {
       title: "",
-      dueDate: getNextWeekDate(),
+      dueDate: getDateInThreeMonths(),
       description: null,
       contractees: [],
       signatures: [],
