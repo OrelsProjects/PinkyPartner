@@ -206,6 +206,18 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
   });
 
   useEffect(() => {
+    formik.setValues({
+      ...formik.values,
+      signatures: [
+        user || {
+          userId: "anonymous",
+          displayName: "Random Pinky",
+        },
+      ],
+    });
+  }, [user]);
+
+  useEffect(() => {
     // if continue without partner is true, make sure the url contains the state. otherwise, remove it
     if (continueWithoutPartner) {
       EventTracker.track("continue_without_partner");
@@ -497,7 +509,9 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     </PopoverContent>
                   </Popover>
                 </SectionContainer>
-                <SectionContainer>
+                <SectionContainer
+                  className={cn({ hidden: !accountabilityPartner })}
+                >
                   <SectionTitleContainer>
                     <SectionTitle text="Signatures" />
                     <SectionTitleExplanation text="Put your pinky where your mouth is" />

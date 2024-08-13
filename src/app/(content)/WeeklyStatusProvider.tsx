@@ -38,27 +38,35 @@ const StatusReportDialog = ({
         <p className="mt-1 text-base font-normal">{report.contract.title}</p>
       </DialogTitle>
       <DialogDescription>
-        Here&apos;s how you and your partner did last week:
+        {report.reports.length > 0
+          ? "Here's how you and your partner did last week:"
+          : ""}
       </DialogDescription>
-      {report.reports.map((userReport, index) => (
-        <div key={index} className="flex flex-col">
-          <h2 className="font-semibold">{userReport.user.displayName}</h2>
-          <span className="font-light">
-            Completed:{" "}
-            <strong>
-              {userReport.report.timesCompleted}/{userReport.report.total}{" "}
-              {userReport.report.timesCompleted === userReport.report.total &&
-                "🔥"}
-            </strong>
-          </span>
-          <span>
-            Missed: <strong>{userReport.report.timesMissed}</strong>
-          </span>
-          <span>
-            Late: <strong>{userReport.report.timesLate}</strong>
-          </span>
+      {report.reports.length > 0 ? (
+        report.reports.map((userReport, index) => (
+          <div key={index} className="flex flex-col">
+            <h2 className="font-semibold">{userReport.user.displayName}</h2>
+            <span className="font-light">
+              Completed:{" "}
+              <strong>
+                {userReport.report.timesCompleted}/{userReport.report.total}{" "}
+                {userReport.report.timesCompleted === userReport.report.total &&
+                  "🔥"}
+              </strong>
+            </span>
+            <span>
+              Missed: <strong>{userReport.report.timesMissed}</strong>
+            </span>
+            <span>
+              Late: <strong>{userReport.report.timesLate}</strong>
+            </span>
+          </div>
+        ))
+      ) : (
+        <div className="text-center">
+          <p>No reports found. Try again next week :)</p>
         </div>
-      ))}
+      )}
     </DialogContent>
   </Dialog>
 );
