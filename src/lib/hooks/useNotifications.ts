@@ -178,6 +178,10 @@ export default function useNotifications() {
    * @returns push token or error message
    */
   async function initNotifications(): Promise<void> {
+    if (Notification.permission !== "granted") {
+      return;
+    }
+
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
