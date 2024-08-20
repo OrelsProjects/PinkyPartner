@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { ObligationBox } from "../contractObligations/contractObligation";
+import { ObligationBox } from "../contractObligations/obligationBox";
 import DeviceMockup from "../ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -273,12 +273,14 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           day={currentDayOrel}
           disabled={disabledOrel}
           isCompleted={completedOrel}
-          partnersDetails={{
-            photoURL: OREL_IMAGE_URL,
-            displayName: "Orel Zilberman",
-            isPartnerSigned: true,
-            isPartnerObligationCompleted: completedRandomPinky,
-          }}
+          partnersDetails={[
+            {
+              photoURL: OREL_IMAGE_URL,
+              displayName: "Orel Zilberman",
+              isPartnerSigned: true,
+              isPartnerObligationCompleted: completedRandomPinky,
+            },
+          ]}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             EventTracker.track("user_completed_obligation_in_landing_page");
             handleCompleteObligation(day, titleOrel, completed, false);
@@ -302,11 +304,13 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           disabled
           forceSound={completedRandomPinky}
           isCompleted={completedRandomPinky}
-          partnersDetails={{
-            displayName: "Random Pinky",
-            isPartnerSigned: true,
-            isPartnerObligationCompleted: completedOrel,
-          }}
+          partnersDetails={[
+            {
+              displayName: "Random Pinky",
+              isPartnerSigned: true,
+              isPartnerObligationCompleted: completedOrel,
+            },
+          ]}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             handleCompleteObligation(day, title, completed, true);
           }}

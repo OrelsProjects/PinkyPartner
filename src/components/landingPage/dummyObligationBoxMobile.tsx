@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ObligationBox } from "../contractObligations/contractObligation";
+import { ObligationBox } from "../contractObligations/obligationBox";
 import DeviceMockup from "../ui/deviceMockup";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { cn } from "../../lib/utils";
@@ -159,12 +159,12 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
           className="!max-w-96 md:!max-w-[27rem] !w-10/12 md:!w-full self-center"
           disabled={disabled}
           isCompleted={completed}
-          partnersDetails={{
+          partnersDetails={[{
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
             isPartnerSigned: true,
             isPartnerObligationCompleted: false,
-          }}
+          }]}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             EventTracker.track(
               "user_completed_obligation_in_landing_page_mobile",
