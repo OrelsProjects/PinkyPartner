@@ -162,8 +162,8 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
           partnersDetails={[{
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
-            isPartnerSigned: true,
-            isPartnerObligationCompleted: false,
+            isSigned: true,
+            isObligationCompleted: false,
           }]}
           handleCompleteObligation={(day: string, completed: boolean): void => {
             EventTracker.track(

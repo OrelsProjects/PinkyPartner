@@ -23,7 +23,6 @@ import {
   GroupedObligations,
   GroupObligationsPartnerData,
   GroupObligationsUserData,
-  ObligationId,
 } from "./_utils";
 
 interface ContractObligationsProps {

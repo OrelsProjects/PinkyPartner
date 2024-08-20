@@ -13,7 +13,7 @@ export type GroupObligationsUserData = {
 export type GroupObligationsPartnerData = {
   [key: ObligationId]: {
     partnerId: PartnerId;
-    isPartnerSigned: boolean;
+    isSigned: boolean;
     data: UserContractObligationData[];
   }[];
 };
@@ -23,7 +23,7 @@ export type GroupedObligationsData = {
   partnersObligations: {
     [key: ObligationId]: {
       partnerId: PartnerId;
-      isPartnerSigned: boolean;
+      isSigned: boolean;
       data: UserContractObligationData[];
     }[];
   };
@@ -94,7 +94,7 @@ export function buildGroupedObligationsForContract(
         } else {
           partnersObligations[obligation.obligationId].push({
             partnerId: partner.partnerId,
-            isPartnerSigned: signatures.includes(partner.partnerId),
+            isSigned: signatures.includes(partner.partnerId),
             data: [obligation],
           });
         }

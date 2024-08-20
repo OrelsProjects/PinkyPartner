@@ -277,8 +277,8 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
             {
               photoURL: OREL_IMAGE_URL,
               displayName: "Orel Zilberman",
-              isPartnerSigned: true,
-              isPartnerObligationCompleted: completedRandomPinky,
+              isSigned: true,
+              isObligationCompleted: completedRandomPinky,
             },
           ]}
           handleCompleteObligation={(day: string, completed: boolean): void => {
@@ -307,8 +307,8 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           partnersDetails={[
             {
               displayName: "Random Pinky",
-              isPartnerSigned: true,
-              isPartnerObligationCompleted: completedOrel,
+              isSigned: true,
+              isObligationCompleted: completedOrel,
             },
           ]}
           handleCompleteObligation={(day: string, completed: boolean): void => {

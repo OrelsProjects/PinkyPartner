@@ -1,8 +1,15 @@
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { cn } from "../../lib/utils";
 import { UserAvatar } from "../ui/avatar";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTrigger,
+} from "../ui/dialog";
 
 export const ObligationBox = ({
   day,
@@ -32,16 +39,16 @@ export const ObligationBox = ({
   isCompleted: boolean;
   isNewObligation?: boolean;
   partnersDetails?: {
-    isPartnerSigned?: boolean;
+    isSigned?: boolean;
     photoURL?: string | null;
     displayName?: string | null;
-    isPartnerObligationCompleted?: boolean;
+    isObligationCompleted?: boolean;
   }[];
   userPhotoUrl?: string | null; // For landing page
   handleCompleteObligation: (day: string, completed: boolean) => void;
 }) => {
   const { user } = useAppSelector(state => state.auth);
- 
+
   return (
     <div
       className={cn(
@@ -112,41 +119,66 @@ export const ObligationBox = ({
           </div>
         </div>
         <div className="self-center flex flex-row gap-3 flex-shrink-0">
-          <UserIndicator
-            isSigned={true}
-            photoURL={userPhotoUrl || user?.photoURL}
-            displayName={user?.displayName}
-            isObligationCompleted={isCompleted}
-          />
-          {partnersDetails &&
-            partnersDetails.map(partnerDetails => (
-              <UserIndicator
-                key={partnerDetails.displayName}
-                isSigned={partnerDetails.isPartnerSigned}
-                photoURL={partnerDetails.photoURL}
-                displayName={partnerDetails.displayName}
-                isObligationCompleted={
-                  partnerDetails.isPartnerObligationCompleted
-                }
-              />
-            ))}
+          {partnersDetails && (
+            <UsersIndicator
+              userData={{
+                isSigned: true,
+                photoURL: userPhotoUrl || user?.photoURL,
+                displayName: user?.displayName,
+                isObligationCompleted: isCompleted,
+              }}
+              partnersData={partnersDetails}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
+const ObligationStatus = ({
+  isSigned,
+  isObligationCompleted,
+}: {
+  isSigned?: boolean;
+  isObligationCompleted?: boolean;
+}) => {
+  const text = isSigned
+    ? isObligationCompleted
+      ? "Done"
+      : "Waiting"
+    : "Not signed";
+
+  return (
+    <span
+      className={cn("text-[10px] font-thin text-muted-foreground", {
+        "text-muted-foreground/60": !isSigned,
+      })}
+    >
+      {text}
+    </span>
+  );
+};
+
+interface UserIndicatorProps {
+  isSigned?: boolean;
+  photoURL?: string | null;
+  displayName?: string | null;
+  showTooltip?: boolean;
+  showStatus?: boolean;
+  isObligationCompleted?: boolean;
+  className?: string;
+}
+
 const UserIndicator = ({
   isSigned,
   photoURL,
   displayName,
+  showTooltip,
   isObligationCompleted,
-}: {
-  isSigned?: boolean;
-  photoURL?: string | null;
-  displayName?: string | null;
-  isObligationCompleted?: boolean;
-}) => {
+  showStatus = true,
+  className,
+}: UserIndicatorProps) => {
   if (!displayName && !photoURL) return null;
   const text = isSigned
     ? isObligationCompleted
@@ -155,10 +187,16 @@ const UserIndicator = ({
     : "Not signed";
 
   return (
-    <div className="w-16ו flex flex-col justify-center items-center gap-0.5 transition-all">
+    <div
+      className={cn(
+        "w-16ו flex flex-col justify-center items-center gap-0.5 transition-all",
+        className,
+      )}
+    >
       <UserAvatar
         displayName={displayName}
         photoURL={photoURL}
+        hideTooltip={!showTooltip}
         className={cn(
           "h-9 w-9",
           {
@@ -167,13 +205,105 @@ const UserIndicator = ({
           { "opacity-50": !isSigned },
         )}
       />
-      <span
-        className={cn("text-[10px] font-thin text-muted-foreground", {
-          "text-muted-foreground/60": !isSigned,
+      {showStatus && (
+        <ObligationStatus
+          isSigned={isSigned}
+          isObligationCompleted={isObligationCompleted}
+        />
+      )}
+    </div>
+  );
+};
+
+export const UsersIndicator = ({
+  userData,
+  partnersData,
+}: {
+  userData?: UserIndicatorProps;
+  partnersData?: UserIndicatorProps[];
+}) => {
+  const [partnerComponent, setPartnerComponent] =
+    useState<React.ReactNode | null>(null);
+
+  useEffect(() => {
+    if (!partnersData || partnersData.length === 0) setPartnerComponent(null);
+    else if (partnersData.length === 1)
+      setPartnerComponent(<UserIndicator {...partnersData[0]} />);
+  }, [partnersData]);
+
+  const partnersCount = useMemo(
+    () => partnersData?.length || 0,
+    [partnersData],
+  );
+
+  const didAllPartnersCompleteObligation = useMemo(
+    () =>
+      partnersData?.every(
+        partner => partner.isSigned && partner.isObligationCompleted,
+      ),
+    [partnersData],
+  );
+
+  return (
+    <div
+      className={cn(
+        "w-10 h-full self-center flex flex-row justify-center items-center gap-3 flex-shrink-0 relative",
+        { "w-fit": partnersCount <= 1 },
+      )}
+    >
+      <UserIndicator
+        {...userData}
+        showStatus={partnersCount <= 1}
+        className={cn({
+          "absolute right-7 z-30": partnersCount > 1,
         })}
-      >
-        {text}
-      </span>
+      />
+      {partnerComponent ? (
+        partnerComponent
+      ) : (
+        <Dialog>
+          <DialogTrigger className="absolute z-20">
+            <div
+              className={cn(
+                "w-10 h-10 bg-card flex justify-center items-center rounded-full border-[2px] border-muted-foreground/30",
+                {
+                  "!border-green-500": didAllPartnersCompleteObligation,
+                },
+              )}
+            >
+              <span className="text-muted-foreground text-center text-xs">
+                {partnersCount >= 100 ? "99+" : `+${partnersCount}`}
+              </span>
+            </div>
+          </DialogTrigger>
+          <DialogContent className="h-[50%]">
+            <DialogHeader>Partners</DialogHeader>
+            <div className="w-full flex flex-col justify-start items-start gap-4 overflow-auto pb-2">
+              {
+                partnersData?.map((partner, index) => (
+                  <div key={index} className="flex flex-row gap-1">
+                    <UserIndicator
+                      showStatus={false}
+                      {...partner}
+                      className={cn({
+                        "border-green-500": partner.isObligationCompleted,
+                      })}
+                    />
+                    <div className="h-full justify-center flex flex-col gap-0">
+                      <span className="text-foreground font-medium text-sm">
+                        {partner.displayName}
+                      </span>
+                      <ObligationStatus
+                        isSigned={partner.isSigned}
+                        isObligationCompleted={partner.isObligationCompleted}
+                      />
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

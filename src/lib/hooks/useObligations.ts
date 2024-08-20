@@ -162,7 +162,6 @@ export function useObligations() {
         type: "obligation",
       });
     } catch (error: any) {
-      debugger;
       Logger.error("Error sending notification", error);
       throw error;
     }

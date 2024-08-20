@@ -27,7 +27,7 @@ const ObligationsComponent = ({
   obligations: UserContractObligationData[];
   partnersData?: {
     partnerId: string;
-    isPartnerSigned: boolean;
+    isSigned: boolean;
     data: UserContractObligationData[];
   }[];
 }) => {
@@ -183,11 +183,11 @@ const ObligationsComponent = ({
                 title={userContractObligation.obligation.title}
                 isNewObligation={isNewObligation(day)}
                 partnersDetails={
-                  partnersData?.map(({ isPartnerSigned, partnerId }) => ({
-                    isPartnerSigned: isPartnerSigned,
+                  partnersData?.map(({ isSigned, partnerId }) => ({
+                    isSigned,
                     photoURL: partnerDetails(partnerId)?.photoURL,
                     displayName: partnerDetails(partnerId)?.displayName,
-                    isPartnerObligationCompleted: isPartnerObligationCompleted(
+                    isObligationCompleted: isPartnerObligationCompleted(
                       partnerId,
                       day,
                     ),
