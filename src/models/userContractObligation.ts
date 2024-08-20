@@ -25,5 +25,8 @@ export type UserContractObligationData = UserContractObligation & {
 
 export type GetNextUpObligationsResponse = {
   userContractObligations: UserContractObligationData[];
-  partnerContractObligations: UserContractObligationData[];
+  partnersContractObligations: {
+    partnerId: string;
+    contractObligations: UserContractObligationData[];
+  }[];
 };

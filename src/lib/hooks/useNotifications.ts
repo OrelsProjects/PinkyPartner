@@ -26,7 +26,7 @@ export default function useNotifications() {
     state => state.notifications,
   );
   const {
-    partnerData: { contractObligations: partnerContractObligations },
+    partnersData: { contractObligations: partnerContractObligations },
   } = useAppSelector(state => state.obligations);
 
   const [loadingNudge, setLoadingNudge] = useState<{ [key: string]: boolean }>(

@@ -273,7 +273,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           day={currentDayOrel}
           disabled={disabledOrel}
           isCompleted={completedOrel}
-          partnerDetails={{
+          partnersDetails={{
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
             isPartnerSigned: true,
@@ -302,7 +302,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           disabled
           forceSound={completedRandomPinky}
           isCompleted={completedRandomPinky}
-          partnerDetails={{
+          partnersDetails={{
             displayName: "Random Pinky",
             isPartnerSigned: true,
             isPartnerObligationCompleted: completedOrel,

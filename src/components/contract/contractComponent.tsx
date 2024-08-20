@@ -65,11 +65,6 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
     [contract.signatures, user],
   );
 
-  const isContractHasPartner = useMemo(
-    () => contract.contractees.length > 1,
-    [contract.contractees],
-  );
-
   const handleSignContract = () => {
     toast.promise(signContract(contract.contractId), {
       pending: "Signing contract...",
@@ -123,10 +118,9 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           />
         ))}
       </div>
-      {isUserSigned && !isContractHasPartner && (
+      {isUserSigned && (
         <div className="w-full flex justify-end items-center">
           <InvitePartnerComponent
-            className={cn({ hidden: isContractHasPartner })}
             contract={contract}
             referralCode={user?.meta?.referralCode}
             buttonText="Invite"

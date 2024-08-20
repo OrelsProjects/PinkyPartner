@@ -143,7 +143,7 @@ export async function GET(
       return NextResponse.json(
         {
           userContractObligations: [],
-          partnerContractObligations: [],
+          partnersContractObligations: [],
         },
         { status: 200 },
       );
@@ -212,14 +212,17 @@ export async function GET(
     const userContractObligations = allUserContractObligations.filter(
       ({ appUser }) => appUser.userId === user.userId,
     );
-    const partnerContractObligations = allUserContractObligations.filter(
-      ({ appUser }) => appUser.userId !== user.userId,
-    );
+    const partnersContractObligations = allUserContractObligations
+      .filter(({ appUser }) => appUser.userId !== user.userId)
+      .map(({ appUser, ...rest }) => ({
+        partnerId: appUser.userId,
+        contractObligations: [{ ...rest, appUser }],
+      }));
 
     return NextResponse.json(
       {
         userContractObligations,
-        partnerContractObligations,
+        partnersContractObligations,
       },
       { status: 200 },
     );

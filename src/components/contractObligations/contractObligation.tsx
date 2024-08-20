@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
 import { Logger } from "../../logger";
 import { useAppSelector } from "../../lib/hooks/redux";
@@ -69,7 +69,7 @@ export const ObligationBox = ({
   forceSound,
   isCompleted,
   userPhotoUrl,
-  partnerDetails,
+  partnersDetails,
   isNewObligation,
   handleCompleteObligation,
 }: {
@@ -84,12 +84,12 @@ export const ObligationBox = ({
   forceSound?: boolean;
   isCompleted: boolean;
   isNewObligation?: boolean;
-  partnerDetails?: {
+  partnersDetails?: {
     isPartnerSigned?: boolean;
     photoURL?: string | null;
     displayName?: string | null;
     isPartnerObligationCompleted?: boolean;
-  };
+  }[];
   userPhotoUrl?: string | null; // For landing page
   handleCompleteObligation: (day: string, completed: boolean) => void;
 }) => {
@@ -170,16 +170,18 @@ export const ObligationBox = ({
             displayName={user?.displayName}
             isObligationCompleted={isCompleted}
           />
-          {partnerDetails && (
-            <UserIndicator
-              isSigned={partnerDetails.isPartnerSigned}
-              photoURL={partnerDetails.photoURL}
-              displayName={partnerDetails.displayName}
-              isObligationCompleted={
-                partnerDetails.isPartnerObligationCompleted
-              }
-            />
-          )}
+          {partnersDetails &&
+            partnersDetails.map(partnerDetails => (
+              <UserIndicator
+                key={partnerDetails.displayName}
+                isSigned={partnerDetails.isPartnerSigned}
+                photoURL={partnerDetails.photoURL}
+                displayName={partnerDetails.displayName}
+                isObligationCompleted={
+                  partnerDetails.isPartnerObligationCompleted
+                }
+              />
+            ))}
         </div>
       </div>
     </div>
@@ -187,17 +189,19 @@ export const ObligationBox = ({
 };
 
 const ObligationsComponent = ({
-  isPartnerSigned,
   newObligations,
   obligations,
-  partnerData,
+  partnersData,
   contract,
 }: {
   contract: Contract;
-  isPartnerSigned?: boolean;
   newObligations: UserContractObligationData[];
   obligations: UserContractObligationData[];
-  partnerData?: UserContractObligationData[];
+  partnersData?: {
+    partnerId: string;
+    isPartnerSigned: boolean;
+    data: UserContractObligationData[];
+  }[];
 }) => {
   const { state } = useAppSelector(state => state.auth);
   const { completeObligation } = useObligations();
@@ -221,14 +225,26 @@ const ObligationsComponent = ({
     }, []);
   }, [obligations]);
 
-  const daysObligationsCompletedPartner = useMemo(() => {
-    return partnerData?.reduce((acc: Date[], { completedAt, dueDate }) => {
-      if (completedAt && dueDate) {
-        acc.push(new Date(dueDate));
-      }
-      return acc;
-    }, []);
-  }, [obligations]);
+  const daysObligationsCompletedPartner: { partnerId: string; data: Date[] }[] =
+    useMemo(() => {
+      // patnerId to {completedAt, dueDate}
+      return (
+        partnersData?.reduce(
+          (acc: { partnerId: string; data: Date[] }[], partnerData) => {
+            return partnerData.data.reduce((acc, { completedAt, dueDate }) => {
+              if (completedAt && dueDate) {
+                acc.push({
+                  partnerId: partnerData.partnerId,
+                  data: [new Date(dueDate)],
+                });
+              }
+              return acc;
+            }, acc);
+          },
+          [],
+        ) || []
+      );
+    }, [obligations]);
 
   const handleCompleteObligation = async (day: string, completed: boolean) => {
     const loading = loadingObligationDays[day];
@@ -257,9 +273,11 @@ const ObligationsComponent = ({
           return;
         }
       } else {
-        const hasPartner = partnerData && partnerData.length > 0;
+        const hasPartner = partnersData && partnersData.length > 0;
         const partnerName = hasPartner
-          ? partnerData[0].appUser.displayName
+          ? partnersData.length > 1
+            ? "Your partners"
+            : partnersData[0].data[0].appUser.displayName
           : "Your partner";
         const completedText = `Good job! ${hasPartner ? `${partnerName} will be notified` : ""}`;
         toast(completedText, {
@@ -289,8 +307,15 @@ const ObligationsComponent = ({
   const isObligationCompleted = (day: string) =>
     daysObligationsCompleted.some(date => isDateSameDay(day, date));
 
-  const isPartnerObligationCompleted = (day: string) =>
-    daysObligationsCompletedPartner?.some(date => isDateSameDay(day, date));
+  const isPartnerObligationCompleted = useCallback(
+    (partnerId: string, day: string) =>
+      daysObligationsCompletedPartner?.some(
+        data =>
+          data.partnerId === partnerId &&
+          data.data.some(date => isDateSameDay(day, date)),
+      ),
+    [daysObligationsCompletedPartner],
+  );
 
   const isNewObligation = (day: string) =>
     newObligations.some(
@@ -298,18 +323,26 @@ const ObligationsComponent = ({
         obligation.dueDate && isDateSameDay(day, obligation.dueDate),
     );
 
-  const partnerDetails = useMemo(() => {
-    if (partnerData && partnerData.length > 0) {
-      return partnerData[0].appUser;
-    }
-    return null;
-  }, [partnerData]);
+  const partnerDetails = useCallback(
+    (partnerId: string) => {
+      const partnerData = partnersData?.find(
+        partner => partner.partnerId === partnerId,
+      );
+      if (partnerData) {
+        return {
+          photoURL: partnerData.data[0].appUser.photoURL,
+          displayName: partnerData.data[0].appUser.displayName,
+        };
+      }
+      return null;
+    },
+    [partnersData],
+  );
 
   return (
     userContractObligation && (
       <div className="w-full h-fit flex flex-col gap-3">
         <div className="flex flex-col justify-between items-start h-fit w-full gap-1">
-
           {obligationsDays.map((day, index) => {
             return (
               <ObligationBox
@@ -321,13 +354,17 @@ const ObligationsComponent = ({
                 loading={loadingObligationDays[day]}
                 title={userContractObligation.obligation.title}
                 isNewObligation={isNewObligation(day)}
-                partnerDetails={{
-                  isPartnerSigned,
-                  photoURL: partnerDetails?.photoURL,
-                  displayName: partnerDetails?.displayName,
-                  isPartnerObligationCompleted:
-                    isPartnerObligationCompleted(day),
-                }}
+                partnersDetails={
+                  partnersData?.map(({ isPartnerSigned, partnerId }) => ({
+                    isPartnerSigned: isPartnerSigned,
+                    photoURL: partnerDetails(partnerId)?.photoURL,
+                    displayName: partnerDetails(partnerId)?.displayName,
+                    isPartnerObligationCompleted: isPartnerObligationCompleted(
+                      partnerId,
+                      day,
+                    ),
+                  })) || []
+                }
                 handleCompleteObligation={handleCompleteObligation}
                 dummy={state !== "authenticated"}
               />

@@ -36,7 +36,7 @@ const NotificationsProvider = () => {
   const { newContracts, newObligations, didShowContractNotification } =
     useAppSelector(state => state.notifications);
   const {
-    partnerData: { contractObligations: partnerContractObligations },
+    partnersData,
   } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
   const { user, state } = useAppSelector(state => state.auth);
@@ -110,18 +110,18 @@ const NotificationsProvider = () => {
     }
   }, [newContracts, newObligations]);
 
-  useEffect(() => {
-    if (partnerContractObligations.length > 0) {
-      const newObligations =
-        partnerContractObligations.filter(obligation => !obligation.viewedAt) ||
-        [];
-      dispatch(setNewObligations(newObligations));
+  // useEffect(() => {
+  //   if (partnerContractObligations.length > 0) {
+  //     const newObligations =
+  //       partnerContractObligations.filter(obligation => !obligation.viewedAt) ||
+  //       [];
+  //     dispatch(setNewObligations(newObligations));
 
-      if (newObligations.length > 0 && canShowObligationsNotification()) {
-        lastShownNewObligationsNotification.current = Date.now();
-      }
-    }
-  }, [partnerContractObligations]);
+  //     if (newObligations.length > 0 && canShowObligationsNotification()) {
+  //       lastShownNewObligationsNotification.current = Date.now();
+  //     }
+  //   }
+  // }, [partnerContractObligations]);
 
   useEffect(() => {
     if (contracts) {

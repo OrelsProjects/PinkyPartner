@@ -441,7 +441,12 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                       )}
                     </CreatePromise>
                     <div
-                      className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full pb-1"
+                      className={cn(
+                        "hidden flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full",
+                        {
+                          "pb-1 flex": obligations.length > 0,
+                        },
+                      )}
                       ref={obligationsRef}
                     >
                       <AnimatePresence>

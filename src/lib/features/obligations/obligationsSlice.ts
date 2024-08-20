@@ -1,4 +1,3 @@
-// obligationsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store"; // Adjust the import path as necessary
 import Obligation from "../../../models/obligation";
@@ -7,10 +6,10 @@ import { UserContractObligationData } from "../../../models/userContractObligati
 interface ObligationsState {
   obligations: Obligation[];
   contractObligations: UserContractObligationData[];
-  partnerData: {
-    loading?: boolean;
+  partnersData: {
+    partnerId: string;
     contractObligations: UserContractObligationData[];
-  };
+  }[];
   loading: boolean;
   loadingData: boolean;
   error: string | null;
@@ -19,10 +18,7 @@ interface ObligationsState {
 const initialState: ObligationsState = {
   obligations: [],
   contractObligations: [],
-  partnerData: {
-    loading: false,
-    contractObligations: [],
-  },
+  partnersData: [],
   loading: false,
   loadingData: true,
   error: null,
@@ -57,13 +53,16 @@ const obligationsSlice = createSlice({
     ) {
       state.contractObligations = action.payload;
     },
-    setPartnerData(
+    setPartnersData(
       state,
-      action: PayloadAction<{
-        contractObligations: UserContractObligationData[];
-      }>,
+      action: PayloadAction<
+        {
+          partnerId: string;
+          contractObligations: UserContractObligationData[];
+        }[]
+      >,
     ) {
-      state.partnerData = action.payload;
+      state.partnersData = action.payload;
     },
     setViewedAt(
       state,
@@ -112,11 +111,19 @@ const obligationsSlice = createSlice({
     setLoadingData(state, action: PayloadAction<boolean>) {
       state.loadingData = action.payload;
     },
-    setLoadingPartnerData(state, action: PayloadAction<boolean>) {
-      state.partnerData = {
-        ...state.partnerData,
-        loading: action.payload,
-      };
+    setLoadingPartnerData(
+      state,
+      action: PayloadAction<{ partnerId: string; loading: boolean }>,
+    ) {
+      state.partnersData = state.partnersData.map(partnerData => {
+        if (partnerData.partnerId === action.payload.partnerId) {
+          return {
+            ...partnerData,
+            loading: action.payload.loading,
+          };
+        }
+        return partnerData;
+      });
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
@@ -129,7 +136,7 @@ export const {
   addObligation,
   updateObligation,
   deleteObligation,
-  setPartnerData,
+  setPartnersData,
   setViewedAt,
   completeObligation,
   setLoading,

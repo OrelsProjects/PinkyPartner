@@ -8,7 +8,7 @@ import {
   updateObligation as updateObligationAction,
   deleteObligation as deleteObligationAction,
   completeObligation as completeObligationAction,
-  setPartnerData as setPartnerDataAction,
+  setPartnersData as setPartnerDataAction,
   setLoadingData as setLoadingDataAction,
   setLoadingPartnerData as setLoadingPartnerDataAction,
   setContractObligations as setContractObligationsAction,
@@ -25,8 +25,13 @@ import { toast } from "react-toastify";
 
 export function useObligations() {
   const dispatch = useAppDispatch();
-  const { obligations, error, partnerData, loading, loadingData } =
-    useAppSelector(state => state.obligations);
+  const {
+    obligations,
+    error,
+    partnersData: partnerData,
+    loading,
+    loadingData,
+  } = useAppSelector(state => state.obligations);
 
   const { contracts } = useAppSelector(state => state.contracts);
   const { user } = useAppSelector(state => state.auth);
@@ -52,8 +57,11 @@ export function useObligations() {
     dispatch(setLoadingDataAction(loading));
   };
 
-  const setLoadingPartnerData = (loading: boolean = true) => {
-    dispatch(setLoadingPartnerDataAction(loading));
+  const setLoadingPartnerData = (
+    partnerId: string,
+    loading: boolean = true,
+  ) => {
+    dispatch(setLoadingPartnerDataAction({ partnerId, loading }));
   };
 
   const setObligations = (obligations: Obligation[]) => {
@@ -128,14 +136,13 @@ export function useObligations() {
     dispatch(setContractObligationsAction([...obligations]));
   };
 
-  const setPartnerData = (
-    contractObligations: UserContractObligationData[],
+  const setPartnersData = (
+    data: {
+      partnerId: string;
+      contractObligations: UserContractObligationData[];
+    }[],
   ) => {
-    dispatch(
-      setPartnerDataAction({
-        contractObligations,
-      }),
-    );
+    dispatch(setPartnerDataAction(data));
   };
 
   const sendCompletedObligationNotification = async (
@@ -155,6 +162,7 @@ export function useObligations() {
         type: "obligation",
       });
     } catch (error: any) {
+      debugger;
       Logger.error("Error sending notification", error);
       throw error;
     }
@@ -188,10 +196,17 @@ export function useObligations() {
       const response = await axios.get<GetNextUpObligationsResponse>(
         "/api/obligations/next-up",
       );
-      const { userContractObligations, partnerContractObligations } =
-        response.data;
+      const {
+        userContractObligations,
+        partnersContractObligations: partnerContractObligations,
+      } = response.data;
+      const partnersData = partnerContractObligations.map(partnerData => ({
+        partnerId: partnerData.partnerId,
+        contractObligations: partnerData.contractObligations,
+      }));
+
       setUserContractObligations(userContractObligations);
-      setPartnerData(partnerContractObligations);
+      setPartnersData(partnersData);
     } catch (error: any) {
       Logger.error("Failed to fetch next up obligations", error);
     } finally {
@@ -270,7 +285,6 @@ export function useObligations() {
     partnerData,
     loading,
     loadingData,
-    loadingPartner: partnerData.loading,
     error,
     sendNudge,
     setObligations,
@@ -280,7 +294,7 @@ export function useObligations() {
     createObligation,
     updateObligation,
     deleteObligation,
-    setPartnerData,
+    setPartnerData: setPartnersData,
     fetchNextUpObligations,
     completeObligation,
   };

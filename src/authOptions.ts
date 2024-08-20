@@ -15,6 +15,7 @@ import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
+import { MAX_PARTICIPANTS_IN_CONTRACT } from "./lib/utils";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -54,7 +55,7 @@ const createNewUserContract = async (userId: string, contractId: string) => {
       contractId,
     },
   });
-  if (currentUserContracts.length > 1) {
+  if (currentUserContracts.length >= MAX_PARTICIPANTS_IN_CONTRACT) {
     return;
   }
   const { contract } = await prisma.userContract.create({

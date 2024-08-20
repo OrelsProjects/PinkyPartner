@@ -159,7 +159,7 @@ const DummyObligationBoxMobile: React.FC<DummyObligationBoxProps> = () => {
           className="!max-w-96 md:!max-w-[27rem] !w-10/12 md:!w-full self-center"
           disabled={disabled}
           isCompleted={completed}
-          partnerDetails={{
+          partnersDetails={{
             photoURL: OREL_IMAGE_URL,
             displayName: "Orel Zilberman",
             isPartnerSigned: true,

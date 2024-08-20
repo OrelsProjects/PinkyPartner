@@ -53,7 +53,7 @@ const EmptyObligations = () => {
 };
 
 export default function Home() {
-  const { contractObligations, partnerData } = useAppSelector(
+  const { contractObligations, partnersData } = useAppSelector(
     state => state.obligations,
   );
   const { state } = useAppSelector(state => state.auth);
@@ -70,7 +70,7 @@ export default function Home() {
     <div className="w-full h-fit flex flex-col gap-4 relative">
       <ContractObligationsComponent
         userData={contractObligations}
-        partnerData={partnerData.contractObligations}
+        partnersData={partnersData}
         loading={loadingData && state !== "anonymous"}
         showReport
       />

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/section";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
+import { MAX_PARTICIPANTS_IN_CONTRACT } from "../../lib/utils";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
@@ -54,14 +55,13 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
 
   const SignedNames = useMemo(() => {
     if (contracteesNames.length > 1) {
-      const maxContractees = 2;
       const last = contracteesNames[contracteesNames.length - 1];
       return (
         <>
           {contracteesNames.slice(0, -1).map((name, index) => (
             <React.Fragment key={index}>
               <strong>{name}</strong>
-              {index < contracteesNames.length - maxContractees ? ", " : " "}
+              {index < contracteesNames.length - MAX_PARTICIPANTS_IN_CONTRACT ? ", " : " "}
             </React.Fragment>
           ))}
           and <strong>{last}</strong>
