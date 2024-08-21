@@ -58,6 +58,18 @@ const createNewUserContract = async (userId: string, contractId: string) => {
   if (currentUserContracts.length >= MAX_PARTICIPANTS_IN_CONTRACT) {
     return;
   }
+
+  const existingUserContract = await prisma.userContract.findFirst({
+    where: {
+      userId,
+      contractId,
+    },
+  });
+
+  if (existingUserContract) {
+    return;
+  }
+
   const { contract } = await prisma.userContract.create({
     data: {
       userId,
