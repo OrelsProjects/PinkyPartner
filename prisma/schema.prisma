@@ -40,8 +40,8 @@ model AppUser {
   ContractObligation UserContractObligation[]
   settings           AppUserSettings?
 
-  nudgesReceived Nudges[]      @relation(name: "nudgesReceived")
-  nudgesSent     Nudges[]      @relation(name: "nudgesSent")
+  nudgesReceived Nudges[] @relation(name: "nudgesReceived")
+  nudgesSent     Nudges[] @relation(name: "nudgesSent")
 
   @@map("appUser")
 }
@@ -102,6 +102,8 @@ model Contract {
   description String?
   dueDate     DateTime
   createdAt   DateTime @default(now())
+
+  type String? @default("contract") // contract/challenge
 
   appUser                 AppUser                  @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
   userContractObligations UserContractObligation[]

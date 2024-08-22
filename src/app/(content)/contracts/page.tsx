@@ -2,7 +2,6 @@
 
 import React, { useMemo } from "react";
 import { Button } from "../../../components/ui/button";
-import { useRouter } from "next/navigation";
 import { useContracts } from "../../../lib/hooks/useContracts";
 import ContractComponent, {
   ContractComponentLoading,

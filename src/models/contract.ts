@@ -1,6 +1,8 @@
 import { AccountabilityPartner } from "./appUser";
 import Obligation from "./obligation";
 
+export type ContractType = "contract" | "challenge";
+
 export default interface Contract {
   contractId: string;
   creatorId?: string;
@@ -9,6 +11,7 @@ export default interface Contract {
   description?: string | null;
   createdAt: Date;
   viewedAt?: string;
+  type?: ContractType| null;
 }
 
 export type ContractWithExtras = Contract & {

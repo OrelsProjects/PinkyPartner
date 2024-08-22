@@ -108,7 +108,7 @@ export async function GET(
         userContracts: {
           where: {
             optOutOn: null,
-          },  
+          },
           select: {
             appUser: {
               select: {
@@ -153,6 +153,9 @@ export async function GET(
         const formattedObligations = formatObligations(obligations);
         const clientContract: ClientContract.ContractWithExtras = {
           ...formattedContract,
+          type:
+            (formattedContract.type as ClientContract.ContractType) ??
+            "contract",
           obligations: formattedObligations,
           contractees: userContracts.map(userContract => userContract.appUser),
           signatures,

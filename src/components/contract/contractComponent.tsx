@@ -15,7 +15,6 @@ import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
 import EditContractComponent from "./editContractComponent";
-import { Button } from "../ui/button";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;
@@ -50,6 +49,36 @@ export const ContractComponentLoading = ({
     </div>
   </div>
 );
+
+const AccountabilityPartners = ({
+  contract,
+}: {
+  contract: ContractWithExtras;
+}) => {
+  // const firstTwoPartners = useMemo(
+  //   () => contract.contractees.slice(0, 2),
+  //   [contract.contractees],
+  // );
+
+  // const otherPartnersCount = useMemo(
+  //   () => contract.contractees.length - 2,
+  //   [contract.contractees],
+  // );
+
+  return (
+    <div className="w-full flex flex-row justify-start md:justify-start gap-6 md:gap-3 overflow-y-auto">
+      {contract.contractees.map(contractee => (
+        <AccountabilityPartnerComponent
+          key={contractee?.userId}
+          partner={contractee}
+          signed={contract.signatures.some(
+            signature => signature?.userId === contractee?.userId,
+          )}
+        />
+      ))}
+    </div>
+  );
+};
 
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
@@ -107,17 +136,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           {new Date(contract.dueDate).toDateString()}
         </h4>
       </div>
-      <div className="w-full flex flex-row justify-between md:justify-start gap-1 md:gap-3">
-        {contract.contractees.map(contractee => (
-          <AccountabilityPartnerComponent
-            key={contractee?.userId}
-            partner={contractee}
-            signed={contract.signatures.some(
-              signature => signature?.userId === contractee?.userId,
-            )}
-          />
-        ))}
-      </div>
+      <AccountabilityPartners contract={contract} />
       {isUserSigned && (
         <div className="w-full flex justify-end items-center">
           <InvitePartnerComponent
