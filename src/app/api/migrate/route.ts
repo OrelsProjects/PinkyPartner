@@ -76,28 +76,9 @@ export async function POST(
         },
       });
 
-    const promises: Promise<any>[] = [];
-    for (const it of userContractObligations) {
-      const { userContractObligationId, dueDate, completedAt, ...rest } = it;
-      promises.push(
-        prisma.userContractObligation.update({
-          where: {
-            userContractObligationId,
-          },
-          data: {
-            ...rest,
-            dueDate: it.completedAtNumber,
-            completedAt: it.dueDateNumber,
-          },
-        }),
-      );
-    }
 
     const allUserContractObligations =
       await prisma.userContractObligation.findMany();
-
-    await Promise.all(promises);
-    console.log("hi");
 
     // for (const it of userContractObligations) {
     //   const {

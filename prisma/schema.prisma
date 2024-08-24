@@ -145,9 +145,7 @@ model UserContractObligation {
   obligationId             String    @db.ObjectId
   contractId               String    @db.ObjectId
   dueDate                  Int? // If it's weekly, there is no due date.
-  dueDateNumber            Int? // If it's weekly, there is no due date.
   completedAt              Int?
-  completedAtNumber        Int?
   viewedAt                 DateTime? // If the partner saw his partner's completion
   createdAt                DateTime  @default(now())
 
