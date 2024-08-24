@@ -40,8 +40,8 @@ model AppUser {
   ContractObligation UserContractObligation[]
   settings           AppUserSettings?
 
-  nudgesReceived Nudges[]      @relation(name: "nudgesReceived")
-  nudgesSent     Nudges[]      @relation(name: "nudgesSent")
+  nudgesReceived Nudges[] @relation(name: "nudgesReceived")
+  nudgesSent     Nudges[] @relation(name: "nudgesSent")
 
   @@map("appUser")
 }
@@ -144,8 +144,10 @@ model UserContractObligation {
   userId                   String
   obligationId             String    @db.ObjectId
   contractId               String    @db.ObjectId
-  dueDate                  DateTime? // If it's weekly, there is no due date.
-  completedAt              DateTime?
+  dueDate                  Int? // If it's weekly, there is no due date.
+  dueDateNumber            Int? // If it's weekly, there is no due date.
+  completedAt              Int?
+  completedAtNumber        Int?
   viewedAt                 DateTime? // If the partner saw his partner's completion
   createdAt                DateTime  @default(now())
 

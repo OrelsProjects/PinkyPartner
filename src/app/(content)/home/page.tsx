@@ -68,6 +68,13 @@ export default function Home() {
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative">
+      {/* <Button
+        onClick={() => {
+          axios.post("/api/migrate");
+        }}
+      >
+        Migrate
+      </Button> */}
       <ContractObligationsComponent
         userData={contractObligations}
         partnerData={partnerData.contractObligations}

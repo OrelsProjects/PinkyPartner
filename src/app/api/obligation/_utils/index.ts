@@ -146,6 +146,7 @@ export function ObligationsToContractObligation(
             dueDate.getUTCSeconds(),
           ),
         );
+        const dueDateTime = dueDate.getTime();
         populatedObligations.push({
           ...obligation,
           userId: userId,
@@ -155,13 +156,13 @@ export function ObligationsToContractObligation(
           userId: userId,
           obligationId: obligation.obligationId,
           contractId: contractId,
-          dueDate,
+          dueDate: dueDateTime,
         });
       });
     } else {
       Array.from({ length: obligation.timesAWeek || 0 }).forEach((_, i) => {
         populatedObligations.push({ ...obligation, userId });
-        const endOfTheWeek = getEndOfTheWeekDate();
+        const endOfTheWeek = getEndOfTheWeekDate().getTime();
         contractObligations.push({
           userId: userId,
           obligationId: obligation.obligationId,
