@@ -18,7 +18,7 @@ const useAuth = () => {
   const signInWithGoogle = useCallback(async () => {
     try {
       EventTracker.track("user_signed_in_with_google");
-      await signIn("google");
+      await signIn("google", { callbackUrl: "/home" });
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");

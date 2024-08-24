@@ -53,11 +53,6 @@ export const UserIndicator = ({
   className,
 }: UserIndicatorProps) => {
   if (!displayName && !photoURL) return null;
-  const text = isSigned
-    ? isObligationCompleted
-      ? "Done"
-      : "Waiting"
-    : "Not signed";
 
   return (
     <div
@@ -100,8 +95,12 @@ export const UsersIndicator = ({
 
   useEffect(() => {
     if (!partnersData || partnersData.length === 0) setPartnerComponent(null);
-    else if (partnersData.length === 1)
-      setPartnerComponent(<UserIndicator {...partnersData[0]} />);
+    else if (partnersData.length === 1) {
+      const partner = partnersData[0];
+      setPartnerComponent(
+        <UserIndicator {...partner} showTooltip showStatus />,
+      );
+    }
   }, [partnersData]);
 
   const partnersCount = useMemo(

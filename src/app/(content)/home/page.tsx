@@ -7,28 +7,6 @@ import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
 import Link from "next/link";
-import axios from "axios";
-
-const EmptyContracts = () => {
-  return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-3">
-      <h1 className="text-xl font-semibold">
-        Seems like your pinky is ready to meet another pinky.. 😉
-      </h1>
-      <div className="w-full flex justify-center items-center flex-col">
-        <Button
-          onClick={() => {
-            EventTracker.track("create_contract_from_home");
-          }}
-          className="bg-primary text-white"
-          asChild
-        >
-          <Link href="/contracts/new">Make it official!</Link>
-        </Button>
-      </div>
-    </div>
-  );
-};
 
 const EmptyObligations = () => {
   return (

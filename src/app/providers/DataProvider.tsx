@@ -57,14 +57,12 @@ export default function DataProvider({
       const { obligations, contracts } = userData;
       setObligations(obligations || []);
       setContracts(contracts || []);
-      setLoadingDataContracts(false);
-      setLoadingDataObligations(false);
       setDataFetched();
     } catch (error: any) {
       Logger.error("Failed to fetch user data", error);
+    } finally {
       setLoadingDataContracts(false);
       setLoadingDataObligations(false);
-    } finally {
       isFetchingData.current = false;
     }
   };
