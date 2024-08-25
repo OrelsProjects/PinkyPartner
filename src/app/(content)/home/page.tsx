@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
-import { useObligations } from "../../../lib/hooks/useObligations";
+import React, { useEffect, useMemo } from "react";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
 import Link from "next/link";
+import ChallengeComponent from "./challengeComponent";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 const EmptyObligations = () => {
   return (
@@ -31,6 +32,7 @@ const EmptyObligations = () => {
 };
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const { contractObligations, partnersData } = useAppSelector(
     state => state.obligations,
   );
@@ -38,20 +40,51 @@ export default function Home() {
   const { loading, loadingData } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
 
-  if (!loadingData && !loading && state !== "anonymous") {
-    if (contracts.length === 0) {
-      return <EmptyObligations />;
+  const [showChallenge, setShowChallenge] = React.useState(false);
+
+  const contractId = useMemo(() => {
+    return searchParams.get("contractId");
+  }, []);
+
+  useEffect(() => {
+    if (contractId) {
+      setShowChallenge(true);
+    } else {
+      setShowChallenge(false);
     }
-  }
+  }, [contractId]);
+
+  const isEmptyContracts = useMemo(
+    () =>
+      !loading &&
+      !loadingData &&
+      contracts.length === 0 &&
+      state !== "anonymous",
+    [loading, loadingData, contracts, state],
+  );
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative">
-      <ContractObligationsComponent
-        userData={contractObligations}
-        partnersData={partnersData}
-        loading={loadingData && state !== "anonymous"}
-        showReport
-      />
+      {contractId && (
+        <ChallengeComponent
+          contractId={contractId}
+          open={showChallenge}
+          onClose={() => {
+            setShowChallenge(false);
+            window.history.replaceState({}, "", "/home");
+          }}
+        />
+      )}
+      {isEmptyContracts ? (
+        <EmptyObligations />
+      ) : (
+        <ContractObligationsComponent
+          userData={contractObligations}
+          partnersData={partnersData}
+          loading={loadingData && state !== "anonymous"}
+          showReport
+        />
+      )}
     </div>
   );
 }

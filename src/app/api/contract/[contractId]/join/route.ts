@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/authOptions";
+import { authOptions, createNewUserContract } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
 
 export async function POST(
@@ -16,6 +16,9 @@ export async function POST(
     if (!contractId) {
       throw new Error("Missing contractId");
     }
+
+    await createNewUserContract(session.user.userId, contractId);
+
     const userContract = await prisma.userContract.findFirst({
       where: {
         AND: {
@@ -28,7 +31,7 @@ export async function POST(
       return NextResponse.json(undefined, { status: 401 });
     }
     userContract.signedAt = new Date();
-    
+
     await prisma.userContract.update({
       where: {
         userContractId: userContract.userContractId,
@@ -37,8 +40,8 @@ export async function POST(
         signedAt: userContract.signedAt,
       },
     });
-    
-    return NextResponse.json({ message: "Contract signed" }, { status: 200 }); 
+
+    return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

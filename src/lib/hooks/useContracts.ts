@@ -141,6 +141,30 @@ export function useContracts() {
     }
   };
 
+  const joinContract = async (contractId: string) => {
+    dispatch(setLoading(true));
+    try {
+      if (!user) {
+        throw new Error(
+          "Cannot join contract without an accountability partner",
+        );
+      }
+      await axios.post(`/api/contract/${contractId}/join`);
+      const newContract = await axios.get<ContractWithExtras>(
+        `/api/contract/${contractId}`,
+      );
+      dispatch(addContractAction(newContract.data));
+      dispatch(signContractAction({ contractId, user }));
+      dispatch(setError(null));
+      await fetchNextUpObligations();
+    } catch (err: any) {
+      dispatch(setError(err.message || "Error signing contract"));
+      throw err;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const signContract = async (contractId: string) => {
     dispatch(setLoading(true));
     try {
@@ -255,6 +279,7 @@ export function useContracts() {
     loading,
     contracts,
     loadingData,
+    joinContract,
     setContracts,
     signContract,
     fetchContracts,

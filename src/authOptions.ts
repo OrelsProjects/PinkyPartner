@@ -49,7 +49,7 @@ const clearContractId = () => {
   });
 };
 
-const createNewUserContract = async (userId: string, contractId: string) => {
+export const createNewUserContract = async (userId: string, contractId: string) => {
   const currentUserContracts = await prisma.userContract.findMany({
     where: {
       contractId,

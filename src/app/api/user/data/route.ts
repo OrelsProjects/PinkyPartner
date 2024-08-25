@@ -15,6 +15,9 @@ type UserData = {
   obligations: Obligation[];
 };
 
+/**
+ * Removes the creatorId from the contract if it is not the same as the logged in user
+ */
 const removeCreatorIdFromContract = (contract: Contract, userId: string) => {
   return {
     ...contract,

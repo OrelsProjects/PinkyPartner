@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "@dotlottie/react-player/dist/index.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
