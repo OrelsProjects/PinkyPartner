@@ -3,6 +3,7 @@ import Obligation from "./obligation";
 
 export type UserId = string;
 export type DisplayName = string;
+export type UserPaidStatus = "premium" | "free";
 
 export default interface AppUser {
   email: string;
@@ -13,9 +14,15 @@ export default interface AppUser {
   displayName?: string | null;
 }
 
+export interface Invitations {
+  challengeId?: string | null;
+}
+
 export interface AppUserMetadata {
-  referralCode: string;
-  onboardingCompleted: boolean;
+  referralCode?: string;
+  onboardingCompleted?: boolean;
+  pushToken?: string;
+  paidStatus?: UserPaidStatus;
 }
 
 export interface AppUserSettings {

@@ -26,6 +26,7 @@ const getAnonymousUser = async (): Promise<
     meta: {
       referralCode: annonymousUser.meta?.referralCode || "",
       onboardingCompleted: false,
+      paidStatus: "free",
     },
     settings: {
       showNotifications: false,

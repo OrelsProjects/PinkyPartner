@@ -145,6 +145,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
       contractees: [],
       signatures: [],
       obligations: undefined,
+      type: "contract",
     },
     onSubmit: async values => {
       EventTracker.track("contract_created");
@@ -379,9 +380,9 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                 <Button
                   variant="ghost"
                   onClick={handleBack}
-                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent px-1 md:px-2 "
+                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center rounded-full bg-background z-20 hover:bg-transparent px-1 md:px-2 md:hover:bg-slate-400/70 "
                 >
-                  <div className="flex flex-row gap-1 items-start md:rounded-full">
+                  <div className="flex flex-row gap-1 items-center justify-center md:rounded-full">
                     <IoArrowBack className="w-6 h-6" />
                     Back
                   </div>
@@ -432,6 +433,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                           onClick={() => {
                             setObligationToEdit(null);
                           }}
+                          className="w-[240px]"
                         >
                           <div className="flex flex-row gap-1 justify-center items-center">
                             <span>Create a promise</span>
@@ -485,8 +487,8 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !formik.values.dueDate && "text-muted-foreground",
+                          "w-[240px] text-left font-normal flex flex-row-reverse items-center justify-center gap-1",
+                          { "text-muted-foreground": !formik.values.dueDate },
                         )}
                       >
                         {formik.values.dueDate ? (
@@ -494,7 +496,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                         ) : (
                           <span>Pick a date</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="h-4 w-4 opacity-50 flex-shrink-0 " />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -514,6 +516,36 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     </PopoverContent>
                   </Popover>
                 </SectionContainer>
+                {user?.meta?.paidStatus === "premium" && (
+                  <SectionContainer>
+                    <div className="h-fit w-fit flex flex-row gap-2 justify-center items-center">
+                      <Checkbox
+                        checked={formik.values.type === "challenge"}
+                        onCheckedChange={checked => {
+                          formik.setValues({
+                            ...formik.values,
+                            type: checked ? "challenge" : "contract",
+                          });
+                        }}
+                        className="h-7 w-7"
+                      />
+                      <span
+                        className="md:hover:cursor-pointer select-none"
+                        onClick={() => {
+                          formik.setValues({
+                            ...formik.values,
+                            type:
+                              formik.values.type === "challenge"
+                                ? "contract"
+                                : "challenge",
+                          });
+                        }}
+                      >
+                        Challenge
+                      </span>
+                    </div>
+                  </SectionContainer>
+                )}
                 <SectionContainer
                   className={cn({ hidden: !accountabilityPartner })}
                 >

@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions, createNewUserContract } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
+import { ContractFullError } from "../../../../../models/errors/ContractFullError";
+import { UserNotPremiumError } from "../../../../../models/errors/UserNotPremiumError";
 
 export async function POST(
   req: NextRequest,
@@ -43,6 +45,9 @@ export async function POST(
 
     return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {
+    if (err instanceof ContractFullError || err instanceof UserNotPremiumError) {
+      return NextResponse.json({ error: err }, { status: 403 });
+    }
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

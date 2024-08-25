@@ -30,6 +30,7 @@ model AppUser {
   displayName String?
   photoURL    String?
 
+
   createdAt DateTime? @default(now())
 
   userContracts      UserContract[]
@@ -56,6 +57,8 @@ model AppUserMetadata {
 
   pushToken       String?
   pushTokenMobile String?
+  
+  paidStatus String? // "free" | "premium"
 
   onboardingCompleted Boolean @default(false)
 

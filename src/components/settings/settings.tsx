@@ -2,6 +2,7 @@ import React from "react";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { UserAvatar } from "../ui/avatar";
 import Link from "next/link";
+import { cn } from "../../lib/utils";
 
 interface SettingsComponentProps {}
 
@@ -16,7 +17,13 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
             photoURL={user?.photoURL || "/images/default-profile.png"}
             displayName={user?.displayName}
             imageClassName="rounded-full hover:cursor-pointer !w-10 !h-10 shadow-md"
-            className="w-10 h-10 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
+            className={cn(
+              "w-10 h-10 md:hover:shadow-lg md:hover:cursor-pointer rounded-full",
+              {
+                "border-[2px] border-primary":
+                  user?.meta?.paidStatus === "premium",
+              },
+            )}
             hideTooltip
           />
         </Link>

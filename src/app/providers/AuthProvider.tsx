@@ -6,12 +6,12 @@ import {
   selectAuth,
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { Logger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
-import AppUser from "../../models/appUser";
+import AppUser, { UserPaidStatus } from "../../models/appUser";
 import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 
@@ -22,6 +22,7 @@ export default function AuthProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   const { data: session, status } = useSession();
@@ -35,6 +36,7 @@ export default function AuthProvider({
     meta: {
       referralCode?: string | null;
       onboardingCompleted?: boolean;
+      paidStatus: UserPaidStatus;
     };
     settings: {
       showNotifications?: boolean;
@@ -54,6 +56,7 @@ export default function AuthProvider({
         meta: {
           referralCode: user?.meta.referralCode || "",
           onboardingCompleted: user?.meta.onboardingCompleted || false,
+          paidStatus: user?.meta?.paidStatus as UserPaidStatus,
         },
         settings: {
           showNotifications: user?.settings.showNotifications || true,
@@ -95,7 +98,12 @@ export default function AuthProvider({
         pathname.includes("register") ||
         pathname === "/"
       ) {
-        router.push("/home");
+        let redirect = "/home";
+        const challengeId = searchParams.get("challengeId");
+        if (challengeId) {
+          redirect = `/home?challengeId=${challengeId}`;
+        }
+        router.push(redirect);
       }
     } else {
       if (!isOnboardingCompleted()) return;

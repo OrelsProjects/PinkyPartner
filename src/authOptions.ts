@@ -15,7 +15,13 @@ import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
-import { MAX_PARTICIPANTS_IN_CONTRACT } from "./lib/utils";
+import {
+  MAX_PARTICIPANTS_IN_CONTRACT_FREE,
+  MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM,
+} from "./lib/utils";
+import { ContractFullError } from "./models/errors/ContractFullError";
+import { UserNotPremiumError } from "./models/errors/UserNotPremiumError";
+import { UserPaidStatus } from "./models/appUser";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -31,9 +37,12 @@ const getName = (name?: string, email?: string) => {
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
   const contractId = cookies().get("contractId")?.value;
+  const challengeId = cookies().get("challengeId")?.value;
+  
   return {
     referralCode,
     contractId,
+    challengeId,
   };
 };
 
@@ -49,14 +58,44 @@ const clearContractId = () => {
   });
 };
 
-export const createNewUserContract = async (userId: string, contractId: string) => {
+export const createNewUserContract = async (
+  userId: string,
+  contractId: string,
+) => {
   const currentUserContracts = await prisma.userContract.findMany({
     where: {
       contractId,
     },
+    include: {
+      contract: {
+        select: {
+          creatorId: true,
+        },
+      },
+    },
   });
-  if (currentUserContracts.length >= MAX_PARTICIPANTS_IN_CONTRACT) {
-    return;
+
+  const creator = await prisma.appUserMetadata.findFirst({
+    where: {
+      userId: currentUserContracts[0]?.contract?.creatorId, // Legit because we are sure that there's only 1 contract
+    },
+    select: {
+      paidStatus: true,
+    },
+  });
+
+  const contractMaxParticipants =
+    creator?.paidStatus === "premium"
+      ? MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM
+      : MAX_PARTICIPANTS_IN_CONTRACT_FREE;
+  const currentUserContractsLength = currentUserContracts.length;
+
+  if (currentUserContractsLength >= contractMaxParticipants) {
+    if (creator?.paidStatus !== "premium") {
+      throw new UserNotPremiumError();
+    } else {
+      throw new ContractFullError();
+    }
   }
 
   const existingUserContract = await prisma.userContract.findFirst({
@@ -273,7 +312,7 @@ export const authOptions: AuthOptions = {
       user: AdapterUser;
     }) {
       try {
-        let userInDB = await prisma.appUser.findFirst({
+        const userInDB = await prisma.appUser.findFirst({
           where: {
             userId: token.sub,
           },
@@ -303,6 +342,7 @@ export const authOptions: AuthOptions = {
             session.user.meta = {
               referralCode: "",
               pushToken: "",
+              paidStatus: "free",
             };
           }
           session.user.userId = token.sub!;
@@ -310,6 +350,7 @@ export const authOptions: AuthOptions = {
             referralCode: userInDB?.meta?.referralCode || "",
             pushToken: userInDB?.meta?.pushToken || "",
             onboardingCompleted: userInDB?.meta?.onboardingCompleted || false,
+            paidStatus: (userInDB?.meta?.paidStatus || "free") as UserPaidStatus,
           };
           session.user.settings = userInDB?.settings || {
             showNotifications: true,
@@ -342,12 +383,15 @@ export const authOptions: AuthOptions = {
 
         const referralOptions: ReferralOptions = getReferralOptions();
         if (referralOptions.contractId) {
+          // TODO: Choose how to proceed in case of an error here.
           await createNewUserContract(
             session.user.userId,
             referralOptions.contractId,
           );
           clearContractId();
         }
+
+        session.user.meta.paidStatus = (userInDB?.meta?.paidStatus || "free") as UserPaidStatus;
         return session;
       } catch (e: any) {
         loggerServer.error("Error creating user", "new_user", { error: e });

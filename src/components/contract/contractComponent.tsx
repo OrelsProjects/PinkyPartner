@@ -146,6 +146,7 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
             variant="secondary"
             onClose={() => setShowInvite(false)}
             open={showInvite}
+            paidStatus={user?.meta?.paidStatus}
           />
         </div>
       )}

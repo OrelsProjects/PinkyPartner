@@ -11,9 +11,10 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
-import { cn } from "../lib/utils";
-import Contract from "../models/contract";
+import { cn, MAX_PARTICIPANTS_IN_CONTRACT_FREE } from "../lib/utils";
+import Contract, { ContractWithExtras } from "../models/contract";
 import { FaCopy } from "react-icons/fa";
+import { UserPaidStatus } from "../models/appUser";
 
 interface InvitePartnerComponentProps {
   id?: string;
@@ -21,14 +22,16 @@ interface InvitePartnerComponentProps {
   buttonText: string;
   className?: string;
   onClose?: () => void;
-  contract?: Contract;
+  contract?: ContractWithExtras;
   referralCode?: string;
   variant?: ButtonVariants;
+  paidStatus?: UserPaidStatus;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   buttonText,
   referralCode,
+  paidStatus,
   className,
   variant,
   contract,
@@ -49,10 +52,13 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
       ? `${registerUrl}?referralCode=${referralCode}`
       : registerUrl;
 
+    const contractIdString =
+      contract?.type === "contract" ? "contractId" : "challengeId";
+
     if (contract) {
       url += referralCode
-        ? `&contractId=${contract.contractId}`
-        : `?contractId=${contract.contractId}`;
+        ? `&${contractIdString}=${contract.contractId}`
+        : `?${contractIdString}=${contract.contractId}`;
     }
     return url;
   }, [referralCode]);
@@ -136,6 +142,14 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
 
   if (contract?.contractId === "temp") {
     return;
+  }
+
+  if (paidStatus === "free") {
+    if (
+      (contract?.contractees?.length || 0) >= MAX_PARTICIPANTS_IN_CONTRACT_FREE
+    ) {
+      return;
+    }
   }
 
   return (

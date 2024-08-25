@@ -42,17 +42,17 @@ export default function Home() {
 
   const [showChallenge, setShowChallenge] = React.useState(false);
 
-  const contractId = useMemo(() => {
-    return searchParams.get("contractId");
+  const challengeId = useMemo(() => {
+    return searchParams.get("challengeId");
   }, []);
 
   useEffect(() => {
-    if (contractId) {
+    if (challengeId) {
       setShowChallenge(true);
     } else {
       setShowChallenge(false);
     }
-  }, [contractId]);
+  }, [challengeId]);
 
   const isEmptyContracts = useMemo(
     () =>
@@ -65,9 +65,9 @@ export default function Home() {
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative">
-      {contractId && (
+      {challengeId && (
         <ChallengeComponent
-          contractId={contractId}
+          contractId={challengeId}
           open={showChallenge}
           onClose={() => {
             setShowChallenge(false);

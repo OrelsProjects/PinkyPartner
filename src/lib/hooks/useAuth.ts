@@ -11,14 +11,21 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
 
   const signInWithGoogle = useCallback(async () => {
+    EventTracker.track("user_signed_in_with_google");
     try {
-      EventTracker.track("user_signed_in_with_google");
-      await signIn("google", { callbackUrl: "/home" });
+      let redirect = "/home";
+      const challengeId = searchParams.get("challengeId");
+      if (challengeId) {
+        redirect = `/home?challengeId=${challengeId}`;
+      }
+      await signIn("google", { callbackUrl: redirect });
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");
@@ -34,7 +41,12 @@ const useAuth = () => {
   const signInWithApple = useCallback(async () => {
     try {
       EventTracker.track("user_signed_in_with_apple");
-      await signIn("apple");
+      let redirect = "/home";
+      const challengeId = searchParams.get("challengeId");
+      if (challengeId) {
+        redirect = `/home?challengeId=${challengeId}`;
+      }
+      await signIn("apple", { callbackUrl: redirect });
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");

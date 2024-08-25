@@ -56,6 +56,7 @@ export async function GET(
           meta: {
             referralCode: "",
             onboardingCompleted: false,
+            paidStatus: "free",
           },
         },
       };

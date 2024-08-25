@@ -69,24 +69,29 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {props.children}
         </span>
       </button>
+    ) : props.loading ? (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      >
+        <Loading
+          className={cn({ hidden: !props.loading })}
+          spinnerClassName={cn(
+            "w-5 h-5",
+            { "fill-primary": variant === "secondary" },
+            { "fill-secondary": variant !== "secondary" },
+            props.loadingClassName,
+          )}
+        />
+      </Comp>
     ) : (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       >
-        <div className="flex justify-center items-center">
-          <Loading
-            className={cn({ hidden: !props.loading })}
-            spinnerClassName={cn(
-              "w-5 h-5",
-              {"fill-primary" : variant === "secondary"},
-              {"fill-secondary" : variant !== "secondary"},
-              props.loadingClassName,
-            )}
-          />
-          <div className={cn({ hidden: props.loading })}>{props.children}</div>
-        </div>
+        {props.children}
       </Comp>
     );
   },
