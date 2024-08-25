@@ -58,10 +58,12 @@ export async function GET(
     const { user } = session;
     const now = moment().utc().toDate();
     const oneMinuteAgo = moment().subtract(1, "minutes").toDate();
-    const startOfWeekDate = isAnonymous
-      ? oneMinuteAgo
-      : getStartOfTheWeekDate();
-    const endOfTheWeekDate = isAnonymous ? now : getEndOfTheWeekDate();
+    const startOfWeekDate = (
+      isAnonymous ? oneMinuteAgo : getStartOfTheWeekDate()
+    ).getTime();
+    const endOfTheWeekDate = (
+      isAnonymous ? now : getEndOfTheWeekDate()
+    ).getTime();
     const createdAt = isAnonymous ? oneMinuteAgo : new Date(0);
 
     const userContractIds = (
@@ -198,8 +200,12 @@ export async function GET(
           userContractObligationId:
             userContractObligation.userContractObligationId,
           obligationId: userContractObligation.obligationId,
-          dueDate: userContractObligation.dueDate,
-          completedAt: userContractObligation.completedAt,
+          dueDate: userContractObligation.dueDate
+            ? new Date(userContractObligation.dueDate)
+            : null,
+          completedAt: userContractObligation.completedAt
+            ? new Date(userContractObligation.completedAt)
+            : null,
           viewedAt: userContractObligation.viewedAt,
           userId: appUser.userId,
           appUser,

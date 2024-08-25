@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../authOptions";
 import prisma from "../_db/db";
 import loggerServer from "../../../loggerServer";
-import { AppUserSettings } from "@prisma/client";
+import { AppUserSettings, UserContractObligation } from "@prisma/client";
+import { badids } from "./badIds";
 
 export async function POST(
   req: NextRequest,
@@ -35,33 +36,75 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const allUsers = await prisma.appUser.findMany();
-    const usersSettings: Omit<
-      AppUserSettings,
-      "appUserSettingsId" | "updatedAt"
-    >[] = [];
-    for (const user of allUsers) {
-      const userCurrentSettings = await prisma.appUserSettings.findFirst({
+    // const allUsers = await prisma.appUser.findMany();
+    // const usersSettings: Omit<
+    //   AppUserSettings,
+    //   "appUserSettingsId" | "updatedAt"
+    // >[] = [];
+    // for (const user of allUsers) {
+    //   const userCurrentSettings = await prisma.appUserSettings.findFirst({
+    //     where: {
+    //       userId: user.userId,
+    //     },
+    //   });
+    //   if (!userCurrentSettings) {
+    //     const settings: Omit<
+    //       AppUserSettings,
+    //       "appUserSettingsId" | "updatedAt"
+    //     > = {
+    //       userId: user.userId,
+    //       showNotifications: true,
+    //       soundEffects: true,
+    //     };
+    //     usersSettings.push(settings);
+    //   }
+    // }
+
+    // await prisma.appUserSettings.createMany({
+    //   data: usersSettings,
+    // });
+
+    // Find all that have dueDate that is DateTime and not Int or null
+    const badIds = badids.map(it => it.userContractObligationId);
+    // go over all the ids and set dueDateNumber and completedAtNumber to dueDate.getTime() and completedAt.getTime()
+    const userContractObligations =
+      await prisma.userContractObligation.findMany({
         where: {
-          userId: user.userId,
+          userContractObligationId: {
+            in: badIds,
+          },
         },
       });
-      if (!userCurrentSettings) {
-        const settings: Omit<
-          AppUserSettings,
-          "appUserSettingsId" | "updatedAt"
-        > = {
-          userId: user.userId,
-          showNotifications: true,
-          soundEffects: true,
-        };
-        usersSettings.push(settings);
-      }
-    }
 
-    await prisma.appUserSettings.createMany({
-      data: usersSettings,
-    });
+
+    const allUserContractObligations =
+      await prisma.userContractObligation.findMany();
+
+    // for (const it of userContractObligations) {
+    //   const {
+    //     userContractObligationId,
+    //     completedAtNumber,
+    //     dueDateNumber,
+    //     ...rest
+    //   } = it;
+    //   // WIth a transaction, delete all the obligations and then insert them again without dueDateNumber and completedAtNumber
+    //   promises.push(
+    //     prisma.$transaction([
+    //       prisma.userContractObligation.delete({
+    //         where: {
+    //           userContractObligationId,
+    //         },
+    //       }),
+    //       prisma.userContractObligation.create({
+    //         data: {
+    //           ...rest,
+    //         },
+    //       }),
+    //     ]),
+    //   );
+    // }
+
+    // const result = await Promise.allSettled(promises);
 
     return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {

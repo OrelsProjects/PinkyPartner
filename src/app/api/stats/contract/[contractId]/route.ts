@@ -32,8 +32,8 @@ export async function GET(
       );
     }
 
-    const startOfWeek = getStartOfXWeeksAgoDate(1);
-    const endOfWeek = getEndOfXWeeksAgoDate(1);
+    const startOfWeek = getStartOfXWeeksAgoDate(1).getTime();
+    const endOfWeek = getEndOfXWeeksAgoDate(1).getTime();
 
     const contractDetails = await prisma.contract.findUnique({
       where: {
