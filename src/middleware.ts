@@ -54,7 +54,7 @@ async function registerMiddleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/register/:path*", "/login/:path*"],
+  matcher: ["/register/:path*", "/login/:path*", "/"],
 };
 
 export { default } from "next-auth/middleware";

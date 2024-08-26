@@ -15,6 +15,7 @@ import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
 import EditContractComponent from "./editContractComponent";
+import { canAddUsersToContract } from "../../lib/utils/contractUtils";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;
@@ -116,10 +117,12 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       <div className="absolute top-1.5 right-0.5">
         <ContractViewDropdown
           onInvite={
-            contract.contractees.length <= 1 && contract.contractId !== "temp"
+            canAddUsersToContract(contract, user?.meta?.paidStatus) &&
+            contract.contractId !== "temp"
               ? () => setShowInvite(true)
               : undefined
           }
+          contract={contract}
           onOptOut={() => setShowOptOut(true)}
           onView={() => setShowContract(true)}
           onEdit={() => setShowEdit(true)}

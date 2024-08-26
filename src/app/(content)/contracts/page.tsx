@@ -10,6 +10,7 @@ import { FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAppSelector } from "../../../lib/hooks/redux";
+import CustomLink from "../../../components/ui/customLink";
 
 interface ContractsProps {}
 
@@ -42,9 +43,9 @@ const ContractsPage: React.FC<ContractsProps> = () => {
           data-onboarding-id="contracts-plus-button"
           asChild
         >
-          <Link href="/contracts/new">
+          <CustomLink href="/contracts/new">
             <FaPlus className="w-5 h-5 fill-muted-foreground" />
-          </Link>
+          </CustomLink>
         </Button>
       </div>
       <motion.div

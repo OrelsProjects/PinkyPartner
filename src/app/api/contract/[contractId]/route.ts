@@ -69,9 +69,9 @@ export async function GET(
   { params }: { params: { contractId: string } },
 ) {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // if (!session) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // }
 
   try {
     const contract = await prisma.contract.findUnique({
@@ -79,7 +79,7 @@ export async function GET(
       include: {
         userContractObligations: {
           where: {
-            userId: session.user.userId,
+            userId: session?.user.userId,
           },
         },
         contractObligations: {
@@ -88,6 +88,9 @@ export async function GET(
           },
         },
         userContracts: {
+          where: {
+            optOutOn: null,
+          },
           include: {
             appUser: true,
           },

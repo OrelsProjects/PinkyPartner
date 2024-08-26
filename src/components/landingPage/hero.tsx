@@ -4,6 +4,7 @@ import ShowContentContainer from "./showContentContainer";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { EventTracker } from "../../eventTracker";
+import CustomLink from "../ui/customLink";
 
 interface HeroProps {}
 
@@ -61,22 +62,25 @@ const Hero: React.FC<HeroProps> = () => {
         </div>
         <div className="w-full md:w-fit flex flex-col justify-center items-center md:items-start text-foreground/80 text-lg text-center">
           <Button asChild className="text-lg py-6 px-12 text-white">
-            <Link
+            <CustomLink
               href="/register"
               onClick={() => {
                 EventTracker.track("take_my_pinky_clicked");
               }}
             >
               Take my pinky!
-            </Link>
+            </CustomLink>
           </Button>
           <Button
             variant="link"
             className="w-full underline decoration-muted-foreground/10"
+            asChild
           >
-            <Link href="/login" className=" text-lg text-muted-foreground/70">
-              <span className="w-full text-center">I have an account</span>
-            </Link>
+            <CustomLink href="/login">
+              <span className="w-full text-base text-center text-muted-foreground/70">
+                I have an account
+              </span>
+            </CustomLink>
           </Button>
         </div>
         <Mission />

@@ -4,6 +4,7 @@ import { authOptions, createNewUserContract } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
 import { ContractFullError } from "../../../../../models/errors/ContractFullError";
 import { UserNotPremiumError } from "../../../../../models/errors/UserNotPremiumError";
+import { ContractExistsForUserError } from "../../../../../models/errors/ContractExistsForUserError";
 
 export async function POST(
   req: NextRequest,
@@ -45,9 +46,17 @@ export async function POST(
 
     return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {
-    if (err instanceof ContractFullError || err instanceof UserNotPremiumError) {
+    if (
+      err instanceof ContractFullError ||
+      err instanceof UserNotPremiumError
+    ) {
       return NextResponse.json({ error: err }, { status: 403 });
     }
+
+    if (err instanceof ContractExistsForUserError) {
+      return NextResponse.json({ error: err }, { status: 409 });
+    }
+
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

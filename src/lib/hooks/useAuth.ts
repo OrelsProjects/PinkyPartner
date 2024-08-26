@@ -20,12 +20,7 @@ const useAuth = () => {
   const signInWithGoogle = useCallback(async () => {
     EventTracker.track("user_signed_in_with_google");
     try {
-      let redirect = "/home";
-      const challengeId = searchParams.get("challengeId");
-      if (challengeId) {
-        redirect = `/home?challengeId=${challengeId}`;
-      }
-      await signIn("google", { callbackUrl: redirect });
+      await signIn("google");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");
@@ -41,12 +36,7 @@ const useAuth = () => {
   const signInWithApple = useCallback(async () => {
     try {
       EventTracker.track("user_signed_in_with_apple");
-      let redirect = "/home";
-      const challengeId = searchParams.get("challengeId");
-      if (challengeId) {
-        redirect = `/home?challengeId=${challengeId}`;
-      }
-      await signIn("apple", { callbackUrl: redirect });
+      await signIn("apple");
     } catch (error: any) {
       if (error?.name === "UserAlreadyAuthenticatedException") {
         EventTracker.track("User already authenticated");

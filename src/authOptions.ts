@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from "uuid";
 import { InvalidCredentialsError } from "./models/errors/InvalidCredentialsError";
 import { UnknownUserError } from "./models/errors/UnknownUserError";
 import UserAlreadyExistsError from "./models/errors/UserAlreadyExistsError";
-import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
@@ -22,6 +21,8 @@ import {
 import { ContractFullError } from "./models/errors/ContractFullError";
 import { UserNotPremiumError } from "./models/errors/UserNotPremiumError";
 import { UserPaidStatus } from "./models/appUser";
+import { generateReferralCode } from "@/lib/utils/referralUtils";
+import { ContractExistsForUserError } from "./models/errors/ContractExistsForUserError";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -38,7 +39,7 @@ const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
   const contractId = cookies().get("contractId")?.value;
   const challengeId = cookies().get("challengeId")?.value;
-  
+
   return {
     referralCode,
     contractId,
@@ -106,7 +107,19 @@ export const createNewUserContract = async (
   });
 
   if (existingUserContract) {
-    return;
+    if (existingUserContract.optOutOn) {
+      await prisma.userContract.update({
+        where: {
+          userContractId: existingUserContract.userContractId,
+        },
+        data: {
+          optOutOn: null,
+        },
+      });
+      return;
+    } else {
+      throw new ContractExistsForUserError();
+    }
   }
 
   const { contract } = await prisma.userContract.create({
@@ -279,7 +292,7 @@ export const authOptions: AuthOptions = {
               options?: ReferralOptions;
             } = {
               userId: newUser.id,
-              referralCode: generateReferalCode(newUser.id),
+              referralCode: generateReferralCode(newUser.id),
             };
 
             const referralOptions: ReferralOptions = getReferralOptions();
@@ -350,7 +363,8 @@ export const authOptions: AuthOptions = {
             referralCode: userInDB?.meta?.referralCode || "",
             pushToken: userInDB?.meta?.pushToken || "",
             onboardingCompleted: userInDB?.meta?.onboardingCompleted || false,
-            paidStatus: (userInDB?.meta?.paidStatus || "free") as UserPaidStatus,
+            paidStatus: (userInDB?.meta?.paidStatus ||
+              "free") as UserPaidStatus,
           };
           session.user.settings = userInDB?.settings || {
             showNotifications: true,
@@ -360,7 +374,7 @@ export const authOptions: AuthOptions = {
 
         if (!session.user.meta.referralCode) {
           try {
-            const referralCode = generateReferalCode(session.user.userId);
+            const referralCode = generateReferralCode(session.user.userId);
             await prisma.appUserMetadata.update({
               where: {
                 userId: token.sub,
@@ -384,14 +398,27 @@ export const authOptions: AuthOptions = {
         const referralOptions: ReferralOptions = getReferralOptions();
         if (referralOptions.contractId) {
           // TODO: Choose how to proceed in case of an error here.
-          await createNewUserContract(
-            session.user.userId,
-            referralOptions.contractId,
-          );
-          clearContractId();
-        }
+          try {
+            await createNewUserContract(
+              session.user.userId,
+              referralOptions.contractId,
+            );
+          } catch (e: any) {
+            if (e! instanceof ContractExistsForUserError) {
+              loggerServer.error(
+                "Error creating user contract",
+                session.user.userId,
+                {
+                  error: e,
+                },
+              );
+            }
 
-        session.user.meta.paidStatus = (userInDB?.meta?.paidStatus || "free") as UserPaidStatus;
+            clearContractId();
+          }
+        }
+        session.user.meta.paidStatus = (userInDB?.meta?.paidStatus ||
+          "free") as UserPaidStatus;
         return session;
       } catch (e: any) {
         loggerServer.error("Error creating user", "new_user", { error: e });
@@ -426,7 +453,7 @@ export const authOptions: AuthOptions = {
               meta: {
                 create: {
                   referredBy: referralOptions.referralCode,
-                  referralCode: generateReferalCode(session.user.id),
+                  referralCode: generateReferralCode(session.user.id),
                 },
               },
               settings: {

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
 import { AppUser, AppUserMetadata } from "@prisma/client";
 import { authOptions } from "../../../../authOptions";
-import { generateReferalCode } from "../../_utils/referralCode";
+import { generateReferralCode } from "@/lib/utils/referralUtils";
 
 export async function POST(
   req: NextRequest,
@@ -26,7 +26,7 @@ export async function POST(
         const appUserMetadata = await prisma.appUserMetadata.create({
           data: {
             userId: existingUser.userId,
-            referralCode: generateReferalCode(existingUser.userId),
+            referralCode: generateReferralCode(existingUser.userId),
           },
         });
         existingUser.meta = appUserMetadata;
@@ -51,7 +51,7 @@ export async function POST(
     const appUserMetadata = await prisma.appUserMetadata.create({
       data: {
         userId: appUser.userId,
-        referralCode: generateReferalCode(appUser.userId),
+        referralCode: generateReferralCode(appUser.userId),
       },
     });
 

@@ -27,7 +27,10 @@ import {
 
 interface ContractObligationsProps {
   userData: UserContractObligationData[];
-  partnersData: { partnerId: string; contractObligations: UserContractObligationData[] }[];
+  partnersData: {
+    partnerId: string;
+    contractObligations: UserContractObligationData[];
+  }[];
   loading?: boolean;
   showReport?: boolean;
 }

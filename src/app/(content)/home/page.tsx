@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
-import Link from "next/link";
-import ChallengeComponent from "./challengeComponent";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import CustomLink from "../../../components/ui/customLink";
 
 const EmptyObligations = () => {
   return (
@@ -24,7 +22,7 @@ const EmptyObligations = () => {
           className="bg-primary text-white"
           asChild
         >
-          <Link href="/contracts/new">Create a contract</Link>
+          <CustomLink href="/contracts/new">Create a contract</CustomLink>
         </Button>
       </div>
     </div>
@@ -32,27 +30,12 @@ const EmptyObligations = () => {
 };
 
 export default function Home() {
-  const searchParams = useSearchParams();
   const { contractObligations, partnersData } = useAppSelector(
     state => state.obligations,
   );
   const { state } = useAppSelector(state => state.auth);
   const { loading, loadingData } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
-
-  const [showChallenge, setShowChallenge] = React.useState(false);
-
-  const challengeId = useMemo(() => {
-    return searchParams.get("challengeId");
-  }, []);
-
-  useEffect(() => {
-    if (challengeId) {
-      setShowChallenge(true);
-    } else {
-      setShowChallenge(false);
-    }
-  }, [challengeId]);
 
   const isEmptyContracts = useMemo(
     () =>
@@ -65,16 +48,6 @@ export default function Home() {
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative">
-      {challengeId && (
-        <ChallengeComponent
-          contractId={challengeId}
-          open={showChallenge}
-          onClose={() => {
-            setShowChallenge(false);
-            window.history.replaceState({}, "", "/home");
-          }}
-        />
-      )}
       {isEmptyContracts ? (
         <EmptyObligations />
       ) : (

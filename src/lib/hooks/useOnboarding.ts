@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./redux";
 import {
@@ -15,9 +15,10 @@ import { Logger } from "../../logger";
 import { setUser, updateOnboardingCompleted } from "../features/auth/authSlice";
 import { ANONYMOUS_USER_ID } from "../utils/consts";
 import { EventTracker } from "../../eventTracker";
+import { useCustomRouter } from "./useCustomRouter";
 
 export default function useOnboarding() {
-  const router = useRouter();
+  const router = useCustomRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const [isMobile, setIsMobile] = useState(false);

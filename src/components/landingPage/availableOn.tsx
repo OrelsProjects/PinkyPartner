@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 import { EventTracker } from "../../eventTracker";
+import CustomLink from "../ui/customLink";
 
 interface AvailableOnProps {}
 
@@ -21,7 +22,7 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
             Download PinkyPartner on
           </span>
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <Link
+            <CustomLink
               href="https://play.google.com/store/apps/details?id=com.pinkypartner.www.twa"
               target="_blank"
               rel="noopener noreferrer"
@@ -35,8 +36,8 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                 fill
                 className="!relative !h-14 !w-48 flex-shrink-0 px-1"
               />
-            </Link>
-            <Link
+            </CustomLink>
+            <CustomLink
               href={
                 "https://www.pinkypartner.com/" + isOnboardingCompleted()
                   ? "register"
@@ -52,7 +53,7 @@ const AvailableOn: React.FC<AvailableOnProps> = () => {
                 fill
                 className="!relative !h-14 !w-48 flex-shrink-0 px-1"
               />
-            </Link>
+            </CustomLink>
           </div>
         </div>
       </div>

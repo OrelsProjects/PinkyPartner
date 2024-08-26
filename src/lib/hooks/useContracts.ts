@@ -4,7 +4,7 @@ import {
   ContractWithExtras,
   CreateContract,
   UpdateContract,
-} from "../../models/contract";
+} from "@/models/contract";
 import { setError } from "../features/auth/authSlice";
 import {
   setContracts as setContractsAction,
@@ -16,9 +16,10 @@ import {
   setLoading,
   replaceTempContract,
 } from "../features/contracts/contractsSlice";
-import { AccountabilityPartner } from "../../models/appUser";
-import { Logger } from "../../logger";
+import { AccountabilityPartner } from "@/models/appUser";
+import { Logger } from "@/logger";
 import { useObligations } from "./useObligations";
+import { ContractExistsForUserError } from "@/models/errors/ContractExistsForUserError";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
@@ -158,6 +159,10 @@ export function useContracts() {
       dispatch(setError(null));
       await fetchNextUpObligations();
     } catch (err: any) {
+      // if code is 409, throw ContractExistsForUserError
+      if (err.response?.status === 409) {
+        throw new ContractExistsForUserError();
+      }
       dispatch(setError(err.message || "Error signing contract"));
       throw err;
     } finally {

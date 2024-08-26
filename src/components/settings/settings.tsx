@@ -3,6 +3,7 @@ import { useAppSelector } from "../../lib/hooks/redux";
 import { UserAvatar } from "../ui/avatar";
 import Link from "next/link";
 import { cn } from "../../lib/utils";
+import CustomLink from "../ui/customLink";
 
 interface SettingsComponentProps {}
 
@@ -12,7 +13,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
   return (
     state === "authenticated" && (
       <div className="sm:p-2 rounded-lg w-full flex flex-col items-end">
-        <Link href="/settings" className="w-fit h-fit">
+        <CustomLink href="/settings" className="w-fit h-fit">
           <UserAvatar
             photoURL={user?.photoURL || "/images/default-profile.png"}
             displayName={user?.displayName}
@@ -26,7 +27,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
             )}
             hideTooltip
           />
-        </Link>
+        </CustomLink>
       </div>
     )
   );

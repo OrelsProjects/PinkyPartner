@@ -8,6 +8,7 @@ import React from "react";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
+import ChallengeProvider from "./providers/ChallengeProvider";
 // import ProductHuntProvider from "./providers/ProductHuntProvider";
 
 const OG_IMAGE_URL =
@@ -86,6 +87,7 @@ export default function Layout({ children }: RootLayoutProps) {
               <AuthProvider>
                 <TopLoaderProvider />
                 {/* <ProductHuntProvider /> */}
+                <ChallengeProvider />
                 {children}
                 {/* <SpeedInsights />
                 <Analytics /> */}
