@@ -1,16 +1,18 @@
 import { UserPaidStatus } from "../../models/appUser";
 import { ContractWithExtras } from "../../models/contract";
-import {
-  MAX_PARTICIPANTS_IN_CONTRACT_FREE,
-  MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM,
-} from "../utils";
+
+const MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM = 999;
+const MAX_PARTICIPANTS_IN_CONTRACT_FREE = 1;
 
 export function canAddUsersToContract(
-  contract: ContractWithExtras,
+  value: number | ContractWithExtras,
   paidStatus?: UserPaidStatus,
-): boolean {
+) {
+  const contracteesCount =
+    typeof value === "number" ? value : value.contractees.length;
+
   if (paidStatus === "premium") {
-    return contract.contractees.length < MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM;
+    return contracteesCount < MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM;
   }
-  return contract.contractees.length < MAX_PARTICIPANTS_IN_CONTRACT_FREE;
+  return contracteesCount < MAX_PARTICIPANTS_IN_CONTRACT_FREE;
 }

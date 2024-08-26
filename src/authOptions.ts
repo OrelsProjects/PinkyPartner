@@ -14,15 +14,12 @@ import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
 import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
-import {
-  MAX_PARTICIPANTS_IN_CONTRACT_FREE,
-  MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM,
-} from "./lib/utils";
 import { ContractFullError } from "./models/errors/ContractFullError";
 import { UserNotPremiumError } from "./models/errors/UserNotPremiumError";
 import { UserPaidStatus } from "./models/appUser";
 import { generateReferralCode } from "@/lib/utils/referralUtils";
 import { ContractExistsForUserError } from "./models/errors/ContractExistsForUserError";
+import { canAddUsersToContract } from "./lib/utils/contractUtils";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -85,13 +82,14 @@ export const createNewUserContract = async (
     },
   });
 
-  const contractMaxParticipants =
-    creator?.paidStatus === "premium"
-      ? MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM
-      : MAX_PARTICIPANTS_IN_CONTRACT_FREE;
   const currentUserContractsLength = currentUserContracts.length;
 
-  if (currentUserContractsLength >= contractMaxParticipants) {
+  if (
+    !canAddUsersToContract(
+      currentUserContractsLength,
+      creator?.paidStatus as UserPaidStatus,
+    )
+  ) {
     if (creator?.paidStatus !== "premium") {
       throw new UserNotPremiumError();
     } else {
