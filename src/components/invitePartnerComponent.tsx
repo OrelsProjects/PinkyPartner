@@ -11,11 +11,12 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
-import { cn, MAX_PARTICIPANTS_IN_CONTRACT_FREE } from "../lib/utils";
+import { cn } from "../lib/utils";
 import { ContractWithExtras } from "../models/contract";
 import { FaCopy } from "react-icons/fa";
 import { UserPaidStatus } from "../models/appUser";
 import { generateReferralUrl } from "../lib/utils/referralUtils";
+import { canAddUsersToContract } from "../lib/utils/contractUtils";
 
 interface InvitePartnerComponentProps {
   id?: string;
@@ -137,12 +138,8 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     return;
   }
 
-  if (paidStatus === "free") {
-    if (
-      (contract?.contractees?.length || 0) >= MAX_PARTICIPANTS_IN_CONTRACT_FREE
-    ) {
-      return;
-    }
+  if (!canAddUsersToContract(contract, paidStatus)) {
+    return;
   }
 
   return (

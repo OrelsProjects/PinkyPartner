@@ -25,9 +25,7 @@ export default function useNotifications() {
   const { status, newContracts, newObligations } = useAppSelector(
     state => state.notifications,
   );
-  const {
-    partnersData: { contractObligations: partnerContractObligations },
-  } = useAppSelector(state => state.obligations);
+  const { partnersData } = useAppSelector(state => state.obligations);
 
   const [loadingNudge, setLoadingNudge] = useState<{ [key: string]: boolean }>(
     {},
@@ -45,19 +43,25 @@ export default function useNotifications() {
       dispatch(setNewObligations([]));
 
       const now = new Date();
-      const updatedObligations = partnerContractObligations.map(obligation =>
-        !obligation.viewedAt ? { ...obligation, viewedAt: now } : obligation,
-      );
+      for (const partnerData of partnersData) {
+        const updatedObligations = partnerData.contractObligations
+          .filter(obligation => !obligation.viewedAt)
+          .map(obligation =>
+            !obligation.viewedAt
+              ? { ...obligation, viewedAt: now }
+              : obligation,
+          );
 
-      for (const obligation of updatedObligations) {
-        dispatch(
-          setViewedAt({
-            userContractObligationId: obligation.userContractObligationId,
-            viewedAt: now,
-          }),
-        );
+        for (const obligation of updatedObligations) {
+          dispatch(
+            setViewedAt({
+              userContractObligationId: obligation.userContractObligationId,
+              viewedAt: now,
+            }),
+          );
+        }
+        dispatch(setStatus("succeeded"));
       }
-      dispatch(setStatus("succeeded"));
     } catch (error) {
       dispatch(setStatus("failed"));
     }

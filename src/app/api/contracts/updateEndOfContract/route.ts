@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../_db/db";
-import loggerServer from "../../../../loggerServer";
-import { messaging } from "../../../../../firebase.config.admin";
-import Contract from "../../../../models/contract";
+import prisma from "@/app/api/_db/db";
+import loggerServer from "@/loggerServer";
+import { messaging } from "@/../firebase.config.admin";
+import { Contract } from "@prisma/client";
 
 const buildTitle = (contractName: string) => {
   const firstTwelve = contractName.slice(0, 12);
@@ -115,7 +115,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         const user = userContract.appUser;
         const token = user.meta?.pushTokenMobile || "";
         const webToken = user.meta?.pushToken || "";
-        await sendNotification(contract, token, webToken);
+
+        const { userContracts, ...rest } = contract;
+        await sendNotification(rest, token, webToken);
       }
     }
 

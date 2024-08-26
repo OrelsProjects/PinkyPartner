@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import Logger from "@/loggerServer";
 import { authOptions } from "@/authOptions";
-import prisma from "../../_db/db";
+import prisma from "@/app/api/_db/db";
 import {
   UserContractObligationData,
   GetNextUpObligationsResponse,
-} from "../../../../models/userContractObligation";
+} from "@/models/userContractObligation";
 import {
   getStartOfTheWeekDate,
   getEndOfTheWeekDate,
@@ -14,7 +14,8 @@ import {
 import { createWeeksContractObligations } from "../../contract/_utils/contractUtils";
 import moment from "moment";
 import loggerServer from "@/loggerServer";
-import { ANONYMOUS_USER_ID } from "../../../../lib/utils/consts";
+import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";
+import { ContractType } from "../../../../models/contract";
 
 export async function GET(
   req: NextRequest,
@@ -210,7 +211,10 @@ export async function GET(
           userId: appUser.userId,
           appUser,
           obligation: obligation!,
-          contract: signedContract.contract,
+          contract: {
+            ...signedContract.contract,
+            type: signedContract.contract.type as ContractType,
+          },
         });
       }
     }

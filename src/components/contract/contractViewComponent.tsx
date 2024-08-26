@@ -21,12 +21,14 @@ import {
 } from "@/components/ui/section";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
-import { MAX_PARTICIPANTS_IN_CONTRACT } from "../../lib/utils";
+import { UserPaidStatus } from "../../models/appUser";
+import { getMaxParticipantsInContract } from "../../lib/utils/contractUtils";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;
   isSigned?: boolean;
   open?: boolean | undefined;
+  userPaidStatus?: UserPaidStatus;
   showReport?: boolean;
   children?: React.ReactNode;
   onClose?: () => void;
@@ -37,6 +39,7 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
   showReport,
   contract,
   isSigned,
+  userPaidStatus,
   children,
   onClose,
   onSign,
@@ -61,7 +64,9 @@ const ContractViewComponent: React.FC<ContractViewComponentProps> = ({
           {contracteesNames.slice(0, -1).map((name, index) => (
             <React.Fragment key={index}>
               <strong>{name}</strong>
-              {index < contracteesNames.length - MAX_PARTICIPANTS_IN_CONTRACT ? ", " : " "}
+              {index < contracteesNames.length - getMaxParticipantsInContract(userPaidStatus)
+                ? ", "
+                : " "}
             </React.Fragment>
           ))}
           and <strong>{last}</strong>

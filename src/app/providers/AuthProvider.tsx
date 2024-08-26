@@ -36,7 +36,7 @@ export default function AuthProvider({
     meta: {
       referralCode?: string | null;
       onboardingCompleted?: boolean;
-      paidStatus: UserPaidStatus;
+      paidStatus?: UserPaidStatus;
     };
     settings: {
       showNotifications?: boolean;
