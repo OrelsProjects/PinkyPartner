@@ -11,11 +11,9 @@ import { useAppDispatch } from "./redux";
 import { EventTracker } from "../../eventTracker";
 import { Logger } from "../../logger";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
-  const searchParams = useSearchParams();
 
   const signInWithGoogle = useCallback(async () => {
     EventTracker.track("user_signed_in_with_google");

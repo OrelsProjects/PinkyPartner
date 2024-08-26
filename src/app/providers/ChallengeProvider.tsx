@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect } from "react";
+import React, { useEffect } from "react";
 import ChallengeComponent from "../(content)/home/challengeComponent";
 
 export default function ChallengeProvider() {
@@ -21,21 +21,19 @@ export default function ChallengeProvider() {
 
   return (
     challengeId && (
-      <Suspense fallback={null}>
-        <ChallengeComponent
-          contractId={challengeId}
-          open={showChallenge}
-          signUp={signedUp === "true"}
-          onClose={() => {
-            setShowChallenge(false);
-            const currentPath = window.location.pathname;
-            if (currentPath === "/") {
-              return; // If the user is in the landing page and wants to explore the app before sign up, keep the challenge alive.
-            }
-            window.history.replaceState({}, "", currentPath);
-          }}
-        />
-      </Suspense>
+      <ChallengeComponent
+        contractId={challengeId}
+        open={showChallenge}
+        signUp={signedUp === "true"}
+        onClose={() => {
+          setShowChallenge(false);
+          const currentPath = window.location.pathname;
+          if (currentPath === "/") {
+            return; // If the user is in the landing page and wants to explore the app before sign up, keep the challenge alive.
+          }
+          window.history.replaceState({}, "", currentPath);
+        }}
+      />
     )
   );
 }

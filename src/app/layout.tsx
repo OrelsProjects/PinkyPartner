@@ -4,11 +4,12 @@ import "@dotlottie/react-player/dist/index.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import React from "react";
+import React, { Suspense } from "react";
 import LiveChatProvider from "./providers/LiveChatProvider";
 import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ChallengeProvider from "./providers/ChallengeProvider";
+import Loading from "../components/ui/loading";
 // import ProductHuntProvider from "./providers/ProductHuntProvider";
 
 const OG_IMAGE_URL =
@@ -80,21 +81,27 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:image:height" content="<generated>" />
       </head>
       <body className="!overscroll-contain">
-        <LiveChatProvider />
-        <StoreProvider>
-          <SessionWrapper>
-            <ThemeProvider>
-              <AuthProvider>
-                <TopLoaderProvider />
-                {/* <ProductHuntProvider /> */}
-                <ChallengeProvider />
-                {children}
-                {/* <SpeedInsights />
+        <Suspense
+          fallback={
+            <Loading spinnerClassName="absolute top-1/2 left-1/2 h-10 w-10" />
+          }
+        >
+          <LiveChatProvider />
+          <StoreProvider>
+            <SessionWrapper>
+              <ThemeProvider>
+                <AuthProvider>
+                  <TopLoaderProvider />
+                  {/* <ProductHuntProvider /> */}
+                  <ChallengeProvider />
+                  {children}
+                  {/* <SpeedInsights />
                 <Analytics /> */}
-              </AuthProvider>
-            </ThemeProvider>
-          </SessionWrapper>
-        </StoreProvider>
+                </AuthProvider>
+              </ThemeProvider>
+            </SessionWrapper>
+          </StoreProvider>
+        </Suspense>
       </body>
     </html>
   );

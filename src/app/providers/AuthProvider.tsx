@@ -6,7 +6,7 @@ import {
   selectAuth,
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { Logger, setUserLogger } from "../../logger";

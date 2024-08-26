@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
@@ -47,19 +47,17 @@ export default function Home() {
   );
 
   return (
-    <Suspense>
-      <div className="w-full h-fit flex flex-col gap-4 relative">
-        {isEmptyContracts ? (
-          <EmptyObligations />
-        ) : (
-          <ContractObligationsComponent
-            userData={contractObligations}
-            partnersData={partnersData}
-            loading={loadingData && state !== "anonymous"}
-            showReport
-          />
-        )}
-      </div>
-    </Suspense>
+    <div className="w-full h-fit flex flex-col gap-4 relative">
+      {isEmptyContracts ? (
+        <EmptyObligations />
+      ) : (
+        <ContractObligationsComponent
+          userData={contractObligations}
+          partnersData={partnersData}
+          loading={loadingData && state !== "anonymous"}
+          showReport
+        />
+      )}
+    </div>
   );
 }
