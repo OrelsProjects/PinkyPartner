@@ -1,16 +1,14 @@
 import { DefaultSession } from "next-auth";
+import { UserPaidStatus } from "./src/lib/features/auth/authSlice";
+import { AppUserMetadata, AppUserSettings } from "./src/models/appUser";
 
 declare module "next-auth" {
   interface SessionUser {
     userId: string;
-    meta: {
-      referralCode?: string;
-      onboardingCompleted?: boolean;
-      pushToken?: string;
-    };
-    settings: {
-      showNotifications: boolean;
-      soundEffects: boolean;
+    meta: AppUserMetadata;
+    settings: AppUserSettings;
+    invitations?: {
+      challengeId?: string | null;
     };
   }
 

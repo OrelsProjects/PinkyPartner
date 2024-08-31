@@ -15,7 +15,7 @@ import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
 import EditContractComponent from "./editContractComponent";
-import { Button } from "../ui/button";
+import { canAddUsersToContract } from "../../lib/utils/contractUtils";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;
@@ -51,6 +51,36 @@ export const ContractComponentLoading = ({
   </div>
 );
 
+const AccountabilityPartners = ({
+  contract,
+}: {
+  contract: ContractWithExtras;
+}) => {
+  // const firstTwoPartners = useMemo(
+  //   () => contract.contractees.slice(0, 2),
+  //   [contract.contractees],
+  // );
+
+  // const otherPartnersCount = useMemo(
+  //   () => contract.contractees.length - 2,
+  //   [contract.contractees],
+  // );
+
+  return (
+    <div className="w-full flex flex-row justify-start md:justify-start gap-6 md:gap-3 overflow-y-auto">
+      {contract.contractees.map(contractee => (
+        <AccountabilityPartnerComponent
+          key={contractee?.userId}
+          partner={contractee}
+          signed={contract.signatures.some(
+            signature => signature?.userId === contractee?.userId,
+          )}
+        />
+      ))}
+    </div>
+  );
+};
+
 const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
   const { signContract } = useContracts();
   const { user } = useAppSelector(state => state.auth);
@@ -63,11 +93,6 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
     () =>
       contract.signatures.some(signature => signature?.userId === user?.userId),
     [contract.signatures, user],
-  );
-
-  const isContractHasPartner = useMemo(
-    () => contract.contractees.length > 1,
-    [contract.contractees],
   );
 
   const handleSignContract = () => {
@@ -92,10 +117,12 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       <div className="absolute top-1.5 right-0.5">
         <ContractViewDropdown
           onInvite={
-            contract.contractees.length <= 1 && contract.contractId !== "temp"
+            canAddUsersToContract(contract, user?.meta?.paidStatus) &&
+            contract.contractId !== "temp"
               ? () => setShowInvite(true)
               : undefined
           }
+          contract={contract}
           onOptOut={() => setShowOptOut(true)}
           onView={() => setShowContract(true)}
           onEdit={() => setShowEdit(true)}
@@ -112,27 +139,17 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
           {new Date(contract.dueDate).toDateString()}
         </h4>
       </div>
-      <div className="w-full flex flex-row justify-between md:justify-start gap-1 md:gap-3">
-        {contract.contractees.map(contractee => (
-          <AccountabilityPartnerComponent
-            key={contractee?.userId}
-            partner={contractee}
-            signed={contract.signatures.some(
-              signature => signature?.userId === contractee?.userId,
-            )}
-          />
-        ))}
-      </div>
-      {isUserSigned && !isContractHasPartner && (
+      <AccountabilityPartners contract={contract} />
+      {isUserSigned && (
         <div className="w-full flex justify-end items-center">
           <InvitePartnerComponent
-            className={cn({ hidden: isContractHasPartner })}
             contract={contract}
             referralCode={user?.meta?.referralCode}
             buttonText="Invite"
             variant="secondary"
             onClose={() => setShowInvite(false)}
             open={showInvite}
+            paidStatus={user?.meta?.paidStatus}
           />
         </div>
       )}

@@ -14,6 +14,7 @@ import DummyObligationBox from "../components/landingPage/dummyObligationBox";
 import { isMobilePhone } from "../lib/utils/notificationUtils";
 import Hero from "../components/landingPage/hero";
 import { EventTracker } from "../eventTracker";
+import CustomLink from "../components/ui/customLink";
 
 const Header = ({
   onGetStarted,
@@ -37,7 +38,7 @@ const Header = ({
           className="bg-card"
           onClick={onGetStarted}
         >
-          <Link
+          <CustomLink
             href={getStartedUrl}
             className="text-base md:text-xl"
             onClick={() => {
@@ -45,7 +46,7 @@ const Header = ({
             }}
           >
             Get Started
-          </Link>
+          </CustomLink>
         </Button>
       </div>
     </div>
@@ -64,7 +65,7 @@ const NotificationExplanation = () => (
     <div className="text-2xl text-muted-foreground">
       With a partner and notifications, your{" "}
       <span className="text-primary underline underline-offset-4">
-        <Link
+        <CustomLink
           href={
             "https://www.afcpe.org/news-and-publications/the-standard/2018-3/the-power-of-accountability/"
           }
@@ -75,7 +76,7 @@ const NotificationExplanation = () => (
           }}
         >
           chances to succeed are 95%
-        </Link>
+        </CustomLink>
       </span>
     </div>
   </ShowContentContainer>
@@ -131,7 +132,7 @@ export default function Home() {
               clearOnboardingViewed();
             }}
           >
-            <Link
+            <CustomLink
               href="/home"
               className="relative"
               onClick={() => {
@@ -140,7 +141,7 @@ export default function Home() {
             >
               Give me a tour!
               <div className="w-fit h-fit shimmer-animation rounded-lg"></div>
-            </Link>
+            </CustomLink>
           </Button>
         </ShowContentContainer>
         <AvailableOn />

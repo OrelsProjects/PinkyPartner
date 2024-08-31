@@ -2,7 +2,6 @@
 
 import { cn } from "../../lib/utils";
 import { FaArrowDownLong } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import {
   hasMobileVersion,
@@ -12,8 +11,6 @@ import {
   showBackground,
   backgroundForNextStage,
   timeDelays,
-  stages,
-  stepperTitles,
 } from "../../lib/consts/onboarding";
 import useOnboarding from "../../lib/hooks/useOnboarding";
 import { useEffect, useMemo } from "react";
@@ -30,7 +27,8 @@ import Link from "next/link";
 import ObligationCheckbox from "../../components/contractObligations/obligationCheckbox";
 import React from "react";
 import { toast } from "react-toastify";
-import Stepper from "../../components/ui/stepper";
+import { useCustomRouter } from "../../lib/hooks/useCustomRouter";
+import CustomLink from "../../components/ui/customLink";
 
 export default function OnboardingProvider() {
   const { user, state } = useAppSelector(state => state.auth);
@@ -49,7 +47,7 @@ export default function OnboardingProvider() {
     setOnboardingViewed,
   } = useOnboarding();
 
-  const router = useRouter();
+  const router = useCustomRouter();
 
   // a lazy way to set a delay to show checkbox
   const [showCheckbox, setShowCheckbox] = React.useState(false);
@@ -283,24 +281,24 @@ export default function OnboardingProvider() {
         <DialogFooter>
           <div className="w-full flex flex-col gap-0 justify-center items-center">
             <Button asChild>
-              <Link
+              <CustomLink
                 href="/register"
                 onClick={() => {
                   EventTracker.track("sign_up_after_onboarding");
                 }}
               >
                 Let&apos;s go!
-              </Link>
+              </CustomLink>
             </Button>
             <Button variant="link" asChild>
-              <Link
+              <CustomLink
                 href="/"
                 onClick={() => {
                   EventTracker.track("sign_up_cancel_after_onboarding");
                 }}
               >
                 Maybe next time
-              </Link>
+              </CustomLink>
             </Button>
           </div>
         </DialogFooter>

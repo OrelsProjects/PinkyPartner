@@ -6,21 +6,22 @@ import {
   selectAuth,
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { Logger, setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
-import AppUser from "../../models/appUser";
+import AppUser, { UserPaidStatus } from "../../models/appUser";
 import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import useOnboarding from "../../lib/hooks/useOnboarding";
+import { useCustomRouter } from "../../lib/hooks/useCustomRouter";
 
 export default function AuthProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
+  const router = useCustomRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
@@ -35,6 +36,7 @@ export default function AuthProvider({
     meta: {
       referralCode?: string | null;
       onboardingCompleted?: boolean;
+      paidStatus?: UserPaidStatus;
     };
     settings: {
       showNotifications?: boolean;
@@ -54,6 +56,7 @@ export default function AuthProvider({
         meta: {
           referralCode: user?.meta.referralCode || "",
           onboardingCompleted: user?.meta.onboardingCompleted || false,
+          paidStatus: user?.meta?.paidStatus as UserPaidStatus,
         },
         settings: {
           showNotifications: user?.settings.showNotifications || true,
@@ -93,8 +96,7 @@ export default function AuthProvider({
       if (
         pathname.includes("login") ||
         pathname.includes("register") ||
-        pathname === "/" ||
-        pathname === "/home"
+        pathname === "/"
       ) {
         router.push("/home");
       }

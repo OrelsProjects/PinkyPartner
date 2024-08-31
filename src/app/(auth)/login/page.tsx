@@ -1,9 +1,9 @@
 "use client";
 
-import GoogleLogin from "../../../components/auth/googleLogin";
-import AppleLogin from "../../../components/auth/appleLogin";
-import { Button } from "../../../components/ui/button";
-import Link from "next/link";
+import GoogleLogin from "@/components/auth/googleLogin";
+import AppleLogin from "@/components/auth/appleLogin";
+import { Button } from "@/components/ui/button";
+import CustomLink from "@/components/ui/customLink";
 
 const Auth = () => {
   return (
@@ -11,8 +11,6 @@ const Auth = () => {
       <div className="w-full flex flex-col gap-3 lg:max-w-[420px] rounded-xl p-8 bg-slate-300 dark:bg-card">
         <GoogleLogin signInTextPrefix="Sign in with" />
         <AppleLogin signInTextPrefix="Sign in with" />
-        {/* <Divider textInCenter="OR" className="my-4" />
-        <EmailLogin register /> */}
       </div>
       <div className="flex flex-row gap-1 justify-center items-center">
         <span className="text-muted-foreground">
@@ -23,7 +21,7 @@ const Auth = () => {
           className="text-base underline text-muted-foreground !p-0"
           asChild
         >
-          <Link href="/register">Sign up</Link>
+          <CustomLink href="/register">Sign up</CustomLink>
         </Button>
       </div>
     </div>

@@ -1,45 +1,46 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Input } from "../../../../../components/ui/input";
+import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import { CreateContractForm } from "../../../../../models/contract";
-import { AccountabilityPartner } from "../../../../../models/appUser";
-import useSearchUser from "../../../../../lib/hooks/useSearchUser";
+import { CreateContractForm } from "@/models/contract";
+import { AccountabilityPartner } from "@/models/appUser";
+import useSearchUser from "@/lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
-import { useAppSelector } from "../../../../../lib/hooks/redux";
-import { Checkbox } from "../../../../../components/ui/checkbox";
-import { useContracts } from "../../../../../lib/hooks/useContracts";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useContracts } from "@/lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
-} from "../../../../../components/accountabilityPartnerComponent";
-import { getDateInThreeMonths } from "../../../../../lib/utils/dateUtils";
-import Divider from "../../../../../components/ui/divider";
+} from "@/components/accountabilityPartnerComponent";
+import { getDateInThreeMonths } from "@/lib/utils/dateUtils";
+import Divider from "@/components/ui/divider";
 import {
   SectionContainer,
   SectionTitle,
   SectionTitleContainer,
   SectionTitleExplanation,
-} from "../../../../../components/ui/section";
+} from "@/components/ui/section";
 import { FaPlus } from "react-icons/fa";
-import CreatePromise from "../../../../../components/createPromise";
-import ObligationComponent from "../../../../../components/obligationComponent";
-import { cn } from "../../../../../lib/utils";
-import { getRandomTimeToFinishRequest } from "../../../../../lib/utils/apiUtils";
-import { EventTracker } from "../../../../../eventTracker";
-import { Calendar } from "../../../../../components/ui/calendar";
+import CreatePromise from "@/components/createPromise";
+import ObligationComponent from "@/components/obligationComponent";
+import { cn } from "@/lib/utils";
+import { getRandomTimeToFinishRequest } from "@/lib/utils/apiUtils";
+import { EventTracker } from "@/eventTracker";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../../../components/ui/popover";
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import Obligation from "../../../../../models/obligation";
+import Obligation from "@/models/obligation";
+import { useCustomRouter } from "@/lib/hooks/useCustomRouter";
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;
@@ -118,7 +119,7 @@ const FindPartner = ({
 };
 
 const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
-  const router = useRouter();
+  const router = useCustomRouter();
   const { user } = useAppSelector(state => state.auth);
   const { createContract, loading } = useContracts();
   const [accountabilityPartner, setAccountabilityPartner] =
@@ -145,6 +146,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
       contractees: [],
       signatures: [],
       obligations: undefined,
+      type: "contract",
     },
     onSubmit: async values => {
       EventTracker.track("contract_created");
@@ -379,9 +381,9 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                 <Button
                   variant="ghost"
                   onClick={handleBack}
-                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center bg-background z-20 hover:bg-transparent px-1 md:px-2 "
+                  className="w-full md:w-fit self-start sticky p-0 top-0 left-0 flex justify-start items-center rounded-full bg-background z-20 hover:bg-transparent px-1 md:px-2 md:hover:bg-slate-400/70 "
                 >
-                  <div className="flex flex-row gap-1 items-start md:rounded-full">
+                  <div className="flex flex-row gap-1 items-center justify-center md:rounded-full">
                     <IoArrowBack className="w-6 h-6" />
                     Back
                   </div>
@@ -432,6 +434,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                           onClick={() => {
                             setObligationToEdit(null);
                           }}
+                          className="w-[240px]"
                         >
                           <div className="flex flex-row gap-1 justify-center items-center">
                             <span>Create a promise</span>
@@ -441,7 +444,12 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                       )}
                     </CreatePromise>
                     <div
-                      className="flex flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full pb-1"
+                      className={cn(
+                        "hidden flex-col-reverse lg:flex-col gap-3 justify-start items-start overflow-auto w-full h-full",
+                        {
+                          "pb-1 flex": obligations.length > 0,
+                        },
+                      )}
                       ref={obligationsRef}
                     >
                       <AnimatePresence>
@@ -480,8 +488,8 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !formik.values.dueDate && "text-muted-foreground",
+                          "w-[240px] text-left font-normal flex flex-row-reverse items-center justify-center gap-1",
+                          { "text-muted-foreground": !formik.values.dueDate },
                         )}
                       >
                         {formik.values.dueDate ? (
@@ -489,7 +497,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                         ) : (
                           <span>Pick a date</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="h-4 w-4 opacity-50 flex-shrink-0 " />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -509,6 +517,36 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     </PopoverContent>
                   </Popover>
                 </SectionContainer>
+                {user?.meta?.paidStatus === "premium" && (
+                  <SectionContainer>
+                    <div className="h-fit w-fit flex flex-row gap-2 justify-center items-center">
+                      <Checkbox
+                        checked={formik.values.type === "challenge"}
+                        onCheckedChange={checked => {
+                          formik.setValues({
+                            ...formik.values,
+                            type: checked ? "challenge" : "contract",
+                          });
+                        }}
+                        className="h-7 w-7"
+                      />
+                      <span
+                        className="md:hover:cursor-pointer select-none"
+                        onClick={() => {
+                          formik.setValues({
+                            ...formik.values,
+                            type:
+                              formik.values.type === "challenge"
+                                ? "contract"
+                                : "challenge",
+                          });
+                        }}
+                      >
+                        Challenge
+                      </span>
+                    </div>
+                  </SectionContainer>
+                )}
                 <SectionContainer
                   className={cn({ hidden: !accountabilityPartner })}
                 >

@@ -30,6 +30,7 @@ model AppUser {
   displayName String?
   photoURL    String?
 
+
   createdAt DateTime? @default(now())
 
   userContracts      UserContract[]
@@ -56,6 +57,8 @@ model AppUserMetadata {
 
   pushToken       String?
   pushTokenMobile String?
+  
+  paidStatus String? // "free" | "premium"
 
   onboardingCompleted Boolean @default(false)
 
@@ -102,6 +105,8 @@ model Contract {
   description String?
   dueDate     DateTime
   createdAt   DateTime @default(now())
+
+  type String? @default("contract") // contract/challenge
 
   appUser                 AppUser                  @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
   userContractObligations UserContractObligation[]

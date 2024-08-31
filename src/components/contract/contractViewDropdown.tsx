@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import { FiEdit2 as Edit } from "react-icons/fi";
 import { FaRegEye as View } from "react-icons/fa";
@@ -14,9 +14,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Contract } from "@prisma/client";
+import { useAppSelector } from "../../lib/hooks/redux";
+import { ContractWithExtras } from "../../models/contract";
 
 interface ContractViewDropdownProps {
   className?: string;
+  contract?: Contract | ContractWithExtras;
   onView?: () => void;
   onEdit?: () => void;
   onInvite?: () => void;
@@ -30,8 +34,22 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
   onOptOut,
   onInvite,
   onShowStats,
+  contract,
   className,
 }) => {
+  const { user } = useAppSelector(state => state.auth);
+
+  const isOwner = useMemo(
+    () => contract?.creatorId === user?.userId,
+    [contract, user],
+  );
+
+  const showInvite = useMemo(() => isOwner && onInvite, [isOwner, onInvite]);
+  const showView = useMemo(() => onView, [onView]);
+  const showOptOut = useMemo(() => onOptOut, [onOptOut]);
+  const showEdit = useMemo(() => onEdit, [onEdit]);
+  const showStats = useMemo(() => onShowStats, [onShowStats]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="!outline-none p-2 md:p-0">
@@ -39,51 +57,51 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn("w-fit bg-card", className)}>
         <DropdownMenuGroup>
-          {onShowStats && (
+          {showStats && (
             <DropdownMenuItem
               onClick={e => {
                 e.stopPropagation();
-                onShowStats();
+                onShowStats?.();
               }}
             >
               <Stats className="mr-2 h-4 w-4" />
               <span>Stats</span>
             </DropdownMenuItem>
           )}
-          {onInvite && (
+          {showInvite && (
             <DropdownMenuItem
               onClick={e => {
                 e.stopPropagation();
-                onInvite();
+                onInvite?.();
               }}
             >
               <Invite className="mr-2 h-4 w-4" />
               <span>Invite</span>
             </DropdownMenuItem>
           )}
-          {onView && (
+          {showView && (
             <DropdownMenuItem
               onClick={e => {
                 e.stopPropagation();
-                onView();
+                onView?.();
               }}
             >
               <View className="mr-2 h-4 w-4" />
               <span>View</span>
             </DropdownMenuItem>
           )}
-          {onEdit && (
+          {showEdit && (
             <DropdownMenuItem
               onClick={e => {
                 e.stopPropagation();
-                onEdit();
+                onEdit?.();
               }}
             >
               <Edit className="mr-2 h-4 w-4" />
               <span>Edit</span>
             </DropdownMenuItem>
           )}
-          {onOptOut && (
+          {showOptOut && (
             <DropdownMenuItem
               onClick={e => {
                 e.stopPropagation();

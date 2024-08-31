@@ -1,7 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/authOptions";
+import { authOptions, createNewUserContract } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
+import { ContractFullError } from "../../../../../models/errors/ContractFullError";
+import { UserNotPremiumError } from "../../../../../models/errors/UserNotPremiumError";
+import { ContractExistsForUserError } from "../../../../../models/errors/ContractExistsForUserError";
 
 export async function POST(
   req: NextRequest,
@@ -16,6 +19,9 @@ export async function POST(
     if (!contractId) {
       throw new Error("Missing contractId");
     }
+
+    await createNewUserContract(session.user.userId, contractId);
+
     const userContract = await prisma.userContract.findFirst({
       where: {
         AND: {
@@ -28,7 +34,7 @@ export async function POST(
       return NextResponse.json(undefined, { status: 401 });
     }
     userContract.signedAt = new Date();
-    
+
     await prisma.userContract.update({
       where: {
         userContractId: userContract.userContractId,
@@ -37,9 +43,20 @@ export async function POST(
         signedAt: userContract.signedAt,
       },
     });
-    
-    return NextResponse.json({ message: "Contract signed" }, { status: 200 }); 
+
+    return NextResponse.json({ message: "Contract signed" }, { status: 200 });
   } catch (err: any) {
+    if (
+      err instanceof ContractFullError ||
+      err instanceof UserNotPremiumError
+    ) {
+      return NextResponse.json({ error: err }, { status: 403 });
+    }
+
+    if (err instanceof ContractExistsForUserError) {
+      return NextResponse.json({ error: err }, { status: 409 });
+    }
+
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import Loading from "./loading";
 
 export type ButtonVariants =
   | "default"
@@ -48,6 +49,8 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  loading?: boolean;
+  loadingClassName?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -66,12 +69,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {props.children}
         </span>
       </button>
+    ) : props.loading ? (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      >
+        <Loading
+          className={cn({ hidden: !props.loading })}
+          spinnerClassName={cn(
+            "w-5 h-5",
+            { "fill-primary": variant === "secondary" },
+            { "fill-secondary": variant !== "secondary" },
+            props.loadingClassName,
+          )}
+        />
+      </Comp>
     ) : (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {props.children}
+      </Comp>
     );
   },
 );

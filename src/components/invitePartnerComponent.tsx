@@ -12,24 +12,31 @@ import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
 import { cn } from "../lib/utils";
-import Contract from "../models/contract";
+import { ContractWithExtras } from "../models/contract";
 import { FaCopy } from "react-icons/fa";
+import { UserPaidStatus } from "../models/appUser";
+import { generateReferralUrl } from "../lib/utils/referralUtils";
+import { canAddUsersToContract } from "../lib/utils/contractUtils";
 
 interface InvitePartnerComponentProps {
   id?: string;
   open?: boolean;
-  buttonText: string;
+  buttonText?: string;
   className?: string;
   onClose?: () => void;
-  contract?: Contract;
+  contract?: ContractWithExtras;
   referralCode?: string;
   variant?: ButtonVariants;
+  paidStatus?: UserPaidStatus;
+  showButton?: boolean;
 }
 
 const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   buttonText,
   referralCode,
+  paidStatus,
   className,
+  showButton,
   variant,
   contract,
   onClose,
@@ -43,18 +50,11 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
   }, [open]);
 
   const url = useMemo(() => {
-    const baseUrl = window.location.origin;
-    const registerUrl = `${baseUrl}/register`;
-    let url = referralCode
-      ? `${registerUrl}?referralCode=${referralCode}`
-      : registerUrl;
-
-    if (contract) {
-      url += referralCode
-        ? `&contractId=${contract.contractId}`
-        : `?contractId=${contract.contractId}`;
-    }
-    return url;
+    return generateReferralUrl(
+      referralCode,
+      contract?.contractId,
+      contract?.type === "challenge",
+    );
   }, [referralCode]);
 
   const summary = useMemo(() => {
@@ -138,6 +138,10 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     return;
   }
 
+  if (!canAddUsersToContract(contract, paidStatus)) {
+    return;
+  }
+
   return (
     <Dialog
       onOpenChange={value => {
@@ -150,18 +154,20 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
       open={isOpen}
     >
       <DialogTrigger asChild>
-        <Button
-          variant={variant || "link"}
-          className={cn(className)}
-          data-onboarding-id="invite-partner-button"
-          onClick={e => {
-            e.stopPropagation();
-            EventTracker.track("Invite Partner", { id });
-            setIsOpen(true);
-          }}
-        >
-          {buttonText}
-        </Button>
+        {showButton && (
+          <Button
+            variant={variant || "link"}
+            className={cn(className)}
+            data-onboarding-id="invite-partner-button"
+            onClick={e => {
+              e.stopPropagation();
+              EventTracker.track("Invite Partner", { id });
+              setIsOpen(true);
+            }}
+          >
+            {buttonText}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="w-full h-[18rem]">
         <ShareButtons />

@@ -6,7 +6,6 @@ import { authOptions } from "../../../authOptions";
 import { ContractWithExtras, CreateContract } from "../../../models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
 import { ANONYMOUS_USER_ID } from "../../../lib/utils/consts";
-import { CreateObligation } from "../../../models/obligation";
 import { Obligation } from "@prisma/client";
 
 const getAnonymousUser = async (): Promise<
@@ -27,6 +26,7 @@ const getAnonymousUser = async (): Promise<
     meta: {
       referralCode: annonymousUser.meta?.referralCode || "",
       onboardingCompleted: false,
+      paidStatus: "free",
     },
     settings: {
       showNotifications: false,

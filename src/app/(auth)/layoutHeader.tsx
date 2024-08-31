@@ -3,13 +3,14 @@
 import React from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import CustomLink from "../../components/ui/customLink";
 
 const AuthHeader = () => {
   const { theme } = useTheme();
 
   return (
     <div className="h-[10rem] w-full absolute top-10 lg:top-10 flex flex-col items-center justify-start overflow-hidden rounded-md">
-      <Link
+      <CustomLink
         className="md:text-7xl text-[2.5rem] lg:text-7xl font-bold text-center relative z-20 "
         href={"/"}
       >
@@ -17,7 +18,7 @@ const AuthHeader = () => {
         <span>inky</span>
         <span className="">P</span>
         <span>artner</span>
-      </Link>
+      </CustomLink>
       <div className="w-[15rem] lg:w-[40rem] h-24 lg:h-40 relative">
         {/* Gradients */}
         <div className="absolute inset-x-8 lg:inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />

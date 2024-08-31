@@ -6,7 +6,7 @@ import { NavigationBarItem, BottomBarItems } from "./_consts";
 import { cn } from "../../lib/utils";
 import NotificationBadge from "../ui/notificationBadge";
 import useNotifications from "../../lib/hooks/useNotifications";
-import Link from "next/link";
+import CustomLink from "@/components/ui/customLink";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -51,7 +51,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
   };
 
   const Item = ({ item, id }: { item: NavigationBarItem; id: string }) => (
-    <Link
+    <CustomLink
       href={item.href}
       className={cn(
         "flex-1 flex items-center justify-center lg:justify-start lg:hover:bg-muted-foreground/20  lg:rounded-lg lg:p-4 cursor-pointer",
@@ -78,7 +78,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
           {item.label}
         </span>
       </div>
-    </Link>
+    </CustomLink>
   );
 
   const SideNavigationBar = () => (

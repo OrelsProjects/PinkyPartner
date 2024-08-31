@@ -12,7 +12,7 @@ const separateBackslashN = (text: string): React.ReactNode[] => {
   splitText.forEach((t, index) => {
     textNodes.push(
       <span
-        className={`${index === 0 ? "font-bold" : ""}`}
+        className={`${index === 0 ? "font-medium" : ""}`}
         key={`loading-text-${index}`}
       >
         {t}

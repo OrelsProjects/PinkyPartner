@@ -1,34 +1,11 @@
 "use client";
 
-import React from "react";
-import { useObligations } from "../../../lib/hooks/useObligations";
+import React, { useMemo } from "react";
 import { useAppSelector } from "../../../lib/hooks/redux";
 import { Button } from "../../../components/ui/button";
 import { EventTracker } from "../../../eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
-import Link from "next/link";
-import axios from "axios";
-
-const EmptyContracts = () => {
-  return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-3">
-      <h1 className="text-xl font-semibold">
-        Seems like your pinky is ready to meet another pinky.. 😉
-      </h1>
-      <div className="w-full flex justify-center items-center flex-col">
-        <Button
-          onClick={() => {
-            EventTracker.track("create_contract_from_home");
-          }}
-          className="bg-primary text-white"
-          asChild
-        >
-          <Link href="/contracts/new">Make it official!</Link>
-        </Button>
-      </div>
-    </div>
-  );
-};
+import CustomLink from "../../../components/ui/customLink";
 
 const EmptyObligations = () => {
   return (
@@ -45,7 +22,7 @@ const EmptyObligations = () => {
           className="bg-primary text-white"
           asChild
         >
-          <Link href="/contracts/new">Create a contract</Link>
+          <CustomLink href="/contracts/new">Create a contract</CustomLink>
         </Button>
       </div>
     </div>
@@ -53,27 +30,34 @@ const EmptyObligations = () => {
 };
 
 export default function Home() {
-  const { contractObligations, partnerData } = useAppSelector(
+  const { contractObligations, partnersData } = useAppSelector(
     state => state.obligations,
   );
   const { state } = useAppSelector(state => state.auth);
   const { loading, loadingData } = useAppSelector(state => state.obligations);
   const { contracts } = useAppSelector(state => state.contracts);
 
-  if (!loadingData && !loading && state !== "anonymous") {
-    if (contracts.length === 0) {
-      return <EmptyObligations />;
-    }
-  }
+  const isEmptyContracts = useMemo(
+    () =>
+      !loading &&
+      !loadingData &&
+      contracts.length === 0 &&
+      state !== "anonymous",
+    [loading, loadingData, contracts, state],
+  );
 
   return (
     <div className="w-full h-fit flex flex-col gap-4 relative">
-      <ContractObligationsComponent
-        userData={contractObligations}
-        partnerData={partnerData.contractObligations}
-        loading={loadingData && state !== "anonymous"}
-        showReport
-      />
+      {isEmptyContracts ? (
+        <EmptyObligations />
+      ) : (
+        <ContractObligationsComponent
+          userData={contractObligations}
+          partnersData={partnersData}
+          loading={loadingData && state !== "anonymous"}
+          showReport
+        />
+      )}
     </div>
   );
 }
