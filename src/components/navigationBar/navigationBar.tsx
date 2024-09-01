@@ -7,6 +7,7 @@ import { cn } from "../../lib/utils";
 import NotificationBadge from "../ui/notificationBadge";
 import useNotifications from "../../lib/hooks/useNotifications";
 import CustomLink from "@/components/ui/customLink";
+import Head from "next/head";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -60,7 +61,6 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
         },
       )}
       key={item.href}
-      // data-onboarding-id={`navigation-bar-item-${item.label}`}
       data-onboarding-id={id}
     >
       <div className="flex flex-col lg:flex-row gap-2 justify-center items-center">

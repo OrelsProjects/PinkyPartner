@@ -1,23 +1,31 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import React, { useEffect, useMemo } from "react";
 import ChallengeComponent from "../(content)/home/challengeComponent";
+import useOnboarding from "../../lib/hooks/useOnboarding";
 
 export default function ChallengeProvider() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { isOnboardingCompleted } = useOnboarding();
   const [showChallenge, setShowChallenge] = React.useState(false);
 
   const challengeId = searchParams.get("challengeId");
   const signedUp = searchParams.get("signedUp");
 
+  const isInLandingPage = useMemo(() => pathname === "/", [pathname]);
+
   useEffect(() => {
+    if (!isOnboardingCompleted() && !isInLandingPage) {
+      return;
+    }
     if (challengeId) {
       setShowChallenge(true);
     } else {
       setShowChallenge(false);
     }
-  }, []);
+  }, [isOnboardingCompleted]);
 
   return (
     challengeId && (

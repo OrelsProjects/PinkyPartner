@@ -8,6 +8,7 @@ interface SwitchProps
   checkedIcon?: React.ReactNode;
   uncheckedIcon?: React.ReactNode;
   textUnder?: string;
+  chidren?: React.ReactNode;
   containerClassName?: string;
 }
 
@@ -34,7 +35,7 @@ const Switch = React.forwardRef<
     return (
       <div
         className={cn(
-          "w-fit flex flex-col gap-0 justify-center items-start",
+          "w-fit flex flex-col gap-0 justify-center items-center",
           containerClassName,
         )}
       >
@@ -42,7 +43,7 @@ const Switch = React.forwardRef<
           {...props}
           ref={ref}
           className={cn(
-            "peer inline-flex h-5 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+            "peer inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
             isChecked ? "bg-primary" : "bg-input",
             className,
           )}
@@ -71,6 +72,7 @@ const Switch = React.forwardRef<
             {textUnder}
           </div>
         )}
+        {props.children}
       </div>
     );
   },

@@ -30,7 +30,6 @@ model AppUser {
   displayName String?
   photoURL    String?
 
-
   createdAt DateTime? @default(now())
 
   userContracts      UserContract[]
@@ -41,8 +40,10 @@ model AppUser {
   ContractObligation UserContractObligation[]
   settings           AppUserSettings?
 
-  nudgesReceived Nudges[] @relation(name: "nudgesReceived")
-  nudgesSent     Nudges[] @relation(name: "nudgesSent")
+  nudgesReceived Nudges[]       @relation(name: "nudgesReceived")
+  nudgesSent     Nudges[]       @relation(name: "nudgesSent")
+  UserOrders     UserOrders[]
+  Subscription   Subscription[]
 
   @@map("appUser")
 }
@@ -57,7 +58,7 @@ model AppUserMetadata {
 
   pushToken       String?
   pushTokenMobile String?
-  
+
   paidStatus String? // "free" | "premium"
 
   onboardingCompleted Boolean @default(false)
@@ -171,4 +172,62 @@ model Nudges {
   nudgedUser AppUser @relation(fields: [userNudgedId], references: [userId], onDelete: Cascade, name: "nudgesReceived")
 
   @@map("nudges")
+}
+
+model CartItems {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  currency String
+  price    Float
+
+  Orders UserOrders[]
+
+  @@map("cartItems")
+}
+
+model UserOrders {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String   @unique
+  userId     String
+  cartItemId String   @db.ObjectId
+  quantity   Int
+  total      Float
+  status     String   @default("pending") // pending, completed, cancelled
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  appUser  AppUser   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  cartItem CartItems @relation(fields: [cartItemId], references: [id], onDelete: Cascade)
+
+  @@map("userOrders")
+}
+
+model Subscription {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String?
+  planId            String
+  subscriptionId    String    @unique
+  startDate         DateTime
+  status            String
+  nextBillingDate   DateTime?
+  lastPaymentDate   DateTime?
+  lastPaymentAmount Float?
+
+  appUser  AppUser?  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  Payments Payment[]
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  paymentId      String   @unique
+  subscriptionId String
+  paidAmount     Float
+  paymentStatus  String
+  paymentDate    DateTime
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [subscriptionId], onDelete: Cascade)
+
+  @@map("payments")
 }

@@ -10,16 +10,16 @@ import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ChallengeProvider from "./providers/ChallengeProvider";
 import Loading from "../components/ui/loading";
+import Head from "next/head";
 // import ProductHuntProvider from "./providers/ProductHuntProvider";
 
-const OG_IMAGE_URL =
-  "https://firebasestorage.googleapis.com/v0/b/myworkout-ca350.appspot.com/o/pinkypartner-og-image.png?alt=media&token=e7414821-66d3-49b7-b67e-d605c35b2fe8";
-const APP_NAME = "PinkyPartner";
-const APP_DEFAULT_TITLE = "PinkyPartner";
-const APP_TITLE_TEMPLATE = "%s - PinkyPartner";
-const APP_DESCRIPTION = "Create habits with a partner!";
-const APP_URL = "https://www.pinkypartner.com";
-const APP_STARTUP_IMAGE = "/favicon.ico";
+const OG_IMAGE_URL = process.env.NEXT_PUBLIC_OG_IMAGE_UR as string;
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME as string;
+const APP_DEFAULT_TITLE = process.env.NEXT_PUBLIC_APP_DEFAULT_TITLE as string;
+const APP_TITLE_TEMPLATE = process.env.NEXT_PUBLIC_APP_TITLE_TEMPLATE as string;
+const APP_DESCRIPTION = process.env.NEXT_PUBLIC_APP_DESCRIPTION as string;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL as string;
+const APP_STARTUP_IMAGE = process.env.NEXT_PUBLIC_APP_STARTUP_IMAGE as string;
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
 export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
-      <head>
+      <Head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -79,7 +79,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:image:type" content="<generated>" />
         <meta property="og:image:width" content="<generated>" />
         <meta property="og:image:height" content="<generated>" />
-      </head>
+      </Head>
       <body className="!overscroll-contain">
         <Suspense
           fallback={
