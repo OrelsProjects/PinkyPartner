@@ -1,18 +1,10 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import Link from "next/link";
 import axios from "axios";
 import { toast } from "react-toastify";
 import usePayments from "@/lib/hooks/usePayments";
-import {
-  OnApproveData,
-  PayPalCapture,
-  PayPalSubscription,
-  PayPalSubscriptionPlan,
-} from "@/models/payment";
-import { Button } from "@/components/ui/button";
-import Loading from "@/components/ui/loading";
+import { OnApproveData, PayPalSubscriptionPlan } from "@/models/payment";
 import PaymentButtons from "../paymentButtons";
 import { Logger } from "@/logger";
 
@@ -22,31 +14,8 @@ export default function PaymentPage({
   params: { planId: string };
 }) {
   const [error, setError] = React.useState<string | null>(null);
-  const [plans, setPlans] = React.useState<PayPalSubscriptionPlan[]>([]);
-  const [loadingPlans, setLoadingPlans] = React.useState<boolean>(false);
   const { approveOrder, cancelOrder, createOrder, approveSubscription } =
     usePayments();
-
-  const getPlans = async () => {
-    if (loadingPlans) return;
-    setLoadingPlans(true);
-    try {
-      const result = await axios.get<PayPalSubscription>(
-        "/api/subscriptions/list",
-      );
-      const { data } = result;
-      setPlans(data.plans);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoadingPlans(false);
-      setError(null);
-    }
-  };
-
-  useEffect(() => {
-    getPlans();
-  }, []);
 
   useEffect(() => {
     if (error) {
@@ -64,10 +33,8 @@ export default function PaymentPage({
 
   const handleApproveOrder = async (data: OnApproveData, actions: any) => {
     if (data.subscriptionID) {
-      debugger;
       return await approveSubscription(data);
     } else {
-      debugger;
       const orderData = await approveOrder(data.orderID);
       const errorDetail = orderData?.details?.[0];
       if (errorDetail?.issue) {
@@ -93,10 +60,9 @@ export default function PaymentPage({
           height: 40,
         }}
         createSubscription={async (data, actions) => {
-          const sub = actions.subscription.create({
+          return actions.subscription.create({
             plan_id: params.planId,
           });
-          return sub;
         }}
         createOrder={async (data, actions) => {
           const order = await handleCreate();
@@ -119,37 +85,6 @@ export default function PaymentPage({
       />
       <div className="flex flex-col gap-5">
         <span className="text-xl text-destructive">{error}</span>
-      </div>
-      <Button asChild>
-        <Link
-          href={process.env.NEXT_PUBLIC_PAYPAL_CREATE_SUBSCRIPTION_URL || ""}
-          target="_blank"
-        >
-          Create Subscription Plan
-        </Link>
-      </Button>
-      <Button asChild>
-        <Link
-          href={process.env.NEXT_PUBLIC_PAYPAL_SEE_SUBSCRIPTIONS_URL || ""}
-          target="_blank"
-        >
-          See Subscriptions
-        </Link>
-      </Button>
-      <Button onClick={getPlans}>Get Plans</Button>
-      <div className="flex flex-col gap-8 justify-center items-center">
-        {loadingPlans ? (
-          <Loading spinnerClassName="w-12 h-12" />
-        ) : plans.length > 0 ? (
-          plans.map((plan, index) => (
-            <div key={index} className="flex flex-row gap-0.5">
-              <span>{plan.name}: </span>
-              <span>{plan.id}</span>
-            </div>
-          ))
-        ) : (
-          <div>No plans</div>
-        )}
       </div>
     </div>
   );

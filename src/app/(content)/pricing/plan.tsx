@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { MdDiscount } from "react-icons/md";
 import { IoIosCheckmarkCircleOutline as ItemCheck } from "react-icons/io";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Divider from "@/components/ui/divider";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "../../../components/ui/skeleton";
 
 type Interval = "month" | "year" | "one-time";
 
@@ -23,20 +24,27 @@ export interface PricePlan {
 
 export interface PlanProps {
   planName: string;
+  className?: string;
+
+  loading?: boolean;
+  recommended?: boolean;
+
   pricePlanPrimary: PricePlan;
   pricePlanSecondary?: PricePlan;
-  onPlanChange?: (planId: string) => void;
+
   items: PlanItem[];
-  recommended?: boolean;
-  className?: string;
+
+  onPlanChange?: (planId: string) => void;
   onClick: (planId: string) => void;
 }
 
 const ContentContainer = ({
+  loading,
   children,
   className,
   recommended,
 }: {
+  loading?: boolean;
   className?: string;
   recommended?: boolean;
   children: React.ReactNode;
@@ -49,15 +57,19 @@ const ContentContainer = ({
   >
     <div
       className={cn("w-full h-full bg-primary absolute inset-0 rounded-lg", {
-        hidden: !recommended,
+        hidden: !recommended || loading,
       })}
     >
-      <div className="w-full h-10 flex flex-row items-center justify-start gap-2 px-4">
-        <MdDiscount className="w-3 h-3 fill-background" />
-        <span className="font-semibold text-base text-background">
-          Recommended
-        </span>
-      </div>
+      {loading ? (
+        <Skeleton className="w-full h-full rounded-lg" />
+      ) : (
+        <div className="w-full h-10 flex flex-row items-center justify-start gap-2 px-4">
+          <MdDiscount className="w-3 h-3 fill-background" />
+          <span className="font-semibold text-base text-background">
+            Recommended
+          </span>
+        </div>
+      )}
     </div>
 
     <div
@@ -69,10 +81,10 @@ const ContentContainer = ({
         className={cn(
           "w-full h-full rounded-b-md flex flex-col gap-2",
           "bg-gradient-to-b from-card to-background border border-muted-foreground/20 dark:border-card",
-          { "rounded-t-md": !recommended },
+          { "rounded-t-md": !recommended || loading },
         )}
       >
-        {children}
+        {loading ? <Skeleton className="w-full h-full" /> : children}
       </div>
     </div>
   </div>
@@ -134,6 +146,7 @@ function Items({
 export default function Plan({
   items,
   onClick,
+  loading,
   planName,
   className,
   recommended,
@@ -142,6 +155,10 @@ export default function Plan({
   pricePlanSecondary,
 }: PlanProps) {
   const [selectedPlan, setSelectedPlan] = useState(pricePlanPrimary);
+
+  useEffect(() => {
+    setSelectedPlan(pricePlanPrimary);
+  }, [pricePlanPrimary]);
 
   const handlePlanChange = () => {
     if (!pricePlanSecondary) return;
@@ -187,7 +204,11 @@ export default function Plan({
   }, [selectedPlan]);
 
   return (
-    <ContentContainer className={className} recommended={recommended}>
+    <ContentContainer
+      className={className}
+      recommended={recommended}
+      loading={loading}
+    >
       <div className="w-full h-full flex flex-col p-4 gap-6">
         <div className="w-full h-fit flex flex-row justify-between items-center relative">
           <Tag recommended={recommended}>
@@ -195,6 +216,7 @@ export default function Plan({
           </Tag>
           {pricePlanSecondary && (
             <Switch
+              defaultChecked={true}
               checked={selectedPlan.id === pricePlanPrimary.id}
               onCheckedChange={handlePlanChange}
               className={cn({

@@ -1,22 +1,35 @@
 export type SubscriptionId = string;
 export type PlanId = string;
 
+export interface SubscriptionPlans {
+  monthly: PayPalSubscriptionPlan;
+  yearly: PayPalSubscriptionPlan;
+}
+
 export interface PayPalLink {
   href: string;
   rel: string;
   method: string;
 }
 
-export interface PayPalSubscription {
-  links: PayPalLink[];
-  plans: PayPalSubscriptionPlan[];
+export interface CreateSubscriptionBody {
+  planId: string;
+  subscriptionId: string;
+  startDate: Date;
+  status: string;
 }
 
 export interface PayPalSubscriptionPlan extends PayPalCreate {
   name: string;
   description?: string;
   create_time: string;
+  update_time: string;
   usage_type: "LICENSED" | "UNLIMITED";
+  billing_cycles: BillingCycle[];
+  payment_preferences: PaymentPreferences;
+  taxes?: Taxes;
+  quantity_supported: boolean;
+  product_id: string;
 }
 
 export interface PayPalCreate {
@@ -28,6 +41,7 @@ export interface PayPalCreate {
 export interface PayPalCapture {
   id: string;
   status: string;
+  create_time: string;
   debug_id?: string;
   details?: {
     issue: string;
@@ -226,7 +240,7 @@ export interface BillingInfo {
   last_payment: PaymentDetail; // Last payment made
   next_billing_time: string;
   final_payment_time: string; // Time of the final payment
-  failed_payments_count: number; 
+  failed_payments_count: number;
 }
 
 export interface CycleExecution {

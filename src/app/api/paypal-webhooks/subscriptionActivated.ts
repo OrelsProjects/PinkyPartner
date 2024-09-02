@@ -17,12 +17,15 @@ export async function handleSubscriptionActivated(data: {
 export async function handleSubscriptionActivated(
   data: PayPalEventResponse,
 ): Promise<NextResponse>;
-export async function handleSubscriptionActivated(data: any) {
+export async function handleSubscriptionActivated(
+  data: any,
+): Promise<NextResponse> {
   let subscriptionId = data.subscriptionId;
   let email_address = data.email_address;
   let nextBillingDate = data.nextBillingDate;
   let lastPaymentDate = data.lastPaymentDate;
   let lastPaymentAmount = data.lastPaymentAmount;
+
   if (data.id) {
     subscriptionId = data.resource.id;
     email_address = data.resource.subscriber.email_address;

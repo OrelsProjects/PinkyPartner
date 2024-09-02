@@ -113,3 +113,17 @@ export const getDateFormatted = (
   const monthName = date.toLocaleString("default", { month: "short" });
   return dayShortened ? `${day} ${monthName}` : `${day}, ${month} ${monthName}`;
 };
+
+export const areDatesClose = (
+  date1?: Date,
+  date2?: Date,
+  maxDifferenceSeconds: number = 1,
+): boolean => {
+  if (!date1 || !date2) {
+    return false;
+  }
+
+  return (
+    Math.abs(date1.getTime() - date2.getTime()) < maxDifferenceSeconds * 1000
+  );
+};

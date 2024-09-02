@@ -1,17 +1,12 @@
 import { NextResponse } from "next/server";
 import prisma from "../_db/db";
-import Logger from "../../../loggerServer";
-import { PayPalEventResponse } from "../../../models/payment";
+import Logger from "@/loggerServer";
+import { CreateSubscriptionBody, PayPalEventResponse } from "@/models/payment";
 
 export async function handleSubscriptionCreated(
   event: PayPalEventResponse,
 ): Promise<NextResponse>;
-export async function handleSubscriptionCreated(data: {
-  planId: string;
-  subscriptionId: string;
-  startDate: Date;
-  status: string;
-}): Promise<NextResponse>;
+export async function handleSubscriptionCreated(data: CreateSubscriptionBody): Promise<NextResponse>;
 
 export async function handleSubscriptionCreated(data: any) {
   try {

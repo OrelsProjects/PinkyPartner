@@ -27,6 +27,12 @@ export async function handlePaymentSaleCompleted(
         paymentDate: new Date(event.resource.create_time),
       },
     });
+
+    await prisma.subscription.update({
+      where: { subscriptionId: event.resource.billing_agreement_id },
+      data: { status: event.resource.state },
+    });
+
     return NextResponse.json(
       { message: "Payment processed successfully", payment },
       { status: 200 },
