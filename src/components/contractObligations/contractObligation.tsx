@@ -74,6 +74,21 @@ const ObligationsComponent = ({
       );
     }, [obligations]);
 
+  const getObligation = useCallback(
+    (day: string) => {
+      const dayInObligationIndex = obligations.findIndex(
+        obligation =>
+          obligation.dueDate && dateToDayString(obligation.dueDate) === day,
+      );
+
+      const obligation = obligations[dayInObligationIndex];
+
+      if (!obligation) return null;
+      return obligation;
+    },
+    [obligations],
+  );
+
   const handleCompleteObligation = async (day: string, completed: boolean) => {
     const loading = loadingObligationDays[day];
     if (loading) return;
@@ -177,6 +192,8 @@ const ObligationsComponent = ({
                 key={`obligation-in-contract-${day}`}
                 day={day}
                 index={index}
+                contractId={contract.contractId}
+                obligation={getObligation(day)}
                 emoji={userContractObligation.obligation.emoji || ""}
                 isCompleted={isObligationCompleted(day)}
                 loading={loadingObligationDays[day]}

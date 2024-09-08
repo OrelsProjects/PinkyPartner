@@ -4,15 +4,12 @@ import { cn } from "../../lib/utils";
 import { UserAvatar } from "../ui/avatar";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
-import {
-  Dialog,
-  DialogHeader,
-  DialogContent,
-  DialogTrigger,
-} from "../ui/dialog";
 import { UsersIndicator } from "./usersIndicator";
+import { UserContractObligationData } from "../../models/userContractObligation";
 
 export const ObligationBox = ({
+  obligation,
+  contractId,
   day,
   dummy,
   index,
@@ -28,6 +25,8 @@ export const ObligationBox = ({
   isNewObligation,
   handleCompleteObligation,
 }: {
+  obligation?: UserContractObligationData | null;
+  contractId: string;
   day: string;
   index: number;
   title: string;
@@ -80,6 +79,8 @@ export const ObligationBox = ({
             disabled={disabled}
             loading={loading}
             isCompleted={isCompleted}
+            contractId={contractId}
+            obligation={obligation}
             onCompletedChange={(day: string, checked: boolean) => {
               handleCompleteObligation(day, checked);
             }}

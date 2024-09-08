@@ -12,39 +12,81 @@ import Loading from "../ui/loading";
 import {
   GroupObligationsUserData,
   GroupObligationsPartnerData,
+  buildGroupedObligationsForContract,
+  GroupedObligations,
+  GroupedObligationsData,
 } from "./_utils";
 import { setShowStatusOfContractId } from "../../lib/features/status/statusSlice";
 import ObligationsComponent from "./contractObligation";
 import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
 import { useContracts } from "../../lib/hooks/useContracts";
 import { toast } from "react-toastify";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import useNotifications from "../../lib/hooks/useNotifications";
 import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
 
-export const SingleContract = ({
-  contract,
-  isSigned,
-  newObligations,
-  isAnyPartnerSigned,
-  userObligations,
-  partnersObligations,
-  index,
-}: {
-  contract: ContractWithExtras;
+/**
+ * 
+ *contract: ContractWithExtras;
   isSigned: boolean;
   newObligations: UserContractObligationData[];
   isAnyPartnerSigned: boolean;
   userObligations: GroupObligationsUserData;
   partnersObligations: GroupObligationsPartnerData;
   index: number;
-}) => {
+ */
+export const SingleContract = ({ contractId }: { contractId: string }) => {
+
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
+  const { contracts } = useAppSelector(state => state.contracts);
+  const { contractObligations, partnersData } = useAppSelector(
+    state => state.obligations,
+  );
   const { signContract } = useContracts();
   const { nudgePartner, loadingNudge } = useNotifications();
   const [nudgeSentContractId, setNudgeSentContractId] =
     React.useState<string>(""); // Last contract id a nudge was successfully sent to
+
+  const getContractSignatures = useCallback(
+    (contractId: string) => {
+      return (
+        contracts
+          .find(contract => contract.contractId === contractId)
+          ?.signatures?.map(signature => signature.userId) ?? []
+      );
+    },
+    [contracts],
+  );
+
+  const contract = useMemo(() => {
+    return contracts.find(contract => contract.contractId === contractId);
+  }, [contracts]);
+
+  const isSigned = contract?.signatures.some(
+    signature => signature.userId === user?.userId,
+  );
+  const isAnyPartnerSigned = contract?.signatures.some(
+    ({ userId: signatureUserId }) =>
+      partnersData.some(
+        partner =>
+          partner.partnerId === signatureUserId &&
+          signatureUserId !== user?.userId,
+      ),
+  );
+
+  const userObligations = useMemo((): GroupedObligationsData | null => {
+    if (!contract) return null;
+
+    const signatures = getContractSignatures(contractId);
+    const groupedObligations = buildGroupedObligationsForContract(
+      contract,
+      signatures,
+      contractObligations,
+      partnersData,
+    );
+    return groupedObligations;
+  }, [contractObligations, partnersData]);
 
   const handleOnSign = (contract: ContractWithExtras) => {
     toast.promise(signContract(contract.contractId), {
@@ -86,17 +128,19 @@ export const SingleContract = ({
     }
   };
 
+  if (!contract) return null;
+
   return (
     <div
       className={cn("w-full h-fit relative bg-card/40 p-4 rounded-lg", {
         "p-2": !isSigned,
       })}
-      key={`contract.contractId-${index}`}
+      key={`contract.contractId-${contractId}`}
     >
       <div className="absolute top-3 right-3 z-40">
         <ContractViewDropdown
           onShowStats={() => {
-            dispatch(setShowStatusOfContractId(contract.contractId));
+            dispatch(setShowStatusOfContractId(contractId));
           }}
         />
       </div>
@@ -128,57 +172,60 @@ export const SingleContract = ({
         )}
       </AnimatePresence>
       <div className="sticky top-0 w-full h-full flex flex-col gap-0 justify-start items-start mb-3">
-        <div className="flex flex-row gap-4 items-center">
-          <ContractViewComponent
-            contract={contract}
-            isSigned={isSigned}
-            onSign={handleOnSign}
-          >
-            <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
-              {contract.title}
-            </h1>
-          </ContractViewComponent>
-          {loadingNudge[contract.contractId] ? (
-            <Loading spinnerClassName="h-4 w-4 text-primary" />
-          ) : (
-            isAnyPartnerSigned && (
-              <SendNudgeDialog
-                contract={contract}
-                onNudgeSelected={handleNudgePartner}
-              >
-                <motion.div
-                  // Ring bell if nudge was sent to this contract
-                  initial={{ scale: 1 }}
-                  whileTap={{ scale: 0.8 }}
-                  animate={{
-                    rotate:
-                      nudgeSentContractId === contract.contractId
-                        ? [0, -5, 5, -5, 5, -5, 5, -5, 5, 0]
-                        : 0,
-                    transition: {
-                      duration: 0.5,
-                    },
-                  }}
-                  className="cursor-pointer"
+        {contract && (
+          <div className="flex flex-row gap-4 items-center">
+            <ContractViewComponent
+              contract={contract}
+              isSigned={isSigned}
+              onSign={handleOnSign}
+            >
+              <h1 className="font-semibold text-lg lg:text-2xl tracking-wide hover:cursor-pointer hover:underline">
+                {contract.title}
+              </h1>
+            </ContractViewComponent>
+            {loadingNudge[contract.contractId] ? (
+              <Loading spinnerClassName="h-4 w-4 text-primary" />
+            ) : (
+              isAnyPartnerSigned && (
+                <SendNudgeDialog
+                  contract={contract}
+                  onNudgeSelected={handleNudgePartner}
                 >
-                  <FaBell className="text-primary cursor-pointer h-[19px] w-[19px]" />
-                </motion.div>
-              </SendNudgeDialog>
-            )
-          )}
-        </div>
+                  <motion.div
+                    // Ring bell if nudge was sent to this contract
+                    initial={{ scale: 1 }}
+                    whileTap={{ scale: 0.8 }}
+                    animate={{
+                      rotate:
+                        nudgeSentContractId === contract.contractId
+                          ? [0, -5, 5, -5, 5, -5, 5, -5, 5, 0]
+                          : 0,
+                      transition: {
+                        duration: 0.5,
+                      },
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <FaBell className="text-primary cursor-pointer h-[19px] w-[19px]" />
+                  </motion.div>
+                </SendNudgeDialog>
+              )
+            )}
+          </div>
+        )}
         <h2 className="font-thin">{getWeekRangeFormatted()}</h2>
       </div>
       <div className="flex flex-col gap-3">
-        {Object.keys(userObligations)?.map(obligationId => (
-          <ObligationsComponent
-            key={`obligations-list-${obligationId}`}
-            contract={contract}
-            obligations={userObligations[obligationId]}
-            newObligations={newObligations}
-            partnersData={partnersObligations[obligationId]}
-          />
-        ))}
+        {userObligations &&
+          Object.keys(userObligations.userObligations).map(obligationId => (
+            <ObligationsComponent
+              key={`obligations-list-${obligationId}`}
+              contract={contract}
+              obligations={userObligations.userObligations?.[obligationId]}
+              newObligations={[]}
+              partnersData={userObligations.partnersObligations?.[obligationId]}
+            />
+          ))}
       </div>
     </div>
   );

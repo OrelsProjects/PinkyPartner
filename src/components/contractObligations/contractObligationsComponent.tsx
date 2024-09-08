@@ -15,13 +15,7 @@ import {
 import { SingleContract } from "./singleContract";
 
 interface ContractObligationsProps {
-  userData: UserContractObligationData[];
-  partnersData: {
-    partnerId: string;
-    contractObligations: UserContractObligationData[];
-  }[];
   loading?: boolean;
-  showReport?: boolean;
 }
 
 const LoadingComponent = () => {
@@ -65,43 +59,11 @@ const LoadingObligationsComponent = () => {
 };
 
 export default function ContractObligationsComponent({
-  userData,
-  partnersData,
   loading,
-  showReport,
 }: ContractObligationsProps) {
+  console.log("Rendered!");
+
   const { contracts } = useAppSelector(state => state.contracts);
-
-  const [contractIdToObligations, setContractIdToObligations] =
-    React.useState<GroupedObligations>({});
-
-  useEffect(() => {
-    for (const contract of contracts) {
-      const contractId = contract.contractId;
-      const signatures = getContractSignatures(contractId);
-      const groupedObligations = buildGroupedObligationsForContract(
-        contract,
-        signatures,
-        userData,
-        partnersData,
-      );
-      setContractIdToObligations(prev => ({
-        ...prev,
-        [contractId]: groupedObligations,
-      }));
-    }
-  }, [userData, partnersData]);
-
-  const getContractSignatures = useCallback(
-    (contractId: string) => {
-      return (
-        contracts
-          .find(contract => contract.contractId === contractId)
-          ?.signatures?.map(signature => signature.userId) ?? []
-      );
-    },
-    [contracts],
-  );
 
   if (loading) {
     return <LoadingComponent />;
@@ -109,30 +71,12 @@ export default function ContractObligationsComponent({
 
   return (
     <div className="h-full w-full flex flex-col gap-10 overflow-auto relative pb-10">
-      {Object.values(contractIdToObligations).map(
-        (
-          {
-            contract,
-            isSigned,
-            newObligations,
-            isAnyPartnerSigned,
-            userObligations,
-            partnersObligations: partnerObligations,
-          },
-          index,
-        ) => (
-          <SingleContract
-            key={`contract-${contract.contractId}`}
-            contract={contract}
-            isSigned={isSigned}
-            newObligations={newObligations}
-            isAnyPartnerSigned={isAnyPartnerSigned}
-            userObligations={userObligations}
-            partnersObligations={partnerObligations}
-            index={index}
-          />
-        ),
-      )}
+      {contracts.map(({ contractId }) => (
+        <SingleContract
+          key={`contract-${contractId}`}
+          contractId={contractId}
+        />
+      ))}
     </div>
   );
 }

@@ -4,8 +4,12 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { selectAuth } from "../../lib/features/auth/authSlice";
 import { cn } from "../../lib/utils";
+import { useObligations } from "../../lib/hooks/useObligations";
+import { UserContractObligationData } from "../../models/userContractObligation";
 
 interface ObligationCheckboxProps {
+  obligation?: UserContractObligationData | null;
+  contractId: string;
   day: string;
   index: number;
   dummy?: boolean; // For onboarding
@@ -18,18 +22,21 @@ interface ObligationCheckboxProps {
 }
 
 const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
+  obligation,
+  contractId,
   day,
   index,
   dummy,
   loading,
   disabled,
   forceSound, // Force sound to play when isCompleted is true, even if the checkbox was not checked by the user
-  isCompleted,
   onCompletedChange,
   onCompletedChangeDummy,
 }) => {
   const { user, state } = useAppSelector(selectAuth);
+  const { completeObligation } = useObligations();
   const [checked, setChecked] = React.useState(false);
+  const [isCompleted, setIsCompleted] = React.useState(false);
   const [shouldPlaySound, setShouldPlaySound] = React.useState(false);
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
@@ -40,6 +47,12 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
   const canPlaySound = useMemo(() => {
     return user?.settings.soundEffects || state !== "authenticated";
   }, [user, state]);
+
+  useEffect(() => {
+    if (!dummy) {
+      setIsCompleted(obligation?.completedAt ? true : false);
+    }
+  }, [obligation]);
 
   useEffect(() => {
     if (!dummy && !onCompletedChange) {
@@ -105,7 +118,14 @@ const ObligationCheckbox: React.FC<ObligationCheckboxProps> = ({
             setChecked(checked);
             onCompletedChangeDummy?.(checked);
           } else {
-            onCompletedChange?.(day, checked);
+            // onCompletedChange?.(day, checked);
+            if (obligation) {
+              if (checked) {
+                playSound();
+              }
+              setIsCompleted(checked);
+              completeObligation(obligation, contractId, checked);
+            }
           }
           setShouldPlaySound(checked);
         }}

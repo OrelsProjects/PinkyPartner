@@ -266,6 +266,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
           <span className="text-xl"></span>
         </div>
         <ObligationBox
+          contractId="dummy"
           key="obligation-box-random-pinky"
           index={0}
           className="!max-w-96 md:!max-w-[25rem] !w-[95%] self-center"
@@ -293,6 +294,7 @@ const DummyObligationBox: React.FC<DummyObligationBoxProps> = () => {
         notificationPhotoUrl="/PP-round.png"
       >
         <ObligationBox
+          contractId="dummy"
           key="obligation-box-orel"
           index={0}
           userPhotoUrl={OREL_IMAGE_URL}
