@@ -189,30 +189,6 @@ export function useObligations() {
     }
   };
 
-  const fetchNextUpObligations = async () => {
-    try {
-      setLoadingData(true);
-      const response = await axios.get<GetNextUpObligationsResponse>(
-        "/api/obligations/next-up",
-      );
-      const {
-        userContractObligations,
-        partnersContractObligations: partnerContractObligations,
-      } = response.data;
-      const partnersData = partnerContractObligations.map(partnerData => ({
-        partnerId: partnerData.partnerId,
-        contractObligations: partnerData.contractObligations,
-      }));
-
-      setUserContractObligations(userContractObligations);
-      setPartnersData(partnersData);
-    } catch (error: any) {
-      Logger.error("Failed to fetch next up obligations", error);
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
   const completeObligation = (
     obligation: UserContractObligationData,
     contractId: string,
@@ -293,8 +269,7 @@ export function useObligations() {
     createObligation,
     updateObligation,
     deleteObligation,
-    setPartnerData: setPartnersData,
-    fetchNextUpObligations,
+    setPartnersData,
     completeObligation,
   };
 }

@@ -18,13 +18,19 @@ import {
 } from "../features/contracts/contractsSlice";
 import { AccountabilityPartner } from "@/models/appUser";
 import { Logger } from "@/logger";
-import { useObligations } from "./useObligations";
+import {
+  setPartnersData as setPartnerDataAction,
+  setContractObligations as setContractObligationsAction,
+} from "../features/obligations/obligationsSlice";
 import { ContractExistsForUserError } from "@/models/errors/ContractExistsForUserError";
+import {
+  fetchNextUpObligations,
+  FetchNextUpObligationsResponse,
+} from "../utils/obligationsUtils";
 
 export function useContracts() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
-  const { fetchNextUpObligations } = useObligations();
   const { contracts, error, loading, loadingData } = useAppSelector(
     state => state.contracts,
   );
@@ -79,7 +85,7 @@ export function useContracts() {
         contractData,
       );
       dispatch(replaceTempContract(response.data));
-      await fetchNextUpObligations();
+      await updateNextUpObligations();
       dispatch(setError(null));
       const otherUser = contractData.contractees.find(
         contractee => contractee.userId !== user?.userId,
@@ -111,22 +117,18 @@ export function useContracts() {
     dispatch(setContractsAction(contracts));
   };
 
-  // const updateContract = async (contractData: Contract) => {
-  //   dispatch(setLoading(true));
-  //   try {
-  //     const response = await axios.patch<Contract>(
-  //       `/api/contract/${contractData.contractId}`,
-  //       contractData,
-  //     );
-  //     dispatch(updateContractAction(response.data));
-  //     dispatch(setError(null));
-  //   } catch (err: any) {
-  //     dispatch(setError(err.message || "Error updating contract"));
-  //     throw err;
-  //   } finally {
-  //     dispatch(setLoading(false));
-  //   }
-  // };
+  const updateNextUpObligations = async () => {
+    try {
+      const response: FetchNextUpObligationsResponse =
+        await fetchNextUpObligations();
+      dispatch(
+        setContractObligationsAction([...response.userContractObligations]),
+      );
+      dispatch(setPartnerDataAction(response.partnersData));
+    } catch (err: any) {
+      throw err;
+    }
+  };
 
   const deleteContract = async (contractId: string) => {
     dispatch(setLoading(true));
@@ -157,7 +159,7 @@ export function useContracts() {
       dispatch(addContractAction(newContract.data));
       dispatch(signContractAction({ contractId, user }));
       dispatch(setError(null));
-      await fetchNextUpObligations();
+      await updateNextUpObligations();
     } catch (err: any) {
       // if code is 409, throw ContractExistsForUserError
       if (err.response?.status === 409) {
@@ -198,7 +200,7 @@ export function useContracts() {
             Logger.error("Error sending notification", err);
           });
       }
-      await fetchNextUpObligations();
+      await updateNextUpObligations();
     } catch (err: any) {
       dispatch(setError(err.message || "Error signing contract"));
       throw err;
@@ -257,7 +259,6 @@ export function useContracts() {
 
       dispatch(deleteContractAction(contractId));
       dispatch(setError(null));
-      await fetchNextUpObligations();
 
       if (otherUser) {
         axios
@@ -291,6 +292,7 @@ export function useContracts() {
     setLoadingData,
     createContract,
     updateContract,
+    updateNextUpObligations,
     deleteContract,
   };
 }

@@ -19,13 +19,13 @@ export default function DataProvider({
   const { state } = useAppSelector(state => state.auth);
   const { isDataFetched, forceFetch } = useAppSelector(state => state.auth);
   const { setDataFetched } = useAuth();
+  const { setObligations, setLoadingData: setLoadingDataObligations } =
+    useObligations();
   const {
-    setObligations,
-    setLoadingData: setLoadingDataObligations,
-    fetchNextUpObligations,
-  } = useObligations();
-  const { setContracts, setLoadingData: setLoadingDataContracts } =
-    useContracts();
+    setContracts,
+    setLoadingData: setLoadingDataContracts,
+    updateNextUpObligations,
+  } = useContracts();
   const isFetchingData = useRef(false);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function DataProvider({
       // Making both API requests in parallel
       const [userDataResponse, _] = await Promise.allSettled([
         axios.get<UserData>("/api/user/data"),
-        fetchNextUpObligations(),
+        updateNextUpObligations(),
       ]);
 
       const userData =
