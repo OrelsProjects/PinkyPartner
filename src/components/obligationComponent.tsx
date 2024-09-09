@@ -87,7 +87,9 @@ const ObligationComponent: React.FC<ObligationProps> = ({
     >
       <div className="h-full flex flex-col gap-1 flex-shrink-1 items-start justify-center">
         <div className="flex flex-row gap-3">
-          <span className="text-card-foreground">{obligation.emoji}</span>
+          {obligation.emoji && (
+            <span className="text-card-foreground">{obligation.emoji}</span>
+          )}
           <span
             className={cn(
               "text-card-foreground line-clamp-1 font-medium",

@@ -1,48 +1,56 @@
 import { NextResponse } from "next/server";
 import prisma from "../_db/db";
-import Logger from "../../../loggerServer";
-import { PayPalEventResponse } from "../../../models/payment";
+import Logger from "@/loggerServer";
+import { PayPalEventResponse } from "@/models/payment";
 import { handleSubscriptionCreated } from "./subscriptionCreated";
 
 export async function handleSubscriptionActivated(data: {
   subscriptionId: string;
-  email_address: string;
-  nextBillingDate: Date;
-  lastPaymentDate: Date;
-  lastPaymentAmount: number;
+  userId: string;
+  nextBillingDate: Date | null;
+  lastPaymentDate: Date | null;
+  lastPaymentAmount: number | null;
   planId: string;
   startDate: Date;
   status: string;
-}): Promise<NextResponse>;
-export async function handleSubscriptionActivated(
-  data: PayPalEventResponse,
-): Promise<NextResponse>;
-export async function handleSubscriptionActivated(
-  data: any,
-): Promise<NextResponse> {
+}): Promise<NextResponse> {
+  // export async function handleSubscriptionActivated(
+  //   data: PayPalEventResponse,
+  // ): Promise<NextResponse>;
+  // export async function handleSubscriptionActivated(
+  //   data: any,
+  // ): Promise<NextResponse> {
   let subscriptionId = data.subscriptionId;
-  let email_address = data.email_address;
   let nextBillingDate = data.nextBillingDate;
   let lastPaymentDate = data.lastPaymentDate;
   let lastPaymentAmount = data.lastPaymentAmount;
+  let status = data.status;
 
-  if (data.id) {
-    subscriptionId = data.resource.id;
-    email_address = data.resource.subscriber.email_address;
-    nextBillingDate = new Date(data.resource.billing_info.next_billing_time);
-    lastPaymentDate = new Date(data.resource.billing_info.last_payment.time);
-    lastPaymentAmount = parseFloat(
-      data.resource.billing_info.last_payment.amount.value,
-    );
-  }
+  // if (data.id) {
+  //   subscriptionId = data.resource.id;
+  //   email_address = data.resource.subscriber.email_address;
+  //   nextBillingDate = new Date(data.resource.billing_info.next_billing_time);
+  //   lastPaymentDate = new Date(data.resource.billing_info.last_payment.time);
+  //   lastPaymentAmount = parseFloat(
+  //     data.resource.billing_info.last_payment.amount.value,
+  //   );
+  //   status = data.resource.status;
+  // }
 
-  const user = await prisma.appUser.findFirst({
-    where: { email: email_address },
+  const user = await prisma.appUserMetadata.findFirst({
+    where: {
+      userId: data.userId,
+    },
+    include: {
+      appUser: {
+        select: { userId: true },
+      },
+    },
   });
 
   if (!user) {
     Logger.error("User not found", "system-webhook", {
-      data: { email_address },
+      data: { data },
     });
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
@@ -59,8 +67,8 @@ export async function handleSubscriptionActivated(
     const subscriptionUpdate = await prisma.subscription.update({
       where: { subscriptionId },
       data: {
-        userId: user.id,
-        status: "active",
+        userId: user.userId,
+        status,
         nextBillingDate,
         lastPaymentDate,
         lastPaymentAmount,

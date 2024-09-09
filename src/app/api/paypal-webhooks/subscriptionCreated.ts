@@ -6,7 +6,9 @@ import { CreateSubscriptionBody, PayPalEventResponse } from "@/models/payment";
 export async function handleSubscriptionCreated(
   event: PayPalEventResponse,
 ): Promise<NextResponse>;
-export async function handleSubscriptionCreated(data: CreateSubscriptionBody): Promise<NextResponse>;
+export async function handleSubscriptionCreated(
+  data: CreateSubscriptionBody,
+): Promise<NextResponse>;
 
 export async function handleSubscriptionCreated(data: any) {
   try {
@@ -32,20 +34,9 @@ export async function handleSubscriptionCreated(data: any) {
         { message: "Subscription already exists", existingSubscription },
         { status: 200 },
       );
+    } else {
+      throw new Error("Subscription not found");
     }
-
-    const subscription = await prisma.subscription.create({
-      data: {
-        planId,
-        subscriptionId,
-        startDate,
-        status,
-      },
-    });
-    return NextResponse.json(
-      { message: "Subscription created successfully", subscription },
-      { status: 200 },
-    );
   } catch (error) {
     Logger.error("Error handling subscription created", "system-webhook", {
       data: { error },

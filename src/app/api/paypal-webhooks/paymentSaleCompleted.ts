@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "../_db/db";
-import Logger from "../../../loggerServer";
-import { PayPalSaleCompletedEvent } from "../../../models/payment";
+import prisma from "@/app/api/_db/db";
+import Logger from "@/loggerServer";
+import { PayPalSaleCompletedEvent } from "@/models/payment";
 
 export async function handlePaymentSaleCompleted(
   event: PayPalSaleCompletedEvent,
@@ -26,11 +26,6 @@ export async function handlePaymentSaleCompleted(
         paymentStatus: event.resource.state,
         paymentDate: new Date(event.resource.create_time),
       },
-    });
-
-    await prisma.subscription.update({
-      where: { subscriptionId: event.resource.billing_agreement_id },
-      data: { status: event.resource.state },
     });
 
     return NextResponse.json(

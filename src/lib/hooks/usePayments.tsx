@@ -12,7 +12,6 @@ export default function usePayments() {
     data: OnApproveData,
   ): Promise<SubscriptionId> => {
     try {
-      debugger;
       const result = await axios.post("/api/subscription/approve", { data });
       const subscriptionData = result.data;
 
@@ -73,7 +72,20 @@ export default function usePayments() {
       }
     } catch (error: any) {
       Logger.error("Error creating order", { error });
-      console.error(error);
+      throw error;
+    }
+  };
+
+  const createSubscription = async (subscriptionId: SubscriptionId) => {
+    try {
+      const result = await axios.post("/api/subscription", {
+        subscriptionId,
+      });
+      const subscription = result.data;
+      return subscription.id;
+    } catch (error: any) {
+      Logger.error("Error creating order", { error });
+      throw error;
     }
   };
 
@@ -101,6 +113,7 @@ export default function usePayments() {
   return {
     approveOrder,
     approveSubscription,
+    createSubscription,
     cancelOrder,
     createOrder,
     getSubscriptionPlans,

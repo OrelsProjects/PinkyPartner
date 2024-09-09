@@ -29,7 +29,12 @@ export async function POST(
         },
       });
 
-      // THE DEAL WAS COMPLETED. RUN YOUR LOGIC HERE.
+      await prisma.appUserMetadata.update({
+        where: { userId: session.user.userId },
+        data: {
+          paidStatus: "premium",
+        },
+      });
     }
 
     return NextResponse.json(captureResponse, { status: 200 });

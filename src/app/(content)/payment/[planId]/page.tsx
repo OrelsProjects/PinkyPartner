@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import usePayments from "@/lib/hooks/usePayments";
-import { OnApproveData, PayPalSubscriptionPlan } from "@/models/payment";
+import { OnApproveData } from "@/models/payment";
 import PaymentButtons from "../paymentButtons";
 import { Logger } from "@/logger";
 
@@ -14,8 +13,13 @@ export default function PaymentPage({
   params: { planId: string };
 }) {
   const [error, setError] = React.useState<string | null>(null);
-  const { approveOrder, cancelOrder, createOrder, approveSubscription } =
-    usePayments();
+  const {
+    approveOrder,
+    cancelOrder,
+    createOrder,
+    approveSubscription,
+    createSubscription,
+  } = usePayments();
 
   useEffect(() => {
     if (error) {
@@ -29,7 +33,10 @@ export default function PaymentPage({
     [],
   );
 
-  const handleCreate = async () => await createOrder(params.planId, 1);
+  const handleCreateOrder = async () => await createOrder(params.planId, 1);
+
+  const handleCreateSubscription = async (subscriptionId: string) =>
+    await createSubscription(subscriptionId);
 
   const handleApproveOrder = async (data: OnApproveData, actions: any) => {
     if (data.subscriptionID) {
@@ -52,20 +59,23 @@ export default function PaymentPage({
   return (
     <div className="flex flex-col gap-5">
       <PaymentButtons
+        subscription={isSubscription ? { planId: params.planId } : undefined}
         style={{
           color: "gold",
-          shape: "pill",
+          shape: "rect",
           layout: "vertical",
-          label: "pay",
+          label: isSubscription ? "subscribe" : "pay",
           height: 40,
         }}
         createSubscription={async (data, actions) => {
-          return actions.subscription.create({
+          const subscriptionId = await actions.subscription.create({
             plan_id: params.planId,
           });
+          await handleCreateSubscription(subscriptionId);
+          return subscriptionId;
         }}
         createOrder={async (data, actions) => {
-          const order = await handleCreate();
+          const order = await handleCreateOrder();
           return order;
         }}
         onApprove={async (data: OnApproveData, actions) => {
@@ -81,7 +91,6 @@ export default function PaymentPage({
           }
           setError(null);
         }}
-        subscription={isSubscription ? { planId: params.planId } : undefined}
       />
       <div className="flex flex-col gap-5">
         <span className="text-xl text-destructive">{error}</span>

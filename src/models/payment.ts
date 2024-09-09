@@ -201,7 +201,7 @@ export interface PayPalSubscriptionResource {
   };
   start_time: string;
   update_time: string;
-  billing_info: BillingInfo;
+  billing_info?: BillingInfo;
   links: PayPalLink[];
   id: string;
   plan_id: string;
@@ -229,6 +229,7 @@ export interface PayPalSubscriber {
       country_code: string;
     };
   };
+  payer_id?: string | null;
 }
 
 export interface BillingInfo {
@@ -303,3 +304,10 @@ export type OnApproveData = {
   subscriptionID?: string | null;
   authCode?: string | null;
 };
+
+export enum PayPalPaymentStatus {
+  APPROVAL_PENDING = "APPROVAL_PENDING",
+  COMPLETED = "COMPLETED",
+  ACTIVATE = "ACTIVATE",
+  CANCELLED = "CANCELLED",
+}

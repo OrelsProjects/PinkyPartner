@@ -3,7 +3,7 @@ import Obligation from "./obligation";
 
 export type UserId = string;
 export type DisplayName = string;
-export type UserPaidStatus = "premium" | "free";
+export type UserPaidStatus = "premium" | "free" | "suspended";
 
 export default interface AppUser {
   email: string;

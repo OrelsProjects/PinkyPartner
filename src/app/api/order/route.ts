@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
         id: cart.itemId,
       },
     });
+    
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }

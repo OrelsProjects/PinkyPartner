@@ -6,6 +6,7 @@ import { OnApproveData } from "@/models/payment";
 import { getSubscription, verifyResponse } from "../../_utils/payments";
 import { handleSubscriptionCreated } from "../../paypal-webhooks/subscriptionCreated";
 import { handleSubscriptionActivated } from "../../paypal-webhooks/subscriptionActivated";
+import prisma from "../../_db/db";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -25,12 +26,15 @@ export async function POST(req: NextRequest) {
         { status: 401 },
       );
     }
-    if (data.subscriptionID) {
-      const subscriptionData = await getSubscription(data.subscriptionID);
+
+    const subscriptionId = data.subscriptionID;
+
+    if (subscriptionId) {
+      const subscriptionData = await getSubscription(subscriptionId);
 
       const responseCreate = await handleSubscriptionCreated({
         status: subscriptionData.status,
-        subscriptionId: data.subscriptionID,
+        subscriptionId: subscriptionId,
         startDate: new Date(subscriptionData.start_time),
         planId: subscriptionData.plan_id,
       });
@@ -39,26 +43,41 @@ export async function POST(req: NextRequest) {
         return responseCreate;
       }
 
+      const next_billing_time =
+        subscriptionData.billing_info?.next_billing_time;
+      const last_payment = subscriptionData.billing_info?.last_payment;
+
+      await prisma.appUserMetadata.update({
+        where: { userId: session.user.userId },
+        data: {
+          payerId: data.payerID,
+        },
+      });
+
       const responseActivate = await handleSubscriptionActivated({
-        subscriptionId: data.subscriptionID,
-        email_address: subscriptionData.subscriber.email_address,
-        nextBillingDate: new Date(
-          subscriptionData.billing_info.next_billing_time,
-        ),
-        lastPaymentDate: new Date(
-          subscriptionData.billing_info.last_payment.time,
-        ),
-        lastPaymentAmount: parseFloat(
-          subscriptionData.billing_info.last_payment.amount.value,
-        ),
+        subscriptionId: subscriptionId,
+        userId: session.user.userId,
+        nextBillingDate: next_billing_time ? new Date(next_billing_time) : null,
+        lastPaymentDate: last_payment ? new Date(last_payment.time) : null,
+        lastPaymentAmount: last_payment?.amount?.value
+          ? parseFloat(last_payment.amount.value)
+          : null,
         planId: subscriptionData.plan_id,
         startDate: new Date(subscriptionData.start_time),
         status: subscriptionData.status,
       });
+      
       if (responseActivate.status !== 200) {
         return responseActivate;
       }
     }
+
+    await prisma.appUserMetadata.update({
+      where: { userId: session.user.userId },
+      data: {
+        paidStatus: "premium",
+      },
+    });
 
     return NextResponse.json(
       {
