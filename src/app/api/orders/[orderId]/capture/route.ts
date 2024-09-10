@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import { captureOrder } from "@/app/api/_utils/payments";
 import prisma from "@/app/api/_db/db";
+import { UserPaidStatus, UserPaidStatusEnum } from "@/models/appUser";
 
 export async function POST(
   req: NextRequest,
@@ -32,7 +33,7 @@ export async function POST(
       await prisma.appUserMetadata.update({
         where: { userId: session.user.userId },
         data: {
-          paidStatus: "premium",
+          paidStatus: UserPaidStatusEnum.Premium,
         },
       });
     }

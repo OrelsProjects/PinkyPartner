@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { FaArrowRightLong } from "react-icons/fa6";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import ShowContentContainer from "./showContentContainer";
 
 interface CardItem {

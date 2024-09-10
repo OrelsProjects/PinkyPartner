@@ -6,17 +6,17 @@ import { IoExitOutline as OptOut } from "react-icons/io5";
 import { FaUserPlus as Invite } from "react-icons/fa6";
 import { IoStatsChartOutline as Stats } from "react-icons/io5";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Contract } from "@prisma/client";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { ContractWithExtras } from "../../models/contract";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { ContractWithExtras } from "@/models/contract";
 
 interface ContractViewDropdownProps {
   className?: string;

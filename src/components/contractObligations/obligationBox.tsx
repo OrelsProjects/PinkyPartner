@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { cn } from "../../lib/utils";
-import { UserAvatar } from "../ui/avatar";
-import NotificationBadge from "../ui/notificationBadge";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/avatar";
+import NotificationBadge from "@/components/ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
 import { UsersIndicator } from "./usersIndicator";
-import { UserContractObligationData } from "../../models/userContractObligation";
+import { UserContractObligationData } from "@/models/userContractObligation";
 
 export const ObligationBox = ({
   obligation,

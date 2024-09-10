@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from "react";
-import { UserContractObligationData } from "../../models/userContractObligation";
-import { ContractWithExtras } from "../../models/contract";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
+import { UserContractObligationData } from "@/models/userContractObligation";
+import { ContractWithExtras } from "@/models/contract";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { toast } from "react-toastify";
-import { cn } from "../../lib/utils";
-import { useContracts } from "../../lib/hooks/useContracts";
-import { Skeleton } from "../ui/skeleton";
-import useNotifications from "../../lib/hooks/useNotifications";
-import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import { cn } from "@/lib/utils";
+import { useContracts } from "@/lib/hooks/useContracts";
+import { Skeleton } from "@/components/ui/skeleton";
+import useNotifications from "@/lib/hooks/useNotifications";
+import CantBeNudgedError from "@/models/errors/CantBeNudgedError";
 import {
   buildGroupedObligationsForContract,
   GroupedObligations,

@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TimesAWeek } from "../../../models/obligation";
+import { TimesAWeek } from "@/models/obligation";
 
 interface TimesAWeekDropdownProps {
   onSelect: (timesAWeek: TimesAWeek) => void;

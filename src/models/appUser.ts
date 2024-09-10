@@ -5,6 +5,12 @@ export type UserId = string;
 export type DisplayName = string;
 export type UserPaidStatus = "premium" | "free" | "suspended";
 
+export enum UserPaidStatusEnum {
+  Premium = "premium",
+  Free = "free",
+  Suspended = "suspended",
+}
+
 export default interface AppUser {
   email: string;
   userId: string;

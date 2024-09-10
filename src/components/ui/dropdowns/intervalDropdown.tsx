@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MdOutlineKeyboardArrowDown as ArrowDown } from "react-icons/md";
-import { ObligationRepeat } from "../../../models/obligation";
+import { ObligationRepeat } from "@/models/obligation";
 
 interface IntervalDropdownProps {
   onSelect: (interval: ObligationRepeat) => void;

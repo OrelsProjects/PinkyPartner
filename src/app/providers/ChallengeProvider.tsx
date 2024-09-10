@@ -3,7 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo } from "react";
 import ChallengeComponent from "../(content)/home/challengeComponent";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 
 export default function ChallengeProvider() {
   const searchParams = useSearchParams();

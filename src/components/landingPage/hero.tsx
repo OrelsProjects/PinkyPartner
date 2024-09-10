@@ -1,10 +1,10 @@
 import React from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import ShowContentContainer from "./showContentContainer";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { EventTracker } from "../../eventTracker";
-import CustomLink from "../ui/customLink";
+import { EventTracker } from "@/eventTracker";
+import CustomLink from "@/components/ui/customLink";
 
 interface HeroProps {}
 

@@ -1,5 +1,5 @@
-import { ContractWithExtras } from "../../models/contract";
-import { UserContractObligationData } from "../../models/userContractObligation";
+import { ContractWithExtras } from "@/models/contract";
+import { UserContractObligationData } from "@/models/userContractObligation";
 
 export type ContractId = string;
 export type ObligationId = string;

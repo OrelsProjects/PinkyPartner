@@ -4,18 +4,18 @@ import React, { useMemo } from "react";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
 } from "../accountabilityPartnerComponent";
-import { useContracts } from "../../lib/hooks/useContracts";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useContracts } from "@/lib/hooks/useContracts";
+import { useAppSelector } from "@/lib/hooks/redux";
 import { toast } from "react-toastify";
 import ContractViewComponent from "./contractViewComponent";
-import { ContractWithExtras } from "../../models/contract";
-import { Skeleton } from "../ui/skeleton";
-import { cn } from "../../lib/utils";
+import { ContractWithExtras } from "@/models/contract";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import InvitePartnerComponent from "../invitePartnerComponent";
 import ContractViewDropdown from "./contractViewDropdown";
 import OptOutComponent from "./optOutComponent";
 import EditContractComponent from "./editContractComponent";
-import { canAddUsersToContract } from "../../lib/utils/contractUtils";
+import { canAddUsersToContract } from "@/lib/utils/contractUtils";
 
 interface ContractComponentProps {
   contract: ContractWithExtras;

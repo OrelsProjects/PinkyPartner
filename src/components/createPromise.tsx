@@ -8,29 +8,29 @@ import {
   DialogContent,
   DialogFooter,
   DialogTrigger,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { MdOutlineEmojiEmotions as EmojiIcon } from "react-icons/md";
 import { useFormik } from "formik";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useMemo } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 import Obligation, { Days, TimesAWeek } from "../models/obligation";
-import { Button } from "./ui/button";
-import IntervalDropdown from "./ui/dropdowns/intervalDropdown";
+import { Button } from "@/components/ui/button";
+import IntervalDropdown from "@/components/ui/dropdowns/intervalDropdown";
 import {
   SectionContainer,
   SectionTitleContainer,
   SectionTitle,
   SectionTitleExplanation,
-} from "./ui/section";
-import { Input } from "./ui/input";
-import { DaysToText } from "../lib/utils/dateUtils";
-import { timesAWeekToText } from "../lib/utils/textUtils";
-import TimesAWeekDropdown from "./ui/dropdowns/timesAWeekDropdown";
-import { Checkbox } from "./ui/checkbox";
-import { useAppSelector } from "../lib/hooks/redux";
+} from "@/components/ui/section";
+import { Input } from "@/components/ui/input";
+import { DaysToText } from "@/lib/utils/dateUtils";
+import { timesAWeekToText } from "@/lib/utils/textUtils";
+import TimesAWeekDropdown from "@/components/ui/dropdowns/timesAWeekDropdown";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAppSelector } from "@/lib/hooks/redux";
 
 const Weekly = ({
   onChange,

@@ -1,7 +1,7 @@
 import React from "react";
 import { AccountabilityPartner } from "../models/appUser";
-import { Skeleton } from "./ui/skeleton";
-import { UserAvatar } from "./ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { UserAvatar } from "@/components/ui/avatar";
 
 export const AccountabilityPartnerComponentLoading = ({
   className,

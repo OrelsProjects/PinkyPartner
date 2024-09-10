@@ -3,19 +3,19 @@
 import React, { useEffect } from "react";
 import { messaging } from "../../../firebase.config";
 import { Messaging, onMessage } from "firebase/messaging";
-import useNotifications from "../../lib/hooks/useNotifications";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
+import useNotifications from "@/lib/hooks/useNotifications";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { usePathname } from "next/navigation";
 import {
   setNewObligations,
   setNewContracts,
   setShownContractNotification,
   NotificationType,
-} from "../../lib/features/notifications/notificationsSlice";
+} from "@/lib/features/notifications/notificationsSlice";
 import RequestPermissionDialog, {
   PermissionType,
 } from "../../components/requestPermissionDialog";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +25,8 @@ import {
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
 import { toast } from "react-toastify";
-import { canUseNotifications } from "../../lib/utils/notificationUtils";
-import { setForceFetch } from "../../lib/features/auth/authSlice";
+import { canUseNotifications } from "@/lib/utils/notificationUtils";
+import { setForceFetch } from "@/lib/features/auth/authSlice";
 
 const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
 

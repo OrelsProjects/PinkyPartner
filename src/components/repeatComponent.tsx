@@ -1,7 +1,7 @@
 import React from "react";
 import Obligation from "../models/obligation";
-import { dayNumberToName } from "../lib/utils/dateUtils";
-import { timesAWeekToText } from "../lib/utils/textUtils";
+import { dayNumberToName } from "@/lib/utils/dateUtils";
+import { timesAWeekToText } from "@/lib/utils/textUtils";
 
 interface RepeatComponentProps {
   obligation: Obligation;

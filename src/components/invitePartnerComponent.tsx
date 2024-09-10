@@ -7,16 +7,16 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from "react-share";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Button, ButtonVariants } from "./ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Button, ButtonVariants } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import { EventTracker } from "../eventTracker";
-import { cn } from "../lib/utils";
+import { EventTracker } from "@/eventTracker";
+import { cn } from "@/lib/utils";
 import { ContractWithExtras } from "../models/contract";
 import { FaCopy } from "react-icons/fa";
 import { UserPaidStatus } from "../models/appUser";
-import { generateReferralUrl } from "../lib/utils/referralUtils";
-import { canAddUsersToContract } from "../lib/utils/contractUtils";
+import { generateReferralUrl } from "@/lib/utils/referralUtils";
+import { canAddUsersToContract } from "@/lib/utils/contractUtils";
 
 interface InvitePartnerComponentProps {
   id?: string;

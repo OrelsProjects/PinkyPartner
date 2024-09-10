@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../_db/db";
+import prisma from "@/app/api/_db/db";
 import Logger from "@/loggerServer";
 import { authOptions } from "../../../../authOptions";
 import { Contract, Obligation } from "@prisma/client";
-import * as ClientContract from "../../../../models/contract";
+import * as ClientContract from "@/models/contract";
 import { formatObligations } from "../../_utils";
-import { ANONYMOUS_USER_ID } from "../../../../lib/utils/consts";
+import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";
 import loggerServer from "@/loggerServer";
 import moment from "moment";
 

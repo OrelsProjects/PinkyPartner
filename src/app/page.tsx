@@ -1,20 +1,20 @@
 "use client";
 
 import React from "react";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useAppDispatch } from "../lib/hooks/redux";
-import { setUser } from "../lib/features/auth/authSlice";
-import useOnboarding from "../lib/hooks/useOnboarding";
-import DummyObligationBoxMobile from "../components/landingPage/dummyObligationBoxMobile";
-import Walkthrough from "../components/landingPage/walkthrough";
-import AvailableOn from "../components/landingPage/availableOn";
-import ShowContentContainer from "../components/landingPage/showContentContainer";
-import DummyObligationBox from "../components/landingPage/dummyObligationBox";
-import { isMobilePhone } from "../lib/utils/notificationUtils";
-import Hero from "../components/landingPage/hero";
-import { EventTracker } from "../eventTracker";
-import CustomLink from "../components/ui/customLink";
+import { useAppDispatch } from "@/lib/hooks/redux";
+import { setUser } from "@/lib/features/auth/authSlice";
+import useOnboarding from "@/lib/hooks/useOnboarding";
+import DummyObligationBoxMobile from "@/components/landingPage/dummyObligationBoxMobile";
+import Walkthrough from "@/components/landingPage/walkthrough";
+import AvailableOn from "@/components/landingPage/availableOn";
+import ShowContentContainer from "@/components/landingPage/showContentContainer";
+import DummyObligationBox from "@/components/landingPage/dummyObligationBox";
+import { isMobilePhone } from "@/lib/utils/notificationUtils";
+import Hero from "@/components/landingPage/hero";
+import { EventTracker } from "@/eventTracker";
+import CustomLink from "@/components/ui/customLink";
 
 const Header = ({
   onGetStarted,

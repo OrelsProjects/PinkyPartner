@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { DefaultSession, SessionUser, getServerSession } from "next-auth";
-import prisma from "../_db/db";
+import prisma from "@/app/api/_db/db";
 import { authOptions } from "../../../authOptions";
-import { ContractWithExtras, CreateContract } from "../../../models/contract";
+import { ContractWithExtras, CreateContract } from "@/models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
-import { ANONYMOUS_USER_ID } from "../../../lib/utils/consts";
+import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";
 import { Obligation } from "@prisma/client";
 
 const getAnonymousUser = async (): Promise<

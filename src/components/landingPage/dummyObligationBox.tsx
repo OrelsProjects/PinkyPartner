@@ -1,14 +1,14 @@
 import React, { useRef, useState } from "react";
 import { ObligationBox } from "../contractObligations/obligationBox";
-import DeviceMockup from "../ui/deviceMockup";
+import DeviceMockup from "@/components/ui/deviceMockup";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import NotificationMockup, {
   NotificationMockupProps,
 } from "./notificationMockup";
-import { EventTracker } from "../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 
 const OREL_IMAGE_URL =
   "https://lh3.googleusercontent.com/a/ACg8ocJuQcn9RGs6JLIUTa4TJzH4CQKVQatTZE4zIlMqxe9ec8wlXJttvA=s96-c";

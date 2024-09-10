@@ -41,9 +41,9 @@ export async function POST(req: NextRequest) {
       // case "BILLING.SUBSCRIPTION.ACTIVATED":
       //   response = await handleSubscriptionActivated(event);
       //   break;
-      // case "BILLING.SUBSCRIPTION.CANCELLED":
-      //   response = await handleSubscriptionCancelled(event);
-      //   break;
+      case "BILLING.SUBSCRIPTION.CANCELLED":
+        response = await handleSubscriptionCancelled(event);
+        break;
       // case "BILLING.SUBSCRIPTION.PAYMENT.FAILED":
       //   response = await handlePaymentFailed(event);
       //   break;

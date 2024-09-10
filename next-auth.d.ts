@@ -1,6 +1,5 @@
 import { DefaultSession } from "next-auth";
-import { UserPaidStatus } from "./src/lib/features/auth/authSlice";
-import { AppUserMetadata, AppUserSettings } from "./src/models/appUser";
+import { AppUserMetadata, AppUserSettings } from "@/models/appUser";
 
 declare module "next-auth" {
   interface SessionUser {

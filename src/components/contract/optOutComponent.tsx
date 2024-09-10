@@ -1,17 +1,15 @@
-import { Contract } from "@prisma/client";
 import React, { useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { EventTracker } from "../../eventTracker";
-import { Button } from "../ui/button";
-import { useContracts } from "../../lib/hooks/useContracts";
-import { ContractWithExtras } from "../../models/contract";
+} from "@/components/ui/dialog";
+import { EventTracker } from "@/eventTracker";
+import { Button } from "@/components/ui/button";
+import { useContracts } from "@/lib/hooks/useContracts";
+import { ContractWithExtras } from "@/models/contract";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppSelector } from "@/lib/hooks/redux";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface OptOutComponentProps {

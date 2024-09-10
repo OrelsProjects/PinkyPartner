@@ -3,7 +3,7 @@ import { Logger } from "@/logger";
 import {
   GetNextUpObligationsResponse,
   UserContractObligationData,
-} from "../../models/userContractObligation";
+} from "@/models/userContractObligation";
 import { setLoadingData } from "../features/contracts/contractsSlice";
 import { setPartnersData } from "../features/obligations/obligationsSlice";
 

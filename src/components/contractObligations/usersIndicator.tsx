@@ -1,12 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { cn } from "../../lib/utils";
-import { UserAvatar } from "../ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "../ui/dialog";
+import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/avatar";
 import ExtraPartnersComponent from "./extraPartnersComponent";
 
 export const ObligationStatus = ({

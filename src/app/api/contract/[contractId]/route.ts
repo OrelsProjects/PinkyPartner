@@ -5,7 +5,7 @@ import prisma from "@/app/api/_db/db";
 import { authOptions } from "@/authOptions";
 import { Contract, Obligation } from "@prisma/client";
 import { ContractType, ContractWithExtras } from "@/models/contract";
-import { AccountabilityPartner } from "../../../../models/appUser";
+import { AccountabilityPartner } from "@/models/appUser";
 
 type ContractUpdateBody = Pick<Contract, "title" | "description">;
 

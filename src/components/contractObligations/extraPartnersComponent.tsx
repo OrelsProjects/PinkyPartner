@@ -4,8 +4,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "../ui/dialog";
-import { cn } from "../../lib/utils";
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import {
   ObligationStatus,
   UserIndicator,

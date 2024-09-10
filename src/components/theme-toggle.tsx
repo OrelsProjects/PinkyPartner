@@ -3,9 +3,9 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Switch } from "./ui/switch";
-import { cn } from "../lib/utils";
-import { EventTracker } from "../eventTracker";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
+import { EventTracker } from "@/eventTracker";
 
 interface ThemeToggleProps {
   className?: string;

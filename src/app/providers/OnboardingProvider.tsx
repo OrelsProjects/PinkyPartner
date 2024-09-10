@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { Button } from "../../components/ui/button";
 import {
@@ -11,8 +11,8 @@ import {
   showBackground,
   backgroundForNextStage,
   timeDelays,
-} from "../../lib/consts/onboarding";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+} from "@/lib/consts/onboarding";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 import { useEffect, useMemo } from "react";
 import {
   Dialog,
@@ -21,13 +21,13 @@ import {
   DialogFooter,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { EventTracker } from "../../eventTracker";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { EventTracker } from "@/eventTracker";
+import { useAppSelector } from "@/lib/hooks/redux";
 import Link from "next/link";
 import ObligationCheckbox from "../../components/contractObligations/obligationCheckbox";
 import React from "react";
 import { toast } from "react-toastify";
-import { useCustomRouter } from "../../lib/hooks/useCustomRouter";
+import { useCustomRouter } from "@/lib/hooks/useCustomRouter";
 import CustomLink from "../../components/ui/customLink";
 
 export default function OnboardingProvider() {

@@ -2,14 +2,14 @@
 
 import React, { useMemo } from "react";
 import { Button } from "../../../components/ui/button";
-import { useContracts } from "../../../lib/hooks/useContracts";
+import { useContracts } from "@/lib/hooks/useContracts";
 import ContractComponent, {
   ContractComponentLoading,
 } from "../../../components/contract/contractComponent";
 import { FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useAppSelector } from "../../../lib/hooks/redux";
+import { useAppSelector } from "@/lib/hooks/redux";
 import CustomLink from "../../../components/ui/customLink";
 
 interface ContractsProps {}

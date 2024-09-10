@@ -3,7 +3,7 @@ import {
   CreateUserContractObligation,
   ObligationsToContractObligation,
 } from "../../obligation/_utils";
-import prisma from "../../_db/db";
+import prisma from "@/app/api/_db/db";
 
 /**
  * Create contract obligations for the week

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { AccountabilityPartner } from "../../models/appUser";
+import { AccountabilityPartner } from "@/models/appUser";
 
 interface SearchUserHook {
   searchResult: AccountabilityPartner[];

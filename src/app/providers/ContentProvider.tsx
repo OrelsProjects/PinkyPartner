@@ -2,13 +2,13 @@
 
 import * as React from "react";
 import "react-toastify/dist/ReactToastify.css";
-import SizeContext from "../../lib/context/sizeContext";
+import SizeContext from "@/lib/context/sizeContext";
 import NavigationBar from "../../components/navigationBar";
 import { ThemeProvider } from "./ThemeProvider";
 import * as toast from "react-toastify";
 import SettingsComponent from "../../components/settings/settings";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { cn } from "../../lib/utils";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import LiveChatProvider from "./LiveChatProvider";
 

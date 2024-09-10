@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { useAppSelector } from "../../../lib/hooks/redux";
+import { useAppSelector } from "@/lib/hooks/redux";
 import { Button } from "../../../components/ui/button";
-import { EventTracker } from "../../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
 import CustomLink from "../../../components/ui/customLink";
 

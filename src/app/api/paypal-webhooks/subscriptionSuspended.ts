@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/api/_db/db";
 import Logger from "@/loggerServer";
 import { PayPalEventResponse } from "@/models/payment";
+import { UserPaidStatusEnum } from "@/models/appUser";
 
 export async function handleSubscriptionSuspended(event: PayPalEventResponse) {
   try {
@@ -29,7 +30,7 @@ export async function handleSubscriptionSuspended(event: PayPalEventResponse) {
           userId: subscription.appUser.userId,
         },
         data: {
-          paidStatus: "suspended",
+          paidStatus: UserPaidStatusEnum.Suspended,
         },
       });
     }

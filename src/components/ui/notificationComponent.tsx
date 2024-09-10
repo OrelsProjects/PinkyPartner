@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { NotificationData } from "../../lib/features/notifications/notificationsSlice";
+import { NotificationData } from "@/lib/features/notifications/notificationsSlice";
 
 interface NotificationComponentProps {
   notification: NotificationData;

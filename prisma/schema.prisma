@@ -59,7 +59,7 @@ model AppUserMetadata {
   pushToken       String?
   pushTokenMobile String?
 
-  paidStatus String? // "free" | "premium"
+  paidStatus String? @default("free") // free, paid, suspended
 
   onboardingCompleted Boolean @default(false)
 

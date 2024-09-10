@@ -2,13 +2,13 @@
 
 import axios from "axios";
 import React, { useEffect, useRef } from "react";
-import { UserData } from "../../models/appUser";
-import { useObligations } from "../../lib/hooks/useObligations";
-import { useContracts } from "../../lib/hooks/useContracts";
-import useAuth from "../../lib/hooks/useAuth";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
+import { UserData } from "@/models/appUser";
+import { useObligations } from "@/lib/hooks/useObligations";
+import { useContracts } from "@/lib/hooks/useContracts";
+import useAuth from "@/lib/hooks/useAuth";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { Logger } from "../../logger";
-import { setForceFetch } from "../../lib/features/auth/authSlice";
+import { setForceFetch } from "@/lib/features/auth/authSlice";
 
 export default function DataProvider({
   children,

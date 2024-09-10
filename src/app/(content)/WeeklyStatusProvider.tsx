@@ -3,8 +3,8 @@
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
-import { StatusReport } from "../../models/statusReport";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import { StatusReport } from "@/models/statusReport";
 import {
   Dialog,
   DialogClose,
@@ -15,7 +15,7 @@ import {
 import {
   addStatusReport,
   setShowStatusOfContractId,
-} from "../../lib/features/status/statusSlice";
+} from "@/lib/features/status/statusSlice";
 import { toast } from "react-toastify";
 
 const StatusReportDialog = ({

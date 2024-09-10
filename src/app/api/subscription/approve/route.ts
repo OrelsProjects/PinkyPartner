@@ -3,10 +3,11 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import { OnApproveData } from "@/models/payment";
-import { getSubscription, verifyResponse } from "../../_utils/payments";
-import { handleSubscriptionCreated } from "../../paypal-webhooks/subscriptionCreated";
-import { handleSubscriptionActivated } from "../../paypal-webhooks/subscriptionActivated";
-import prisma from "../../_db/db";
+import { getSubscription, verifyResponse } from "@/app/api/_utils/payments";
+import { handleSubscriptionCreated } from "@/app/api/paypal-webhooks/subscriptionCreated";
+import { handleSubscriptionActivated } from "@/app/api/paypal-webhooks/subscriptionActivated";
+import prisma from "@/app/api/_db/db";
+import { UserPaidStatusEnum } from "@/models/appUser";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
         startDate: new Date(subscriptionData.start_time),
         status: subscriptionData.status,
       });
-      
+
       if (responseActivate.status !== 200) {
         return responseActivate;
       }
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
     await prisma.appUserMetadata.update({
       where: { userId: session.user.userId },
       data: {
-        paidStatus: "premium",
+        paidStatus: UserPaidStatusEnum.Premium,
       },
     });
 

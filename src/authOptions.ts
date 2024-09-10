@@ -4,22 +4,22 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import AppleProvider from "next-auth/providers/apple";
-import prisma from "./app/api/_db/db";
+import prisma from "@/app/api/_db/db";
 import { hash } from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { InvalidCredentialsError } from "./models/errors/InvalidCredentialsError";
-import { UnknownUserError } from "./models/errors/UnknownUserError";
-import UserAlreadyExistsError from "./models/errors/UserAlreadyExistsError";
+import { InvalidCredentialsError } from "@/models/errors/InvalidCredentialsError";
+import { UnknownUserError } from "@/models/errors/UnknownUserError";
+import UserAlreadyExistsError from "@/models/errors/UserAlreadyExistsError";
 import { cookies } from "next/headers";
-import loggerServer from "./loggerServer";
+import loggerServer from "@/loggerServer";
 import { ReferralOptions } from "global";
-import { createWeeksContractObligations } from "./app/api/contract/_utils/contractUtils";
-import { ContractFullError } from "./models/errors/ContractFullError";
-import { UserNotPremiumError } from "./models/errors/UserNotPremiumError";
-import { UserPaidStatus } from "./models/appUser";
+import { createWeeksContractObligations } from "@/app/api/contract/_utils/contractUtils";
+import { ContractFullError } from "@/models/errors/ContractFullError";
+import { UserNotPremiumError } from "@/models/errors/UserNotPremiumError";
+import { UserPaidStatus, UserPaidStatusEnum } from "@/models/appUser";
 import { generateReferralCode } from "@/lib/utils/referralUtils";
-import { ContractExistsForUserError } from "./models/errors/ContractExistsForUserError";
-import { canAddUsersToContract } from "./lib/utils/contractUtils";
+import { ContractExistsForUserError } from "@/models/errors/ContractExistsForUserError";
+import { canAddUsersToContract } from "@/lib/utils/contractUtils";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -83,14 +83,10 @@ export const createNewUserContract = async (
   });
 
   const currentUserContractsLength = currentUserContracts.length;
+  const paidStatus = creator?.paidStatus as UserPaidStatus;
 
-  if (
-    !canAddUsersToContract(
-      currentUserContractsLength,
-      creator?.paidStatus as UserPaidStatus,
-    )
-  ) {
-    if (creator?.paidStatus !== "premium") {
+  if (!canAddUsersToContract(currentUserContractsLength, paidStatus)) {
+    if (paidStatus !== UserPaidStatusEnum.Premium) {
       throw new UserNotPremiumError();
     } else {
       throw new ContractFullError();

@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import Divider from "../../../components/ui/divider";
 import { Button } from "../../../components/ui/button";
-import useAuth from "../../../lib/hooks/useAuth";
+import useAuth from "@/lib/hooks/useAuth";
 import { toast } from "react-toastify";
 import InvitePartnerComponent from "../../../components/invitePartnerComponent";
 import { ThemeToggle } from "../../../components/theme-toggle";
-import { EventTracker } from "../../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 import { Switch } from "../../../components/ui/switch";
 import axios from "axios";
-import useNotifications from "../../../lib/hooks/useNotifications";
-import { updateUserSettings } from "../../../lib/features/auth/authSlice";
-import { canUseNotifications } from "../../../lib/utils/notificationUtils";
+import useNotifications from "@/lib/hooks/useNotifications";
+import { updateUserSettings } from "@/lib/features/auth/authSlice";
+import { canUseNotifications } from "@/lib/utils/notificationUtils";
 import { Input } from "../../../components/ui/input";
 import { HiPencil } from "react-icons/hi2";
 import { FaCheck } from "react-icons/fa6";

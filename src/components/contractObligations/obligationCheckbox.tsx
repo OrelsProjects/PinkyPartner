@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo } from "react";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DotLottiePlayer } from "@dotlottie/react-player";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { selectAuth } from "../../lib/features/auth/authSlice";
-import { cn } from "../../lib/utils";
-import { useObligations } from "../../lib/hooks/useObligations";
-import { UserContractObligationData } from "../../models/userContractObligation";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { selectAuth } from "@/lib/features/auth/authSlice";
+import { cn } from "@/lib/utils";
+import { useObligations } from "@/lib/hooks/useObligations";
+import { UserContractObligationData } from "@/models/userContractObligation";
 
 interface ObligationCheckboxProps {
   obligation?: UserContractObligationData | null;

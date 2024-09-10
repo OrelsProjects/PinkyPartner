@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { ContractWithExtras } from "@/models/contract";
 import Obligation from "@/models/obligation";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
 import { timesAWeekToText } from "@/lib/utils/textUtils";
 import {
@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/section";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
-import { UserPaidStatus } from "../../models/appUser";
-import { getMaxParticipantsInContract } from "../../lib/utils/contractUtils";
+import { UserPaidStatus } from "@/models/appUser";
+import { getMaxParticipantsInContract } from "@/lib/utils/contractUtils";
 
 interface ContractViewComponentProps {
   contract: ContractWithExtras;

@@ -2,9 +2,9 @@ import React from "react";
 import ShowContentContainer from "./showContentContainer";
 import Image from "next/image";
 import Link from "next/link";
-import useOnboarding from "../../lib/hooks/useOnboarding";
-import { EventTracker } from "../../eventTracker";
-import CustomLink from "../ui/customLink";
+import useOnboarding from "@/lib/hooks/useOnboarding";
+import { EventTracker } from "@/eventTracker";
+import CustomLink from "@/components/ui/customLink";
 
 interface AvailableOnProps {}
 

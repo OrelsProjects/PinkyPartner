@@ -4,7 +4,7 @@ import _ from "lodash";
 import AppUser, {
   AppUserSettings,
   UserPaidStatus,
-} from "../../../models/appUser";
+} from "@/models/appUser";
 
 export type AuthStateType =
   | "anonymous"

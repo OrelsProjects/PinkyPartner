@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import Logger from "../../../loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../authOptions";
-import prisma from "../_db/db";
+import prisma from "@/app/api/_db/db";
 import { messaging } from "../../../../firebase.config.admin";
-import { NotificationData } from "../../../lib/features/notifications/notificationsSlice";
+import { NotificationData } from "@/lib/features/notifications/notificationsSlice";
 
 const MIN_NUDGE_TIME = 4 * 60 * 60 * 1000; // 4 hours
 

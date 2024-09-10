@@ -3,12 +3,12 @@
 import React, { ElementType } from "react";
 import Obligation from "../models/obligation";
 import { FiMinusCircle as Minus } from "react-icons/fi";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 import RepeatComponent from "./repeatComponent";
-import { Skeleton } from "./ui/skeleton";
-import { cn } from "../lib/utils";
-import { dateToDayString, dateToHourMinute } from "../lib/utils/dateUtils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { dateToDayString, dateToHourMinute } from "@/lib/utils/dateUtils";
 import AccountabilityPartnerComponent from "./accountabilityPartnerComponent";
 
 interface ObligationProps {

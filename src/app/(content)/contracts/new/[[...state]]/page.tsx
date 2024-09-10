@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import { CreateContractForm } from "@/models/contract";
-import { AccountabilityPartner } from "@/models/appUser";
+import { AccountabilityPartner, UserPaidStatusEnum } from "@/models/appUser";
 import useSearchUser from "@/lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,6 @@ import { useAppSelector } from "@/lib/hooks/redux";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useContracts } from "@/lib/hooks/useContracts";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
 } from "@/components/accountabilityPartnerComponent";
@@ -517,7 +516,7 @@ const CreateContractPage = ({ params }: { params: { state: string[] } }) => {
                     </PopoverContent>
                   </Popover>
                 </SectionContainer>
-                {user?.meta?.paidStatus === "premium" && (
+                {user?.meta?.paidStatus === UserPaidStatusEnum.Premium && (
                   <SectionContainer>
                     <div className="h-fit w-fit flex flex-row gap-2 justify-center items-center">
                       <Checkbox

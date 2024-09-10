@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 import { usePathname } from "next/navigation";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface ProductHuntProviderProps {}
 

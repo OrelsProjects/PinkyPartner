@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Button } from "../components/ui/button";
-import { useCustomRouter } from "../lib/hooks/useCustomRouter";
+import { Button } from "@/components/ui/button";
+import { useCustomRouter } from "@/lib/hooks/useCustomRouter";
 
 const NotFound = () => {
   const router = useCustomRouter();

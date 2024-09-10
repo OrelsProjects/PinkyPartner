@@ -3,7 +3,7 @@ import Logger from "../../../loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import { createOrder } from "../_utils/payments";
-import prisma from "../_db/db";
+import prisma from "@/app/api/_db/db";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);

@@ -4,10 +4,10 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { Button } from "./ui/button";
-import { EventTracker } from "../eventTracker";
+import { Button } from "@/components/ui/button";
+import { EventTracker } from "@/eventTracker";
 
 const titlesMap: Record<PermissionType, string> = {
   notifications: "Make the most out of PinkyPartner",

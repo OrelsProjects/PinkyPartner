@@ -15,7 +15,7 @@ import { createWeeksContractObligations } from "../../contract/_utils/contractUt
 import moment from "moment";
 import loggerServer from "@/loggerServer";
 import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";
-import { ContractType } from "../../../../models/contract";
+import { ContractType } from "@/models/contract";
 
 export async function GET(
   req: NextRequest,

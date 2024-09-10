@@ -1,14 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "react-day-picker";
 import { FaBell } from "react-icons/fa6";
-import { cn } from "../../lib/utils";
-import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
-import { ContractWithExtras } from "../../models/contract";
-import { UserContractObligationData } from "../../models/userContractObligation";
+import { cn } from "@/lib/utils";
+import { getWeekRangeFormatted } from "@/lib/utils/dateUtils";
+import { ContractWithExtras } from "@/models/contract";
+import { UserContractObligationData } from "@/models/userContractObligation";
 import ContractViewComponent from "../contract/contractViewComponent";
 import ContractViewDropdown from "../contract/contractViewDropdown";
 import SendNudgeDialog from "../sendNudgeDialog";
-import Loading from "../ui/loading";
+import Loading from "@/components/ui/loading";
 import {
   GroupObligationsUserData,
   GroupObligationsPartnerData,
@@ -16,14 +16,14 @@ import {
   GroupedObligations,
   GroupedObligationsData,
 } from "./_utils";
-import { setShowStatusOfContractId } from "../../lib/features/status/statusSlice";
+import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
 import ObligationsComponent from "./contractObligation";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
-import { useContracts } from "../../lib/hooks/useContracts";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import { useContracts } from "@/lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import React, { useCallback, useMemo } from "react";
-import useNotifications from "../../lib/hooks/useNotifications";
-import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import useNotifications from "@/lib/hooks/useNotifications";
+import CantBeNudgedError from "@/models/errors/CantBeNudgedError";
 
 /**
  * 

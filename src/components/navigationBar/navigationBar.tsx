@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { NavigationBarItem, BottomBarItems } from "./_consts";
-import { cn } from "../../lib/utils";
-import NotificationBadge from "../ui/notificationBadge";
-import useNotifications from "../../lib/hooks/useNotifications";
+import { cn } from "@/lib/utils";
+import NotificationBadge from "@/components/ui/notificationBadge";
+import useNotifications from "@/lib/hooks/useNotifications";
 import CustomLink from "@/components/ui/customLink";
 import Head from "next/head";
 

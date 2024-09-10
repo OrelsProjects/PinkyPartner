@@ -1,8 +1,9 @@
 import React from "react";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { UserAvatar } from "../ui/avatar";
-import { cn } from "../../lib/utils";
-import CustomLink from "../ui/customLink";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { UserAvatar } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import CustomLink from "@/components/ui/customLink";
+import { UserPaidStatusEnum } from "@/models/appUser";
 
 interface SettingsComponentProps {}
 const SettingsComponent: React.FC<SettingsComponentProps> = () => {
@@ -20,7 +21,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
               "w-10 h-10 md:hover:shadow-lg md:hover:cursor-pointer rounded-full",
               {
                 "border-[2px] border-primary":
-                  user?.meta?.paidStatus === "premium",
+                  user?.meta?.paidStatus === UserPaidStatusEnum.Premium,
               },
             )}
             hideTooltip
