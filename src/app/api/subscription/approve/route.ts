@@ -48,13 +48,6 @@ export async function POST(req: NextRequest) {
         subscriptionData.billing_info?.next_billing_time;
       const last_payment = subscriptionData.billing_info?.last_payment;
 
-      await prisma.appUserMetadata.update({
-        where: { userId: session.user.userId },
-        data: {
-          payerId: data.payerID,
-        },
-      });
-
       const responseActivate = await handleSubscriptionActivated({
         subscriptionId: subscriptionId,
         userId: session.user.userId,
