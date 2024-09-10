@@ -53,7 +53,7 @@ model AppUser {
 model AppUserMetadata {
   appUserMetadataId String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @unique
-  referralCode      String?
+  referralCode      String? @unique
   referredBy        String?
 
   pushToken       String?

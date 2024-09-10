@@ -117,9 +117,14 @@ const ContractComponent: React.FC<ContractComponentProps> = ({ contract }) => {
       <div className="absolute top-1.5 right-0.5">
         <ContractViewDropdown
           onInvite={
-            canAddUsersToContract(contract, user?.meta?.paidStatus) &&
-            contract.contractId !== "temp"
-              ? () => setShowInvite(true)
+            contract.type
+              ? canAddUsersToContract(
+                  contract.type,
+                  contract.contractees.length,
+                  user?.meta?.paidStatus,
+                ) && contract.contractId !== "temp"
+                ? () => setShowInvite(true)
+                : undefined
               : undefined
           }
           contract={contract}

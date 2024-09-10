@@ -20,6 +20,8 @@ import { UserPaidStatus, UserPaidStatusEnum } from "@/models/appUser";
 import { generateReferralCode } from "@/lib/utils/referralUtils";
 import { ContractExistsForUserError } from "@/models/errors/ContractExistsForUserError";
 import { canAddUsersToContract } from "@/lib/utils/contractUtils";
+import { ContractNotFoundError } from "@/models/errors/ContractNotFoundError";
+import { ContractType } from "@/models/contract";
 
 const getName = (name?: string, email?: string) => {
   if (name) {
@@ -60,32 +62,49 @@ export const createNewUserContract = async (
   userId: string,
   contractId: string,
 ) => {
-  const currentUserContracts = await prisma.userContract.findMany({
+  const currentUserContract = await prisma.userContract.findFirst({
     where: {
       contractId,
     },
     include: {
       contract: {
         select: {
+          _count: {
+            select: {
+              userContracts: true,
+            },
+          },
           creatorId: true,
+          type: true,
         },
       },
     },
   });
 
+  if (!currentUserContract) {
+    throw new ContractNotFoundError();
+  }
+
   const creator = await prisma.appUserMetadata.findFirst({
     where: {
-      userId: currentUserContracts[0]?.contract?.creatorId, // Legit because we are sure that there's only 1 contract
+      userId: currentUserContract.contract.creatorId, // Legit because we are sure that there's only 1 contract
     },
     select: {
       paidStatus: true,
     },
   });
 
-  const currentUserContractsLength = currentUserContracts.length;
+  const currentUserContractsLength =
+    currentUserContract.contract._count.userContracts;
   const paidStatus = creator?.paidStatus as UserPaidStatus;
 
-  if (!canAddUsersToContract(currentUserContractsLength, paidStatus)) {
+  if (
+    !canAddUsersToContract(
+      currentUserContract.contract.type as ContractType || "contract",
+      currentUserContractsLength,
+      paidStatus,
+    )
+  ) {
     if (paidStatus !== UserPaidStatusEnum.Premium) {
       throw new UserNotPremiumError();
     } else {

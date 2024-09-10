@@ -37,6 +37,7 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
   contract,
   className,
 }) => {
+  console.log("onInvite", onInvite);
   const { user } = useAppSelector(state => state.auth);
 
   const isOwner = useMemo(
@@ -44,11 +45,20 @@ const ContractViewDropdown: React.FC<ContractViewDropdownProps> = ({
     [contract, user],
   );
 
-  const showInvite = useMemo(() => isOwner && onInvite, [isOwner, onInvite]);
-  const showView = useMemo(() => onView, [onView]);
-  const showOptOut = useMemo(() => onOptOut, [onOptOut]);
-  const showEdit = useMemo(() => onEdit, [onEdit]);
-  const showStats = useMemo(() => onShowStats, [onShowStats]);
+  const isChallenge = useMemo(() => contract?.type === "challenge", [contract]);
+
+  const showInvite = useMemo(
+    () => (isOwner || isChallenge) && onInvite !== undefined,
+    [isOwner, onInvite],
+  );
+  const showView = useMemo(() => onView !== undefined, [onView]);
+  const showOptOut = useMemo(() => onOptOut !== undefined, [onOptOut]);
+  const showEdit = useMemo(() => onEdit !== undefined, [onEdit]);
+  const showStats = useMemo(() => onShowStats !== undefined, [onShowStats]);
+
+  console.log("Show invite", showInvite);
+  console.log("isChallenge", isChallenge);
+  console.log("onInvite", onInvite);
 
   return (
     <DropdownMenu>

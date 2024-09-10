@@ -138,7 +138,15 @@ const InvitePartnerComponent: React.FC<InvitePartnerComponentProps> = ({
     return;
   }
 
-  if (!canAddUsersToContract(contract, paidStatus)) {
+  if (
+    !contract ||
+    !contract.type ||
+    !canAddUsersToContract(
+      contract.type,
+      contract.contractees.length,
+      paidStatus,
+    )
+  ) {
     return;
   }
 

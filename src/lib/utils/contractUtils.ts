@@ -1,20 +1,22 @@
 import { UserPaidStatus, UserPaidStatusEnum } from "@/models/appUser";
-import { ContractWithExtras } from "@/models/contract";
+import Contract, { ContractType, ContractWithExtras } from "@/models/contract";
 
 const MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM = 999;
 const MAX_PARTICIPANTS_IN_CONTRACT_FREE = 1;
 
 export function canAddUsersToContract(
-  value?: number | ContractWithExtras,
+  contractType: ContractType,
+  contracteesCount: number,
   paidStatus?: UserPaidStatus,
 ) {
-  if (!value) {
+  if (!contracteesCount) {
     return false;
   }
-  const contracteesCount =
-    typeof value === "number" ? value : value.contractees.length;
 
-  if (paidStatus === UserPaidStatusEnum.Premium) {
+  if (
+    paidStatus === UserPaidStatusEnum.Premium ||
+    contractType === "challenge"
+  ) {
     return contracteesCount < MAX_PARTICIPANTS_IN_CONTRACT_PREMIUM;
   }
   return contracteesCount < MAX_PARTICIPANTS_IN_CONTRACT_FREE;

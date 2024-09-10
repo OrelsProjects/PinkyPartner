@@ -66,7 +66,7 @@ export async function PATCH(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { contractId: string } },
+  { params }: { params: { contractId: string; referralCode?: string[] } },
 ) {
   const session = await getServerSession(authOptions);
   // if (!session) {
@@ -104,10 +104,28 @@ export async function GET(
         { status: 404 },
       );
     }
+    let referrer = session?.user.name;
+    if (params.referralCode && params.referralCode.length > 0) {
+      const newReferrer = await prisma.appUserMetadata.findUnique({
+        where: {
+          referralCode: params.referralCode[0],
+        },
+        include: {
+          appUser: {
+            select: {
+              displayName: true,
+            },
+          },
+        },
+      });
+      if (newReferrer) {
+        referrer = newReferrer.appUser.displayName;
+      }
+    }
 
     const contractees = contract.userContracts.map(userContract => ({
       userId: userContract.userId,
-      displayName: userContract.appUser.displayName,
+      displayName: referrer,
       photoURL: userContract.appUser.photoURL,
       signedAt: userContract.signedAt,
     }));

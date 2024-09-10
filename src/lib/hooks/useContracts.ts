@@ -72,6 +72,7 @@ export function useContracts() {
         contractees: contractData.contractees,
         signatures: [user as AccountabilityPartner],
         obligations: obligationsWithTempId || [],
+        type: contractData.type,
       };
       dispatch(addContractAction(newContract));
     };
@@ -153,6 +154,7 @@ export function useContracts() {
         );
       }
       await axios.post(`/api/contract/${contractId}/join`);
+      debugger;
       const newContract = await axios.get<ContractWithExtras>(
         `/api/contract/${contractId}`,
       );

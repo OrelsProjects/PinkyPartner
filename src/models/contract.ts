@@ -11,7 +11,7 @@ export default interface Contract {
   description?: string | null;
   createdAt: Date;
   viewedAt?: string;
-  type?: ContractType| null;
+  type?: ContractType | null;
 }
 
 export type ContractWithExtras = Contract & {

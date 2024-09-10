@@ -14,6 +14,7 @@ import { ContractExistsForUserError } from "@/models/errors/ContractExistsForUse
 import { usePathname } from "next/navigation";
 
 export interface ChallengeComponentProps {
+  referralCode?: string | null;
   contractId: string;
   open: boolean;
   signUp?: boolean; // In case the user was not logged in, he accepted the invitation and signed up
@@ -21,6 +22,7 @@ export interface ChallengeComponentProps {
 }
 
 export default function ChallengeComponent({
+  referralCode,
   contractId,
   signUp,
   open,
@@ -46,7 +48,7 @@ export default function ChallengeComponent({
     setLoading(true);
     try {
       const response = await axios.get<ContractWithExtras>(
-        `/api/contract/${contractId}`,
+        `/api/contract/${contractId}/${referralCode}`,
       );
       const { data } = response;
       setData(data);
@@ -191,7 +193,7 @@ export default function ChallengeComponent({
         }
       }}
     >
-      <DialogContent className="h-[70%] md:h-[50%] flex flex-col gap-2 justify-center items-center">
+      <DialogContent className="h-[70%] md:h-[60%] flex flex-col gap-2 justify-center items-center">
         {loading ? (
           <LoadingContent />
         ) : error ? (
@@ -202,31 +204,29 @@ export default function ChallengeComponent({
           <JoinedSuccessfulyContent />
         ) : (
           <>
-            <DialogHeader className="font-semibold tracking-wide text-xl">
-              You&apos;ve been invited!
-            </DialogHeader>
-            <div className="flex flex-col gap-6">
+            <div className="h-full w-full flex flex-col justify-start items-center gap-6">
+              <div className="relative h-24 w-24">
+                <DotLottiePlayer
+                  src="/challenge.confetti.json"
+                  autoplay
+                  loop={1}
+                  className="!h-full !w-full"
+                />
+              </div>
               <div className="w-full justify-center items-center flex flex-col gap-1">
-                <div className="relative h-32 w-32">
-                  <DotLottiePlayer
-                    src="/challenge.confetti.json"
-                    autoplay
-                    loop={1}
-                    className="!h-full !w-full"
-                  />
-                </div>
+                You&apos;ve been invited!
                 {contractOwner && (
                   <span className="text-center font-light text-sm">
-                    {contractOwner.displayName} <br /> has invited you to a
-                    challenge!
+                    {contractOwner.displayName} <br className="md:hidden" /> has
+                    invited you to a challenge!
                   </span>
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <span className="font-semibold line-clamp-2">
+                <span className="font-semibold line-clamp-2 px-0">
                   {data?.title}
                 </span>
-                <ul>
+                <ul className="h-24 flex flex-col gap-2 overflow-auto">
                   {data?.obligations.map(obligation => (
                     <li key={obligation.obligationId}>• {obligation.title}</li>
                   ))}

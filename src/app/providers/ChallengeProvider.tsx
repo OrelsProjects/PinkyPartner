@@ -13,6 +13,7 @@ export default function ChallengeProvider() {
 
   const challengeId = searchParams.get("challengeId");
   const signedUp = searchParams.get("signedUp");
+  const referralCode = searchParams.get("referralCode");
 
   const isInLandingPage = useMemo(() => pathname === "/", [pathname]);
 
@@ -31,6 +32,7 @@ export default function ChallengeProvider() {
     challengeId && (
       <ChallengeComponent
         contractId={challengeId}
+        referralCode={referralCode}
         open={showChallenge}
         signUp={signedUp === "true"}
         onClose={() => {
