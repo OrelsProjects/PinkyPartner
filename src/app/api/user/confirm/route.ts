@@ -3,7 +3,7 @@ import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/api/_db/db";
 import { AppUser, AppUserMetadata } from "@prisma/client";
-import { authOptions } from "../../../../authOptions";
+import { authOptions } from "@/authOptions";
 import { generateReferralCode } from "@/lib/utils/referralUtils";
 
 export async function POST(

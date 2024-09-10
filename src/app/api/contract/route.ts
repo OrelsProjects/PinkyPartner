@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { DefaultSession, SessionUser, getServerSession } from "next-auth";
 import prisma from "@/app/api/_db/db";
-import { authOptions } from "../../../authOptions";
+import { authOptions } from "@/authOptions";
 import { ContractWithExtras, CreateContract } from "@/models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
 import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";

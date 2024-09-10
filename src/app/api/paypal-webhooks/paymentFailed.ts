@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/api/_db/db";
-import Logger from "../../../loggerServer";
+import Logger from "@/loggerServer";
 import { PayPalEventResponse } from "@/models/payment";
 
 export async function handlePaymentFailed(event: PayPalEventResponse) {

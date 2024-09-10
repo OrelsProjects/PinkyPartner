@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
-import Logger from "../../../../loggerServer";
+import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../../../authOptions";
+import { authOptions } from "@/authOptions";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);

@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../../authOptions";
+import { authOptions } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
-import loggerServer from "../../../loggerServer";
+import loggerServer from "@/loggerServer";
 import { AppUserSettings, UserContractObligation } from "@prisma/client";
 import { badids } from "./badIds";
 
