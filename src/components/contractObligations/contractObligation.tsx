@@ -1,19 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
-import { Logger } from "../../logger";
+import { Logger } from "@/logger";
 import { useAppSelector } from "@/lib/hooks/redux";
 import { useObligations } from "@/lib/hooks/useObligations";
-import { cn } from "@/lib/utils";
 import {
   dateToDayString,
   daysOfWeek,
   isDateSameDay,
 } from "@/lib/utils/dateUtils";
 import { UserContractObligationData } from "@/models/userContractObligation";
-import { UserAvatar } from "@/components/ui/avatar";
 import Contract from "@/models/contract";
-import NotificationBadge from "@/components/ui/notificationBadge";
-import ObligationCheckbox from "./obligationCheckbox";
 import { ObligationBox } from "./obligationBox";
 
 const ObligationsComponent = ({

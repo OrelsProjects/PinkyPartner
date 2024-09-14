@@ -382,6 +382,7 @@ export const authOptions: AuthOptions = {
           session.user.settings = userInDB?.settings || {
             showNotifications: true,
             soundEffects: true,
+            dailyReminder: false,
           };
         }
 
@@ -473,6 +474,7 @@ export const authOptions: AuthOptions = {
                 create: {
                   showNotifications: true,
                   soundEffects: true,
+                  dailyReminder: false,
                 },
               },
             },

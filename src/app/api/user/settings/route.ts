@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/authOptions";
-import AppUser from "@/models/appUser";
+import AppUser, { AppUserSettings } from "@/models/appUser";
 import Logger from "@/loggerServer";
 import prisma from "@/app/api/_db/db";
 
@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest): Promise<any> {
     if (!session.user?.userId) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    const { showNotifications, soundEffects } = await req.json();
+    const newSettings: Partial<AppUserSettings> = await req.json();
     const now = new Date();
     const userSettings = await prisma.appUserSettings.findUnique({
       where: { userId: session.user?.userId },
@@ -30,20 +30,37 @@ export async function PATCH(req: NextRequest): Promise<any> {
       );
     }
 
+    let updatedSettings: AppUserSettings = {
+      showNotifications: true,
+      soundEffects: true,
+      dailyReminder: true,
+    };
+
+    if (userSettings) {
+      updatedSettings = {
+        showNotifications:
+          newSettings.showNotifications || userSettings.showNotifications,
+        soundEffects: newSettings.soundEffects || userSettings.soundEffects,
+        dailyReminder: newSettings.dailyReminder || userSettings.dailyReminder,
+      };
+    }
+
+    updatedSettings = {
+      ...updatedSettings,
+      ...newSettings,
+    };
+
     await prisma.appUserSettings.upsert({
       where: { userId: session.user?.userId },
       update: {
-        showNotifications:
-          showNotifications !== undefined
-            ? showNotifications
-            : userSettings?.showNotifications,
-        soundEffects:
-          soundEffects !== undefined
-            ? soundEffects
-            : userSettings?.soundEffects,
+        ...updatedSettings,
         updatedAt: now,
       },
-      create: { userId: session.user?.userId, showNotifications },
+      create: {
+        userId: session.user?.userId,
+        updatedAt: now,
+        ...updatedSettings,
+      },
     });
     return NextResponse.json({}, { status: 200 });
   } catch (error: any) {

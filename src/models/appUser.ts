@@ -29,11 +29,13 @@ export interface AppUserMetadata {
   onboardingCompleted?: boolean;
   pushToken?: string;
   paidStatus?: UserPaidStatus;
+  pushTokenMobile?: string;
 }
 
 export interface AppUserSettings {
   showNotifications: boolean;
   soundEffects: boolean;
+  dailyReminder: boolean;
 }
 
 export type UserData = {

@@ -16,9 +16,8 @@ import {
 } from "../features/obligations/obligationsSlice";
 import LoadingError from "@/models/errors/LoadingError";
 import { ContractWithExtras } from "@/models/contract";
-import { Logger } from "../../logger";
+import { Logger } from "@/logger";
 import {
-  GetNextUpObligationsResponse,
   UserContractObligationData,
 } from "@/models/userContractObligation";
 import { toast } from "react-toastify";

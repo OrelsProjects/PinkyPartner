@@ -238,6 +238,7 @@ export default function OnboardingProvider() {
               elementsActions[currentStage]?.();
               toast("Good job! Your partner will be notified");
             }}
+            contractId={"temp"}
           />
         )}
       </div>

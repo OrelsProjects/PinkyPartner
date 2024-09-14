@@ -2,25 +2,27 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
-import Divider from "../../../components/ui/divider";
-import { Button } from "../../../components/ui/button";
+import Divider from "@/components/ui/divider";
+import { Button } from "@/components/ui/button";
 import useAuth from "@/lib/hooks/useAuth";
 import { toast } from "react-toastify";
-import InvitePartnerComponent from "../../../components/invitePartnerComponent";
-import { ThemeToggle } from "../../../components/theme-toggle";
+import InvitePartnerComponent from "@/components/invitePartnerComponent";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { EventTracker } from "@/eventTracker";
-import { Switch } from "../../../components/ui/switch";
+import { Switch } from "@/components/ui/switch";
 import axios from "axios";
 import useNotifications from "@/lib/hooks/useNotifications";
 import { updateUserSettings } from "@/lib/features/auth/authSlice";
 import { canUseNotifications } from "@/lib/utils/notificationUtils";
-import { Input } from "../../../components/ui/input";
+import { Input } from "@/components/ui/input";
 import { HiPencil } from "react-icons/hi2";
 import { FaCheck } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
-import Loading from "../../../components/ui/loading";
+import Loading from "@/components/ui/loading";
+import { cn } from "../../../lib/utils";
+import { AppUserSettings } from "@prisma/client";
 
-interface SettingsProps {}
+type SettingsTypes = "sound" | "daily-reminder";
 
 const UpdateUserPreferredName = ({
   value,
@@ -74,7 +76,7 @@ const UpdateUserPreferredName = ({
   );
 };
 
-const SettingsScreen: React.FC<SettingsProps> = () => {
+const SettingsScreen = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { deleteUser, signOut, updateUserDisplayName } = useAuth();
@@ -86,6 +88,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
     user?.settings || {
       showNotifications: false,
       soundEffects: true,
+      dailyReminder: false,
     },
   );
 
@@ -95,8 +98,7 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
 
   const changeNotificationTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const isNotificationsGranted =
-    canUseNotifications() && Notification.permission === "granted";
+  const isNotificationsGranted = Notification.permission === "granted";
 
   useEffect(() => {
     if (user) {
@@ -105,36 +107,46 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
     }
   }, [user]);
 
-  const updateSoundSettings = (soundEffects: boolean) => {
-    setSettings({ ...settings, soundEffects });
+  const updateSettings = (type: SettingsTypes, value: boolean) => {
+    let newSetting: Partial<AppUserSettings> = {};
+    let oldSetting: Partial<AppUserSettings> = {};
+    switch (type) {
+      case "sound":
+        newSetting = { soundEffects: value };
+        oldSetting = { soundEffects: !value };
+        break;
+      case "daily-reminder":
+        newSetting = { dailyReminder: value };
+        oldSetting = { dailyReminder: !value };
+        break;
+      default:
+        return;
+    }
+    setSettings({ ...settings, ...newSetting });
     try {
-      axios.patch("/api/user/settings", { soundEffects });
-      dispatch(updateUserSettings({ soundEffects }));
+      axios.patch("/api/user/settings", newSetting);
+      dispatch(updateUserSettings(newSetting));
     } catch (e) {
       toast.error("Failed to update sound settings");
-      setSettings({ ...settings, soundEffects: !soundEffects });
+      setSettings({ ...settings, ...oldSetting });
     }
   };
 
-  const updateNotificationSettings = (showNotifications: boolean) => {
+  const updateNotificationSettings = async (showNotifications: boolean) => {
     if (changeNotificationTimeout.current) {
       clearTimeout(changeNotificationTimeout.current);
     }
     setSettings({ ...settings, showNotifications });
-
-    changeNotificationTimeout.current = setTimeout(async () => {
-      changeNotificationTimeout.current = null;
-      try {
-        await axios.patch("/api/user/settings", { showNotifications });
-        if (showNotifications) {
-          await initUserToken();
-        }
-        dispatch(updateUserSettings({ showNotifications }));
-      } catch (e) {
-        toast.error("Failed to update notification settings");
-        setSettings({ ...settings, showNotifications: !showNotifications });
+    try {
+      await axios.patch("/api/user/settings", { showNotifications });
+      if (showNotifications) {
+        await initUserToken();
       }
-    }, 1000);
+      dispatch(updateUserSettings({ showNotifications }));
+    } catch (e) {
+      toast.error("Failed to update notification settings");
+      setSettings({ ...settings, showNotifications: !showNotifications });
+    }
   };
 
   const handleDeleteUserRequest = async () => {
@@ -245,6 +257,26 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
                 </Button>
               )}
             </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-lg font-semibold">Daily Reminder</span>
+              <div className="pl-2 flex flex-row gap-1">
+                <Switch
+                  className="w-10"
+                  disabled={!settings.showNotifications}
+                  checked={settings.dailyReminder}
+                  onCheckedChange={() => {
+                    updateSettings("daily-reminder", !settings.dailyReminder);
+                  }}
+                />
+                <p
+                  className={cn("text-xs text-foreground/60", {
+                    hidden: settings.showNotifications,
+                  })}
+                >
+                  (Requires notifications to be enabled)
+                </p>
+              </div>
+            </div>
           </div>
         )}
         <div className="flex flex-col gap-2">
@@ -253,7 +285,9 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             <Switch
               className="w-10"
               checked={settings.soundEffects}
-              onCheckedChange={updateSoundSettings}
+              onCheckedChange={() => {
+                updateSettings("sound", !settings.soundEffects);
+              }}
             />
           </div>
         </div>

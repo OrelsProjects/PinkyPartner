@@ -3,8 +3,8 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
-import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "@/lib/features/notifications/notificationsSlice";
+import { sendNotification } from "../_utils/notification";
 
 const MIN_NUDGE_TIME = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -103,67 +103,23 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
         );
       }
     }
-
     const message = {
-      data: {
-        title,
-        body: body || "",
-        icon: process.env.LOGO_URL || "",
-        badge: process.env.NOTIFICATION_URL || "", // icon on top of phnone
-        image: image || "",
-        type: type || "", // Include notification type in the data payload
-        toUserId: session?.user.userId || "",
-        fromName: user.displayName || "",
-      },
-      webpush: {
-        fcmOptions: {
-          link: "https://www.pinkypartner.com/home",
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            contentAvailable: true,
-            threadId: type,
-          },
-        },
-        headers: {
-          "apns-push-type": "background",
-          "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
-        },
-      },
-      android: {
-        notification: {
-          icon: process.env.LOGO_URL || "",
-          channelId: type,
-          tag: type,
-        },
-      },
+      title,
+      body: body || null,
+      image: image || null,
+      type,
+      fromName: session?.user.name || "",
+      toUserId: userIdToNotify,
+      link: null,
+      fromUserId: session?.user.userId || null,
     };
 
-    try {
-      // Send to mobile
-      await messaging.send({
-        ...message,
-        token: mobileToken || "",
-      });
-    } catch (error: any) {
-      Logger.error(
-        "Error sending mobile notification",
-        session?.user.userId || "system",
-        {
-          data: { error, token },
-        },
-      );
-    } finally {
-      // Send to web
-      if (token && token !== "no-token") {
-        await messaging.send({
-          ...message,
-          token,
-        });
-      }
-    }
+    const tokens = {
+      webToken: token,
+      mobileToken,
+    };
+
+    await sendNotification(message, tokens);
 
     Logger.info("Notification sent", session?.user.userId || "system", {
       data: { message, type },

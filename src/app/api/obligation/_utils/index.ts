@@ -6,7 +6,7 @@ import moment from "moment";
 
 export type CreateUserContractObligation = Omit<
   UserContractObligation,
-  "userContractObligationId" | "completedAt" | "viewedAt" | "createdAt"
+  "userContractObligationId" | "viewedAt" | "createdAt"
 >;
 
 export type ObligationsInContract = {
@@ -157,6 +157,7 @@ export function ObligationsToContractObligation(
           obligationId: obligation.obligationId,
           contractId: contractId,
           dueDate: dueDateTime,
+          completedAt: null,
         });
       });
     } else {
@@ -168,6 +169,7 @@ export function ObligationsToContractObligation(
           obligationId: obligation.obligationId,
           contractId: contractId,
           dueDate: endOfTheWeek,
+          completedAt: null,
         });
       });
     }

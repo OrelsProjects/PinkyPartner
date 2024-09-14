@@ -6,12 +6,12 @@ import {
   selectAuth,
   setUser as setUserAction,
 } from "@/lib/features/auth/authSlice";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "@/eventTracker";
-import { Logger, setUserLogger } from "../../logger";
+import { Logger, setUserLogger } from "@/logger";
 import { useSession } from "next-auth/react";
-import AppUser, { UserPaidStatus } from "@/models/appUser";
+import AppUser, { AppUserMetadata, AppUserSettings, UserPaidStatus } from "@/models/appUser";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import useOnboarding from "@/lib/hooks/useOnboarding";
 import { useCustomRouter } from "@/lib/hooks/useCustomRouter";
@@ -33,15 +33,8 @@ export default function AuthProvider({
     email?: string | null;
     image?: string | null;
     userId?: string | null;
-    meta: {
-      referralCode?: string | null;
-      onboardingCompleted?: boolean;
-      paidStatus?: UserPaidStatus;
-    };
-    settings: {
-      showNotifications?: boolean;
-      soundEffects?: boolean;
-    };
+    meta: Partial<AppUserMetadata>;
+    settings: Partial<AppUserSettings>;
   }) => {
     try {
       if (!user) {
@@ -59,8 +52,9 @@ export default function AuthProvider({
           paidStatus: user?.meta?.paidStatus as UserPaidStatus,
         },
         settings: {
-          showNotifications: user?.settings.showNotifications || true,
-          soundEffects: user?.settings.soundEffects || true,
+          showNotifications: user?.settings?.showNotifications || true,
+          soundEffects: user?.settings?.soundEffects || true,
+          dailyReminder: user?.settings?.dailyReminder || false,
         },
       };
       dispatch(setUserAction(appUser));

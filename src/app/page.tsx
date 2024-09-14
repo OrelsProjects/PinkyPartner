@@ -101,6 +101,7 @@ export default function Home() {
               settings: {
                 showNotifications: false,
                 soundEffects: true,
+                dailyReminder: false,
               },
             }),
           );
