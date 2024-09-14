@@ -3,7 +3,7 @@ import Contract, { ContractWithExtras } from "../../../models/contract";
 import Obligation from "../../../models/obligation";
 import { UserContractObligationData } from "../../../models/userContractObligation";
 
-export type NotificationType = "contract" | "obligation" | "nudge" | "response";
+export type NotificationType = "contract" | "obligation" | "nudge" | "response" | "daily-reminder";
 
 export type NotificationData = {
   title: string;

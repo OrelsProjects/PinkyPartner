@@ -121,9 +121,11 @@ model UserContract {
 
   optOutOn DateTime?
 
-  appUser  AppUser  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  contract Contract @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
+  appUser                AppUser                  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contract               Contract                 @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
+  UserContractObligation UserContractObligation[]
 
+  @@unique([contractId, userId])
   @@map("userContracts")
 }
 
@@ -143,16 +145,18 @@ model ContractObligation {
 model UserContractObligation {
   userContractObligationId String    @id @default(auto()) @map("_id") @db.ObjectId
   userId                   String
-  obligationId             String    @db.ObjectId
-  contractId               String    @db.ObjectId
   dueDate                  Int? // If it's weekly, there is no due date.
   completedAt              Int?
   viewedAt                 DateTime? // If the partner saw his partner's completion
   createdAt                DateTime  @default(now())
 
-  appUser    AppUser    @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  contract   Contract   @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
-  obligation Obligation @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
+  obligationId String @db.ObjectId
+  contractId   String @db.ObjectId
+
+  appUser      AppUser      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contract     Contract     @relation(fields: [contractId], references: [contractId], onDelete: Cascade)
+  obligation   Obligation   @relation(fields: [obligationId], references: [obligationId], onDelete: Cascade)
+  userContract UserContract @relation(fields: [contractId, userId], references: [contractId, userId], onDelete: Cascade)
 
   @@map("userContractObligations")
 }

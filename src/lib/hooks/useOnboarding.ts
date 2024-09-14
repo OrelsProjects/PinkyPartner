@@ -72,6 +72,7 @@ export default function useOnboarding() {
           settings: {
             showNotifications: false,
             soundEffects: true,
+            dailyReminder: false,
           },
         }),
       );
