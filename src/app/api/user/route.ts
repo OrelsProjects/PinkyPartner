@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../authOptions";
 import AppUser from "../../../models/appUser";
 import prisma from "../_db/db";
-import Logger from "../../../loggerServer";
+import Logger from "@/loggerServer";
 
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);

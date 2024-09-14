@@ -13,12 +13,12 @@ import {
 import NotificationComponent from "../../components/ui/notificationComponent";
 import { toast } from "react-toastify";
 import { getUserToken, initMessaging } from "../../../firebase.config";
-import { Logger } from "../../logger";
+import { Logger } from "@/logger";
 import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
-import { UserId } from "../../models/appUser";
-import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
+import { UserId } from "@/models/appUser";
+import CantBeNudgedError from "@/models/errors/CantBeNudgedError";
 import { useState } from "react";
-import Contract from "../../models/contract";
+import Contract from "@/models/contract";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();

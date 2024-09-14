@@ -11,9 +11,9 @@ import NotificationsProvider from "../providers/NotificationsProvider";
 import OnboardingProvider from "../providers/OnboardingProvider";
 import AnimationProvider from "../providers/AnimationProvider";
 import TopLoaderProvider from "../providers/TopLoaderProvider";
-import { useAppDispatch } from "../../lib/hooks/redux";
+import { useAppDispatch } from "@/lib/hooks/redux";
 import PullToRefresh from "../../components/ui/pullToRefresh";
-import { setForceFetch } from "../../lib/features/auth/authSlice";
+import { setForceFetch } from "@/lib/features/auth/authSlice";
 
 interface RootLayoutProps {
   children: React.ReactNode;

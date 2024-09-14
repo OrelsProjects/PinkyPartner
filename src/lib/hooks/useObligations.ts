@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import Obligation, { CreateObligation } from "../../models/obligation";
+import Obligation, { CreateObligation } from "@/models/obligation";
 import { setError } from "../features/auth/authSlice";
 import {
   setObligations as setObligationsAction,
@@ -14,13 +14,13 @@ import {
   setContractObligations as setContractObligationsAction,
   setLoading,
 } from "../features/obligations/obligationsSlice";
-import LoadingError from "../../models/errors/LoadingError";
-import { ContractWithExtras } from "../../models/contract";
-import { Logger } from "../../logger";
+import LoadingError from "@/models/errors/LoadingError";
+import { ContractWithExtras } from "@/models/contract";
+import { Logger } from "@/logger";
 import {
   GetNextUpObligationsResponse,
   UserContractObligationData,
-} from "../../models/userContractObligation";
+} from "@/models/userContractObligation";
 import { toast } from "react-toastify";
 
 export function useObligations() {

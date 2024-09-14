@@ -11,10 +11,10 @@ import {
   timeDelays,
 } from "../consts/onboarding";
 import axios from "axios";
-import { Logger } from "../../logger";
+import { Logger } from "@/logger";
 import { setUser, updateOnboardingCompleted } from "../features/auth/authSlice";
 import { ANONYMOUS_USER_ID } from "../utils/consts";
-import { EventTracker } from "../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 
 export default function useOnboarding() {
   const router = useRouter();

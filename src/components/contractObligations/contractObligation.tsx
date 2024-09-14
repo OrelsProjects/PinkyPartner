@@ -1,17 +1,17 @@
 import React, { useMemo } from "react";
 import { toast } from "react-toastify";
-import { Logger } from "../../logger";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { useObligations } from "../../lib/hooks/useObligations";
-import { cn } from "../../lib/utils";
+import { Logger } from "@/logger";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { useObligations } from "@/lib/hooks/useObligations";
+import { cn } from "@/lib/utils";
 import {
   dateToDayString,
   daysOfWeek,
   isDateSameDay,
-} from "../../lib/utils/dateUtils";
-import { UserContractObligationData } from "../../models/userContractObligation";
+} from "@/lib/utils/dateUtils";
+import { UserContractObligationData } from "@/models/userContractObligation";
 import { UserAvatar } from "../ui/avatar";
-import Contract from "../../models/contract";
+import Contract from "@/models/contract";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
 

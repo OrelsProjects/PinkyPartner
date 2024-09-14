@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Loading from "../../../components/ui/loading";
+import Loading from "@/components/ui/loading";
 
 export type ContractsStats = {
   [key: string]: {

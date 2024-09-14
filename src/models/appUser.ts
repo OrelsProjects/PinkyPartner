@@ -16,11 +16,14 @@ export default interface AppUser {
 export interface AppUserMetadata {
   referralCode: string;
   onboardingCompleted: boolean;
+  pushToken?: string;
+  pushTokenMobile?: string;
 }
 
 export interface AppUserSettings {
   showNotifications: boolean;
   soundEffects: boolean;
+  dailyReminder: boolean;
 }
 
 export type UserData = {

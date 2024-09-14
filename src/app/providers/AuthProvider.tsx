@@ -5,15 +5,15 @@ import { useEffect } from "react";
 import {
   selectAuth,
   setUser as setUserAction,
-} from "../../lib/features/auth/authSlice";
+} from "@/lib/features/auth/authSlice";
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
-import { setUserEventTracker } from "../../eventTracker";
-import { Logger, setUserLogger } from "../../logger";
+import { setUserEventTracker } from "@/eventTracker";
+import { Logger, setUserLogger } from "@/logger";
 import { useSession } from "next-auth/react";
-import AppUser from "../../models/appUser";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+import AppUser, { AppUserMetadata, AppUserSettings } from "@/models/appUser";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 
 export default function AuthProvider({
   children,
@@ -32,14 +32,8 @@ export default function AuthProvider({
     email?: string | null;
     image?: string | null;
     userId?: string | null;
-    meta: {
-      referralCode?: string | null;
-      onboardingCompleted?: boolean;
-    };
-    settings: {
-      showNotifications?: boolean;
-      soundEffects?: boolean;
-    };
+    meta: Partial<AppUserMetadata>;
+    settings: Partial<AppUserSettings>;
   }) => {
     try {
       if (!user) {
@@ -52,12 +46,13 @@ export default function AuthProvider({
         photoURL: user?.image || null,
         userId: user?.userId || "",
         meta: {
-          referralCode: user?.meta.referralCode || "",
-          onboardingCompleted: user?.meta.onboardingCompleted || false,
+          referralCode: user?.meta?.referralCode || "",
+          onboardingCompleted: user?.meta?.onboardingCompleted || false,
         },
         settings: {
-          showNotifications: user?.settings.showNotifications || true,
-          soundEffects: user?.settings.soundEffects || true,
+          showNotifications: user?.settings?.showNotifications || true,
+          soundEffects: user?.settings?.soundEffects || true,
+          dailyReminder: user?.settings?.dailyReminder || false,
         },
       };
       dispatch(setUserAction(appUser));

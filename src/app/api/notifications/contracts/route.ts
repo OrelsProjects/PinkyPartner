@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import Logger from "../../../../loggerServer";
+import Logger from "@/loggerServer";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../../authOptions";
 

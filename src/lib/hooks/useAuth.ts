@@ -8,8 +8,8 @@ import {
   updateUserDisplayName as updateUserDisplayNameAction,
 } from "../features/auth/authSlice";
 import { useAppDispatch } from "./redux";
-import { EventTracker } from "../../eventTracker";
-import { Logger } from "../../logger";
+import { EventTracker } from "@/eventTracker";
+import { Logger } from "@/logger";
 import axios from "axios";
 
 const useAuth = () => {

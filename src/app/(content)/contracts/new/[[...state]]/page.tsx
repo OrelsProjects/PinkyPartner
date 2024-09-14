@@ -1,45 +1,45 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Input } from "../../../../../components/ui/input";
+import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import { CreateContractForm } from "../../../../../models/contract";
-import { AccountabilityPartner } from "../../../../../models/appUser";
-import useSearchUser from "../../../../../lib/hooks/useSearchUser";
+import { CreateContractForm } from "@/models/contract";
+import { AccountabilityPartner } from "@/models/appUser";
+import useSearchUser from "@/lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "../../../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { IoArrowBack } from "react-icons/io5";
-import { useAppSelector } from "../../../../../lib/hooks/redux";
-import { Checkbox } from "../../../../../components/ui/checkbox";
-import { useContracts } from "../../../../../lib/hooks/useContracts";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useContracts } from "@/lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AccountabilityPartnerComponent, {
   AccountabilityPartnerComponentLoading,
-} from "../../../../../components/accountabilityPartnerComponent";
-import { getDateInThreeMonths } from "../../../../../lib/utils/dateUtils";
-import Divider from "../../../../../components/ui/divider";
+} from "@/components/accountabilityPartnerComponent";
+import { getDateInThreeMonths } from "@/lib/utils/dateUtils";
+import Divider from "@/components/ui/divider";
 import {
   SectionContainer,
   SectionTitle,
   SectionTitleContainer,
   SectionTitleExplanation,
-} from "../../../../../components/ui/section";
+} from "@/components/ui/section";
 import { FaPlus } from "react-icons/fa";
-import CreatePromise from "../../../../../components/createPromise";
-import ObligationComponent from "../../../../../components/obligationComponent";
-import { cn } from "../../../../../lib/utils";
-import { getRandomTimeToFinishRequest } from "../../../../../lib/utils/apiUtils";
-import { EventTracker } from "../../../../../eventTracker";
-import { Calendar } from "../../../../../components/ui/calendar";
+import CreatePromise from "@/components/createPromise";
+import ObligationComponent from "@/components/obligationComponent";
+import { cn } from "@/lib/utils";
+import { getRandomTimeToFinishRequest } from "@/lib/utils/apiUtils";
+import { EventTracker } from "@/eventTracker";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../../../components/ui/popover";
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import Obligation from "../../../../../models/obligation";
+import Obligation from "@/models/obligation";
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;

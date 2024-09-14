@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useObligations } from "../../../lib/hooks/useObligations";
-import { useAppSelector } from "../../../lib/hooks/redux";
-import { Button } from "../../../components/ui/button";
-import { EventTracker } from "../../../eventTracker";
-import ContractObligationsComponent from "../../../components/contractObligations/contractObligationsComponent";
+import { useObligations } from "@/lib/hooks/useObligations";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { Button } from "@/components/ui/button";
+import { EventTracker } from "@/eventTracker";
+import ContractObligationsComponent from "@/components/contractObligations/contractObligationsComponent";
 import Link from "next/link";
 import axios from "axios";
 

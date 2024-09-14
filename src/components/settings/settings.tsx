@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppSelector } from "@/lib/hooks/redux";
 import { UserAvatar } from "../ui/avatar";
 import Link from "next/link";
 

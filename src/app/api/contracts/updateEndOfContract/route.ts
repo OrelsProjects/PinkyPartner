@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../_db/db";
-import loggerServer from "../../../../loggerServer";
+import loggerServer from "@/loggerServer";
 import { messaging } from "../../../../../firebase.config.admin";
 import Contract from "../../../../models/contract";
 

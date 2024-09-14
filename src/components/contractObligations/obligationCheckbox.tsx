@@ -2,9 +2,9 @@ import React, { useEffect, useMemo } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
-import { useAppSelector } from "../../lib/hooks/redux";
-import { selectAuth } from "../../lib/features/auth/authSlice";
-import { cn } from "../../lib/utils";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { selectAuth } from "@/lib/features/auth/authSlice";
+import { cn } from "@/lib/utils";
 
 interface ObligationCheckboxProps {
   day: string;

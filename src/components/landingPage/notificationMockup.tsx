@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface NotificationMockupProps {
   title: string;

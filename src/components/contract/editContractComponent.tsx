@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { ContractWithExtras, UpdateContract } from "../../models/contract";
+import { ContractWithExtras, UpdateContract } from "@/models/contract";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { useFormik } from "formik";
-import { useContracts } from "../../lib/hooks/useContracts";
+import { useContracts } from "@/lib/hooks/useContracts";
 import { toast } from "react-toastify";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";

@@ -1,17 +1,11 @@
 import { DefaultSession } from "next-auth";
+import { AppUserMetadata, AppUserSettings } from "./src/models/appUser";
 
 declare module "next-auth" {
   interface SessionUser {
     userId: string;
-    meta: {
-      referralCode?: string;
-      onboardingCompleted?: boolean;
-      pushToken?: string;
-    };
-    settings: {
-      showNotifications: boolean;
-      soundEffects: boolean;
-    };
+    meta: Partial<AppUserMetadata>;
+    settings: Partial<AppUserSettings>;
   }
 
   interface Session {

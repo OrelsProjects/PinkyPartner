@@ -6,7 +6,7 @@ import { IoExitOutline as OptOut } from "react-icons/io5";
 import { FaUserPlus as Invite } from "react-icons/fa6";
 import { IoStatsChartOutline as Stats } from "react-icons/io5";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,

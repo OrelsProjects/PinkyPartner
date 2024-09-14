@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import useAuth from "../../lib/hooks/useAuth";
+import useAuth from "@/lib/hooks/useAuth";
 import { FaApple } from "react-icons/fa";
-import { EventTracker } from "../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 import { toast } from "react-toastify";
 import Loading from "../ui/loading";
 import { motion } from "framer-motion";

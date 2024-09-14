@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { NavigationBarItem, BottomBarItems } from "./_consts";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import NotificationBadge from "../ui/notificationBadge";
-import useNotifications from "../../lib/hooks/useNotifications";
+import useNotifications from "@/lib/hooks/useNotifications";
 import Link from "next/link";
 
 interface NavigationBar {

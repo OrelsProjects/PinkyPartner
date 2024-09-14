@@ -1,23 +1,23 @@
 import React, { useEffect } from "react";
-import { UserContractObligationData } from "../../models/userContractObligation";
-import Contract, { ContractWithExtras } from "../../models/contract";
-import { useAppDispatch, useAppSelector } from "../../lib/hooks/redux";
+import { UserContractObligationData } from "@/models/userContractObligation";
+import Contract, { ContractWithExtras } from "@/models/contract";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { toast } from "react-toastify";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import ContractViewComponent from "../contract/contractViewComponent";
-import { useContracts } from "../../lib/hooks/useContracts";
+import { useContracts } from "@/lib/hooks/useContracts";
 import { AnimatePresence, motion } from "framer-motion";
 import { Skeleton } from "../ui/skeleton";
-import useNotifications from "../../lib/hooks/useNotifications";
+import useNotifications from "@/lib/hooks/useNotifications";
 import ObligationsComponent from "./contractObligation";
 import Loading from "../ui/loading";
 import { FaBell } from "react-icons/fa6";
-import CantBeNudgedError from "../../models/errors/CantBeNudgedError";
-import { getWeekRangeFormatted } from "../../lib/utils/dateUtils";
+import CantBeNudgedError from "@/models/errors/CantBeNudgedError";
+import { getWeekRangeFormatted } from "@/lib/utils/dateUtils";
 import { Button } from "../ui/button";
 import SendNudgeDialog from "../sendNudgeDialog";
 import ContractViewDropdown from "../contract/contractViewDropdown";
-import { setShowStatusOfContractId } from "../../lib/features/status/statusSlice";
+import { setShowStatusOfContractId } from "@/lib/features/status/statusSlice";
 
 export type GroupedObligations = {
   [key: string]: {

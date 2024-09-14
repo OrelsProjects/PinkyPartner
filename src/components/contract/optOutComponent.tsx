@@ -6,12 +6,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { EventTracker } from "../../eventTracker";
+import { EventTracker } from "@/eventTracker";
 import { Button } from "../ui/button";
-import { useContracts } from "../../lib/hooks/useContracts";
-import { ContractWithExtras } from "../../models/contract";
+import { useContracts } from "@/lib/hooks/useContracts";
+import { ContractWithExtras } from "@/models/contract";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { useAppSelector } from "@/lib/hooks/redux";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface OptOutComponentProps {

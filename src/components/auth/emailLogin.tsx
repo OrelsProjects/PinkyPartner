@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import React from "react";
-import useAuth from "../../lib/hooks/useAuth";
+import useAuth from "@/lib/hooks/useAuth";
 import { toast } from "react-toastify";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";

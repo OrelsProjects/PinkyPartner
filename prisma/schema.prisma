@@ -70,6 +70,7 @@ model AppUserSettings {
 
   showNotifications Boolean @default(true)
   soundEffects      Boolean @default(true)
+  dailyReminder     Boolean @default(true)
 
   updatedAt DateTime? @default(now())
 

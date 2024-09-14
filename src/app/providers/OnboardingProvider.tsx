@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
@@ -14,8 +14,8 @@ import {
   timeDelays,
   stages,
   stepperTitles,
-} from "../../lib/consts/onboarding";
-import useOnboarding from "../../lib/hooks/useOnboarding";
+} from "@/lib/consts/onboarding";
+import useOnboarding from "@/lib/hooks/useOnboarding";
 import { useEffect, useMemo } from "react";
 import {
   Dialog,
@@ -24,8 +24,8 @@ import {
   DialogFooter,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { EventTracker } from "../../eventTracker";
-import { useAppSelector } from "../../lib/hooks/redux";
+import { EventTracker } from "@/eventTracker";
+import { useAppSelector } from "@/lib/hooks/redux";
 import Link from "next/link";
 import ObligationCheckbox from "../../components/contractObligations/obligationCheckbox";
 import React from "react";
