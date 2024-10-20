@@ -4,7 +4,7 @@ import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-
 import { useRouter, useSearchParams } from "next/navigation";
 
 export interface CustomRouterOptions {
-  preserveQuery: boolean;
+  preserveQuery: boolean | null; // Use null for now to not preserve query and not break existing code
 }
 
 export function useCustomRouter() {
@@ -22,8 +22,10 @@ export function useCustomRouter() {
       href.includes("http") ? href : window.location.host + href,
     );
 
-    // Force preserve Query
-    if (routerOptions?.preserveQuery || true) {
+    if (
+      routerOptions?.preserveQuery !== null &&
+      (routerOptions?.preserveQuery || true)
+    ) {
       searchParams.forEach((val, key) => {
         url.searchParams.append(key, val);
       });

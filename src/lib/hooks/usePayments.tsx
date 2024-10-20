@@ -26,7 +26,7 @@ export default function usePayments() {
         throw new Error(errorMessage);
       }
     } catch (error: any) {
-      Logger.error("Error approving subscription", { error });
+      Logger.error("**ERROR APPROVING SUBSCRIPTION**", { error });
       throw error;
     }
   };
@@ -96,7 +96,7 @@ export default function usePayments() {
       );
       return response.data;
     } catch (error: any) {
-      Logger.error("Error approving order", { error });
+      Logger.error("**ERROR APPROVING ORDER**", { error });
       throw error;
     }
   };

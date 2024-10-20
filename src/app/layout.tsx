@@ -11,6 +11,7 @@ import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ChallengeProvider from "./providers/ChallengeProvider";
 import Loading from "@/components/ui/loading";
 import Head from "next/head";
+import AnimationProvider from "./providers/AnimationProvider";
 // import ProductHuntProvider from "./providers/ProductHuntProvider";
 
 const OG_IMAGE_URL = process.env.NEXT_PUBLIC_OG_IMAGE_UR as string;
@@ -92,11 +93,10 @@ export default function Layout({ children }: RootLayoutProps) {
               <ThemeProvider>
                 <AuthProvider>
                   <TopLoaderProvider />
-                  {/* <ProductHuntProvider /> */}
-                  <ChallengeProvider />
-                  {children}
-                  {/* <SpeedInsights />
-                <Analytics /> */}
+                  <AnimationProvider>
+                    <ChallengeProvider />
+                    {children}
+                  </AnimationProvider>
                 </AuthProvider>
               </ThemeProvider>
             </SessionWrapper>

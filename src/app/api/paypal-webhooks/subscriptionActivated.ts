@@ -14,29 +14,12 @@ export async function handleSubscriptionActivated(data: {
   startDate: Date;
   status: string;
 }): Promise<NextResponse> {
-  // export async function handleSubscriptionActivated(
-  //   data: PayPalEventResponse,
-  // ): Promise<NextResponse>;
-  // export async function handleSubscriptionActivated(
-  //   data: any,
-  // ): Promise<NextResponse> {
   let subscriptionId = data.subscriptionId;
   let nextBillingDate = data.nextBillingDate;
   let lastPaymentDate = data.lastPaymentDate;
   let lastPaymentAmount = data.lastPaymentAmount;
   let status = data.status;
-
-  // if (data.id) {
-  //   subscriptionId = data.resource.id;
-  //   email_address = data.resource.subscriber.email_address;
-  //   nextBillingDate = new Date(data.resource.billing_info.next_billing_time);
-  //   lastPaymentDate = new Date(data.resource.billing_info.last_payment.time);
-  //   lastPaymentAmount = parseFloat(
-  //     data.resource.billing_info.last_payment.amount.value,
-  //   );
-  //   status = data.resource.status;
-  // }
-
+  
   const user = await prisma.appUserMetadata.findFirst({
     where: {
       userId: data.userId,

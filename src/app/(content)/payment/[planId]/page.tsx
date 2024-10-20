@@ -6,12 +6,15 @@ import usePayments from "@/lib/hooks/usePayments";
 import { OnApproveData } from "@/models/payment";
 import PaymentButtons from "../paymentButtons";
 import { Logger } from "@/logger";
+import { useCustomRouter } from "@/lib/hooks/useCustomRouter";
 
 export default function PaymentPage({
   params,
 }: {
   params: { planId: string };
 }) {
+  const router = useCustomRouter();
+
   const [error, setError] = React.useState<string | null>(null);
   const {
     approveOrder,
@@ -48,7 +51,7 @@ export default function PaymentPage({
         if (errorDetail.issue === "INSTRUMENT_DECLINED") {
           return actions.restart();
         } else if (errorDetail.issue === "PAYER_CANNOT_PAY") {
-          throw new Error("Payer cannot pay");
+          throw new Error("Your payment method is not valid.");
         } else if (errorDetail) {
           throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
         }
@@ -81,6 +84,7 @@ export default function PaymentPage({
         onApprove={async (data: OnApproveData, actions) => {
           setError(null);
           await handleApproveOrder(data, actions);
+          router.push("/home?payment=success");
         }}
         onError={(err: any) => {
           setError(err.message);
