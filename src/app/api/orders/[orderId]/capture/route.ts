@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import { captureOrder } from "@/app/api/_utils/payments";
 import prisma from "@/app/api/_db/db";
-import { UserPaidStatus, UserPaidStatusEnum } from "@/models/appUser";
+import { UserPaidStatusEnum } from "@/models/appUser";
 
 export async function POST(
   req: NextRequest,

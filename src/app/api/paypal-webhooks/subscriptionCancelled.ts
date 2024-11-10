@@ -32,14 +32,6 @@ export async function handleSubscriptionCancelled(event: PayPalEventResponse) {
       },
     });
 
-    await prisma.appUserMetadata.update({
-      where: { userId: existingSubscription.userId },
-      data: {
-        paidStatus: UserPaidStatusEnum.Free,
-      },
-    });
-
-
     return NextResponse.json(
       { message: "Subscription cancelled successfully", subscriptionUpdate },
       { status: 200 },

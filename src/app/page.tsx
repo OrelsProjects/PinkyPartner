@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { setUser } from "@/lib/features/auth/authSlice";
 import useOnboarding from "@/lib/hooks/useOnboarding";

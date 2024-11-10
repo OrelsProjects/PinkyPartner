@@ -47,7 +47,7 @@ const printLog = (type: StatusType, message?: string, logItem?: LogItem) => {
   if (process.env.NODE_ENV === "production") {
     return;
   }
-  const logText = `${`${type}: ` ?? ""}${message ?? ""} ${
+  const logText = `${`${type || ""}: `}${message ?? ""} ${
     logItem?.data ? JSON.stringify(logItem.data) : ""
   } ${logItem?.error ? JSON.stringify(logItem.error) : ""}
   }`;

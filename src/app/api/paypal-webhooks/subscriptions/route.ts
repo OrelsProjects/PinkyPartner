@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     const isBillingEvent = eventType.startsWith("BILLING.SUBSCRIPTION");
+    console.log("eventType", eventType);
     let response: any = {};
     switch (eventType) {
       // case "BILLING.SUBSCRIPTION.CREATED":

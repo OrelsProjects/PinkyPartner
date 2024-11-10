@@ -10,11 +10,10 @@ import AuthProvider from "./providers/AuthProvider";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
 import ChallengeProvider from "./providers/ChallengeProvider";
 import Loading from "@/components/ui/loading";
-import Head from "next/head";
 import AnimationProvider from "./providers/AnimationProvider";
-// import ProductHuntProvider from "./providers/ProductHuntProvider";
+import Head from "next/head";
 
-const OG_IMAGE_URL = process.env.NEXT_PUBLIC_OG_IMAGE_UR as string;
+const OG_IMAGE_URL = process.env.NEXT_PUBLIC_OG_IMAGE_URL as string;
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME as string;
 const APP_DEFAULT_TITLE = process.env.NEXT_PUBLIC_APP_DEFAULT_TITLE as string;
 const APP_TITLE_TEMPLATE = process.env.NEXT_PUBLIC_APP_TITLE_TEMPLATE as string;
@@ -28,42 +27,42 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  applicationName: APP_NAME,
+  applicationName: APP_NAME, // Name of the application, used in app manifest files and app listing.
   title: {
-    default: APP_DEFAULT_TITLE,
-    template: APP_TITLE_TEMPLATE,
+    default: APP_DEFAULT_TITLE, // The default title shown on the browser tab if a specific page title is not set.
+    template: APP_TITLE_TEMPLATE, // Template for titles to include page-specific titles followed by a default name.
   },
-  description: APP_DESCRIPTION,
-  manifest: "/manifest.json",
+  description: APP_DESCRIPTION, // A brief description of the app, often used in search engines for SEO.
+  manifest: "/manifest.json", // Path to the web app manifest file, which stores metadata and config for PWA.
   appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: APP_DEFAULT_TITLE,
-    startupImage: APP_STARTUP_IMAGE,
+    capable: true, // Enables the app to be added to the home screen on iOS devices.
+    statusBarStyle: "default", // Specifies the status bar appearance when the app is opened from the home screen.
+    title: APP_DEFAULT_TITLE, // Title used when the app is saved on an iOS device.
+    startupImage: APP_STARTUP_IMAGE, // URL for the app startup screen image, shown during app load on iOS.
   },
   formatDetection: {
-    telephone: false,
+    telephone: false, // Disables automatic phone number detection on iOS for text content.
   },
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: APP_NAME,
-    url: APP_URL,
+    type: "website", // Specifies the type of Open Graph object, in this case, a website.
+    locale: "en_US", // Defines the locale in Open Graph for language and region (English, US).
+    siteName: APP_NAME, // Name of the site shown in Open Graph previews on social platforms.
+    url: APP_URL, // Canonical URL for the app, used in social media previews.
     title: {
-      default: APP_DEFAULT_TITLE,
-      template: APP_TITLE_TEMPLATE,
+      default: APP_DEFAULT_TITLE, // Default title used in Open Graph meta tags for social previews.
+      template: APP_TITLE_TEMPLATE, // Template for title formatting in Open Graph to create page-specific titles.
     },
-    description: APP_DESCRIPTION,
-    images: { url: OG_IMAGE_URL, width: 1200, height: 630 },
+    description: APP_DESCRIPTION, // Description used in Open Graph for richer social media previews.
+    images: { url: OG_IMAGE_URL, width: 1200, height: 630 }, // Default Open Graph image with recommended size.
   },
   twitter: {
-    card: "summary",
+    card: "summary", // Sets Twitter card type to 'summary', showing a small preview image and description.
     title: {
-      default: APP_DEFAULT_TITLE,
-      template: APP_TITLE_TEMPLATE,
+      default: APP_DEFAULT_TITLE, // Default title used in Twitter metadata for page previews.
+      template: APP_TITLE_TEMPLATE, // Template for Twitter title formatting to include specific page names.
     },
-    description: APP_DESCRIPTION,
-    images: { url: OG_IMAGE_URL, width: 1200, height: 630 },
+    description: APP_DESCRIPTION, // Description displayed in Twitter card previews.
+    images: { url: OG_IMAGE_URL, width: 1200, height: 630 }, // Image used in Twitter preview card with dimensions.
   },
 };
 
@@ -71,15 +70,16 @@ export default function Layout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="font-montserrat">
       <Head>
+        {/* Enables mobile web app mode on Android devices. */}
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Enables iOS web app mode for add-to-homescreen. */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/* Sets status bar style on iOS devices. */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* Sets the color for the theme, background in supported browsers. */}
         <meta name="theme-color" content="#00000000" />
+        {/* Link to the manifest file for PWA functionality. */}
         <link rel="manifest" href="/manifest.json" />
-        <meta property="og:image" content="<generated>" />
-        <meta property="og:image:type" content="<generated>" />
-        <meta property="og:image:width" content="<generated>" />
-        <meta property="og:image:height" content="<generated>" />
       </Head>
       <body className="!overscroll-contain">
         <Suspense
