@@ -81,11 +81,11 @@ messaging.onBackgroundMessage(payload => {
 self.addEventListener("notificationclick", event => {
   // Handle action button click
   if (event.action === "sendGoodJob") {
-    sendResponseToServer(
-      event.notification.data.toUserId,
-      event.notification.data.fromName,
-      "goodJob",
-    );
+    sendResponseToServer({
+      toUserId: event.notification.data.toUserId,
+      fromName: event.notification.data.fromName,
+      type: "goodJob",
+    });
   } else if (event.action === "responseNudge") {
     sendResponseToServer(
       event.notification.data.toUserId,
@@ -102,12 +102,12 @@ self.addEventListener("notificationclick", event => {
   event.notification.close();
 });
 
-function sendResponseToServer(toUserId, fromName, type) {
+function sendResponseToServer({ toUserId, fromName, type }) {
   const postUrl = "api/notifications";
   const postData = {
     title: "Good job!",
     body: fromName + " is proud of you!",
-    userId: toUserId,
+    userIdToNotify: toUserId,
     type: "response",
   };
 

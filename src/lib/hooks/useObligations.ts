@@ -148,10 +148,14 @@ export function useObligations() {
       );
       if (!otherUser) return;
 
+      Logger.debug(
+        `Sending notification from: ${JSON.stringify(user)} to: ${JSON.stringify(otherUser)}`,
+      );
+
       await axios.post("/api/notifications", {
         title: `${user?.displayName || "Your partner"} is progressing!`,
         body: `${obligation.obligation.title} completed!`,
-        userId: otherUser.userId,
+        userIdToNotify: otherUser.userId,
         type: "obligation",
       });
     } catch (error: any) {

@@ -3,7 +3,6 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
-import { messaging } from "@/../firebase.config.admin";
 import { NotificationData } from "@/lib/features/notifications/notificationsSlice";
 import { sendNotification } from "../_utils/notification";
 
@@ -39,9 +38,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       title,
       body,
       image,
-      userId: userIdToNotify,
+      userIdToNotify,
       type,
-    }: NotificationData & { userId: string } = await req.json();
+    }: NotificationData & { userIdToNotify: string } = await req.json();
 
     if (!session && type !== "response") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
