@@ -7,6 +7,7 @@ import statusReducer from "./features/status/statusSlice";
 import storage from "redux-persist/lib/storage";
 
 import { persistReducer, persistStore } from "redux-persist";
+import { PersistPartial } from "redux-persist/es/persistReducer";
 
 const buildReducer = (key: string, reducer: any) =>
   persistReducer(
@@ -33,5 +34,12 @@ export const makeStore = () => store;
 
 export type AppStore = ReturnType<typeof makeStore>;
 
-export type RootState = ReturnType<AppStore["getState"]>;
+export type RootState = {
+  auth: ReturnType<typeof authReducer> & PersistPartial;
+  contracts: ReturnType<typeof contractReducer> & PersistPartial;
+  obligations: ReturnType<typeof obligationReducer> & PersistPartial;
+  notifications: ReturnType<typeof notificationsReducer> & PersistPartial;
+  status: ReturnType<typeof statusReducer> & PersistPartial;
+};
+
 export type AppDispatch = AppStore["dispatch"];
