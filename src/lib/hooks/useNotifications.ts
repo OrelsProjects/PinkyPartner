@@ -22,7 +22,7 @@ import { UserId } from "@/lib/models/appUser";
 import CantBeNudgedError from "@/lib/models/errors/CantBeNudgedError";
 import { NotificationData } from "@/lib/models/notification";
 import { Contract } from "@prisma/client";
-import { initMessaging, getUser } from "@/../firebase.config";
+import { initMessaging, getUserToken } from "@/../firebase.config";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();
