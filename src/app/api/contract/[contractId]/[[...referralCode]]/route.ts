@@ -4,8 +4,8 @@ import { getServerSession } from "next-auth";
 import prisma from "@/app/api/_db/db";
 import { authOptions } from "@/authOptions";
 import { Contract, Obligation } from "@prisma/client";
-import { ContractType, ContractWithExtras } from "@/models/contract";
-import {  } from "@/models/appUser";
+import { ContractType, ContractWithExtras } from "@/lib/models/contract";
+import {  } from "@/lib/models/appUser";
 
 type ContractUpdateBody = Pick<Contract, "title" | "description">;
 

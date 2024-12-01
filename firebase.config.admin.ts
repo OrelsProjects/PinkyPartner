@@ -14,7 +14,6 @@ const serviceAccount = {
   universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
 };
 
-
 try {
   if (!admin.apps.length) {
     admin.initializeApp({
@@ -23,7 +22,7 @@ try {
     });
   }
 } catch (e) {
-  
+  console.error("Firebase admin initialization error", e);
 }
 
 const storage = admin.storage();

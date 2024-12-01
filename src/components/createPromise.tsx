@@ -16,7 +16,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { cn } from "../lib/utils";
-import Obligation, { Days, TimesAWeek } from "../models/obligation";
+import Obligation, { Days, TimesAWeek } from "../lib/models/obligation";
 import { Button } from "./ui/button";
 import IntervalDropdown from "./ui/dropdowns/intervalDropdown";
 import {

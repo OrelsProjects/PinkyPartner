@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
-import "../../../firebase.config";
+import React from "react";
 import type { Viewport } from "next";
 import ContentProvider from "../providers/ContentProvider";
 import HeightProvider from "../providers/HeightProvider";
@@ -21,17 +20,6 @@ interface RootLayoutProps {
 
 export default function ContentLayout({ children }: RootLayoutProps) {
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      console.log("Registering service worker");
-      navigator.serviceWorker
-        .register("/firebase-messaging-sw.js")
-        .then(function (registration) {
-          registration.update(); // Check for updates immediately after registering
-        });
-    }
-  }, []);
 
   return (
     <main>

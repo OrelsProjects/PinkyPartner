@@ -7,7 +7,7 @@ import {
 } from "@/app/api/_utils/notification";
 import moment from "moment";
 import prisma from "@/app/api/_db/db";
-import { UserId } from "@/models/appUser";
+import { UserId } from "@/lib/models/appUser";
 
 export async function POST(req: NextRequest): Promise<any> {
   try {

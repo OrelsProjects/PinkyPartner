@@ -1,17 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Contract, { ContractWithExtras } from "../../../models/contract";
-import Obligation from "../../../models/obligation";
-import { UserContractObligationData } from "../../../models/userContractObligation";
-
-export type NotificationType = "contract" | "obligation" | "nudge" | "response" | "daily-reminder";
-
-export type NotificationData = {
-  title: string;
-  type: NotificationType;
-  body?: string;
-  image?: string;
-  onClick?: () => void;
-};
+import Contract, { ContractWithExtras } from "../../models/contract";
+import Obligation from "../../models/obligation";
+import { UserContractObligationData } from "../../models/userContractObligation";
 
 type ObligationNotification = {
   userId: string;

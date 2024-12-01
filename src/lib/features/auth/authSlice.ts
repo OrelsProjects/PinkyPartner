@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import _ from "lodash";
-import AppUser, { AppUserSettings } from "../../../models/appUser";
+import AppUser, { AppUserSettings } from "../../models/appUser";
 
 export type AuthStateType =
   | "anonymous"

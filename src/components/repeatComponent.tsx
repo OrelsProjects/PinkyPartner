@@ -1,5 +1,5 @@
 import React from "react";
-import Obligation from "../models/obligation";
+import Obligation from "../lib/models/obligation";
 import { dayNumberToName } from "../lib/utils/dateUtils";
 import { timesAWeekToText } from "../lib/utils/textUtils";
 

@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/authOptions";
-import AppUser from "@/models/appUser";
+import AppUser from "@/lib/models/appUser";
 import Logger from "@/loggerServer";
 import prisma from "../../_db/db";
-import { AppUserSettings } from "@/models/appUser";
+import { AppUserSettings } from "@/lib/models/appUser";
 
 export async function POST(req: NextRequest): Promise<any> {}
 

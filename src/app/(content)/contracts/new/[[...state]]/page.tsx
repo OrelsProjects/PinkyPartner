@@ -3,8 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import { CreateContractForm } from "@/models/contract";
-import { AccountabilityPartner } from "@/models/appUser";
+import { CreateContractForm } from "@/lib/models/contract";
+import { AccountabilityPartner } from "@/lib/models/appUser";
 import useSearchUser from "@/lib/hooks/useSearchUser";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import Obligation from "@/models/obligation";
+import Obligation from "@/lib/models/obligation";
 
 interface FindPartnerProps {
   onPartnerSelect: (partner?: AccountabilityPartner) => void;

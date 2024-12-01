@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/authOptions";
 import prisma from "@/app/api/_db/db";
 import moment from "moment";
-import { StatusReport, UserReport } from "@/models/statusReport";
+import { StatusReport, UserReport } from "@/lib/models/statusReport";
 import { Obligation, UserContractObligation } from "@prisma/client";
 import {
   getStartOfTheWeekDate,

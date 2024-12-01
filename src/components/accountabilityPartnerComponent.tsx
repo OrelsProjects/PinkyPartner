@@ -1,5 +1,5 @@
 import React from "react";
-import { AccountabilityPartner } from "../models/appUser";
+import { AccountabilityPartner } from "../lib/models/appUser";
 import { Skeleton } from "./ui/skeleton";
 import { UserAvatar } from "./ui/avatar";
 

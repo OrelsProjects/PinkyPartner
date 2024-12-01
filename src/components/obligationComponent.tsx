@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ElementType } from "react";
-import Obligation from "../models/obligation";
+import Obligation from "../lib/models/obligation";
 import { FiMinusCircle as Minus } from "react-icons/fi";
 import { Button } from "./ui/button";
 

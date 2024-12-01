@@ -3,14 +3,25 @@ importScripts(
   "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js",
 );
 
+/**
+ * Here you'll need to hard code your Firebase configuration.
+ * 
+ * .env files are not accessible in service workers.
+ * 
+ * In a service worker file, directly using .env variables isn’t possible
+ * because .env files are parsed and loaded by your server environment (like Node.js)
+ * or bundler (such as Webpack, Vite, or Parcel) during build time,
+ * and service workers typically run in the browser environment
+ * without direct access to the server's environment variables.
+ */
 const firebaseConfig = {
-  apiKey: "AIzaSyALZvbmwKVBUXia4-u2Wv__C6ST6GFbBUQ",
-  authDomain: "myworkout-ca350.firebaseapp.com",
-  projectId: "myworkout-ca350",
-  storageBucket: "myworkout-ca350.appspot.com",
-  messagingSenderId: "334976118267",
-  appId: "1:334976118267:web:2547d2f91a0235d1aa2f5e",
-  measurementId: "G-BTFG0DLT3J",
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: "",
 };
 
 // Initialize Firebase
@@ -32,7 +43,7 @@ self.addEventListener("push", e => {
       json() {
         const newData = oldData.json();
         newData.data = { ...newData.data, ...newData.notification };
-        delete newData.notification;
+        delete newData.notification; // Avoid duplication
         return newData;
       },
     },
@@ -54,22 +65,15 @@ messaging.onBackgroundMessage(payload => {
     icon,
     badge,
     data: { userId, ...restPayload },
-    tag: restPayload.tag || "pinky-partner",
+    tag: restPayload.tag || "your-tag",
   };
 
   // Check the type and conditionally add the action
-  if (type === "obligation") {
+  if (type === "your-type") {
     notificationOptions.actions = [
       {
-        action: "sendGoodJob",
-        title: "Send Good Job",
-      },
-    ];
-  } else if (type === "nudge") {
-    notificationOptions.actions = [
-      {
-        action: "responseNudge",
-        title: "I'm on it!",
+        action: "title-of-action",
+        title: "",
       },
     ];
   }
@@ -78,20 +82,14 @@ messaging.onBackgroundMessage(payload => {
   self.registration.showNotification(title, notificationOptions);
 });
 
+// Handle notification click event
 self.addEventListener("notificationclick", event => {
   // Handle action button click
-  if (event.action === "sendGoodJob") {
+  if (event.action === "your-type") {
     sendResponseToServer({
       toUserId: event.notification.data.toUserId,
-      fromName: event.notification.data.fromName,
-      type: "goodJob",
+      // Other data you need
     });
-  } else if (event.action === "responseNudge") {
-    sendResponseToServer(
-      event.notification.data.toUserId,
-      event.notification.data.fromName,
-      "nudge",
-    );
   } else if (event.notification.data && event.notification.data.click_action) {
     // Handle other notification click actions
     self.clients.openWindow(event.notification.data.click_action);
@@ -99,22 +97,21 @@ self.addEventListener("notificationclick", event => {
     // Default action: open application
     self.clients.openWindow(event.currentTarget.origin);
   }
+
   event.notification.close();
 });
 
-function sendResponseToServer({ toUserId, fromName, type }) {
+/**
+ * This is needed if you want to create an async action button in your notification
+ */
+function sendResponseToServer({ toUserId, ...props }) {
   const postUrl = "api/notifications";
   const postData = {
-    title: "Good job!",
-    body: fromName + " is proud of you!",
+    title: "your-title",
+    body: "body-of-notification",
     userIdToNotify: toUserId,
-    type: "response",
+    type: "type-if-needed",
   };
-
-  if (type === "nudge") {
-    postData.title = fromName + " is on it!";
-    postData.body = fromName + " is working on their goal.";
-  }
 
   fetch(postUrl, {
     method: "POST",

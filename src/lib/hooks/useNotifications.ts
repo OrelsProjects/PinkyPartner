@@ -1,24 +1,28 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "./redux";
-import { setViewedAt } from "../features/obligations/obligationsSlice";
+import { setViewedAt } from "@/lib/features/obligations/obligationsSlice";
 import axios from "axios";
-import { updatedManyContracts } from "../features/contracts/contractsSlice";
+import { updatedManyContracts } from "@/lib/features/contracts/contractsSlice";
 import {
-  NotificationData,
   setNewContracts,
   setNewObligations,
   setStatus,
-} from "../features/notifications/notificationsSlice";
-import NotificationComponent from "../../components/ui/notificationComponent";
+} from "@/lib/features/notifications/notificationsSlice";
+import NotificationComponent from "@/components/ui/notificationComponent";
 import { toast } from "react-toastify";
-import { getUserToken, initMessaging } from "../../../firebase.config";
 import { Logger } from "@/logger";
-import { canUseNotifications, isMobilePhone } from "../utils/notificationUtils";
-import { UserId } from "@/models/appUser";
-import CantBeNudgedError from "@/models/errors/CantBeNudgedError";
+import {
+  canUseNotifications,
+  isMobilePhone,
+} from "@/lib/utils/notificationUtils";
+
 import { useState } from "react";
-import Contract from "@/models/contract";
+import { UserId } from "@/lib/models/appUser";
+import CantBeNudgedError from "@/lib/models/errors/CantBeNudgedError";
+import { NotificationData } from "@/lib/models/notification";
+import { Contract } from "@prisma/client";
+import { initMessaging, getUser } from "@/../firebase.config";
 
 export default function useNotifications() {
   const dispatch = useAppDispatch();

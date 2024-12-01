@@ -4,7 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
-import { StatusReport } from "@/models/statusReport";
+import { StatusReport } from "@/lib/models/statusReport";
 import {
   Dialog,
   DialogClose,

@@ -9,9 +9,9 @@ import {
   daysOfWeek,
   isDateSameDay,
 } from "@/lib/utils/dateUtils";
-import { UserContractObligationData } from "@/models/userContractObligation";
+import { UserContractObligationData } from "@/lib/models/userContractObligation";
 import { UserAvatar } from "../ui/avatar";
-import Contract from "@/models/contract";
+import Contract from "@/lib/models/contract";
 import NotificationBadge from "../ui/notificationBadge";
 import ObligationCheckbox from "./obligationCheckbox";
 

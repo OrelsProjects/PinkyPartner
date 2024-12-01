@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { ContractWithExtras } from "@/models/contract";
-import Obligation from "@/models/obligation";
+import { ContractWithExtras } from "@/lib/models/contract";
+import Obligation from "@/lib/models/obligation";
 import { Button } from "../ui/button";
 import { dayNumbersToNames } from "@/lib/utils/dateUtils";
 import { timesAWeekToText } from "@/lib/utils/textUtils";

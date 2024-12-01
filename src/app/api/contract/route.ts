@@ -3,10 +3,10 @@ import Logger from "@/loggerServer";
 import { DefaultSession, SessionUser, getServerSession } from "next-auth";
 import prisma from "../_db/db";
 import { authOptions } from "../../../authOptions";
-import { ContractWithExtras, CreateContract } from "../../../models/contract";
+import { ContractWithExtras, CreateContract } from "../../../lib/models/contract";
 import { createWeeksContractObligations } from "./_utils/contractUtils";
 import { ANONYMOUS_USER_ID } from "@/lib/utils/consts";
-import { CreateObligation } from "../../../models/obligation";
+import { CreateObligation } from "../../../lib/models/obligation";
 import { Obligation } from "@prisma/client";
 
 const getAnonymousUser = async (): Promise<

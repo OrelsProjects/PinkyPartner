@@ -4,7 +4,7 @@ import {
   ContractWithExtras,
   CreateContract,
   UpdateContract,
-} from "@/models/contract";
+} from "@/lib/models/contract";
 import { setError } from "../features/auth/authSlice";
 import {
   setContracts as setContractsAction,
@@ -16,7 +16,7 @@ import {
   setLoading,
   replaceTempContract,
 } from "../features/contracts/contractsSlice";
-import { AccountabilityPartner } from "@/models/appUser";
+import { AccountabilityPartner } from "@/lib/models/appUser";
 import { Logger } from "@/logger";
 import { useObligations } from "./useObligations";
 

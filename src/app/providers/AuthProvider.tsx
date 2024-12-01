@@ -11,7 +11,7 @@ import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "@/eventTracker";
 import { Logger, setUserLogger } from "@/logger";
 import { useSession } from "next-auth/react";
-import AppUser, { AppUserMetadata, AppUserSettings } from "@/models/appUser";
+import AppUser, { AppUserMetadata, AppUserSettings } from "@/lib/models/appUser";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import useOnboarding from "@/lib/hooks/useOnboarding";
 

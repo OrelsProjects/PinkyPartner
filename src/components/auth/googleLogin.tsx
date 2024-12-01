@@ -1,10 +1,10 @@
 import React from "react";
 import useAuth from "@/lib/hooks/useAuth";
 import { FcGoogle } from "react-icons/fc";
-import { InvalidCredentialsError } from "@/models/errors/InvalidCredentialsError";
+import { InvalidCredentialsError } from "@/lib/models/errors/InvalidCredentialsError";
 import { toast } from "react-toastify";
-import { UnknownUserError } from "@/models/errors/UnknownUserError";
-import UserAlreadyExistsError from "@/models/errors/UserAlreadyExistsError";
+import { UnknownUserError } from "@/lib/models/errors/UnknownUserError";
+import UserAlreadyExistsError from "@/lib/models/errors/UserAlreadyExistsError";
 
 interface GoogleLoginProps {
   className?: string;

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@/lib/store";
-import { StatusReport } from "../../../models/statusReport";
+import { StatusReport } from "../../models/statusReport";
 
 type ContractId = string;
 

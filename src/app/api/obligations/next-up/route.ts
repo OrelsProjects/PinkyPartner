@@ -6,7 +6,7 @@ import prisma from "../../_db/db";
 import {
   UserContractObligationData,
   GetNextUpObligationsResponse,
-} from "../../../../models/userContractObligation";
+} from "../../../../lib/models/userContractObligation";
 import {
   getStartOfTheWeekDate,
   getEndOfTheWeekDate,

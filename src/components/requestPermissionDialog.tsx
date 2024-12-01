@@ -4,27 +4,25 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { Button } from "./ui/button";
-import { EventTracker } from "../eventTracker";
+import { Button } from "@/components/ui/button";
+import { PermissionType } from "@/lib/models/notification";
+
 
 const titlesMap: Record<PermissionType, string> = {
-  notifications: "Make the most out of PinkyPartner",
+  notifications: "Make the most out of the app",
 };
 
 const messagesMap: Record<PermissionType, React.ReactNode> = {
   notifications: (
     <>
       <p>
-        Studies show that having an accountability partner increases your
-        chances to build your habits up to 95%.
+        The best thing you can do right now is to enable notifications.
       </p>
     </>
   ),
 };
-
-export type PermissionType = "notifications";
 
 interface RequestPermissionDialogProps {
   open: boolean;
@@ -58,7 +56,6 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
             <div className="w-full flex flex-col justify-center items-center gap-0">
               <Button
                 onClick={() => {
-                  EventTracker.track("Clicked on enable notifications");
                   onEnablePermission(permission);
                 }}
                 className="w-fit"
@@ -69,7 +66,6 @@ const RequestPermissionDialog: React.FC<RequestPermissionDialogProps> = ({
                 variant="link"
                 onClick={() => {
                   onClose();
-                  EventTracker.track("Clicked on not now");
                 }}
               >
                 Not now

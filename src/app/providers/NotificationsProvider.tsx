@@ -1,152 +1,112 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { messaging } from "../../../firebase.config";
+import { messaging } from "@/../firebase.config";
 import { Messaging, onMessage } from "firebase/messaging";
 import useNotifications from "@/lib/hooks/useNotifications";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
-import { usePathname } from "next/navigation";
-import {
-  setNewObligations,
-  setNewContracts,
-  setShownContractNotification,
-  NotificationType,
-} from "@/lib/features/notifications/notificationsSlice";
-import RequestPermissionDialog, {
-  PermissionType,
-} from "../../components/requestPermissionDialog";
-import useOnboarding from "@/lib/hooks/useOnboarding";
+import RequestPermissionDialog from "@/components/requestPermissionDialog";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogTitle,
-} from "../../components/ui/dialog";
-import { Button } from "../../components/ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { canUseNotifications } from "@/lib/utils/notificationUtils";
-import { setForceFetch } from "@/lib/features/auth/authSlice";
+import { NotificationType, PermissionType } from "@/lib/models/notification";
 
-const MIN_DELAY_BETWEEN_NOTIFICATIONS = 1000 * 60; // 1 minute
+/**
+ * NotificationsProvider Component
+ *
+ * Purpose:
+ * - Initializes the user's notification token for Firebase Cloud Messaging.
+ * - Manages dialogs for requesting notification permissions.
+ * - Handles incoming notifications and displays them using a custom notification utility.
+ * - Manages dialogs when the user denies notification permissions.
+ */
 
 const NotificationsProvider = () => {
-  const pathname = usePathname();
-  const dispatch = useAppDispatch();
-  const { newContracts, newObligations, didShowContractNotification } =
-    useAppSelector(state => state.notifications);
   const {
-    partnerData: { contractObligations: partnerContractObligations },
-  } = useAppSelector(state => state.obligations);
-  const { contracts } = useAppSelector(state => state.contracts);
-  const { user, state } = useAppSelector(state => state.auth);
-
-  const { onboardingState, isOnboardingCompleted } = useOnboarding();
-  const {
-    initNotifications: initUserToken,
-    showNotification,
-    isPermissionGranted,
-    didRequestPermission,
-    markContractsAsViewed,
-    setPermissionRequested,
-    markObligationsAsViewed,
-    requestNotificationsPermission,
+    initNotifications: initUserToken, // Initialize user token for notifications
+    showNotification, // Function to display notifications
+    isPermissionGranted, // Check if notification permissions are granted
+    didRequestPermission, // Check if permission was requested before
+    setPermissionRequested, // Mark that permission has been requested
+    requestNotificationsPermission, // Request permission for notifications
   } = useNotifications();
 
-  const lastShownNewContractsNotification = React.useRef<number>(0);
-  const lastShownNewObligationsNotification = React.useRef<number>(0);
-
+  // State to control visibility of permission request dialogs
   const [showRequestPermissionDialog, setShowRequestPermissionDialog] =
     React.useState(false);
   const [showPermissionNotGrantedDialog, setShowPermissionNotGrantedDialog] =
     React.useState(false);
 
-  const init = async (messaging: Messaging) => {
-    await initUserToken();
+  /**
+   * Register the service worker for push notifications.
+   * This is required to receive push notifications in the browser (Also in the mobile app).
+   */
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      console.log("Registering service worker");
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then(function (registration) {
+          registration.update(); // Check for updates immediately after registering
+        });
+    }
+  }, []);
 
+  /**
+   * Initializes the messaging service and sets up an onMessage listener
+   * to handle incoming push notifications.
+   *
+   * @param messaging - Firebase Messaging instance
+   */
+  const init = async (messaging: Messaging) => {
+    await initUserToken(); // Initialize the notification token
+
+    // Listen for incoming messages and display them as notifications
     onMessage(messaging, payload => {
-      const type = (payload.data?.type || "response") as NotificationType;
-      if (type === "obligation" || type === "contract") {
-        dispatch(setForceFetch(true));
-      }
       showNotification({
         title: payload.data?.title ?? "",
         body: payload.data?.body ?? "",
         image: payload.data?.image ?? "",
-        type,
+        type: (payload.data?.type || "response") as NotificationType,
       });
     });
   };
 
+  /**
+   * Determine if the request permission dialog should be shown
+   * based on the user's notification settings and permission status.
+   */
   useEffect(() => {
     const shouldShowRequestPermissionDialog =
       canUseNotifications() &&
       !didRequestPermission() &&
-      (onboardingState === "completed" || isOnboardingCompleted()) &&
       !isPermissionGranted();
-    setShowRequestPermissionDialog(shouldShowRequestPermissionDialog);
-  }, [onboardingState, user]);
 
+    setShowRequestPermissionDialog(shouldShowRequestPermissionDialog);
+  }, []);
+
+  /**
+   * Initialize Firebase Messaging when the messaging instance
+   * is available.
+   */
   useEffect(() => {
     if (messaging) {
       init(messaging);
     }
   }, [messaging]);
 
-  useEffect(() => {
-    let promise: Promise<void> | null = null;
-    switch (pathname) {
-      case "/contracts":
-        promise = markContractsAsViewed();
-        break;
-      case "/home":
-        promise = markObligationsAsViewed();
-        break;
-    }
-    if (promise) {
-      setTimeout(async () => {
-        await promise;
-      }, 3000);
-    }
-  }, [newContracts, newObligations]);
-
-  useEffect(() => {
-    if (partnerContractObligations.length > 0) {
-      const newObligations =
-        partnerContractObligations.filter(obligation => !obligation.viewedAt) ||
-        [];
-      dispatch(setNewObligations(newObligations));
-
-      if (newObligations.length > 0 && canShowObligationsNotification()) {
-        lastShownNewObligationsNotification.current = Date.now();
-      }
-    }
-  }, [partnerContractObligations]);
-
-  useEffect(() => {
-    if (contracts) {
-      const newContracts = contracts.filter(
-        contract =>
-          !contract.signatures.some(
-            signature => signature?.userId === user?.userId,
-          ) && contract.viewedAt,
-      );
-
-      dispatch(setNewContracts(newContracts));
-      setTimeout(() => {
-        if (newContracts.length > 0 && canShowContractsNotification()) {
-          dispatch(setShownContractNotification(true));
-          lastShownNewContractsNotification.current = Date.now();
-          const contractees = newContracts.map(contract =>
-            contract.contractees.find(
-              contractee => contractee?.userId !== user?.userId,
-            ),
-          );
-        }
-      }, 3000);
-    }
-  }, [contracts]);
-
+  /**
+   * Handles the closing of the permission request dialog and updates
+   * the notification permission status based on user interaction.
+   *
+   * @param permission - The type of permission response from the user
+   */
   const onCloseRequestPermissionDialog = async (
     permission?: PermissionType,
   ) => {
@@ -155,8 +115,8 @@ const NotificationsProvider = () => {
       setPermissionRequested();
       setShowRequestPermissionDialog(false);
       if (granted) {
-        const toastId = toast.loading("Saving your pinky...");
-        await initUserToken();
+        const toastId = toast.loading("Saving your settings...");
+        await initUserToken(); // Initialize the token if permission is granted
         toast.dismiss(toastId);
         toast("You're all set! 🎉");
       } else {
@@ -169,30 +129,17 @@ const NotificationsProvider = () => {
     }
   };
 
-  const canShowContractsNotification = () => {
-    if (didShowContractNotification) return false;
-    const now = Date.now();
-    const timeSinceLastNotification =
-      now - lastShownNewContractsNotification.current;
-    return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
-  };
-
-  const canShowObligationsNotification = () => {
-    const now = Date.now();
-    const timeSinceLastNotification =
-      now - lastShownNewObligationsNotification.current;
-    return timeSinceLastNotification > MIN_DELAY_BETWEEN_NOTIFICATIONS;
-  };
-
   return (
     <>
+      {/* Dialog for requesting notification permission */}
       <RequestPermissionDialog
-        open={showRequestPermissionDialog && state === "authenticated"}
+        open={showRequestPermissionDialog}
         onClose={onCloseRequestPermissionDialog}
         onEnablePermission={onCloseRequestPermissionDialog}
         permission="notifications"
       />
 
+      {/* Dialog shown when notification permission is not granted */}
       <Dialog
         open={showPermissionNotGrantedDialog}
         onOpenChange={value => {

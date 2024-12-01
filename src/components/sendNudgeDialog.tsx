@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { ContractWithExtras } from "../models/contract";
+import { ContractWithExtras } from "../lib/models/contract";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 

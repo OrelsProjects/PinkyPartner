@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import React, { useEffect, useRef } from "react";
-import { UserData } from "@/models/appUser";
+import { UserData } from "@/lib/models/appUser";
 import { useObligations } from "@/lib/hooks/useObligations";
 import { useContracts } from "@/lib/hooks/useContracts";
 import useAuth from "@/lib/hooks/useAuth";

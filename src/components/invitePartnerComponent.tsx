@@ -12,7 +12,7 @@ import { Button, ButtonVariants } from "./ui/button";
 import { toast } from "react-toastify";
 import { EventTracker } from "../eventTracker";
 import { cn } from "../lib/utils";
-import Contract from "../models/contract";
+import Contract from "../lib/models/contract";
 import { FaCopy } from "react-icons/fa";
 
 interface InvitePartnerComponentProps {
