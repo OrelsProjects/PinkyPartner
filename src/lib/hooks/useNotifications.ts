@@ -126,7 +126,11 @@ export default function useNotifications() {
     return Notification?.permission === "granted";
   };
 
-  async function nudgePartner(to: UserId, contract: Contract, title: string) {
+  async function nudgePartner(
+    to: UserId,
+    contract: { contractId: string; title: string },
+    title: string,
+  ) {
     if (loadingNudge[contract.contractId]) return;
     try {
       setLoadingNudge({
@@ -136,7 +140,7 @@ export default function useNotifications() {
       await axios.post(`/api/notifications`, {
         title,
         body: `${from} reminds you to complete ${contract.title}.`,
-        userId: to,
+        userIdToNotify: to,
         type: "nudge",
       });
     } catch (error: any) {
@@ -153,6 +157,7 @@ export default function useNotifications() {
         );
       }
       Logger.error("Failed to nudge partner", { error });
+      throw error;
     } finally {
       setLoadingNudge({
         [contract.contractId]: false,
